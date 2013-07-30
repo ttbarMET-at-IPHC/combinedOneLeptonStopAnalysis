@@ -63,25 +63,25 @@ int main()
 
     // Add the variables you want to consider 
     
-    //factory->AddVariable( "nJets := nJets",  'F' );
     //factory->AddVariable( "MT := MT",  'F' );
-    factory->AddVariable( "nJets := nJets",  'F' );
-    factory->AddVariable( "nWTag := nWTag",  'F' );
+    //factory->AddVariable( "nJets := nJets",  'F' );
+    //factory->AddVariable( "nWTag := nWTag",  'F' );
     factory->AddVariable( "MET := MET",  'F' );
     factory->AddVariable( "MT2W := MT2W",  'F' );
     factory->AddVariable( "dPhiMETjet := dPhiMETjet",  'F' );
     factory->AddVariable( "HTratio := HTratio",  'F' );
+    factory->AddVariable( "HadronicChi2 := HadronicChi2",  'F' );
     
     // Open samples
     
-    TFile* f_signal = TFile::Open("../store/microTuples_MVA0725/signal.root");
-    TFile* f_ttbar  = TFile::Open("../store/microTuples_MVA0725/ttbar.root");
-    TFile* f_W2Jets = TFile::Open("../store/microTuples_MVA0725/W2Jets.root");
-    TFile* f_W3Jets = TFile::Open("../store/microTuples_MVA0725/W3Jets.root");
-    TFile* f_W4Jets = TFile::Open("../store/microTuples_MVA0725/W4Jets.root");
+    TFile* f_signal = TFile::Open("../store/microTuples_MVA0726/signal.root");
+    TFile* f_ttbar  = TFile::Open("../store/microTuples_MVA0726/ttbar.root" );
+    TFile* f_W2Jets = TFile::Open("../store/microTuples_MVA0726/W2Jets.root");
+    TFile* f_W3Jets = TFile::Open("../store/microTuples_MVA0726/W3Jets.root");
+    TFile* f_W4Jets = TFile::Open("../store/microTuples_MVA0726/W4Jets.root");
     
     TTree *signal = (TTree*) f_signal->Get("microTuple");
-    TTree *ttbar  = (TTree*) f_ttbar->Get("microTuple");
+    TTree *ttbar  = (TTree*) f_ttbar ->Get("microTuple");
     TTree *W2Jets = (TTree*) f_W2Jets->Get("microTuple");
     TTree *W3Jets = (TTree*) f_W3Jets->Get("microTuple");
     TTree *W4Jets = (TTree*) f_W4Jets->Get("microTuple");
