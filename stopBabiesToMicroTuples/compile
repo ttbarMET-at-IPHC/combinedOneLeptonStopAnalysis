@@ -156,6 +156,7 @@ if [[ $src != "" ]] ; then
          -I `root-config --incdir` -I $NTUPLEANA_PATH/../                     \
          -I ../sonicScrewdriver                                               \
          -l:$PWD/../sonicScrewdriver/libSonicScrewdriver.so                   \
+         -l:$PWD/MiniFWLite/libMiniFWLite.so                                  \
          -I $NTUPLEANA_PATH/../../../IPHCDataFormat/                          \
          -L $ROOTSYS/lib                                                      \
          -lGenVector -lCore -lCint -lRIO -lNet -lHist -lGraf                  \
