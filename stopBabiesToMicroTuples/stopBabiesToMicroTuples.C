@@ -23,7 +23,7 @@
 #include <iostream>
 using namespace std;
 
-#include "../microTupling/MicroTuple_Format_Synchro0722.h"
+#include "../microTupling/MicroTuple_Format_Synchro0902.h"
 
 #define INPUT "/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v1/store/synchro/baby_RelValTTbar_CMSSW_5_3_2_patch1-START53_V7A-v1_GEN-SIM-RECO.root"
 
@@ -61,13 +61,14 @@ int main (int argc, char *argv[])
   // ########################################
 
   float aFloat0;  float aFloat1;  float aFloat2;  float aFloat3;  float aFloat4;  
-  float aFloat5;  float aFloat6;  float aFloat7;  float aFloat8;  float aFloat9;
+  float aFloat5;  float aFloat6;  float aFloat7;  float aFloat8;  float aFloat9; float aFloat10;
   int anInt0;  int anInt1;  int anInt2;  int anInt3;  int anInt4;  int anInt5;  int anInt6;
   UInt_t         anUInt;
 
   ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> >* aVector0 = 0;
   ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> >* aVector1 = 0;
   vector< ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> > >* aVector2  = 0;
+  vector< float >* aVector3  = 0;
 
   for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
   {
@@ -93,7 +94,10 @@ int main (int argc, char *argv[])
       theInputTree->SetBranchAddress("mini_htratiom",   &aFloat8); 
       theInputTree->SetBranchAddress("mini_dRleptB1",   &aFloat9); 
       theInputTree->SetBranchAddress("pfjets",          &aVector2); 
+      theInputTree->SetBranchAddress("pfjets_sigma",    &aVector3); 
 
+      theInputTree->SetBranchAddress("pfmet",   &aFloat10); 
+      
       theInputTree->GetEntry(i); 
       
       myEvent.event        = anUInt;
@@ -120,6 +124,8 @@ int main (int argc, char *argv[])
       myEvent.HTratio      = aFloat8;
       myEvent.dRleptonB    = aFloat9;
 
+      cout << "event = " << myEvent.event << " raw met : " << aFloat10 << endl;
+
       int i;
       for (i = 0 ; i < (*aVector2).size() ; i++)
       {
@@ -128,6 +134,7 @@ int main (int argc, char *argv[])
           myEvent.jets_Pt[i] = (*aVector2)[i].Pt();
           myEvent.jets_Phi[i] = (*aVector2)[i].Phi();
           myEvent.jets_Eta[i] = (*aVector2)[i].Eta();
+          myEvent.jets_Sigma[i] = (*aVector3)[i];
       }
 
       if (i < 10)
@@ -135,6 +142,7 @@ int main (int argc, char *argv[])
           myEvent.jets_Pt[i] = -1;
           myEvent.jets_Phi[i] = -999;
           myEvent.jets_Eta[i] = -999;
+          myEvent.jets_Sigma[i] = -999;
       }
 
       theOutputTree->Fill();
