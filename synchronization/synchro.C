@@ -9,9 +9,9 @@
 #include <iostream>
 using namespace std;
 
-#include "../microTupling/MicroTuple_Format_Synchro0722.h"
+#include "../microTupling/MicroTuple_Format_Synchro0902.h"
 
-#define INPUT "../store/microTuples_Synchro0722_July22th/iphc.root"
+#define INPUT "../store/microTuples_Synchro0902/fnal.root"
 
 // #########################################################################
 //                              Main function
@@ -25,10 +25,6 @@ int main (int argc, char *argv[])
   cout << "   │   Starting dump   │  " << endl;
   cout << "   └───────────────────┘  " << endl; 
   cout << endl;
-
-  // ########################################
-  // ##       Run over the datasets        ##
-  // ########################################
 
   microEvent myEvent;
 
@@ -54,7 +50,7 @@ int main (int argc, char *argv[])
        for (int i = 0 ; i < 10 ; i++)
        {
            if (myEvent.jets_Pt[i] == -1) break;
-           cout << " jet: " << i << " pt: " << myEvent.jets_Pt[i] << " eta: " << myEvent.jets_Eta[i] << " phi: " << myEvent.jets_Phi[i] << endl;
+           cout << " jet: " << i << " pt: " << myEvent.jets_Pt[i] << " eta: " << myEvent.jets_Eta[i] << " phi: " << myEvent.jets_Phi[i] << " sigma: " << myEvent.jets_Sigma[i] << endl;
        }
        cout << " nJets : " << myEvent.nJets << " ; nB : " << myEvent.nB << endl;
        cout << " MET : " << myEvent.MET << " ; MT : " << myEvent.MT << " ; MT2W " << myEvent.MT2W << endl;

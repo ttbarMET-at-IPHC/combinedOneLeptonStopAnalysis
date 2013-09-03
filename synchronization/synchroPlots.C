@@ -12,10 +12,10 @@ using namespace std;
 #include "interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
-#include "../microTupling/MicroTuple_Format_Synchro0722.h"
+#include "../microTupling/MicroTuple_Format_Synchro0902.h"
 
-#define INPUT_IPHC "../store/microTuples_Synchro0722_July22th/iphc.root"
-#define INPUT_FNAL "../store/microTuples_Synchro0722_July22th/fnal.root"
+#define INPUT_IPHC "../store/microTuples_Synchro0902/iphc.root"
+#define INPUT_FNAL "../store/microTuples_Synchro0902/fnal.root"
 
 bool inclusiveChannelSelector() { return true; }
 bool Selection_presel() { return true; }
@@ -47,22 +47,25 @@ int main (int argc, char *argv[])
      float triggerE;   mySonic.AddVariable("triggerE",   "#Delta triggerE",        "", 3,-1.5,1.5,  &(triggerE));
      float triggerM;   mySonic.AddVariable("triggerM",   "#Delta triggerM",        "", 3,-1.5,1.5,  &(triggerM));
      
-     float leptonPt;   mySonic.AddVariable("leptonPt",   "#Delta lepton p_{T}",    "", 21,-0.5,0.5,  &(leptonPt));
-     float leptonEta;  mySonic.AddVariable("leptonEta",  "#Delta lepton #eta",     "", 21,-0.5,0.5,  &(leptonEta));
-     float leptonPhi;  mySonic.AddVariable("leptonPhi",  "#Delta lepton #phi",     "", 21,-0.5,0.5,  &(leptonPhi));
-     float leptonE;    mySonic.AddVariable("leptonE",    "#Delta lepton E",        "", 21,-0.5,0.5,  &(leptonE));
-     float leptonPFPt; mySonic.AddVariable("leptonPFPt", "#Delta lepton PF p_{T}", "", 21,-0.5,0.5,  &(leptonPFPt));
+     float leptonPt;   mySonic.AddVariable("leptonPt",   "#Delta lepton p_{T}",    "", 21,-0.5,0.5, &(leptonPt));
+     float leptonEta;  mySonic.AddVariable("leptonEta",  "#Delta lepton #eta",     "", 21,-0.5,0.5, &(leptonEta));
+     float leptonPhi;  mySonic.AddVariable("leptonPhi",  "#Delta lepton #phi",     "", 21,-0.5,0.5, &(leptonPhi));
+     float leptonE;    mySonic.AddVariable("leptonE",    "#Delta lepton E",        "", 21,-0.5,0.5, &(leptonE));
+     float leptonPFPt; mySonic.AddVariable("leptonPFPt", "#Delta lepton PF p_{T}", "", 21,-0.5,0.5, &(leptonPFPt));
      float leptonIso;  mySonic.AddVariable("leptonIso",  "#Delta lepton Iso",      "", 21,-20,20,   &(leptonIso));
-     float leptonEpin; mySonic.AddVariable("leptonEpin", "#Delta lepton E/pin",    "", 21,-0.5,0.5,  &(leptonEpin));
+     float leptonEpin; mySonic.AddVariable("leptonEpin", "#Delta lepton E/pin",    "", 21,-0.5,0.5, &(leptonEpin));
      float nJets;      mySonic.AddVariable("nJets",      "#Delta nJets",           "", 7,-3.5,3.5,  &(nJets));
      float nBtag;      mySonic.AddVariable("nBTag",      "#Delta nBTag",           "", 7,-3.5,3.5,  &(nBtag));
      
-     float MET;        mySonic.AddVariable("MET",        "#Delta MET",             "", 21,-0.5,0.5,  &(MET));
-     float MT;         mySonic.AddVariable("MT",         "#Delta MT",              "", 21,-0.5,0.5,  &(MT));
-     float MT2W;       mySonic.AddVariable("MT2W",       "#Delta MT2W",            "", 21,-0.5,0.5,  &(MT2W));
-     float dPhiMETjet; mySonic.AddVariable("dPhiMETjet", "#Delta dPhiMetJet",      "", 21,-0.5,0.5,  &(dPhiMETjet));
-     float Chi2;       mySonic.AddVariable("Chi2",       "#Delta Chi2",            "", 21,-0.5,0.5,  &(Chi2));
-     float HTRatio;    mySonic.AddVariable("HTRatio",    "#Delta HTRatio",         "", 21,-0.5,0.5,  &(HTRatio));
+     float MET;        mySonic.AddVariable("MET",        "#Delta MET",             "", 21,-0.5,0.5, &(MET));
+     float MT;         mySonic.AddVariable("MT",         "#Delta MT",              "", 21,-0.5,0.5, &(MT));
+     float MT2W;       mySonic.AddVariable("MT2W",       "#Delta MT2W",            "", 21,-0.5,0.5, &(MT2W));
+     float dPhiMETjet; mySonic.AddVariable("dPhiMETjet", "#Delta dPhiMetJet",      "", 21,-0.5,0.5, &(dPhiMETjet));
+     float Chi2;       mySonic.AddVariable("Chi2",       "#Delta Chi2",            "", 21,-0.5,0.5, &(Chi2));
+     float HTRatio;    mySonic.AddVariable("HTRatio",    "#Delta HTRatio",         "", 21,-0.5,0.5, &(HTRatio));
+     
+     float trackVeto;  mySonic.AddVariable("trackVeto",  "#Delta trackVeto",       "", 3,-1.5,1.5,  &(trackVeto));
+     float tauVeto;    mySonic.AddVariable("tauVeto",    "#Delta tauVeto",         "", 3,-1.5,1.5,  &(tauVeto));
      
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -128,6 +131,11 @@ int main (int argc, char *argv[])
       dPhiMETjet = (myEventFNAL.dPhiMETjet   - myEventIPHC.dPhiMETjet  ) / myEventFNAL.dPhiMETjet  ;
       Chi2       = (myEventFNAL.hadronicChi2 - myEventIPHC.hadronicChi2) / myEventFNAL.hadronicChi2;
       HTRatio    = (myEventFNAL.HTratio      - myEventIPHC.HTratio     ) / myEventFNAL.HTratio     ;
+      
+      trackVeto  = (myEventFNAL.isoTrackVeto - myEventIPHC.isoTrackVeto); 
+      tauVeto    = (myEventFNAL.tauVeto      - myEventIPHC.tauVeto)     ;      
+
+      //if (nBtag != 0) cout << "nJets = " << myEventIPHC.nJets << " / event : " << myEventFNAL.event << endl;
       
       mySonic.AutoFillProcessClass("diff");
   }
