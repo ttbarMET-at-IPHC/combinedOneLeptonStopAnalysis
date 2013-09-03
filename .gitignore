@@ -15,4 +15,8 @@
 # Root files
 *.root
 
+# Various stuff not needed to be versionned
 .list*
+store/
+plots/
+microTupling/
