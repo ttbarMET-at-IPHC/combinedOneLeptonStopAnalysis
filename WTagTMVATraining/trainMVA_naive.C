@@ -60,7 +60,7 @@ int main()
     factory->AddVariable( "dPhiMETjet := dPhiMETjet",  'F' );
     factory->AddVariable( "HTratio := HTratio",  'F' );
     factory->AddVariable( "HadronicChi2 := HadronicChi2",  'F' );
-    factory->AddVariable( "nWTag := nWTag",  'F' );
+    //factory->AddVariable( "nWTag := nWTag",  'F' );
     
     // Open samples
     
@@ -78,10 +78,6 @@ int main()
 
     // Register the trees
     
-    factory->AddSignalTree    ( signal, 1.0);
-    factory->AddBackgroundTree( ttbar,  1.0);
-
-    /*
     cout << " signal ; w = " << 1.0   * 20000.0 / getNumberOfEvent(signal) << endl;
     factory->AddSignalTree    ( signal, 1.0   * 20000.0 / getNumberOfEvent(signal));
     cout << " ttbar ; w = "  << 225.2 * 20000.0 / getNumberOfEvent(ttbar) << endl;
@@ -92,7 +88,6 @@ int main()
     factory->AddBackgroundTree( W3Jets, 640   * 20000.0 / getNumberOfEvent(W3Jets));
     cout << " W4Jets ; w = " << 264   * 20000.0 / getNumberOfEvent(W4Jets) << endl;
     factory->AddBackgroundTree( W4Jets, 264   * 20000.0 / getNumberOfEvent(W4Jets));
-    */
 
     // Add preselection cuts
    
@@ -102,13 +97,13 @@ int main()
     // Prepare the training
 
     factory->PrepareTrainingAndTestTree( preselectionCutsSig.c_str(), preselectionCutsBkg.c_str(),
-                    "nTrain_Signal=40000:nTrain_Background=50000:SplitMode=Random:NormMode=EqualNumEvents:!V" );
+                    "nTrain_Signal=40000:nTrain_Background=50000:SplitMode=Random:NormMode=NumEvents:!V" );
 
     // Cut optimisation
     if (Use["Cuts"])     factory->BookMethod( TMVA::Types::kCuts, "Cuts",
                          "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart" );
     if (Use["BDT"])      factory->BookMethod( TMVA::Types::kBDT, "BDT", 
-                         "!H:!V:NTrees=1000:BoostType=Grad:nEventsMin=2000:MaxDepth=4:Shrinkage=0.30" );
+                         "!H:!V:NTrees=400:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning" );
    
    // --------------------------------------------------------------
 
