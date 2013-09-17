@@ -33,6 +33,9 @@ microEvent* myEventPointer;
 
 // Variables for region selector
 
+float* AdaBoostBDTOutputNoWTag_Pointer;
+float* AdaBoostBDTOutputWithWTag_Pointer;
+
 float* BDTOutputNoWTag_Pointer;
 float* BDTOutputWithWTag_Pointer;
 
@@ -48,7 +51,7 @@ bool Selector_signalRegion()
 { 
     return  (
                (myEventPointer->MET   > 80) 
-            && (myEventPointer->MT    > 120)
+            && (myEventPointer->MT    > 100)
             && (myEventPointer->nJets >= 4 )
             ); 
 }
@@ -105,17 +108,24 @@ int main (int argc, char *argv[])
  	 mySonic.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",        "",       20,0,5,        &(myEvent.HadronicChi2),  "");
 
      mySonic.AddVariable("nJets",          "# of jets",              "",        4, 2.5,6.5,     &(myEvent.nJets),         "");
+    
      mySonic.AddVariable("nBTag",          "# of b-tagged jets",     "",        4,-0.5,3.5,     &(myEvent.nBTag),         "");
      mySonic.AddVariable("nWTag",          "# of W-tagged jets",     "",        3,-0.5,2.5,     &(myEvent.nWTag),         "");
 
  	 mySonic.AddVariable("mStop",          "m_{#tilde{t}}",          "GeV",     14,112.5,812.5, &(myEvent.mStop),         "");
  	 mySonic.AddVariable("mNeutralino",    "m_{#chi^{0}}",           "GeV",     8,-12.5,387.5,  &(myEvent.mNeutralino),   "");
- 	 
-     float BDTOutputNoWTag;    BDTOutputNoWTag_Pointer = &BDTOutputNoWTag;
-     mySonic.AddVariable("BDTOutputNoWTag",       "BDT output (no WTag)",            "",        20,-0.5,1.5,      &(BDTOutputNoWTag),    "");
+
+     float AdaBoostBDTOutputNoWTag;   AdaBoostBDTOutputNoWTag_Pointer   = &AdaBoostBDTOutputNoWTag;
+     mySonic.AddVariable("BDTOutputAdaBoostNoWTag",  "(AdaBoost) BDT output (no WTag)",   "", 44,-1.1,1.1, &(AdaBoostBDTOutputNoWTag),   "logY=true");
+     
+     float AdaBoostBDTOutputWithWTag; AdaBoostBDTOutputWithWTag_Pointer = &AdaBoostBDTOutputWithWTag;
+     mySonic.AddVariable("BDTOutputAdaBoostWithWTag","(AdaBoost) BDT output (with WTag)", "", 44,-1.1,1.1, &(AdaBoostBDTOutputWithWTag), "logY=true");
+
+     float BDTOutputNoWTag;           BDTOutputNoWTag_Pointer = &BDTOutputNoWTag;
+     mySonic.AddVariable("BDTOutputNoWTag",          "BDT output (no WTag)",              "", 40,-1,1,     &(BDTOutputNoWTag),           "logY=true");
  
-     float BDTOutputWithWTag;  BDTOutputWithWTag_Pointer = &BDTOutputWithWTag;
-     mySonic.AddVariable("BDTOutputWithWTag",     "BDT output (with WTag)",          "",        20,-0.5,1.5,      &(BDTOutputWithWTag),  "");
+     float BDTOutputWithWTag;         BDTOutputWithWTag_Pointer = &BDTOutputWithWTag;
+     mySonic.AddVariable("BDTOutputWithWTag",        "BDT output (with WTag)",            "", 40,-1,1,     &(BDTOutputWithWTag),         "");
     
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -127,18 +137,18 @@ int main (int argc, char *argv[])
 
       // Wjets
       mySonic.AddProcessClass("W+jets",   "W+jets",       "background",kOrange-2);
-          mySonic.AddDataset("W2Jets",    "W+jets",100,2159);
-          mySonic.AddDataset("W3Jets",    "W+jets",100,640);
+          //mySonic.AddDataset("W2Jets",    "W+jets",100,2159);
+          //mySonic.AddDataset("W3Jets",    "W+jets",100,640);
           mySonic.AddDataset("W4Jets",    "W+jets",100,264);
 
      // Signal
      mySonic.AddProcessClass("signal_550_25", "T2tt (550/25)",  "signal",COLORPLOT_AZURE);
           mySonic.AddDataset("signal1", "signal_550_25", 100,1);
 
-     mySonic.AddProcessClass("signal_650_25", "T2tt (650/25)",  "signal",COLORPLOT_GREEN);
+     mySonic.AddProcessClass("signal_650_25", "T2tt (650/25)",  "signal",kCyan-3);
           mySonic.AddDataset("signal2", "signal_650_25", 100,1);
 
-     mySonic.AddProcessClass("signal_750_25", "T2tt (750/25)",  "signal",kCyan-3);
+     mySonic.AddProcessClass("signal_750_25", "T2tt (750/25)",  "signal",COLORPLOT_GREEN);
           mySonic.AddDataset("signal3", "signal_750_25", 100,1);
           
 
@@ -148,8 +158,8 @@ int main (int argc, char *argv[])
 
      mySonic.AddRegion("presel",                "Preselection",             &Selector_presel);
      mySonic.AddRegion("signalRegion",          "Signal region",            &Selector_signalRegion);
-     mySonic.AddRegion("afterBDTNoWTagCut",     "After BDT cut (no WTag)",  &Selector_afterBDTNoWTagCut);
-     mySonic.AddRegion("afterBDTWithWTagCut",   "After BDT cut (with WTag)",&Selector_afterBDTWithWTagCut);
+     //mySonic.AddRegion("afterBDTNoWTagCut",     "After BDT cut (no WTag)",  &Selector_afterBDTNoWTagCut);
+     //mySonic.AddRegion("afterBDTWithWTagCut",   "After BDT cut (with WTag)",&Selector_afterBDTWithWTagCut);
  
   // ##########################
   // ##   Create Channels    ##
@@ -168,40 +178,54 @@ int main (int argc, char *argv[])
 	 // Create histograms
   	 mySonic.Create1DHistos();
   	 mySonic.Add2DHisto("mStop","mNeutralino");
+  	 mySonic.Add2DHisto("BDTOutputNoWTag","BDTOutputWithWTag");
   	 
   	 // Schedule plots
   	 mySonic.SchedulePlots("1DSuperpRenorm","includeSignal=true");
   	 mySonic.SchedulePlots("1DStack","includeSignal=true,includeSignalHow=stack,factorSignal=1.0");
   	 mySonic.SchedulePlots("2D");
-  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_550_25,var=BDTOutputNoWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
-  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_550_25,var=BDTOutputWithWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
+
+     mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputNoWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputWithWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=AdaBoostBDTOutputNoWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=AdaBoostBDTOutputWithWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
 
   // ##########################
   // ##  Set up MVA reader   ##
   // ########################## 
-  
-  TMVA::Reader* MVAReader_noWTag = new TMVA::Reader( "" );
 
-  //MVAReader_noWTag->AddVariable( "nJets",      &(myEvent.nJets)     );
-  //MVAReader_noWTag->AddVariable( "nWTag",      &(myEvent.nWTag)     );
+  TMVA::Reader* MVAReader_AdaBoost_noWTag = new TMVA::Reader( "" );
+  MVAReader_AdaBoost_noWTag->AddVariable( "MET",           &(myEvent.MET)          );
+  MVAReader_AdaBoost_noWTag->AddVariable( "MT2W",          &(myEvent.MT2W)         );
+  MVAReader_AdaBoost_noWTag->AddVariable( "dPhiMETjet",    &(myEvent.dPhiMETjet)   );
+  MVAReader_AdaBoost_noWTag->AddVariable( "HTratio",       &(myEvent.HTratio)      );
+  MVAReader_AdaBoost_noWTag->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
+  MVAReader_AdaBoost_noWTag->BookMVA("BDT","../WTagTMVATraining/weights_AdaBoost_withWeights_noWTag/TMVAClassification_BDT.weights.xml");
+
+  TMVA::Reader* MVAReader_AdaBoost_withWTag = new TMVA::Reader( "" );
+  MVAReader_AdaBoost_withWTag->AddVariable( "MET",           &(myEvent.MET)          );
+  MVAReader_AdaBoost_withWTag->AddVariable( "MT2W",          &(myEvent.MT2W)         );
+  MVAReader_AdaBoost_withWTag->AddVariable( "dPhiMETjet",    &(myEvent.dPhiMETjet)   );
+  MVAReader_AdaBoost_withWTag->AddVariable( "HTratio",       &(myEvent.HTratio)      );
+  MVAReader_AdaBoost_withWTag->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
+  MVAReader_AdaBoost_withWTag->AddVariable( "nWTag",         &(myEvent.nWTag)        );
+  MVAReader_AdaBoost_withWTag->BookMVA("BDT","../WTagTMVATraining/weights_AdaBoost_withWeights_withWTag/TMVAClassification_BDT.weights.xml");
+
+  TMVA::Reader* MVAReader_noWTag = new TMVA::Reader( "" );
   MVAReader_noWTag->AddVariable( "MET",           &(myEvent.MET)          );
   MVAReader_noWTag->AddVariable( "MT2W",          &(myEvent.MT2W)         );
   MVAReader_noWTag->AddVariable( "dPhiMETjet",    &(myEvent.dPhiMETjet)   );
   MVAReader_noWTag->AddVariable( "HTratio",       &(myEvent.HTratio)      );
   MVAReader_noWTag->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
- 
   MVAReader_noWTag->BookMVA("BDT","../WTagTMVATraining/weights_noWTag/TMVAClassification_BDT.weights.xml");
 
   TMVA::Reader* MVAReader_withWTag = new TMVA::Reader( "" );
-
-  //MVAReader_withWTag->AddVariable( "nJets",      &(myEvent.nJets)     );
   MVAReader_withWTag->AddVariable( "MET",           &(myEvent.MET)          );
   MVAReader_withWTag->AddVariable( "MT2W",          &(myEvent.MT2W)         );
   MVAReader_withWTag->AddVariable( "dPhiMETjet",    &(myEvent.dPhiMETjet)   );
   MVAReader_withWTag->AddVariable( "HTratio",       &(myEvent.HTratio)      );
   MVAReader_withWTag->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
   MVAReader_withWTag->AddVariable( "nWTag",         &(myEvent.nWTag)        );
- 
   MVAReader_withWTag->BookMVA("BDT","../WTagTMVATraining/weights_withWTag/TMVAClassification_BDT.weights.xml");
 
   // ########################################
@@ -261,9 +285,10 @@ int main (int argc, char *argv[])
             weight *= stopCrossSection(myEvent.mStop);
           }
 
-          BDTOutputNoWTag   = MVAReader_noWTag->EvaluateMVA("BDT");
-          BDTOutputWithWTag = MVAReader_withWTag->EvaluateMVA("BDT");
-
+          AdaBoostBDTOutputNoWTag   = 0; //MVAReader_AdaBoost_noWTag->EvaluateMVA("BDT");
+          AdaBoostBDTOutputWithWTag = 0; //MVAReader_AdaBoost_withWTag->EvaluateMVA("BDT");
+          BDTOutputNoWTag           = MVAReader_noWTag->EvaluateMVA("BDT");
+          BDTOutputWithWTag         = MVAReader_withWTag->EvaluateMVA("BDT");
           
           // Fill all the variables with autoFill-mode activated
           mySonic.AutoFillProcessClass(currentProcessClass,weight);
@@ -326,6 +351,147 @@ int main (int argc, char *argv[])
   cout << "   │  Tables generation completed  │  " << endl;
   cout << "   └───────────────────────────────┘  " << endl; 
   cout << endl;
+
+  cout << endl;
+  cout << "   ┌───────────────────────────┐  " << endl;
+  cout << "   │  Generating Eric's plots  │  " << endl;
+  cout << "   └───────────────────────────┘  " << endl; 
+  cout << endl;
+    
+    vector<Histo2D>* Histos2D = mySonic.Get2DHistoList();
+
+    TH2F* BDTOutputsTTbar;
+    TH2F* BDTOutputsWJets;
+    TH2F* BDTOutputsSignal550;
+    TH2F* BDTOutputsSignal650;
+    TH2F* BDTOutputsSignal750;
+
+    float WeightTTbar = mySonic.GetDatasetLumiWeight("ttbar");
+    float WeightWJets = mySonic.GetDatasetLumiWeight("W4Jets");
+    // Dont forget to change stopCrossSection argument if you change the signal !!!
+    float WeightSignal550 = mySonic.GetDatasetLumiWeight("signal1") * stopCrossSection(550);
+    float WeightSignal650 = mySonic.GetDatasetLumiWeight("signal2") * stopCrossSection(650);
+    float WeightSignal750 = mySonic.GetDatasetLumiWeight("signal3") * stopCrossSection(750);
+
+    for (int i = 0 ; i < Histos2D->size() ; i++)
+    {
+        if (((*Histos2D)[i].getRegionTag()    == "signalRegion")
+        &&  ((*Histos2D)[i].getVariableXTag() == "BDTOutputNoWTag")
+        &&  ((*Histos2D)[i].getVariableYTag() == "BDTOutputWithWTag"))
+        {
+               if ((*Histos2D)[i].getProcessClassTag() == "ttbar")
+              BDTOutputsTTbar = (*Histos2D)[i].getClone();
+          else if ((*Histos2D)[i].getProcessClassTag() == "W+jets")
+              BDTOutputsWJets = (*Histos2D)[i].getClone();
+          else if ((*Histos2D)[i].getProcessClassTag() == "signal_550_25")
+              BDTOutputsSignal550 = (*Histos2D)[i].getClone();
+          else if ((*Histos2D)[i].getProcessClassTag() == "signal_650_25")
+              BDTOutputsSignal650 = (*Histos2D)[i].getClone();
+          else if ((*Histos2D)[i].getProcessClassTag() == "signal_750_25")
+              BDTOutputsSignal750 = (*Histos2D)[i].getClone();
+
+        }
+    }
+
+     int  nBins = BDTOutputsSignal550->GetNbinsX(); 
+    float xMin  = BDTOutputsSignal550->GetXaxis()->GetXmin();
+    float xMax  = BDTOutputsSignal550->GetXaxis()->GetXmax();
+    
+    TH1F* signal550_00 = new TH1F("signal550_00","",nBins,xMin,xMax);
+    TH1F* signal550_10 = new TH1F("signal550_10","",nBins,xMin,xMax);
+    TH1F* signal550_01 = new TH1F("signal550_01","",nBins,xMin,xMax);
+    TH1F* signal550_11 = new TH1F("signal550_11","",nBins,xMin,xMax);
+    TH1F* signal650_00 = new TH1F("signal650_00","",nBins,xMin,xMax);
+    TH1F* signal650_10 = new TH1F("signal650_10","",nBins,xMin,xMax);
+    TH1F* signal650_01 = new TH1F("signal650_01","",nBins,xMin,xMax);
+    TH1F* signal650_11 = new TH1F("signal650_11","",nBins,xMin,xMax);
+    TH1F* signal750_00 = new TH1F("signal750_00","",nBins,xMin,xMax);
+    TH1F* signal750_10 = new TH1F("signal750_10","",nBins,xMin,xMax);
+    TH1F* signal750_01 = new TH1F("signal750_01","",nBins,xMin,xMax);
+    TH1F* signal750_11 = new TH1F("signal750_11","",nBins,xMin,xMax);
+    TH1F* ttbar_00 = new TH1F("ttbar_00","",nBins,xMin,xMax);
+    TH1F* ttbar_10 = new TH1F("ttbar_10","",nBins,xMin,xMax);
+    TH1F* ttbar_01 = new TH1F("ttbar_01","",nBins,xMin,xMax);
+    TH1F* ttbar_11 = new TH1F("ttbar_11","",nBins,xMin,xMax);
+    TH1F* wjets_00 = new TH1F("wjets_00","",nBins,xMin,xMax);
+    TH1F* wjets_10 = new TH1F("wjets_10","",nBins,xMin,xMax);
+    TH1F* wjets_01 = new TH1F("wjets_01","",nBins,xMin,xMax);
+    TH1F* wjets_11 = new TH1F("wjets_11","",nBins,xMin,xMax);
+
+    for (int i = 1 ; i <= nBins ; i++)
+    {
+        signal550_00->SetBinContent(i,BDTOutputsSignal550->Integral(0,i,0,i)                 / WeightSignal550);
+        signal550_10->SetBinContent(i,BDTOutputsSignal550->Integral(i+1,nBins+1,0,i)         / WeightSignal550);
+        signal550_01->SetBinContent(i,BDTOutputsSignal550->Integral(0,i,i+1,nBins+1)         / WeightSignal550);
+        signal550_11->SetBinContent(i,BDTOutputsSignal550->Integral(i+1,nBins+1,i+1,nBins+1) / WeightSignal550);
+        
+        signal650_00->SetBinContent(i,BDTOutputsSignal650->Integral(0,i,0,i)                 / WeightSignal650);
+        signal650_10->SetBinContent(i,BDTOutputsSignal650->Integral(i+1,nBins+1,0,i)         / WeightSignal650);
+        signal650_01->SetBinContent(i,BDTOutputsSignal650->Integral(0,i,i+1,nBins+1)         / WeightSignal650);
+        signal650_11->SetBinContent(i,BDTOutputsSignal650->Integral(i+1,nBins+1,i+1,nBins+1) / WeightSignal650);
+        
+        signal750_00->SetBinContent(i,BDTOutputsSignal750->Integral(0,i,0,i)                 / WeightSignal750);
+        signal750_10->SetBinContent(i,BDTOutputsSignal750->Integral(i+1,nBins+1,0,i)         / WeightSignal750);
+        signal750_01->SetBinContent(i,BDTOutputsSignal750->Integral(0,i,i+1,nBins+1)         / WeightSignal750);
+        signal750_11->SetBinContent(i,BDTOutputsSignal750->Integral(i+1,nBins+1,i+1,nBins+1) / WeightSignal750);
+
+        ttbar_00->SetBinContent(i,BDTOutputsTTbar->Integral(0,i,0,i)                / WeightTTbar);
+        ttbar_10->SetBinContent(i,BDTOutputsTTbar->Integral(i+1,nBins+1,0,i)        / WeightTTbar);
+        ttbar_01->SetBinContent(i,BDTOutputsTTbar->Integral(0,i,i+1,nBins+1)        / WeightTTbar);
+        ttbar_11->SetBinContent(i,BDTOutputsTTbar->Integral(i+1,nBins+1,i+1,nBins+1)/ WeightTTbar);
+
+        wjets_00->SetBinContent(i,BDTOutputsWJets->Integral(0,i,0,i)                / WeightWJets);
+        wjets_10->SetBinContent(i,BDTOutputsWJets->Integral(i+1,nBins+1,0,i)        / WeightWJets);
+        wjets_01->SetBinContent(i,BDTOutputsWJets->Integral(0,i,i+1,nBins+1)        / WeightWJets);
+        wjets_11->SetBinContent(i,BDTOutputsWJets->Integral(i+1,nBins+1,i+1,nBins+1)/ WeightWJets);
+
+    }
+
+    TFile outputEric("BDTyields.root","RECREATE");
+      
+    BDTOutputsTTbar->Write();
+    BDTOutputsWJets->Write();
+    BDTOutputsSignal550->Write();
+    BDTOutputsSignal650->Write();
+    BDTOutputsSignal750->Write();
+
+    signal550_00->Write();
+    signal550_10->Write();
+    signal550_01->Write();
+    signal550_11->Write();
+    signal650_00->Write();
+    signal650_10->Write();
+    signal650_01->Write();
+    signal650_11->Write();
+    signal750_00->Write();
+    signal750_10->Write();
+    signal750_01->Write();
+    signal750_11->Write();
+    ttbar_00->Write();
+    ttbar_10->Write();
+    ttbar_01->Write();
+    ttbar_11->Write();
+    wjets_00->Write();
+    wjets_10->Write();
+    wjets_01->Write();
+    wjets_11->Write();
+
+    cout << "weightTTbar = " << WeightTTbar << endl;
+    cout << "weightWJets = " << WeightWJets << endl;
+    cout << "weightSignal550 = " << WeightSignal550 << endl;
+    cout << "weightSignal650 = " << WeightSignal650 << endl;
+    cout << "weightSignal750 = " << WeightSignal750 << endl;
+
+    outputEric.Close();
+
+  cout << endl;
+  cout << "   ┌──────────────────────────┐  " << endl;
+  cout << "   │  Eric's plots generated  │  " << endl;
+  cout << "   └──────────────────────────┘  " << endl; 
+  cout << endl;
+
+
+
 
   return (0);
 }
