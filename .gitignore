@@ -12,8 +12,10 @@
 *.la
 *.a
 
-# Root files
+# Root & plots files
 *.root
+*.eps
+*.png
 
 # Various stuff not needed to be versionned
 .list*
