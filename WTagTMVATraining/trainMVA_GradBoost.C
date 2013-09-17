@@ -60,7 +60,7 @@ int main()
     factory->AddVariable( "dPhiMETjet := dPhiMETjet",  'F' );
     factory->AddVariable( "HTratio := HTratio",  'F' );
     factory->AddVariable( "HadronicChi2 := HadronicChi2",  'F' );
-    factory->AddVariable( "nWTag := nWTag",  'F' );
+    //factory->AddVariable( "nWTag := nWTag",  'F' );
     
     // Open samples
     
@@ -78,8 +78,8 @@ int main()
 
     // Register the trees
     
-    factory->AddSignalTree    ( signal, 1.0);
-    factory->AddBackgroundTree( ttbar,  1.0);
+    factory->AddSignalTree    ( signal, 1.0 * 20000.0 / 55000);
+    factory->AddBackgroundTree( ttbar,  225.2 * 20000.0 / getNumberOfEvent(ttbar) );
 
     /*
     cout << " signal ; w = " << 1.0   * 20000.0 / getNumberOfEvent(signal) << endl;
@@ -96,17 +96,17 @@ int main()
 
     // Add preselection cuts
    
-    std::string preselectionCutsSig("nJets > 4 && MET > 80 && MT > 120");
-    std::string preselectionCutsBkg("nJets > 4 && MET > 80 && MT > 120");
+    std::string preselectionCutsSig("nJets > 4 && MET > 80 && MT > 100");
+    std::string preselectionCutsBkg("nJets > 4 && MET > 80 && MT > 100");
 
     // Prepare the training
 
     factory->PrepareTrainingAndTestTree( preselectionCutsSig.c_str(), preselectionCutsBkg.c_str(),
-                    "nTrain_Signal=40000:nTrain_Background=50000:SplitMode=Random:NormMode=EqualNumEvents:!V" );
+                    "nTrain_Signal=40000:nTrain_Background=300000:nTest_Signal=40000:nTest_Background=300000:SplitMode=Random:NormMode=EqualNumEvents:!V" );
 
     // Cut optimisation
-    if (Use["Cuts"])     factory->BookMethod( TMVA::Types::kCuts, "Cuts",
-                         "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart" );
+    //if (Use["Cuts"])     factory->BookMethod( TMVA::Types::kCuts, "Cuts",
+    //                     "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart" );
     if (Use["BDT"])      factory->BookMethod( TMVA::Types::kBDT, "BDT", 
                          "!H:!V:NTrees=1000:BoostType=Grad:nEventsMin=2000:MaxDepth=4:Shrinkage=0.30" );
    

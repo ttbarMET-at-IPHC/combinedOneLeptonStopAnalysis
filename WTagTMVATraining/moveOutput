@@ -1,0 +1,6 @@
+#!/bin/bash
+
+rm -rf weight_$1
+
+mv weight weight_$1
+mv TMVA_output.root weight_$1

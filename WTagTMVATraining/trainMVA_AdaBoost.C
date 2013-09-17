@@ -77,7 +77,11 @@ int main()
     TTree* W4Jets = (TTree*) f_W4Jets->Get("microTuple");
 
     // Register the trees
-    
+        
+    factory->AddSignalTree    ( signal, 1.0 * 20000.0 / 55000);
+    factory->AddBackgroundTree( ttbar,  225.2 * 20000.0 / getNumberOfEvent(ttbar) );
+
+    /*
     cout << " signal ; w = " << 1.0   * 20000.0 / getNumberOfEvent(signal) << endl;
     factory->AddSignalTree    ( signal, 1.0   * 20000.0 / getNumberOfEvent(signal));
     cout << " ttbar ; w = "  << 225.2 * 20000.0 / getNumberOfEvent(ttbar) << endl;
@@ -88,23 +92,23 @@ int main()
     factory->AddBackgroundTree( W3Jets, 640   * 20000.0 / getNumberOfEvent(W3Jets));
     cout << " W4Jets ; w = " << 264   * 20000.0 / getNumberOfEvent(W4Jets) << endl;
     factory->AddBackgroundTree( W4Jets, 264   * 20000.0 / getNumberOfEvent(W4Jets));
+    */
 
     // Add preselection cuts
    
-    std::string preselectionCutsSig("nJets > 4 && MET > 80 && MT > 120");
-    std::string preselectionCutsBkg("nJets > 4 && MET > 80 && MT > 120");
+    std::string preselectionCutsSig("nJets > 4 && MET > 80 && MT > 100");
+    std::string preselectionCutsBkg("nJets > 4 && MET > 80 && MT > 100");
 
     // Prepare the training
 
     factory->PrepareTrainingAndTestTree( preselectionCutsSig.c_str(), preselectionCutsBkg.c_str(),
-                    "nTrain_Signal=40000:nTrain_Background=50000:SplitMode=Random:NormMode=NumEvents:!V" );
+                    "nTrain_Signal=40000:nTrain_Background=300000:nTest_Signal=40000:nTest_Background=300000:SplitMode=Random:NormMode=EqualNumEvents:!V" );
 
     // Cut optimisation
-    if (Use["Cuts"])     factory->BookMethod( TMVA::Types::kCuts, "Cuts",
-                         "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart" );
+    //if (Use["Cuts"])     factory->BookMethod( TMVA::Types::kCuts, "Cuts",
+    //                     "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart" );
     if (Use["BDT"])      factory->BookMethod( TMVA::Types::kBDT, "BDT", 
-                         "!H:!V:NTrees=400:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning" );
-   
+                         "!H:!V:NTrees=400:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning" ); 
    // --------------------------------------------------------------
 
    // Train MVAs using the set of training events
