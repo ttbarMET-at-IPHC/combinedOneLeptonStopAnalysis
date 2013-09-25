@@ -1,0 +1,11 @@
+
+{
+    TFile::Open("BDTyields.root");
+    TFile::Open("FOMratio.root");
+    TFile::Open("../plots/WTagWithMVA/1DCutSignificance.root");
+    TFile::Open("../plots/WTagWithMVA/1DStack.root");
+    TFile::Open("../plots/WTagWithMVA/1DSuperpRenorm.root");
+    TFile::Open("../plots/WTagWithMVA/2D.root");
+    new TBrowser();
+}
+
