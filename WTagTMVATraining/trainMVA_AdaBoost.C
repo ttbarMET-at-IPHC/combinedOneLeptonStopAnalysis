@@ -19,8 +19,8 @@
 #include "TMVA/Factory.h"
 #endif
 
-#define MICROTUPLES_FOLDER "../store/microTuples_MVA0904/"
-#include "../microTupling/MicroTuple_Format_MVA0808.h" 
+#define MICROTUPLES_FOLDER "../store/microTuples_MVA0925/"
+#include "../microTupling/MicroTuple_Format_MVA0924.h" 
 
 using namespace TMVA;
 using namespace std;
@@ -55,31 +55,31 @@ int main()
     
     //factory->AddVariable( "MT := MT",  'F' );
     //factory->AddVariable( "nJets := nJets",  'F' );
-    factory->AddVariable( "MET := MET",  'F' );
-    factory->AddVariable( "MT2W := MT2W",  'F' );
-    factory->AddVariable( "dPhiMETjet := dPhiMETjet",  'F' );
-    factory->AddVariable( "HTratio := HTratio",  'F' );
-    factory->AddVariable( "HadronicChi2 := HadronicChi2",  'F' );
-    //factory->AddVariable( "nWTag := nWTag",  'F' );
+    factory->AddVariable( "MET := MET",                   'F' );
+    factory->AddVariable( "MT2W := MT2W",                 'F' );
+    factory->AddVariable( "dPhiMETjet := dPhiMETjet",     'F' );
+    factory->AddVariable( "HTratio := HTratio",           'F' );
+    factory->AddVariable( "HadronicChi2 := HadronicChi2", 'F' );
+    factory->AddVariable( "nWTag := nWTag",               'I' );
     
     // Open samples
     
     TFile* f_signal = TFile::Open((string(MICROTUPLES_FOLDER)+"signal.root").c_str());
     TFile* f_ttbar  = TFile::Open((string(MICROTUPLES_FOLDER)+"ttbar.root" ).c_str());
-    TFile* f_W2Jets = TFile::Open((string(MICROTUPLES_FOLDER)+"W2Jets.root").c_str());
-    TFile* f_W3Jets = TFile::Open((string(MICROTUPLES_FOLDER)+"W3Jets.root").c_str());
-    TFile* f_W4Jets = TFile::Open((string(MICROTUPLES_FOLDER)+"W4Jets.root").c_str());
+    //TFile* f_W2Jets = TFile::Open((string(MICROTUPLES_FOLDER)+"W2Jets.root").c_str());
+    //TFile* f_W3Jets = TFile::Open((string(MICROTUPLES_FOLDER)+"W3Jets.root").c_str());
+    //TFile* f_W4Jets = TFile::Open((string(MICROTUPLES_FOLDER)+"W4Jets.root").c_str());
     
     TTree* signal = (TTree*) f_signal->Get("microTuple");
     TTree* ttbar  = (TTree*) f_ttbar ->Get("microTuple");
-    TTree* W2Jets = (TTree*) f_W2Jets->Get("microTuple");
-    TTree* W3Jets = (TTree*) f_W3Jets->Get("microTuple");
-    TTree* W4Jets = (TTree*) f_W4Jets->Get("microTuple");
+    //TTree* W2Jets = (TTree*) f_W2Jets->Get("microTuple");
+    //TTree* W3Jets = (TTree*) f_W3Jets->Get("microTuple");
+    //TTree* W4Jets = (TTree*) f_W4Jets->Get("microTuple");
 
     // Register the trees
-        
-    factory->AddSignalTree    ( signal, 1.0 * 20000.0 / 55000);
-    factory->AddBackgroundTree( ttbar,  225.2 * 20000.0 / getNumberOfEvent(ttbar) );
+
+    factory->AddSignalTree    ( signal, 1.0 );
+    factory->AddBackgroundTree( ttbar,  1.0 );
 
     /*
     cout << " signal ; w = " << 1.0   * 20000.0 / getNumberOfEvent(signal) << endl;
@@ -108,7 +108,8 @@ int main()
     //if (Use["Cuts"])     factory->BookMethod( TMVA::Types::kCuts, "Cuts",
     //                     "!H:!V:FitMethod=MC:EffSel:SampleSize=200000:VarProp=FSmart" );
     if (Use["BDT"])      factory->BookMethod( TMVA::Types::kBDT, "BDT", 
-                         "!H:!V:NTrees=400:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning" ); 
+                         "!H:!V:NTrees=400:nEventsMin=400:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:PruneMethod=NoPruning");
+   
    // --------------------------------------------------------------
 
    // Train MVAs using the set of training events
