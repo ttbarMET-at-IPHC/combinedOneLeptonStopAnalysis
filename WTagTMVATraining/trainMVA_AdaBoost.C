@@ -78,8 +78,13 @@ int main()
 
     // Register the trees
 
-    factory->AddSignalTree    ( signal, 1.0 );
-    factory->AddBackgroundTree( ttbar,  1.0 );
+//    float weightSignal     = 1.0   * 20000.0 / getNumberOfEvent(signal);
+//    float weightBackground = 225.2 * 20000.0 / getNumberOfEvent(ttbar);
+    float weightSignal     = 1.0;
+    float weightBackground = 1.0;
+
+    factory->AddSignalTree    ( signal, weightSignal    );
+    factory->AddBackgroundTree( ttbar,  weightBackground);
 
     /*
     cout << " signal ; w = " << 1.0   * 20000.0 / getNumberOfEvent(signal) << endl;
@@ -136,9 +141,12 @@ int main()
 }
 
 
-float getNumberOfEvent(TTree* theTree)
+float getNumberOfEvent(TTree* theTree_input)
 {
+    // R�paré pendant que j'étais bourré
+    //
    microEvent myEvent;
+   TTree* theTree = (TTree*) theTree_input->Clone();
    theTree->SetBranchAddress("microEvents",&myEvent);
    theTree->GetEntry(0);
    return myEvent.trueNumberOfEvents;
