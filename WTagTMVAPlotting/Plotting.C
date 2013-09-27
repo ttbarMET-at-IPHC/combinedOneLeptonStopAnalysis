@@ -27,8 +27,8 @@ using namespace theDoctor;
 
 // MicroTuple format and location
 
-#define FOLDER_MICROTUPLES "../store/microTuples_MVA0920/"
-#include "../microTupling/MicroTuple_Format_MVA0919.h" 
+#define FOLDER_MICROTUPLES "../store/microTuples_MVA0926/"
+#include "../microTupling/MicroTuple_Format_MVA0926.h" 
 microEvent* myEventPointer;
 
 // Variables for region selector
@@ -105,17 +105,21 @@ int main (int argc, char *argv[])
  	 mySonic.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),           "logY=true");
  	 mySonic.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),            "logY=true");
  	 mySonic.AddVariable("dPhiMETjet",     "#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.dPhiMETjet),    "logY=true");
- 	 mySonic.AddVariable("MT2W",           "M_{T2}^{W}",               "GeV",    20,0,500,      &(myEvent.MT2W),          "");
- 	 mySonic.AddVariable("HTratio",        "HT_{ratio}",               "",       20,0,1.2,      &(myEvent.HTratio),       "");
- 	 mySonic.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",        "",       20,0,5,        &(myEvent.HadronicChi2),  "");
+ 	 mySonic.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),          "");
+ 	 mySonic.AddVariable("HTratio",        "HT_{ratio}",              "",       20,0,1.2,       &(myEvent.HTratio),       "");
+ 	 mySonic.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       20,0,5,         &(myEvent.HadronicChi2),  "");
+ 	 mySonic.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    30,0,300,       &(myEvent.leadingBPt),    "");
+ 	 mySonic.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    30,0,300,       &(myEvent.leptonPt),      "");
 
-     mySonic.AddVariable("nJets",          "# of jets",              "",        4, 2.5,6.5,     &(myEvent.nJets),         "");
-    
-     mySonic.AddVariable("nBTag",          "# of b-tagged jets",     "",        4,-0.5,3.5,     &(myEvent.nBTag),         "");
-     mySonic.AddVariable("nWTag",          "# of W-tagged jets",     "",        3,-0.5,2.5,     &(myEvent.nWTag),         "");
+     mySonic.AddVariable("nJets",          "# of jets",               "",       4, 2.5,6.5,     &(myEvent.nJets),         "");
+     mySonic.AddVariable("nBTag",          "# of b-tagged jets",      "",       4,-0.5,3.5,     &(myEvent.nBTag),         "");
+     float nWTagFloat;
+     mySonic.AddVariable("nWTag",          "# of W-tagged jets",      "",       3,-0.5,2.5,     &(nWTagFloat),            "");
+     float nWTag2Float;
+     mySonic.AddVariable("nWTag2",         "# of W-tagged jets",      "",       3,-0.5,2.5,     &(nWTag2Float),           "");
 
- 	 mySonic.AddVariable("mStop",          "m_{#tilde{t}}",          "GeV",     14,112.5,812.5, &(myEvent.mStop),         "");
- 	 mySonic.AddVariable("mNeutralino",    "m_{#chi^{0}}",           "GeV",     8,-12.5,387.5,  &(myEvent.mNeutralino),   "");
+ 	 mySonic.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    14,112.5,812.5, &(myEvent.mStop),         "");
+ 	 mySonic.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    8,-12.5,387.5,  &(myEvent.mNeutralino),   "");
 
      float AdaBoostBDTOutputNoWTag;    AdaBoostBDTOutputNoWTag_Pointer   = &AdaBoostBDTOutputNoWTag;
      mySonic.AddVariable("BDTOutputAdaBoostNoWTag",    "(AdaBoost) BDT output (no WTag)",   "", 44,-1.1,1.1, &(AdaBoostBDTOutputNoWTag),   "");
@@ -124,19 +128,20 @@ int main (int argc, char *argv[])
      mySonic.AddVariable("BDTOutputAdaBoostWithWTag",  "(AdaBoost) BDT output (with WTag)", "", 44,-1.1,1.1, &(AdaBoostBDTOutputWithWTag), "");
 
      float GradBoostBDTOutputNoWTag;   GradBoostBDTOutputNoWTag_Pointer = &GradBoostBDTOutputNoWTag;
-     mySonic.AddVariable("BDTOutputGradBoostNoWTag",   "BDT output (no WTag)",              "", 120,-1,1,    &(GradBoostBDTOutputNoWTag),   "");
+     mySonic.AddVariable("BDTOutputGradBoostNoWTag",   "(GradBoost) BDT output (no WTag)",              "", 50,-1,1,    &(GradBoostBDTOutputNoWTag),   "");
  
      float GradBoostBDTOutputWithWTag; GradBoostBDTOutputWithWTag_Pointer = &GradBoostBDTOutputWithWTag;
-     mySonic.AddVariable("BDTOutputGradBoostWithWTag", "BDT output (with WTag)",            "", 120,-1,1,    &(GradBoostBDTOutputWithWTag), "");
+     mySonic.AddVariable("BDTOutputGradBoostWithWTag", "(GradBoost) BDT output (with WTag)",            "", 50,-1,1,    &(GradBoostBDTOutputWithWTag), "");
 
+     mySonic.AddVariable("BDTOutputGradBoostNoWTagZoom",   "(GradBoost) BDT output (no WTag)",              "", 50,0.9,1,    &(GradBoostBDTOutputNoWTag),   "");
+     mySonic.AddVariable("BDTOutputGradBoostWithWTagZoom", "(GradBoost) BDT output (with WTag)",            "", 50,0.9,1,    &(GradBoostBDTOutputWithWTag), "");
+
+     /*
      float GradBoostBDTOutputLowMETCut;
      mySonic.AddVariable("BDTOutputGradBoostLowMETCut",  "BDT output (MET cut  50)",        "", 120,-1,1,    &(GradBoostBDTOutputLowMETCut), "");
      float GradBoostBDTOutputHighMETCut;
      mySonic.AddVariable("BDTOutputGradBoostHighMETCut", "BDT output (MET cut 150)",        "", 120,-1,1,    &(GradBoostBDTOutputHighMETCut), "");
-
-     float GradBoostBDTOutputLowDeltaM;
-     mySonic.AddVariable("BDTOutputGradBoostLowDeltaM", "BDT output (low dM training)",     "", 120,-1,1,    &(GradBoostBDTOutputLowDeltaM),"");
-
+     */
 
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
@@ -158,16 +163,12 @@ int main (int argc, char *argv[])
      mySonic.AddProcessClass("signal_750_25", "T2tt (750/25)",  "signal",COLORPLOT_GREEN);
           mySonic.AddDataset("signal", "signal_750_25", 100,1);
      
-     mySonic.AddProcessClass("signal_350_100", "T2tt (350/100)",  "signal",COLORPLOT_PINK);
-          mySonic.AddDataset("signal-lowdM", "signal_350_100", 100,1);
-          
-
   // ##########################
   // ##    Create Regions    ##
   // ##########################
 
      //mySonic.AddRegion("presel",                "Preselection",             &Selector_presel);
-     mySonic.AddRegion("signalRegion",          "Signal region",            &Selector_signalRegion);
+     mySonic.AddRegion("signalRegion",            "Signal region",            &Selector_signalRegion);
      //mySonic.AddRegion("afterBDTNoWTagCut",     "After BDT cut (no WTag)",  &Selector_afterBDTNoWTagCut);
      //mySonic.AddRegion("afterBDTWithWTagCut",   "After BDT cut (with WTag)",&Selector_afterBDTWithWTagCut);
  
@@ -188,7 +189,7 @@ int main (int argc, char *argv[])
 	 // Create histograms
   	 mySonic.Create1DHistos();
   	 mySonic.Add2DHisto("mStop","mNeutralino");
-  	 mySonic.Add2DHisto("BDTOutputGradBoostNoWTag","BDTOutputGradBoostWithWTag");
+  	 //mySonic.Add2DHisto("BDTOutputGradBoostNoWTag","BDTOutputGradBoostWithWTag");
   	 mySonic.Add2DHisto("BDTOutputAdaBoostNoWTag","BDTOutputAdaBoostWithWTag");
   	 
   	 // Schedule plots
@@ -196,13 +197,19 @@ int main (int argc, char *argv[])
   	 mySonic.SchedulePlots("1DStack","includeSignal=true,includeSignalHow=stack,factorSignal=1.0");
   	 mySonic.SchedulePlots("2D");
 
-     mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostNoWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
-  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostWithWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
-  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputAdaBoostNoWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
-  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputAdaBoostWithWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
-  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostLowMETCut,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
-  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostHighMETCut,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
-  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_350_100,var=BDTOutputGradBoostLowDeltaM,cutType=keepHighValues,backgroundSystematicUncertainty=0.3");
+     
+     mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostNoWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostWithWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostNoWTagZoom,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostWithWTagZoom,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     
+ 
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputAdaBoostNoWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputAdaBoostWithWTag,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     /*
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostLowMETCut,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+  	 mySonic.SchedulePlots("1DCutSignificance","signal=signal_650_25,var=BDTOutputGradBoostHighMETCut,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     */
 
   // ##########################
   // ##  Set up MVA reader   ##
@@ -214,7 +221,7 @@ int main (int argc, char *argv[])
   MVAReader_AdaBoost_noWTag->AddVariable( "dPhiMETjet",    &(myEvent.dPhiMETjet)   );
   MVAReader_AdaBoost_noWTag->AddVariable( "HTratio",       &(myEvent.HTratio)      );
   MVAReader_AdaBoost_noWTag->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
-  MVAReader_AdaBoost_noWTag->BookMVA("BDT","../WTagTMVATraining//weights_AdaBoost_noWTag/TMVAClassification_BDT.weights.xml");
+  MVAReader_AdaBoost_noWTag->BookMVA("BDT","../WTagTMVATraining//weights_AdaBoost_noWTag1/TMVAClassification_BDT.weights.xml");
 
   TMVA::Reader* MVAReader_AdaBoost_withWTag = new TMVA::Reader( "" );
   MVAReader_AdaBoost_withWTag->AddVariable( "MET",           &(myEvent.MET)          );
@@ -222,8 +229,8 @@ int main (int argc, char *argv[])
   MVAReader_AdaBoost_withWTag->AddVariable( "dPhiMETjet",    &(myEvent.dPhiMETjet)   );
   MVAReader_AdaBoost_withWTag->AddVariable( "HTratio",       &(myEvent.HTratio)      );
   MVAReader_AdaBoost_withWTag->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
-  MVAReader_AdaBoost_withWTag->AddVariable( "nWTag",         &(myEvent.nWTag)        );
-  MVAReader_AdaBoost_withWTag->BookMVA("BDT","../WTagTMVATraining//weights_AdaBoost_withWTag/TMVAClassification_BDT.weights.xml");
+  MVAReader_AdaBoost_withWTag->AddVariable( "nWTag",         &(nWTagFloat)        );
+  MVAReader_AdaBoost_withWTag->BookMVA("BDT","../WTagTMVATraining//weights_AdaBoost_withWTag1/TMVAClassification_BDT.weights.xml");
 
   TMVA::Reader* MVAReader_GradBoost_noWTag = new TMVA::Reader( "" );
   MVAReader_GradBoost_noWTag->AddVariable( "MET",           &(myEvent.MET)          );
@@ -239,17 +246,10 @@ int main (int argc, char *argv[])
   MVAReader_GradBoost_withWTag->AddVariable( "dPhiMETjet",    &(myEvent.dPhiMETjet)   );
   MVAReader_GradBoost_withWTag->AddVariable( "HTratio",       &(myEvent.HTratio)      );
   MVAReader_GradBoost_withWTag->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
-  MVAReader_GradBoost_withWTag->AddVariable( "nWTag",         &(myEvent.nWTag)        );
+  MVAReader_GradBoost_withWTag->AddVariable( "nWTag",         &(nWTagFloat)           );
   MVAReader_GradBoost_withWTag->BookMVA("BDT","../WTagTMVATraining//weights_GradBoost_withWTag/TMVAClassification_BDT.weights.xml");
 
-  TMVA::Reader* MVAReader_GradBoost_lowdM = new TMVA::Reader( "" );
-  MVAReader_GradBoost_lowdM->AddVariable( "MET",           &(myEvent.MET)          );
-  MVAReader_GradBoost_lowdM->AddVariable( "MT2W",          &(myEvent.MT2W)         );
-  MVAReader_GradBoost_lowdM->AddVariable( "dPhiMETjet",    &(myEvent.dPhiMETjet)   );
-  MVAReader_GradBoost_lowdM->AddVariable( "HTratio",       &(myEvent.HTratio)      );
-  MVAReader_GradBoost_lowdM->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
-  MVAReader_GradBoost_lowdM->BookMVA("BDT","../WTagTMVATraining/weights_GradBoost_lowDeltaM/TMVAClassification_BDT.weights.xml");
-
+  /*
   TMVA::Reader* MVAReader_GradBoost_lowMETCut = new TMVA::Reader( "" );
   MVAReader_GradBoost_lowMETCut->AddVariable( "MET",           &(myEvent.MET)          );
   MVAReader_GradBoost_lowMETCut->AddVariable( "MT2W",          &(myEvent.MT2W)         );
@@ -265,7 +265,7 @@ int main (int argc, char *argv[])
   MVAReader_GradBoost_highMETCut->AddVariable( "HTratio",       &(myEvent.HTratio)      );
   MVAReader_GradBoost_highMETCut->AddVariable( "HadronicChi2",  &(myEvent.HadronicChi2) );
   MVAReader_GradBoost_highMETCut->BookMVA("BDT","../WTagTMVATraining/weights_GradBoost_MET150/TMVAClassification_BDT.weights.xml");
-
+  */
 
   // ########################################
   // ##       Run over the datasets        ##
@@ -331,13 +331,20 @@ int main (int argc, char *argv[])
             weight *= stopCrossSection(myEvent.mStop);
           }
 
-          AdaBoostBDTOutputNoWTag      = MVAReader_AdaBoost_noWTag     ->EvaluateMVA("BDT");
-          AdaBoostBDTOutputWithWTag    = MVAReader_AdaBoost_withWTag   ->EvaluateMVA("BDT");
+          nWTagFloat = (float) myEvent.nWTag;
+          nWTag2Float = (float) myEvent.nWTag2;
+
+          
           GradBoostBDTOutputNoWTag     = MVAReader_GradBoost_noWTag    ->EvaluateMVA("BDT");
           GradBoostBDTOutputWithWTag   = MVAReader_GradBoost_withWTag  ->EvaluateMVA("BDT");
+          
+          AdaBoostBDTOutputNoWTag      = MVAReader_AdaBoost_noWTag     ->EvaluateMVA("BDT");
+          AdaBoostBDTOutputWithWTag    = MVAReader_AdaBoost_withWTag   ->EvaluateMVA("BDT");
+          /*
           GradBoostBDTOutputLowDeltaM  = MVAReader_GradBoost_lowdM     ->EvaluateMVA("BDT");
           GradBoostBDTOutputLowMETCut  = MVAReader_GradBoost_lowMETCut ->EvaluateMVA("BDT");
           GradBoostBDTOutputHighMETCut = MVAReader_GradBoost_highMETCut->EvaluateMVA("BDT");
+          */
 
           // Fill all the variables with autoFill-mode activated
           mySonic.AutoFillProcessClass(currentProcessClass,weight);
@@ -404,9 +411,12 @@ int main (int argc, char *argv[])
     //makeHistosForEric(&mySonic,"BDTOutputGradBoost");
     //makeHistosForEric(&mySonic,"BDTOutputAdaBoost");
 
+    /*
     makeFOMRatioPlots(&mySonic,"BDTOutputGradBoost","signal_550_25");
     makeFOMRatioPlots(&mySonic,"BDTOutputGradBoost","signal_650_25");
     makeFOMRatioPlots(&mySonic,"BDTOutputGradBoost","signal_750_25");
+    */
+
     makeFOMRatioPlots(&mySonic,"BDTOutputAdaBoost" ,"signal_550_25");
     makeFOMRatioPlots(&mySonic,"BDTOutputAdaBoost" ,"signal_650_25");
     makeFOMRatioPlots(&mySonic,"BDTOutputAdaBoost" ,"signal_750_25");
@@ -471,7 +481,12 @@ void makeFOMRatioPlots(SonicScrewdriver* mySonic, string BDT, string signal)
         float S_WithWTag = BDTWithWTagSignal->Integral(i,nBins+1);
         float B_WithWTag = BDTWithWTagBackground->Integral(i,nBins+1);
 
-        float f = 0.3;
+        if (S_NoWTag   < 3) S_NoWTag   = 0;
+        if (S_WithWTag < 3) S_WithWTag = 0;
+        if (B_NoWTag   < 1) B_NoWTag   = 1;
+        if (B_WithWTag < 1) B_WithWTag = 1;
+
+        float f = 0.15;
         FOMNoWTag  ->SetBinContent(i,S_NoWTag   / sqrt(B_NoWTag   + f*f * B_NoWTag  *B_NoWTag  ));
         FOMWithWTag->SetBinContent(i,S_WithWTag / sqrt(B_WithWTag + f*f * B_WithWTag*B_WithWTag));
     }
@@ -489,7 +504,7 @@ void makeFOMRatioPlots(SonicScrewdriver* mySonic, string BDT, string signal)
     float maxNoWTag   = FOMNoWTag->GetMaximum(100);
     float maxWithWTag = FOMWithWTag->GetMaximum(100);
 
-    cout << "BDT : "            << BDT                     << endl;
+    //cout << "BDT : "            << BDT                     << endl;
     cout << "signal : "         << signal                  << endl;
     cout << " max with WTag : " << maxWithWTag             << endl;
     cout << " max no WTag : "   << maxNoWTag               << endl;

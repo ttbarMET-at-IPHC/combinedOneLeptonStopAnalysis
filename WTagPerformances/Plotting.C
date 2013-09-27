@@ -6,18 +6,18 @@
 
 using namespace std;
 
-#include "../microTupling/MicroTuple_Format_WTag0430.h" 
-microEvent* myEventPointer;
 
 #include "interface/Table.h" 
 #include "interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
-#define FOLDER_MICROTUPLES "../store/microTuples_WTag0430_July16th/"
+#define FOLDER_MICROTUPLES "../store/microTuples_WTag0925/"
+#include "../microTupling/MicroTuple_Format_WTag0925.h" 
+microEvent* myEventPointer;
 
-bool WTagged(float mass, float pT, float dRlep)
+bool WTagged(float mass, float pT, float tau2OverTau1,float dRlep, float dRbjet)
 {
-    if ((mass > 60) && (mass < 130) && (dRlep > 0.6))
+    if ((mass > 60) && (mass < 130) && (dRlep > 0.6) && (dRbjet > 0.6))
          return true;
     else return false;
 }
@@ -37,6 +37,16 @@ float deltaR(float genEta, float genPhi, float recoEta, float recoPhi)
 bool inclusiveChannelSelector() { return true; }
 
 bool Selection_presel() { return true; }
+
+float* massPointer;
+float* pTPointer;
+bool Selection_pTAndMass() 
+{ 
+    if ((*massPointer > 60) && (*massPointer < 130) && (*pTPointer > 200))
+        return true; 
+    else
+        return false;
+}
 
 // #########################################################################
 //                              Main function
@@ -69,13 +79,18 @@ int main (int argc, char *argv[])
      float genW_pT;                   mySonic.AddVariable("PtGen",                   "p_{T}(gen W)",                          "GeV",    24,0,600,  &(genW_pT),                  "");
      float genW_hasMatchedCA8;        mySonic.AddVariable("genW_hasMatchedCA8",        "gen W has a matched CA8 jet",           "",     2,-0.5,1.5,  &(genW_hasMatchedCA8),       "");
      float genW_hasMatchedTaggedCA8;  mySonic.AddVariable("genW_hasMatchedTaggedCA8",  "gen W has a matched tagged CA8 jet",    "",     2,-0.5,1.5,  &(genW_hasMatchedTaggedCA8), "");
-     float CA8jet_mass;   mySonic.AddVariable("mass",       "mass(CA8 jet)",                         "GeV",    20,0,200,  &(CA8jet_mass),    "");
-     float CA8jet_pT;     mySonic.AddVariable("Pt",         "p_{T}(CA8 jet)",                        "GeV",    24,0,600,  &(CA8jet_pT),      "");
-     float CA8jet_dR;     mySonic.AddVariable("dR",         "#DeltaR(CA8 jet,gen W)",                   "",      40,0,2,  &(CA8jet_dR),      "");
-     float CA8jet_dRlep;  mySonic.AddVariable("dRlep",      "#DeltaR(CA8 jet,sel. l)",                  "",      40,0,2,  &(CA8jet_dRlep),   "");
-     float CA8jet_tagged; mySonic.AddVariable("tagged",     "W-tag flag",                               "",  2,-0.5,1.5,  &(CA8jet_tagged),  "");
-     float deltaPtRel;    mySonic.AddVariable("deltaPtRel", "p_{T}(CA8 jet) - p_{T}(gen W) / p_{T}(gen W)",  "", 20,-0.3,0.3,  &(deltaPtRel),     "");
+     float CA8jet_mass;      mySonic.AddVariable("mass",       "mass(CA8 jet)",                         "GeV",    20,0,200,  &(CA8jet_mass),     "");
+     float CA8jet_pT;        mySonic.AddVariable("Pt",         "p_{T}(CA8 jet)",                        "GeV",    24,0,600,  &(CA8jet_pT),       "");
+     float CA8jet_dR;        mySonic.AddVariable("dR",         "#DeltaR(CA8 jet,gen W)",                   "",      40,0,2,  &(CA8jet_dR),       "");
+     float CA8jet_dRlep;     mySonic.AddVariable("dRlep",      "#DeltaR(CA8 jet,sel. l)",                  "",      40,0,2,  &(CA8jet_dRlep),    "");
+     float CA8jet_dRbjet;    mySonic.AddVariable("dRbjet",     "#DeltaR(CA8 jet,b jet)",                   "",      40,0,2,  &(CA8jet_dRbjet),    "");
+     float CA8jet_tagged;    mySonic.AddVariable("tagged",     "W-tag flag",                               "",  2,-0.5,1.5,  &(CA8jet_tagged),   "");
+     float deltaPtRel;       mySonic.AddVariable("deltaPtRel", "p_{T}(CA8 jet) - p_{T}(gen W) / p_{T}(gen W)",  "", 20,-0.3,0.3,  &(deltaPtRel), "");
+     float subjetinessRatio; mySonic.AddVariable("subjetinessRatio", "#tau_{2} / #tau_{1}",                    "",      20,0,1,  &(subjetinessRatio),"");
   
+     massPointer = &CA8jet_mass;
+     pTPointer   = &CA8jet_pT;
+
   // #########################################################
   // ##   Create ProcessClasses (and associated datasets)   ##
   // #########################################################
@@ -84,16 +99,12 @@ int main (int argc, char *argv[])
       mySonic.AddProcessClass("fakes",  "fakes",  "background",COLORPLOT_AZURE);
       mySonic.AddProcessClass("gen",    "gen",    "data",COLORPLOT_GREEN);
 
-  // ##########################
-  // ##    Create Regions    ##
-  // ##########################
+  // #######################################
+  // ##    Create Regions and channels    ##
+  // #######################################
 
      mySonic.AddRegion("presel","Preselection",&Selection_presel);  
-
-  // ##########################
-  // ##   Create Channels    ##
-  // ##########################
-   
+     mySonic.AddRegion("pT > 200, 60 < mass < 130","",&Selection_pTAndMass);  
 	 mySonic.AddChannel("inclusiveChannel","",&inclusiveChannelSelector);
 
   // ########################################
@@ -126,7 +137,7 @@ int main (int argc, char *argv[])
   // ########################################
 
      // Open the tree
-     TFile f((string(FOLDER_MICROTUPLES)+"ttbar-v2.root").c_str());
+     TFile f((string(FOLDER_MICROTUPLES)+"ttbar.root").c_str());
      TTree* theTree = (TTree*) f.Get("microTuple"); 
      theTree->SetBranchAddress("microEvents",&myEvent);
     
@@ -139,7 +150,7 @@ int main (int argc, char *argv[])
 
   for (int i = 0 ; i < theTree->GetEntries() ; i++)
   {
-      if (i % 1000 == 0) cout << "i = " << i << endl;
+      if (i % 10000 == 0) cout << "i = " << i << endl;
 	  // Get the i-th entry
       theTree->GetEntry(i);
 
@@ -162,6 +173,8 @@ int main (int argc, char *argv[])
                               myEvent.genW_Phi,
                               myEvent.recoW_Eta[j],
                               myEvent.recoW_Phi[j]);
+         
+         subjetinessRatio = myEvent.recoW_Tau2[j] / myEvent.recoW_Tau1[j];
 
          if (CA8jet_dR > 1.99) CA8jet_dR = 1.99;
 
@@ -171,7 +184,22 @@ int main (int argc, char *argv[])
                                myEvent.recoW_Phi[j]);
          if (CA8jet_dRlep > 1.99) CA8jet_dRlep = 1.99;
 
-         CA8jet_tagged = WTagged(CA8jet_mass,CA8jet_pT,CA8jet_dRlep);
+         CA8jet_dRbjet = 1.99;
+         
+         for (int k = 0 ; k < myEvent.nJets ; k++)
+         {
+            if (myEvent.jet_bTag[k] != 1.0) continue;
+
+            float deltaRTemp = deltaR(myEvent.jet_eta[k],
+                                      myEvent.jet_phi[k],
+                                      myEvent.recoW_Eta[j],
+                                      myEvent.recoW_Phi[j]);
+            
+            if (CA8jet_dRbjet > deltaRTemp)
+                CA8jet_dRbjet = deltaRTemp;
+         }
+
+         CA8jet_tagged = WTagged(CA8jet_mass,CA8jet_pT,subjetinessRatio,CA8jet_dRlep,CA8jet_dRbjet);
          deltaPtRel = (CA8jet_pT - myEvent.genW_pT) / myEvent.genW_pT;
 
 
