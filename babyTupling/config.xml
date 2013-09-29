@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<!-- ex with eqlumi <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" EqLumi="2287."/> -->
+<!-- ex with NofEvts <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" NofEvts="946644"/> -->
+<!-- ex with PreselEff NofPSEvts <d name="ttJets" add="1" color="4" ls="1" lw="1" normf="0.000437334" xsection="414" filenames="/user/echabert/TopTree_Prod229/TopTree_TTJets.root" PreselEff="0.2307" NofEvts="218404"/> -->
+
+<!--
+	#################################################
+	#            Analysis configuration             #
+	#################################################
+-->
+
+<Analysis>
+<!--
+	DataType = [ 0: MC ; 1: Data ; 2 : Data & MC ]
+	Luminosity in in pb-1
+-->
+<!--a type="General" Verbosity="3" DataType="0" Luminosity="38.35"/>
+<a type="General" Verbosity="3" DataType="0" Luminosity="204.2" LumiError="12." PUWeightFile="/opt/sbg/data/data1/cms/echabert/TopDilep/CMSSW_4_1_4/src/MiniTreeAnalysis/NTupleAnalysis/macros/pudist_200pb.root" />
+-->
+<a 						
+   type="General" 
+   Verbosity="3" 
+   DataType="0" 
+   Luminosity="2288.8" 
+   LumiError="2284.1" 
+   PUWeightFile="/opt/sbg/data/data1/cms/ccollard/CMSSW/fichier_root2011/pileup_160404_167151.root" 
+/>
+</Analysis>
+
+<!--
+	#################################################
+	#            Datasets configuration             #
+	#################################################
+-->
+
+<Datasets>
+<!-- add = 1 : run on the sample
+     add = 0 : do not run on the sample
+     isData = 1 for data; = 0  for MC
+     ls = lineStyle //not yet used
+     lw = lineWidth //not yet used
+     !! important:
+	2 of the 3 information need to be filled
+		- normf (normalisation factor - default = 1)
+		- xsection (cross-section of the processus if it's MC - default = 1)
+		- NofEvts (could be lower than the size of the file. If it's higher or equal to the size, the program will run on the full sample)
+     Preselection
+	if a preselection has been applied before use
+		- PreselEff
+		- NofPSEvts instead of NofEvts 						 
+	 NofEvts="250000" 
+ -->
+<!--
+<d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/ttbar-v*/*.root" />
+<d  name="W2Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/W2Jets/*.root" />
+<d  name="W3Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/W3Jets/*.root" />
+<d  name="W4Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/W4Jets/*.root" />
+<d  name="signal" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/T2tt_*/*.root" />
+-->
+
+<d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v1/store/synchro/our*.root" />
+
+</Datasets>
+
+<!--
+	#################################################
+	#            Selection configuration            #
+	#################################################
+-->
+
+<Selection>
+	
+<s 
+	type="Electron" 
+	Loaded="1" 
+	Algo="selectedPatElectrons" 
+	PtThreshold="30." 
+	EtaThreshold="1.4442" 
+	RelIso="0.15" 
+	D0Cut="0.02" 
+	VertexMatchThr="9999." 
+	DElectronETSCThr="99999." 
+	RemuThr="0.1"
+/>
+<s 
+	type="Muon"
+	Loaded="1"
+	Algo="selectedPatMuons" 
+	PtThreshold="30." 
+	EtaThreshold="2.1" 
+	RelIso="0.15" 
+	D0Cut="0.02" 
+	VertexMatchThr="1." 
+	NofValidHits="0"  
+	NofValidTkHits="10" 
+	NormChi2="10" 
+/>
+<s 
+	type="Tau"      
+	Loaded="1" 
+	Algo="selectedPatTaus" 
+	PtThreshold="20." 
+	EtaThreshold="2.5" 
+	RelIso="0.15" 
+	D0Cut="0.04" 
+	VertexMatchThr="1." 
+	TauLeadTrkPtCut="10."
+/>
+<s 
+	type="Vertex"   
+	Loaded="1" 
+	Algo="goodVertices" 
+	VertexNdofThr="4" 
+	VertexZThr="24."   
+	VertexRhoThr="2." 
+/>
+<s 
+	type="PFCandidate"
+	Loaded="1"
+	Algo="particleFlow"
+/>
+<s 
+	type="Jet" 
+	Loaded="1" 
+	Algo="pf" 
+	PtThreshold="30." 
+	EtaThreshold="2.5"
+/> 
+<s 
+	type="HeavyTagJet" 
+	Loaded="1" 
+	Algo="CA8Pruned"
+/>
+
+</Selection>
+
+
+
