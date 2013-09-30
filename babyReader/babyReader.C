@@ -43,7 +43,7 @@ int main (int argc, char *argv[])
   {
       ReadEvent(theInputTree,i,&pointers,&myEvent);
 
-      /*
+      
       cout << endl;
       cout << " index = " << i << endl;
       cout << " event n°" << myEvent.event << endl;
@@ -92,7 +92,7 @@ int main (int argc, char *argv[])
       }
 
       cout << endl;
-     */ 
+      
   } 
 
   
