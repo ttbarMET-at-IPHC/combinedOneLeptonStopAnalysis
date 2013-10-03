@@ -49,22 +49,32 @@
 		- PreselEff
 		- NofPSEvts instead of NofEvts 						 
 	 NofEvts="250000" 
- -->
-<!--
-<d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
-    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/ttbar-v*/*.root" />
-<d  name="W2Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
-    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/W2Jets/*.root" />
-<d  name="W3Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
-    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/W3Jets/*.root" />
-<d  name="W4Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
-    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/W4Jets/*.root" />
-<d  name="signal" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
-    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v2/store/T2tt_*/*.root" />
 -->
 
 <d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v1/store/synchro/our*.root" />
+
+<!--
+<d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar-v*/*.root" />
+
+<d  name="W2Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="2159.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/W2Jets/*.root" />
+<d  name="W3Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="640.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/W3Jets/*.root" />
+<d  name="W4Jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="264.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/W4Jets/*.root" />
+
+<d  name="T2bw-025" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_x-025_*/*.root" />
+<d  name="T2bw-050" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_x-050_*/*.root" />
+<d  name="T2bw-075" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_x-075_*/*.root" />
+<d  name="T2tt" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2tt_*/*.root" />
+-->
+
 
 </Datasets>
 
@@ -72,6 +82,11 @@
 	#################################################
 	#            Selection configuration            #
 	#################################################
+-->
+
+<!--
+    Note : the pT/treshold and others cuts listed are actually not used in the selection
+           see the TTbarMETSelection / combined1LeptonStopSelecton.cc
 -->
 
 <Selection>
@@ -139,6 +154,5 @@
 />
 
 </Selection>
-
 
 

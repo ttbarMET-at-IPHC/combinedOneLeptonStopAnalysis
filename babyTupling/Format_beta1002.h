@@ -1,0 +1,662 @@
+#ifndef babyFormat
+#define babyFormat
+
+typedef struct 
+{
+    // ------------
+    // General info
+    // ------------
+
+    Int_t run;                              // Run number
+    Int_t lumi;                             // Lumiblock number
+    Int_t event;                            // Event number
+
+    // ------------
+    // Trigger info
+    // ------------
+    
+    Bool_t triggerMuon;                     // Single-Muon trigger has been fired
+    Bool_t xtriggerMuon;                    // Muon cross-trigger  has been fired
+    Bool_t triggerElec;                     // Single-Elec trigger has been fired
+    
+    Bool_t triggerDoubleElec;               // Double-Elec trigger has been fired
+    Bool_t triggerDoubleMuon;               // Double-Muon trigger has been fired
+    Bool_t triggerMuonElec;                 // Muon-Elec   trigger has been fired
+
+    // ------------
+    // Leptons info
+    // ------------
+
+    Short_t        numberOfLepton;          // Number of selected leptons
+    TLorentzVector leadingLepton;           // p4 of the leading selected lepton
+    Short_t        leadingLeptonPDGId;      // pdgid of the leading selected lepton
+    TLorentzVector secondLepton;            // p4 of the second lepton
+    Short_t        secondLeptonPDGId;       // pdgid of the second lepton
+
+    Bool_t         isolatedTrackVeto;       // Event pass/fail the isolated track veto
+    Bool_t         tauVeto;                 // Event pass/fail the tau veto
+    
+    // ------------
+    // Jets info
+    // ------------
+
+    Short_t                nJets;           // Number of selected jets
+    Short_t                nBTag;           // Number of selected jets b-tagged
+    vector<TLorentzVector> jets;            // p4 of the selected jets
+    vector<Float_t>        jets_CSV;        // CSV value of the selected jets           // TODO : b-tag reweighting
+
+    // ------------
+    // "High-level" /BDT variables
+    // ------------
+
+    Float_t MET;                            // Type-1 + phi-corrected PF MET
+    Float_t MT;                             // transverse mass of leading lepton + MET
+    Float_t deltaPhiMETJets;                // DeltaPhi(MET,first two leading jets)
+    Float_t hadronicChi2;                   // Hadronic Chi^2
+    Float_t MT2W;                           // MT2W
+    Float_t HT;                             // HT
+    Float_t HTRatio;                        // Fraction of HT in the same hemisphere as MET
+    Float_t leadingBPt;                     // pT of the leading b-jet
+    Float_t leadingLeptonPt;                // pT of the leading lepton
+    Float_t leadingJetPt;                   // pT of the leading jet
+    Float_t Mlb;                            // invariant mass of leading lepton + jet with highest CSV
+    Float_t Mlb_hemi;                       // invariant mass of leading lepton + b-jet closest to lepton
+    Float_t M3b;                            // invariant mass of the 3jets dR-furthest from lepton
+    Float_t deltaRLeptonLeadingB;           // DeltaR(leading lepton, leading b-jet)
+    Float_t METoverSqrtHT;                  // MET/sqrt(HT)
+    Float_t HTPlusLeptonPtPlusMET;          // HT + pT(leading lepton) + MET
+
+    // ------------
+    // W-tagging info
+    // ------------
+
+    Short_t nWTag;                          // Number of W-tagged jets
+    Float_t leadingWjetPt;                  // pT of the leading W-tagged jet
+
+    // ------------
+    // Signal-specific infos
+    // ------------
+
+    Float_t mStop;                          // Stop mass
+    Float_t mNeutralino;                    // Neutralino mass
+    Float_t mCharginoParameter;             // Chargino mass parameter for T2bw (0.25, 0.5 or 0.75)
+ 
+    // ------------
+    // Generator-level infos
+    // ------------
+   
+    Int_t   numberOfGenLepton;              // Number of MC leptons (e/µ/tau, leptons from tau decay are not taken into account)
+    Float_t genMET;                         // MET at generator level (definition ?), (TODO)
+    Float_t genMETPhi;                      // Phi of the MET at generator level (TODO)
+
+    vector<TLorentzVector> genParticles;       // p4 of status=3 particles
+    vector<Int_t>          genParticlesPDGId;  // PDG of status=3 particles
+    vector<Int_t>          genParticlesMother; // Mother index of the status=3 particles
+
+    // ------------
+    // Weights and infos related to weights
+    // ------------
+
+    Int_t   numberOfInitialEvents;          // Number of events for the given dataset or signal mass point, before any skimming/selection applied
+    Float_t crossSection;                   // Cross section for the given dataset or signal mass point
+    Int_t   numberOfTruePU;                 // Number of true pile-up (MC, used in weightPileup)
+    Int_t   numberOfPrimaryVertices;        // Number of primary vertices, used to check pile-up data/MC aggreement
+
+    Float_t weightCrossSection;             // = (crossSection / numberOfInitialEvents) ; user should multiply this weight by the desired lumi
+    Float_t weightPileUp;                   // Weight for PU-reweighting, TODO
+    Float_t weightISRmodeling;              // Weight for ISR modeling, TODO
+
+    Float_t weightT2ttLeftHanded;           // Polarization reweighting, TODO
+    Float_t weightT2ttRightHanded;          // Polarization reweighting, TODO
+    Float_t weightT2bwPolarization_ss;      // Polarization reweighting, TODO
+    Float_t weightT2bwPolarization_ll;      // Polarization reweighting, TODO
+    Float_t weightT2bwPolarization_lr;      // Polarization reweighting, TODO
+    Float_t weightT2bwPolarization_rl;      // Polarization reweighting, TODO
+    Float_t weightT2bwPolarization_rr;      // Polarization reweighting, TODO
+    
+    Float_t efficiencySingleLeptonTrigger;  // Single-lepton trigger efficiency
+    Float_t efficiencyDoubleLeptonTrigger;  // Double-lepton trigger efficiency 
+
+    // ------------
+    // Infos for systematic effects (TODO)
+    // ------------
+
+    Float_t MET_JESup;                      // Type-1 + phi-corrected PF MET                              (+1sigma JES applied)
+    Float_t MT_JESup;                       // transverse mass of leading lepton + MET                    (+1sigma JES applied)
+    Float_t deltaPhiMETJets_JESup;          // DeltaPhi(MET,first two leading jets)                       (+1sigma JES applied)
+    Float_t hadronicChi2_JESup;             // Hadronic Chi^2                                             (+1sigma JES applied)
+    Float_t MT2W_JESup;                     // MT2W                                                       (+1sigma JES applied)
+    Float_t HT_JESup;                       // HT                                                         (+1sigma JES applied)
+    Float_t HTRatio_JESup;                  // Fraction of HT in the same hemisphere as MET               (+1sigma JES applied)
+    Float_t leadingBPt_JESup;               // pT of the leading b-jet                                    (+1sigma JES applied)
+    Float_t leadingJetPt_JESup;             // pT of the leading jet                                      (+1sigma JES applied)
+    Float_t Mlb_JESup;                      // invariant mass of leading lepton + jet with highest CSV    (+1sigma JES applied)
+    Float_t Mlb_hemi_JESup;                 // invariant mass of leading lepton + b-jet closest to lepton (+1sigma JES applied)
+    Float_t M3b_JESup;                      // invariant mass of the 3jets dR-furthest from lepton        (+1sigma JES applied)
+    Float_t deltaRLeptonLeadingB_JESup;     // DeltaR(leading lepton, leading b-jet)                      (+1sigma JES applied)
+    Float_t METoverSqrtHT_JESup;            // MET/sqrt(HT)                                               (+1sigma JES applied)
+    Float_t HTPlusLeptonPtPlusMET_JESup;    // HT + pT(leading lepton) + MET                              (+1sigma JES applied)
+    Short_t nJets_JESup;                    // Jet multiplicity with                                      (+1sigma JES applied)
+
+    Float_t MET_JESdown;                    // Type-1 - phi-corrected PF MET                              (-1sigma JES applied)
+    Float_t MT_JESdown;                     // transverse mass of leading lepton - MET                    (-1sigma JES applied)
+    Float_t deltaPhiMETJets_JESdown;        // DeltaPhi(MET,first two leading jets)                       (-1sigma JES applied)
+    Float_t hadronicChi2_JESdown;           // Hadronic Chi^2                                             (-1sigma JES applied)
+    Float_t MT2W_JESdown;                   // MT2W                                                       (-1sigma JES applied)
+    Float_t HT_JESdown;                             // HT                                                         (-1sigma JES applied)
+    Float_t HTRatio_JESdown;                // Fraction of HT in the same hemisphere as MET               (-1sigma JES applied)
+    Float_t leadingBPt_JESdown;             // pT of the leading b-jet                                    (-1sigma JES applied)
+    Float_t leadingJetPt_JESdown;           // pT of the leading jet                                      (-1sigma JES applied)
+    Float_t Mlb_JESdown;                    // invariant mass of leading lepton - jet with highest CSV    (-1sigma JES applied)
+    Float_t Mlb_hemi_JESdown;               // invariant mass of leading lepton - b-jet closest to lepton (-1sigma JES applied)
+    Float_t M3b_JESdown;                    // invariant mass of the 3jets dR-furthest from lepton        (-1sigma JES applied)
+    Float_t deltaRLeptonLeadingB_JESdown;   // DeltaR(leading lepton, leading b-jet)                      (-1sigma JES applied)
+    Float_t METoverSqrtHT_JESdown;          // MET/sqrt(HT)                                               (-1sigma JES applied)
+    Float_t HTPlusLeptonPtPlusMET_JESdown;  // HT - pT(leading lepton) - MET                              (-1sigma JES applied)
+    Short_t nJets_JESdown;                  // Jet multiplicity with                                      (-1sigma JES applied)
+
+
+} babyEvent;
+
+#endif
+  
+
+
+// ###################################################
+// #     This function is called by the proof        #
+// #   job - this is where you fill the microtuple   #
+// ###################################################
+#ifdef isCompilingTheBabyTupler
+
+void ProofJob::InitializeBranches(TTree* theTree, babyEvent* myEvent)
+{
+    theTree->Branch("run",                                          &(myEvent->run));
+    theTree->Branch("lumi",                                         &(myEvent->lumi));
+    theTree->Branch("event",                                        &(myEvent->event));
+    
+    theTree->Branch("triggerMuon",                                  &(myEvent->triggerMuon));
+    theTree->Branch("xtriggerMuon",                                 &(myEvent->xtriggerMuon));
+    theTree->Branch("triggerElec",                                  &(myEvent->triggerElec));
+    theTree->Branch("triggerDoubleElec",                            &(myEvent->triggerDoubleElec));
+    theTree->Branch("triggerDoubleMuon",                            &(myEvent->triggerDoubleMuon));
+    theTree->Branch("triggerMuonElec",                              &(myEvent->triggerMuonElec));
+    
+    theTree->Branch("numberOfLepton",                               &(myEvent->numberOfLepton));
+    theTree->Branch("leadingLepton","TLorentzVector",               &(myEvent->leadingLepton));
+    theTree->Branch("leadingLeptonPDGId",                           &(myEvent->leadingLeptonPDGId));
+    theTree->Branch("secondLepton","TLorentzVector",                &(myEvent->secondLepton));
+    theTree->Branch("secondLeptonPDGId",                            &(myEvent->secondLeptonPDGId));
+    theTree->Branch("isolatedTrackVeto",                            &(myEvent->isolatedTrackVeto));
+    theTree->Branch("tauVeto",                                      &(myEvent->tauVeto));
+    
+    theTree->Branch("nJets",                                        &(myEvent->nJets));
+    theTree->Branch("nBTag",                                        &(myEvent->nBTag));
+    theTree->Branch("jets","std::vector<TLorentzVector>",           &(myEvent->jets));
+    theTree->Branch("jets_CSV","std::vector<Float_t>",              &(myEvent->jets_CSV));
+    
+    theTree->Branch("MET",                                          &(myEvent->MET));
+    theTree->Branch("MT",                                           &(myEvent->MT));
+    theTree->Branch("deltaPhiMETJets",                              &(myEvent->deltaPhiMETJets));
+    theTree->Branch("hadronicChi2",                                 &(myEvent->hadronicChi2));
+    theTree->Branch("MT2W",                                         &(myEvent->MT2W));
+    theTree->Branch("HT",                                           &(myEvent->HT));
+    theTree->Branch("HTRatio",                                      &(myEvent->HTRatio));
+    theTree->Branch("leadingBPt",                                   &(myEvent->leadingBPt));
+    theTree->Branch("leadingLeptonPt",                              &(myEvent->leadingLeptonPt));
+    theTree->Branch("leadingJetPt",                                 &(myEvent->leadingJetPt));
+    theTree->Branch("Mlb",                                          &(myEvent->Mlb));
+    theTree->Branch("Mlb_hemi",                                     &(myEvent->Mlb_hemi));
+    theTree->Branch("M3b",                                          &(myEvent->M3b));
+    theTree->Branch("deltaRLeptonLeadingB",                         &(myEvent->deltaRLeptonLeadingB));
+    theTree->Branch("METoverSqrtHT",                                &(myEvent->METoverSqrtHT));
+    theTree->Branch("HTPlusLeptonPtPlusMET",                        &(myEvent->HTPlusLeptonPtPlusMET));
+    
+    theTree->Branch("nWTag",                                        &(myEvent->nWTag));
+    theTree->Branch("leadingWjetPt",                                &(myEvent->leadingWjetPt));
+    
+    theTree->Branch("mStop",                                        &(myEvent->mStop));
+    theTree->Branch("mNeutralino",                                  &(myEvent->mNeutralino));
+    theTree->Branch("mCharginoParameter",                           &(myEvent->mCharginoParameter));
+    
+    theTree->Branch("numberOfGenLepton",                            &(myEvent->numberOfGenLepton));
+    theTree->Branch("genMET",                                       &(myEvent->genMET));
+    theTree->Branch("genMETPhi",                                    &(myEvent->genMETPhi));
+    theTree->Branch("genParticles","std::vector<TLorentzVector>",   &(myEvent->genParticles));
+    theTree->Branch("genParticlesPDGId","std::vector<Int_t>",       &(myEvent->genParticlesPDGId));
+    theTree->Branch("genParticlesMother","std::vector<Int_t>",      &(myEvent->genParticlesMother));
+    
+    theTree->Branch("numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
+    theTree->Branch("crossSection",                                 &(myEvent->crossSection));
+    theTree->Branch("numberOfTruePU",                               &(myEvent->numberOfTruePU));
+    theTree->Branch("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
+    theTree->Branch("weightCrossSection",                           &(myEvent->weightCrossSection));
+    theTree->Branch("weightPileUp",                                 &(myEvent->weightPileUp));
+    theTree->Branch("weightISRmodeling",                            &(myEvent->weightISRmodeling));
+    theTree->Branch("weightT2ttLeftHanded",                         &(myEvent->weightT2ttLeftHanded));
+    theTree->Branch("weightT2ttRightHanded",                        &(myEvent->weightT2ttRightHanded));
+    theTree->Branch("weightT2bwPolarization_ss",                    &(myEvent->weightT2bwPolarization_ss));
+    theTree->Branch("weightT2bwPolarization_ll",                    &(myEvent->weightT2bwPolarization_ll));
+    theTree->Branch("weightT2bwPolarization_lr",                    &(myEvent->weightT2bwPolarization_lr));
+    theTree->Branch("weightT2bwPolarization_rl",                    &(myEvent->weightT2bwPolarization_rl));
+    theTree->Branch("weightT2bwPolarization_rr",                    &(myEvent->weightT2bwPolarization_rr));
+    theTree->Branch("efficiencySingleLeptonTrigger",                &(myEvent->efficiencySingleLeptonTrigger));
+    theTree->Branch("efficiencyDoubleLeptonTrigger",                &(myEvent->efficiencyDoubleLeptonTrigger));
+    
+    theTree->Branch("MET_JESup",                                    &(myEvent->MET_JESup));
+    theTree->Branch("MT_JESup",                                     &(myEvent->MT_JESup));
+    theTree->Branch("deltaPhiMETJets_JESup",                        &(myEvent->deltaPhiMETJets_JESup));
+    theTree->Branch("hadronicChi2_JESup",                           &(myEvent->hadronicChi2_JESup));
+    theTree->Branch("MT2W_JESup",                                   &(myEvent->MT2W_JESup));
+    theTree->Branch("HT_JESup",                                     &(myEvent->HT_JESup));
+    theTree->Branch("HTRatio_JESup",                                &(myEvent->HTRatio_JESup));
+    theTree->Branch("leadingBPt_JESup",                             &(myEvent->leadingBPt_JESup));
+    theTree->Branch("leadingJetPt_JESup",                           &(myEvent->leadingJetPt_JESup));
+    theTree->Branch("Mlb_JESup",                                    &(myEvent->Mlb_JESup));
+    theTree->Branch("Mlb_hemi_JESup",                               &(myEvent->Mlb_hemi_JESup));
+    theTree->Branch("M3b_JESup",                                    &(myEvent->M3b_JESup));
+    theTree->Branch("deltaRLeptonLeadingB_JESup",                   &(myEvent->deltaRLeptonLeadingB_JESup));
+    theTree->Branch("METoverSqrtHT_JESup",                          &(myEvent->METoverSqrtHT_JESup));
+    theTree->Branch("HTPlusLeptonPtPlusMET_JESup",                  &(myEvent->HTPlusLeptonPtPlusMET_JESup));
+    theTree->Branch("nJets_JESup",                                  &(myEvent->nJets_JESup));
+    
+    theTree->Branch("MET_JESdown",                                  &(myEvent->MET_JESdown));
+    theTree->Branch("MT_JESdown",                                   &(myEvent->MT_JESdown));
+    theTree->Branch("deltaPhiMETJets_JESdown",                      &(myEvent->deltaPhiMETJets_JESdown));
+    theTree->Branch("hadronicChi2_JESdown",                         &(myEvent->hadronicChi2_JESdown));
+    theTree->Branch("MT2W_JESdown",                                 &(myEvent->MT2W_JESdown));
+    theTree->Branch("HT_JESdown",                                   &(myEvent->HT_JESdown));
+    theTree->Branch("HTRatio_JESdown",                              &(myEvent->HTRatio_JESdown));
+    theTree->Branch("leadingBPt_JESdown",                           &(myEvent->leadingBPt_JESdown));
+    theTree->Branch("leadingJetPt_JESdown",                         &(myEvent->leadingJetPt_JESdown));
+    theTree->Branch("Mlb_JESdown",                                  &(myEvent->Mlb_JESdown));
+    theTree->Branch("Mlb_hemi_JESdown",                             &(myEvent->Mlb_hemi_JESdown));
+    theTree->Branch("M3b_JESdown",                                  &(myEvent->M3b_JESdown));
+    theTree->Branch("deltaRLeptonLeadingB_JESdown",                 &(myEvent->deltaRLeptonLeadingB_JESdown));
+    theTree->Branch("METoverSqrtHT_JESdown",                        &(myEvent->METoverSqrtHT_JESdown));
+    theTree->Branch("HTPlusLeptonPtPlusMET_JESdown",                &(myEvent->HTPlusLeptonPtPlusMET_JESdown));
+    theTree->Branch("nJets_JESdown",                                &(myEvent->nJets_JESdown));
+
+}
+
+
+float stopCrossSection(float inputMass);
+
+Bool_t ProofJob::Process(Long64_t entry)
+{
+
+    // ########################################
+    // #  Load the event from the input tree  #
+    // ########################################
+
+    fChain->GetTree()->GetEntry(entry); 
+    branch->GetEntry(entry);
+    IPHCTree::NTTransient::InitializeAfterReading(event);
+    sel.LoadEvent(event);
+
+    // ######################
+    // #  Apply selection   #
+    // ######################
+    
+    if (sel.doFullSelection(dataset) == false) return false;
+
+    // #####################
+    // #   General infos   #
+    // #####################
+
+    myEvent.run   = event->general.runNb;  
+    myEvent.lumi  = event->general.lumiblock;
+    myEvent.event = event->general.eventNb;
+
+  // #####################
+  // #   General infos   #
+  // #####################
+
+    myEvent.triggerMuon       = sel.passTrigger("singleMuon");
+    myEvent.triggerElec       = sel.passTrigger("singleElec");
+    myEvent.xtriggerMuon      = sel.passTrigger("crossMuon" );
+    myEvent.triggerDoubleMuon = sel.passTrigger("doubleMuon");
+    myEvent.triggerDoubleElec = sel.passTrigger("doubleElec");
+    myEvent.triggerMuonElec   = sel.passTrigger("muonElec"  );  
+
+  // #####################
+  // #   Leptons infos   #
+  // #####################
+    
+    myEvent.numberOfLepton          = sel.getTheNumberOfSelectedLeptons();
+    myEvent.leadingLepton           = sel.getTheLeadingLepton();
+    myEvent.leadingLeptonPDGId      = sel.getTheLeadingLeptonPDGId();
+    myEvent.secondLepton            = sel.getTheSecondLepton();
+    myEvent.secondLeptonPDGId       = sel.getTheSecondLeptonPDGId();
+    float leptonCharge;
+    if (myEvent.leadingLeptonPDGId > 0) leptonCharge = -1.0;
+    else                                leptonCharge = +1.0;
+    myEvent.isolatedTrackVeto       = sel.GetSUSYstopIsolatedTrackVeto(myEvent.leadingLepton,leptonCharge);
+    myEvent.tauVeto                 = sel.GetSUSYstopTauVeto(myEvent.leadingLepton,leptonCharge);
+
+    // ####################
+    // #  Fill jets info  #
+    // ####################
+
+    myEvent.nJets        = sel.GetJetsForAna().size();
+    myEvent.nBTag        = sel.GetBJetsForAna().size();
+
+    myEvent.jets.clear();
+    myEvent.jets_CSV.clear();
+    std::vector<IPHCTree::NTJet> jets = sel.GetJetsForAna();
+    for (unsigned int i = 0 ; i < jets.size() ; i++)
+    {
+        myEvent.jets.push_back(jets[i].p4);
+        myEvent.jets_CSV.push_back(jets[i].bTag["combinedSecondaryVertexBJetTags"]);
+    }
+
+    // #############################
+    // #  "High-level" variables  #
+    // #############################
+
+    myEvent.MET                   = sel.Met();
+    myEvent.MT                    = sel.MT_wleptonic();
+    myEvent.deltaPhiMETJets       = sel.DPhi_MET_leadingJets();
+    myEvent.hadronicChi2          = sel.HadronicChi2(dataset->isData());
+    myEvent.MT2W                  = sel.MT2W();
+    myEvent.HTRatio               = sel.HT_ratio();
+    myEvent.HT                    = sel.HT();
+    myEvent.METoverSqrtHT         = myEvent.MET / sqrt(myEvent.HT);
+    myEvent.leadingLeptonPt       = myEvent.leadingLepton.Pt();
+    myEvent.HTPlusLeptonPtPlusMET = myEvent.HT + myEvent.leadingLeptonPt + myEvent.MET;
+
+    myEvent.leadingBPt = 0.0;
+    float minDeltaRLeptonB = 9999.0;
+    TLorentzVector bJetClosestToLepton;
+    for (unsigned int i = 0 ; i < myEvent.nBTag ; i++)
+    {
+        if (myEvent.leadingBPt < sel.GetBJetsForAna()[i].p4.Pt())
+        {
+            myEvent.leadingBPt           = sel.GetBJetsForAna()[i].p4.Pt();
+            myEvent.deltaRLeptonLeadingB = myEvent.leadingLepton.DeltaR(sel.GetBJetsForAna()[i].p4);
+        }
+
+        if (minDeltaRLeptonB > sel.GetBJetsForAna()[i].p4.DeltaR(myEvent.leadingLepton))
+        {
+            minDeltaRLeptonB = sel.GetBJetsForAna()[i].p4.DeltaR(myEvent.leadingLepton);
+            bJetClosestToLepton = sel.GetBJetsForAna()[i].p4;
+        }
+    }
+
+    myEvent.leadingJetPt = 0.0;
+    float highestCSV = -999.0;
+    TLorentzVector highestCSVJet;
+    for (unsigned int i = 0 ; i < myEvent.jets.size() ; i++)
+    {
+        if (myEvent.leadingJetPt < myEvent.jets[i].Pt())
+            myEvent.leadingJetPt = myEvent.jets[i].Pt();
+
+        if (highestCSV < jets[i].bTag["combinedSecondaryVertexBJetTags"])
+        {
+            highestCSV = jets[i].bTag["combinedSecondaryVertexBJetTags"];
+            highestCSVJet = jets[i].p4;
+        }
+
+    }
+
+    myEvent.M3b                   = sel.M3b();
+    myEvent.Mlb                   = (myEvent.leadingLepton + highestCSVJet).M();
+    myEvent.Mlb_hemi              = (myEvent.leadingLepton + bJetClosestToLepton).M();
+
+    
+    // ####################
+    // #   Signal infos   #
+    // ####################
+
+    if ((dataset->Name() == "T2tt") 
+     || (dataset->Name() == "T2bw-025")
+     || (dataset->Name() == "T2bw-050")
+     || (dataset->Name() == "T2bw-075")  
+     )
+    {
+        // TODO : check weird non-round values for signal
+        stopMCinfo->LoadEvent(event);
+        myEvent.mStop       = stopMCinfo->GetStopMass();
+        myEvent.mNeutralino = stopMCinfo->GetNeutralinoMass();
+    
+        if (dataset->Name() == "T2tt")
+            myEvent.mCharginoParameter = -1.0;
+        else
+            myEvent.mCharginoParameter = (stopMCinfo->GetCharginoMass() - stopMCinfo->GetNeutralinoMass()) 
+                                       / (stopMCinfo->GetStopMass()     - stopMCinfo->GetCharginoMass()  );
+    }
+    else
+    {
+        myEvent.mStop       = -1.0;
+        myEvent.mNeutralino = -1.0;
+        myEvent.mCharginoParameter = -1.0;
+    }
+     
+    // ################################################
+    // #  Weights and weighting-related informations  #
+    // ################################################
+    
+
+    if ((dataset->Name() == "T2tt") 
+     || (dataset->Name() == "T2bw-025")
+     || (dataset->Name() == "T2bw-050")
+     || (dataset->Name() == "T2bw-075")  
+     )
+    {
+        myEvent.crossSection          = stopCrossSection(myEvent.mStop);
+        myEvent.numberOfInitialEvents = -1.0;
+    }
+    else
+    {
+        myEvent.crossSection          = dataset->Xsection();
+        myEvent.numberOfInitialEvents = dataset->getNumberOfEventsBeforeMTSkimmer();
+    }
+
+    myEvent.numberOfTruePU = sel.getTnpv();
+    myEvent.numberOfPrimaryVertices = sel.GetVertex().size();;
+    
+    myEvent.weightCrossSection = myEvent.crossSection / myEvent.numberOfInitialEvents;
+    
+    /*
+    myEvent.weightPileUp;
+    myEvent.weightISRmodeling;
+
+    myEvent.weightT2ttLeftHanded;
+    myEvent.weightT2ttRightHanded;
+    myEvent.weightT2bwPolarization_ss;
+    myEvent.weightT2bwPolarization_ll;
+    myEvent.weightT2bwPolarization_lr;
+    myEvent.weightT2bwPolarization_rl;
+    myEvent.weightT2bwPolarization_rr;
+    
+    myEvent.efficiencySingleLeptonTrigger;
+    myEvent.efficiencyDoubleLeptonTrigger;
+    */
+
+    // ###################################
+    // #   Generator-level information   #
+    // ###################################
+
+    myEvent.genParticles.clear();
+    myEvent.genParticlesPDGId.clear();
+    myEvent.genParticlesMother.clear();
+
+    if (dataset->isData())
+    {
+        myEvent.numberOfGenLepton = -1;
+        myEvent.genMET  = -1;
+        myEvent.genMETPhi = -1;
+
+    }
+    else
+    {
+
+        // TMEME decoding
+        IPHCTree::NTMonteCarlo mcInfo = *((sel).GetPointer2MC());    
+        int TMEME = mcInfo.TMEME; 
+        int  MEME = TMEME % 10000; 
+        int   EME =  MEME % 1000; 
+        int    ME =   EME % 100; 
+        int     E =    ME % 10;
+        
+        myEvent.numberOfGenLepton = TMEME/10000 + ME/10 + E/1;
+
+        // TODO
+        //myEvent.genMET 
+        //myEvent.genMETPhi
+
+        vector<IPHCTree::NTGenParticle> MCParticles = mcInfo.genParticles;
+        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
+        {
+            myEvent.genParticles.push_back(MCParticles[i].p4);
+            myEvent.genParticlesPDGId.push_back(MCParticles[i].id);
+            myEvent.genParticlesMother.push_back(MCParticles[i].motherIndex_);
+        }
+    }
+
+
+    // ################
+    // #  Fill W-tag  #
+    // ################         
+
+    myEvent.nWTag = 0;
+    myEvent.leadingWjetPt = -1.0;
+    std::vector<IPHCTree::NTJet> WCand = sel.GetHeavyTagJets();
+    for (unsigned int i = 0 ; i < WCand.size() ; i++)
+    {
+        // Pt
+        if (WCand[i].p4.Pt() < 200) continue;
+
+        // Mass window
+        if ((WCand[i].p4.M() < 60) || (WCand[i].p4.M() > 100)) continue;
+
+        // Lepton overlap removal
+        if (WCand[i].p4.DeltaR(myEvent.leadingLepton) < 0.6) continue; 
+
+        // B-jet overlap removal
+        float minDeltaRBJet = 99.0;
+        for (int j = 0 ; j < myEvent.nBTag ; j++)
+        {
+            if (minDeltaRBJet > WCand[i].p4.DeltaR(sel.GetBJetsForAna()[j].p4));
+                minDeltaRBJet = WCand[i].p4.DeltaR(sel.GetBJetsForAna()[j].p4);
+        }
+        if (minDeltaRBJet > 0.6)
+        {
+            myEvent.nWTag = 1.0;
+            if (myEvent.leadingWjetPt < WCand[i].p4.Pt())
+                myEvent.leadingWjetPt = WCand[i].p4.Pt();
+        }
+
+    }
+
+    // #####################################
+    // #  Info for studies of systematics  #
+    // #####################################
+
+    /*
+    myEvent.MET_up   = ;
+    myEvent.MET_down = ;
+    myEvent.MT_up    = ;
+    myEvent.MT_down  = ;
+    */
+
+    // ###############################
+    // #  Add the event to the tree  #
+    // ###############################
+    
+    theTree->Fill();
+
+    return true;
+}
+
+float stopCrossSection(float inputMass)
+{
+         if (abs(inputMass - 170) <= 5) return 42.6441;
+    else if (abs(inputMass - 180) <= 5) return 31.8695;
+    else if (abs(inputMass - 190) <= 5) return 24.1585;
+    else if (abs(inputMass - 200) <= 5) return 18.5245;
+    else if (abs(inputMass - 210) <= 5) return 14.3201;
+    else if (abs(inputMass - 220) <= 5) return 11.1808;
+    else if (abs(inputMass - 230) <= 5) return 8.78125;
+    else if (abs(inputMass - 240) <= 5) return 6.96892;
+    else if (abs(inputMass - 250) <= 5) return 5.57596;
+    else if (abs(inputMass - 260) <= 5) return 4.48773;
+    else if (abs(inputMass - 270) <= 5) return 3.63085;
+    else if (abs(inputMass - 280) <= 5) return 2.95613;
+    else if (abs(inputMass - 290) <= 5) return 2.42299;
+    else if (abs(inputMass - 300) <= 5) return 1.99608;
+    else if (abs(inputMass - 310) <= 5) return 1.64956;
+    else if (abs(inputMass - 320) <= 5) return 1.3733;
+    else if (abs(inputMass - 330) <= 5) return 1.14277;
+    else if (abs(inputMass - 340) <= 5) return 0.959617;
+    else if (abs(inputMass - 350) <= 5) return 0.807323;
+    else if (abs(inputMass - 360) <= 5) return 0.681346;
+    else if (abs(inputMass - 370) <= 5) return 0.576882;
+    else if (abs(inputMass - 380) <= 5) return 0.489973;
+    else if (abs(inputMass - 390) <= 5) return 0.4176;
+    else if (abs(inputMass - 400) <= 5) return 0.35683;
+    else if (abs(inputMass - 410) <= 5) return 0.305512;
+    else if (abs(inputMass - 420) <= 5) return 0.262683;
+    else if (abs(inputMass - 430) <= 5) return 0.226367;
+    else if (abs(inputMass - 440) <= 5) return 0.195812;
+    else if (abs(inputMass - 450) <= 5) return 0.169668;
+    else if (abs(inputMass - 460) <= 5) return 0.147492;
+    else if (abs(inputMass - 470) <= 5) return 0.128326;
+    else if (abs(inputMass - 480) <= 5) return 0.112241;
+    else if (abs(inputMass - 490) <= 5) return 0.0977878;
+    else if (abs(inputMass - 500) <= 5) return 0.0855847;
+    else if (abs(inputMass - 510) <= 5) return 0.0751004;
+    else if (abs(inputMass - 520) <= 5) return 0.0660189;
+    else if (abs(inputMass - 530) <= 5) return 0.0580348;
+    else if (abs(inputMass - 540) <= 5) return 0.0511747;
+    else if (abs(inputMass - 550) <= 5) return 0.0452067;
+    else if (abs(inputMass - 560) <= 5) return 0.0399591;
+    else if (abs(inputMass - 570) <= 5) return 0.0354242;
+    else if (abs(inputMass - 580) <= 5) return 0.0313654;
+    else if (abs(inputMass - 590) <= 5) return 0.0279395;
+    else if (abs(inputMass - 600) <= 5) return 0.0248009;
+    else if (abs(inputMass - 610) <= 5) return 0.0220672;
+    else if (abs(inputMass - 620) <= 5) return 0.0196331;
+    else if (abs(inputMass - 630) <= 5) return 0.0175075;
+    else if (abs(inputMass - 640) <= 5) return 0.0155809;
+    else if (abs(inputMass - 650) <= 5) return 0.0139566;
+    else if (abs(inputMass - 660) <= 5) return 0.0125393;
+    else if (abs(inputMass - 670) <= 5) return 0.0112223;
+    else if (abs(inputMass - 680) <= 5) return 0.0100516;
+    else if (abs(inputMass - 690) <= 5) return 0.0090306;
+    else if (abs(inputMass - 700) <= 5) return 0.0081141;
+    else if (abs(inputMass - 710) <= 5) return 0.00730084;
+    else if (abs(inputMass - 720) <= 5) return 0.00656729;
+    else if (abs(inputMass - 730) <= 5) return 0.00591771;
+    else if (abs(inputMass - 740) <= 5) return 0.00532605;
+    else if (abs(inputMass - 750) <= 5) return 0.00480639;
+    else if (abs(inputMass - 760) <= 5) return 0.00433688;
+    else if (abs(inputMass - 770) <= 5) return 0.00391839;
+    else if (abs(inputMass - 780) <= 5) return 0.00354211;
+    else if (abs(inputMass - 790) <= 5) return 0.00320476;
+    else if (abs(inputMass - 800) <= 5) return 0.00289588;
+    else if (abs(inputMass - 810) <= 5) return 0.0026184;
+    else if (abs(inputMass - 820) <= 5) return 0.00237168;
+    else if (abs(inputMass - 830) <= 5) return 0.00214607;
+    else if (abs(inputMass - 840) <= 5) return 0.00195172;
+    else if (abs(inputMass - 850) <= 5) return 0.00176742;
+    else if (abs(inputMass - 860) <= 5) return 0.00160403;
+    else if (abs(inputMass - 870) <= 5) return 0.00145772;
+    else if (abs(inputMass - 880) <= 5) return 0.00132077;
+    else if (abs(inputMass - 890) <= 5) return 0.00120568;
+    else if (abs(inputMass - 900) <= 5) return 0.00109501;
+    else if (abs(inputMass - 910) <= 5) return 0.000996193;
+    else if (abs(inputMass - 920) <= 5) return 0.000907494;
+    else if (abs(inputMass - 930) <= 5) return 0.000826533;
+    else if (abs(inputMass - 940) <= 5) return 0.000753768;
+    else if (abs(inputMass - 950) <= 5) return 0.000687022;
+    else if (abs(inputMass - 960) <= 5) return 0.000626876;
+    else if (abs(inputMass - 970) <= 5) return 0.000571551;
+    else if (abs(inputMass - 980) <= 5) return 0.000522495;
+    else if (abs(inputMass - 990) <= 5) return 0.000476255;
+    else if (abs(inputMass - 1000) <= 5) return 0.000435488;
+    else return 0.0;
+}
+
+
+#endif
+

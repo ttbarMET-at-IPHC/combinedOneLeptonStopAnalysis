@@ -274,7 +274,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     {
         myEvent.jets.push_back(jets[i].p4);
         // TODO : bTag reweighting
-        //myEvent.jets_CSV.push_back(jetsAna[i].bTag["combinedSecondaryVertexBJetTags"]);
+        myEvent.jets_CSV.push_back(jets[i].bTag["combinedSecondaryVertexBJetTags"]);
     }
 
     // #############################
