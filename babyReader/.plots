@@ -1,6 +1,0 @@
-
-{
-    TFile::Open("../plots/checkSynchro/1DSuperpRenorm.root");
-    new TBrowser();
-}
-
