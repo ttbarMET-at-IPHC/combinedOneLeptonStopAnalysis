@@ -12,8 +12,8 @@ using namespace std;
 #include <TLorentzVector.h>
 
 // Define format and input file
-#include "Reader_beta0927.h"
-#define INPUT "synchronizationBaby.root"
+#include "Reader_beta1002.h"
+#define INPUT "../store/babyTuples_1004/T2tt.root"
 
 // ###################
 // #  Main function  #
@@ -88,6 +88,7 @@ int main (int argc, char *argv[])
               << " ; PDGId : " << myEvent.genParticlesPDGId[j]
               << " ; Pt : "    << myEvent.genParticles[j].Pt() 
               << " ; Eta : "   << myEvent.genParticles[j].Eta() 
+              << " ; Mass : "   << myEvent.genParticles[j].M() 
               << endl;
       }
 
