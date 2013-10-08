@@ -17,7 +17,7 @@ Then source the setup.sh script
 
 Compile the code and run on the synchronization baby provided
 
-    ./compile
+    ./compile.sh
     ./babyReader
 
 
