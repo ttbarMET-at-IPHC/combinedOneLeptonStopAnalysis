@@ -12,8 +12,8 @@ using namespace std;
 #include <TLorentzVector.h>
 
 // Define format and input file
-#include "Reader_beta1002.h"
-#define INPUT "../store/babyTuples_1004/T2tt.root"
+#include "Reader_beta1009.h"
+#define INPUT "synchronizationBaby1009.root"
 
 // ###################
 // #  Main function  #

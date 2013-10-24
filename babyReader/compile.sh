@@ -6,7 +6,7 @@ EXECUTABLE=`echo $SOURCE | tr '.' ' ' | awk '{print $1}'`
 
 
 
-g++  -l:$PWD/vectorDictionnary_C.so                    \
+g++  -l:$PWD/vectorDictionnary_C.so                       \
      -I `root-config --incdir`                            \
      -L $ROOTSYS/lib                                      \
      -lGenVector -lCore -lCint -lRIO -lNet -lHist -lGraf  \

@@ -3,7 +3,7 @@
 #define ProofBabyTupler_h
 
 // Number of nodes to be used
-#define NUMBER_OF_NODES 16
+#define NUMBER_OF_NODES 4
 
 // Name of the macro to be run
 #define MACRO_NAME "ProofJob.C+"

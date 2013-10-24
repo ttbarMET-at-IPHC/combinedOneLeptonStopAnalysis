@@ -89,6 +89,8 @@ void ProofJob::SlaveBegin(TTree * /*tree*/)
     anaEL->LoadSelection(sel);  
     anaEL->LoadGeneralInfo(DataType, Luminosity, LumiError, verbosity);
 
+    LoadCorrectionFiles(); 
+
     // Retrieve the current dataset according to its name
     for(unsigned int d=0;d<datasets.size();d++)
       if (datasets[d].Name() == datasetName) dataset = &datasets[d];
