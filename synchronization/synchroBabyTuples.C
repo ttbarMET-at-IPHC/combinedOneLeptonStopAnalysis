@@ -81,11 +81,11 @@ int main (int argc, char *argv[])
   // ##   Create ProcessClasses (and associated datasets)   ##
   // #########################################################
 
-     mySonic.AddProcessClass("diff","UC/FNAL - IPHC","background",COLORPLOT_AZURE);
+     mySonic.AddProcessClass("diff","UC/FNAL vs IPHC","background",COLORPLOT_AZURE);
      mySonic.AddRegion("presel","Preselection",&Selection_presel);  
 	 mySonic.AddChannel("inclusiveChannel","",&inclusiveChannelSelector);
      
-     mySonic_jets.AddProcessClass("diff","UC/FNAL - IPHC","background",COLORPLOT_AZURE);
+     mySonic_jets.AddProcessClass("diff","UC/FNAL vs IPHC","background",COLORPLOT_AZURE);
      mySonic_jets.AddRegion("presel","Preselection",&Selection_presel);  
 	 mySonic_jets.AddChannel("inclusiveChannel","",&inclusiveChannelSelector);
   	 

@@ -193,16 +193,31 @@ typedef struct
 // ###################################################
 #ifdef isCompilingTheBabyTupler
 
+TH1F* mapT2tt;
+TH1F* mapT2bw025;
+TH1F* mapT2bw050;
+TH1F* mapT2bw075;
+
 void ProofJob::LoadCorrectionFiles()
 {
-    sel.setBTagReshapingInput(anaEL->GetInfo("Analysis","Corrections","bTagReshaping"));
-    sel.setMCJetCorrectionsInput(anaEL->GetInfo("Analysis","Corrections","jetEnergyCorrectionMC"));
+    sel.setBTagReshapingInput(     anaEL->GetInfo("Analysis","Corrections","bTagReshaping")          );
+    sel.setMCJetCorrectionsInput(  anaEL->GetInfo("Analysis","Corrections","jetEnergyCorrectionMC")  );
     sel.setDataJetCorrectionsInput(anaEL->GetInfo("Analysis","Corrections","jetEnergyCorrectionData"));
-    sel.setPileUpReweightingInput(anaEL->GetInfo("Analysis","Corrections","pileUp"));
+    sel.setPileUpReweightingInput( anaEL->GetInfo("Analysis","Corrections","pileUp")                 );
 
     sel.loadCorrections();
     
-    std::cout << "loaded corrections " << std::endl;
+
+    TFile* fileMapT2tt    = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-025.root");
+    TFile* fileMapT2bw025 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-050.root");
+    TFile* fileMapT2bw050 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-075.root");
+    TFile* fileMapT2bw075 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2tt.root");
+
+    fileMapT2tt   ->GetObject("mStopVSmNeutralino",mapT2tt   );
+    fileMapT2bw025->GetObject("mStopVSmNeutralino",mapT2bw025);
+    fileMapT2bw050->GetObject("mStopVSmNeutralino",mapT2bw050);
+    fileMapT2bw075->GetObject("mStopVSmNeutralino",mapT2bw075);
+
 }
 
 void ProofJob::InitializeBranches(TTree* theTree, babyEvent* myEvent)
@@ -474,13 +489,11 @@ Bool_t ProofJob::Process(Long64_t entry)
     // ####################
 
     if ((datasetName.find("T2tt") != string::npos) 
-            || (datasetName.find("T2bw") != string::npos)) 
+    || (datasetName.find("T2bw")  != string::npos)) 
     {
-        // TODO : fix non-integer values for mStop and mNeutralino
         myEvent.mStop       = stopMCinfo->GetStopMass();
         myEvent.mNeutralino = stopMCinfo->GetNeutralinoMass();
 
-        // TODO fix this
         if (datasetName.find("T2tt"))           myEvent.mCharginoParameter = -1.0;
         else if (datasetName.find("T2bw-025"))  myEvent.mCharginoParameter = 0.25;
         else if (datasetName.find("T2bw-050"))  myEvent.mCharginoParameter = 0.50; 
@@ -503,8 +516,14 @@ Bool_t ProofJob::Process(Long64_t entry)
      || (datasetName.find("T2bw") != string::npos))
     {
         myEvent.crossSection          = stopCrossSection(myEvent.mStop);
-        // TODO : get number of initial event from map
-        myEvent.numberOfInitialEvents = -1.0;
+
+        TH1F* signalMap = 0;
+        if (datasetName.find("T2tt"))          signalMap = mapT2tt; 
+        else if (datasetName.find("T2bw-025")) signalMap = mapT2bw025;
+        else if (datasetName.find("T2bw-050")) signalMap = mapT2bw050;
+        else if (datasetName.find("T2bw-075")) signalMap = mapT2bw075;
+        
+        myEvent.numberOfInitialEvents = signalMap->GetBinContent(signalMap->FindBin(myEvent.mStop,myEvent.mNeutralino));
     }
     else
     {

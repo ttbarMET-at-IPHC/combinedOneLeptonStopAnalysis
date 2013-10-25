@@ -23,7 +23,7 @@
 #include <iostream>
 using namespace std;
 
-#include "../microTupling/MicroTuple_Format_Synchro0902.h"
+#include "../microTupling/formats/Synchro1025.h"
 
 #define INPUT "/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v1/store/synchro/baby_RelValTTbar_CMSSW_5_3_2_patch1-START53_V7A-v1_GEN-SIM-RECO.root"
 
@@ -60,96 +60,95 @@ int main (int argc, char *argv[])
   // ##        Run over the events         ##
   // ########################################
 
-  float aFloat0;  float aFloat1;  float aFloat2;  float aFloat3;  float aFloat4;  
-  float aFloat5;  float aFloat6;  float aFloat7;  float aFloat8;  float aFloat9; float aFloat10;
-  int anInt0;  int anInt1;  int anInt2;  int anInt3;  int anInt4;  int anInt5;  int anInt6;
-  UInt_t         anUInt;
+  ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> >* lepton = 0;
+  ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> >* leptonPF = 0;
+  vector< ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> > >* jets  = 0;
+  vector< float >* jets_sigma        = 0;
+  vector< float >* jets_CSV          = 0;
+  vector< float >* jets_CSVreshaped  = 0;
+  vector< float >* jets_PUId         = 0;
 
-  ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> >* aVector0 = 0;
-  ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> >* aVector1 = 0;
-  vector< ROOT::Math::LorentzVector< ROOT::Math::PxPyPzE4D<float> > >* aVector2  = 0;
-  vector< float >* aVector3  = 0;
+  theInputTree->SetBranchAddress("event",             &(myEvent.event        ));  
+  theInputTree->SetBranchAddress("isomu24",           &(myEvent.triggerMu    ));  
+  theInputTree->SetBranchAddress("ele27wp80",         &(myEvent.triggerEl    ));  
+  theInputTree->SetBranchAddress("isopf1",            &(myEvent.leptonIso    )); 
+  theInputTree->SetBranchAddress("eoverpin",          &(myEvent.leptonEpin   )); 
+  theInputTree->SetBranchAddress("id1",               &(myEvent.leptonPDG    ));  
+  theInputTree->SetBranchAddress("mini_met",          &(myEvent.MET          )); 
+  theInputTree->SetBranchAddress("mini_mt",           &(myEvent.MT           ));
+  theInputTree->SetBranchAddress("mini_njets",        &(myEvent.nJets        ));  
+  theInputTree->SetBranchAddress("mini_nb",           &(myEvent.nB           ));  
+  theInputTree->SetBranchAddress("mini_passisotrk",   &(myEvent.isoTrackVeto ));  
+  theInputTree->SetBranchAddress("mini_passtauveto",  &(myEvent.tauVeto      ));  
+  theInputTree->SetBranchAddress("mini_dphimjmin",    &(myEvent.dPhiMETjet   )); 
+  theInputTree->SetBranchAddress("mini_chi2",         &(myEvent.hadronicChi2 )); 
+  theInputTree->SetBranchAddress("mini_mt2w",         &(myEvent.MT2W         )); 
+  theInputTree->SetBranchAddress("mini_pt_b",         &(myEvent.leadingBPt   )); 
+  theInputTree->SetBranchAddress("mini_htratiom",     &(myEvent.HTratio      )); 
+  theInputTree->SetBranchAddress("mini_dRleptB1",     &(myEvent.dRleptonB    ));
+  theInputTree->SetBranchAddress("lep1",              &lepton                 );
+  theInputTree->SetBranchAddress("pflep1",            &leptonPF               );
+  theInputTree->SetBranchAddress("pfjets",            &jets                   ); 
+  theInputTree->SetBranchAddress("pfjets_sigma",      &jets_sigma             ); 
+  theInputTree->SetBranchAddress("pfjets_csv",        &jets_CSV               ); 
+  theInputTree->SetBranchAddress("pfjets_csvreshape", &jets_CSVreshaped       ); 
+  theInputTree->SetBranchAddress("pfjets_mva5xPUid",  &jets_PUId              ); 
+  
+  theInputTree->SetBranchAddress("pfmet",             &(myEvent.rawMET       )); 
+  
+  theInputTree->SetBranchAddress("mini_metup",        &(myEvent.MET_up       )); 
+  theInputTree->SetBranchAddress("mini_metdown",      &(myEvent.MET_down     )); 
+  theInputTree->SetBranchAddress("mini_mtup",         &(myEvent.MT_up        )); 
+  theInputTree->SetBranchAddress("mini_mtdown",       &(myEvent.MT_down      )); 
+  
+  theInputTree->SetBranchAddress("mini_puweight",     &(myEvent.pileUpWeight )); 
 
   for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
   {
 	  // Get the i-th entry
-      theInputTree->SetBranchAddress("event",           &anUInt);  
-      theInputTree->SetBranchAddress("isomu24",         &anInt0);  
-      theInputTree->SetBranchAddress("ele27wp80",       &anInt1);  
-      theInputTree->SetBranchAddress("lep1",            &aVector0);
-      theInputTree->SetBranchAddress("pflep1",          &aVector1);
-      theInputTree->SetBranchAddress("isopf1",          &aFloat0); 
-      theInputTree->SetBranchAddress("eoverpin",        &aFloat1); 
-      theInputTree->SetBranchAddress("id1",             &anInt2);  
-      theInputTree->SetBranchAddress("mini_met",        &aFloat2); 
-      theInputTree->SetBranchAddress("mini_mt",         &aFloat3); 
-      theInputTree->SetBranchAddress("mini_njets",      &anInt3);  
-      theInputTree->SetBranchAddress("mini_nb",         &anInt4);  
-      theInputTree->SetBranchAddress("mini_passisotrk", &anInt5);  
-      theInputTree->SetBranchAddress("mini_passtauveto",&anInt6);  
-      theInputTree->SetBranchAddress("mini_dphimjmin",  &aFloat4); 
-      theInputTree->SetBranchAddress("mini_chi2",       &aFloat5); 
-      theInputTree->SetBranchAddress("mini_mt2w",       &aFloat6); 
-      theInputTree->SetBranchAddress("mini_pt_b",       &aFloat7); 
-      theInputTree->SetBranchAddress("mini_htratiom",   &aFloat8); 
-      theInputTree->SetBranchAddress("mini_dRleptB1",   &aFloat9); 
-      theInputTree->SetBranchAddress("pfjets",          &aVector2); 
-      theInputTree->SetBranchAddress("pfjets_sigma",    &aVector3); 
-
-      theInputTree->SetBranchAddress("pfmet",   &aFloat10); 
-      
       theInputTree->GetEntry(i); 
       
-      myEvent.event        = anUInt;
-      myEvent.triggerMu    = anInt0;
-      myEvent.triggerEl    = anInt1;
-      myEvent.leptonPt     = aVector0->Pt();
-      myEvent.leptonEta    = aVector0->Eta();
-      myEvent.leptonPhi    = aVector0->Phi();
-      myEvent.leptonE      = aVector0->E();
-      myEvent.leptonPFPt   = aVector1->Pt();
-      myEvent.leptonIso    = aFloat0;
-      myEvent.leptonEpin   = aFloat1;
-      myEvent.leptonPDG    = anInt2;
-      myEvent.MET          = aFloat2;
-      myEvent.MT           = aFloat3;
-      myEvent.nJets        = anInt3;
-      myEvent.nB           = anInt4;
-      myEvent.isoTrackVeto = anInt5;
-      myEvent.tauVeto      = anInt6;
-      myEvent.dPhiMETjet   = aFloat4;
-      myEvent.hadronicChi2 = aFloat5;
-      myEvent.MT2W         = aFloat6;
-      myEvent.leadingBPt   = aFloat7;
-      myEvent.HTratio      = aFloat8;
-      myEvent.dRleptonB    = aFloat9;
+      myEvent.leptonPt     = lepton->Pt();
+      myEvent.leptonEta    = lepton->Eta();
+      myEvent.leptonPhi    = lepton->Phi();
+      myEvent.leptonE      = lepton->E();
+      myEvent.leptonPFPt   = leptonPF->Pt();
 
-      cout << "event = " << myEvent.event << " raw met : " << aFloat10 << endl;
-
-      int i;
-      for (i = 0 ; i < (*aVector2).size() ; i++)
+      for (int i = 0 ; i < 10 ; i++)
       {
-          if (i >= 10) break;
-
-          myEvent.jets_Pt[i] = (*aVector2)[i].Pt();
-          myEvent.jets_Phi[i] = (*aVector2)[i].Phi();
-          myEvent.jets_Eta[i] = (*aVector2)[i].Eta();
-          myEvent.jets_Sigma[i] = (*aVector3)[i];
-      }
-
-      if (i < 10)
-      {
-          myEvent.jets_Pt[i] = -1;
-          myEvent.jets_Phi[i] = -999;
-          myEvent.jets_Eta[i] = -999;
-          myEvent.jets_Sigma[i] = -999;
+          if (i < (*jets).size())
+          {
+              myEvent.jets_Pt[i]          = (*jets)[i].Pt();
+              myEvent.jets_Phi[i]         = (*jets)[i].Phi();
+              myEvent.jets_Eta[i]         = (*jets)[i].Eta();
+              myEvent.jets_Sigma[i]       = (*jets_sigma)[i];
+              myEvent.jets_CSV[i]         = (*jets_CSV)[i];
+              myEvent.jets_CSVreshaped[i] = (*jets_CSVreshaped)[i];
+              myEvent.jets_PUId[i]        = (*jets_PUId)[i];
+          }
+          else
+          {
+              myEvent.jets_Pt[i]          = -1;
+              myEvent.jets_Phi[i]         = -999;
+              myEvent.jets_Eta[i]         = -999;
+              myEvent.jets_Sigma[i]       = -999;
+              myEvent.jets_CSV[i]         = -999; 
+              myEvent.jets_CSVreshaped[i] = -999;
+              myEvent.jets_PUId[i]        = -999;
+          }
       }
 
       theOutputTree->Fill();
   } 
 
-  theOutputTree->Print();
+  //theOutputTree->Print();
   theOutputTree->Write(0, TObject::kOverwrite); 
+
+  cout << endl;
+  cout << "   ┌──────────┐  " << endl;
+  cout << "   │   Done   │  " << endl;
+  cout << "   └──────────┘  " << endl; 
+  cout << endl;
 
   return (0);
 

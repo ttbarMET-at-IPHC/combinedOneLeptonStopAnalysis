@@ -85,7 +85,7 @@ typedef struct
     // Generator-level infos
     // ------------
    
-    Int_t   numberOfGenLepton;              // Number of MC leptons (e/µ/tau, leptons from tau decay are not taken into account)
+    Int_t   numberOfGenLepton;              // Number of MC leptons (e/mu/tau, leptons from tau decay are not taken into account)
     Float_t genMET;                         // MET at generator level (definition ?), (TODO)
     Float_t genMETPhi;                      // Phi of the MET at generator level (TODO)
 
@@ -410,8 +410,14 @@ Bool_t ProofJob::Process(Long64_t entry)
     if ((dataset->Name() == "T2tt") 
      || (dataset->Name() == "T2bw-025")
      || (dataset->Name() == "T2bw-050")
-     || (dataset->Name() == "T2bw-075")  
-     )
+     || (dataset->Name() == "T2bw-075") 
+     || (dataset->Name() == "T2tt_mStop-150to350_mLSP-0to250")
+     || (dataset->Name() == "T2tt_mStop-375to475_mLSP-0to375")
+     || (dataset->Name() == "T2tt_mStop-500to650_mLSP-0to225")
+     || (dataset->Name() == "T2tt_mStop-500to650_mLSP-250to550")
+     || (dataset->Name() == "T2tt_mStop-500to800_mLSP-1")
+     || (dataset->Name() == "T2tt_mStop-675to800_mLSP-0to275")
+     || (dataset->Name() == "T2tt_mStop-675to800_mLSP-300to700"))
     {
         // TODO : check weird non-round values for signal
         stopMCinfo->LoadEvent(event);

@@ -32,7 +32,7 @@ int main (int argc, char *argv[])
   
 
   // ############################
-  // #	Initializing variables  #
+  // #  Initializing variables  #
   // ############################
 
   string xmlFileName("config.xml");
@@ -42,7 +42,7 @@ int main (int argc, char *argv[])
   IPHCTree::NTEvent * event = 0;
   
   // #############################
-  // # 	 Loading configuration   #
+  // #   Loading configuration   #
   // #############################
 
   cout << endl;
@@ -50,11 +50,11 @@ int main (int argc, char *argv[])
   cout << "        (config : " << xmlFileName << ")" << endl;
   
   AnalysisEnvironmentLoader anaEL (xmlFileName);
-  anaEL.LoadSamples (datasets);	// now the list of datasets written in the xml file is known
-  anaEL.LoadSelection (sel);	// now the parameters for the selection are given to the selection // no specific TTbarMET parameters
+  anaEL.LoadSamples (datasets); // now the list of datasets written in the xml file is known
+  anaEL.LoadSelection (sel);    // now the parameters for the selection are given to the selection // no specific TTbarMET parameters
 
   // ###########################
-  // # 	 Loading corrections   #
+  // #   Loading corrections   #
   // ###########################
 
   sel.setBTagReshapingInput(     anaEL.GetInfo("Analysis","Corrections","bTagReshaping")          );
@@ -65,7 +65,7 @@ int main (int argc, char *argv[])
   sel.loadCorrections();
 
   // ####################################
-  // # 	 Start loop over the datasets   #
+  // #   Start loop over the datasets   #
   // ####################################
 
   if (verbosity > 0) printBoxedMessage("Starting loop over datasets");
@@ -73,9 +73,9 @@ int main (int argc, char *argv[])
   for (unsigned int datasetId = 0; datasetId < datasets.size (); datasetId++) 
   {
 
-	// ########################
-	// #   Load the dataset   #
-	// ########################
+    // ########################
+    // #   Load the dataset   #
+    // ########################
    
     INFO1_MSG << "Loading next dataset..." << endl;
 
@@ -94,11 +94,11 @@ int main (int argc, char *argv[])
     
     bool runningOnData = datasets[datasetId].isData();
 
-	// ############################
-	// #   Loop over the events   #
-	// ############################
-			  
-	if (verbosity > 0) printBoxedMessage("Starting loop over events");
+    // ############################
+    // #   Loop over the events   #
+    // ############################
+              
+    if (verbosity > 0) printBoxedMessage("Starting loop over events");
 
     for (unsigned int ievt = 0; ievt < datasets[datasetId].NofEvtsToRunOver(); ievt++)
     {
@@ -113,15 +113,26 @@ int main (int argc, char *argv[])
         sel.LoadEvent(event);
 
         // Apply selection
-        if (sel.passEventSelection(runningOnData) == false) continue;
+        //if (sel.passEventSelection(runningOnData) == false) continue;
+        sel.passEventSelection(runningOnData) == false;
 
+        
         // Test JES +1sigma variation
+        
+        float nominalMET = sel.Met();
+
         sel.doObjectSelection(runningOnData,1);
         sel.FillKinematicP4();
+        float JESupMET   = sel.Met();
 
+        sel.doObjectSelection(runningOnData,-1);
+        sel.FillKinematicP4();
+        float JESdownMET   = sel.Met();
 
-    } // End event loop
-  }		// End dataset loop
+        //cout << "MET | nominal : " << nominalMET << " ; JESup : " << JESupMET << " ; JESdown " << JESdownMET << endl;
+
+    }   // End event loop
+  }     // End dataset loop
 
 
   printBoxedMessage("Program completed");
