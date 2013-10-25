@@ -12,28 +12,40 @@ double pi=acos(-1.);
 
 struct SortByPt
 {
-  bool operator()( TLorentzVector j1, TLorentzVector j2 ) const
-  {
-    return j1.Pt() > j2.Pt() ;
-  }
+    bool operator()( TLorentzVector j1, TLorentzVector j2 ) const
+    {
+        return j1.Pt() > j2.Pt() ;
+    }
 };
 
 void printProgressBar(int current, int max)
 {
-	std::string bar;
-	int percent = 100 * (float) current / (float) max;
+    std::string bar;
+    int percent = 100 * (float) current / (float) max;
 
-	for(int i = 0; i < 50; i++)
-	{
-		if( i < (percent/2))       bar.replace(i,1,"=");
-		else if( i == (percent/2)) bar.replace(i,1,">");
-		else					   bar.replace(i,1," ");
-	}
+    for(int i = 0; i < 50; i++)
+    {
+        if( i < (percent/2))       bar.replace(i,1,"=");
+        else if( i == (percent/2)) bar.replace(i,1,">");
+        else					   bar.replace(i,1," ");
+    }
 
-	std::cout << "  [Progress]  ";
-	std::cout << "[" << bar << "] ";
-	std::cout.width( 3 );
-	std::cout << percent << "%     ";
-	std::cout << "(" << current << " / " << max << ")" << std::endl;
+    std::cout << "  [Progress]  ";
+    std::cout << "[" << bar << "] ";
+    std::cout.width( 3 );
+    std::cout << percent << "%     ";
+    std::cout << "(" << current << " / " << max << ")" << std::endl;
 }
 
+void printBoxedMessage(string message)
+{
+    string line;
+    for (int i = 0 ; i < message.length() ; i++)
+        line.replace(i,1,"-");
+
+    cout << endl;
+    cout << "   ,---" <<  line   << "---," << endl;
+    cout << "   |   " << message << "   |" << endl;
+    cout << "   `---" <<  line   << "---`" << endl;
+    cout << endl;
+}
