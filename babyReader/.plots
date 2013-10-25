@@ -1,6 +1,0 @@
-
-{
-    TFile::Open("../plots/checkBabySynchro/1DSuperpRenorm.root");
-    new TBrowser();
-}
-
