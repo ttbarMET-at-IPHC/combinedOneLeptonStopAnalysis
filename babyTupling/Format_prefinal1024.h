@@ -193,10 +193,10 @@ typedef struct
 // ###################################################
 #ifdef isCompilingTheBabyTupler
 
-TH1F* mapT2tt;
-TH1F* mapT2bw025;
-TH1F* mapT2bw050;
-TH1F* mapT2bw075;
+TH2F* mapT2tt;
+TH2F* mapT2bw025;
+TH2F* mapT2bw050;
+TH2F* mapT2bw075;
 
 void ProofJob::LoadCorrectionFiles()
 {
@@ -357,7 +357,6 @@ float stopCrossSection(float inputMass);
 Bool_t ProofJob::Process(Long64_t entry)
 {
 
-    std::cout << "processing " << entry << std::endl;
     // ########################################
     // #  Load the event from the input tree  #
     // ########################################
@@ -387,16 +386,13 @@ Bool_t ProofJob::Process(Long64_t entry)
     // #  Filter bad signal events   #
     // ###############################
   
-    std::cout << "filtering signal event" << std::endl;
     if (badSignalEventFilter(datasetName,stopMCinfo) == false) return false;
 
     // ######################
     // #  Apply selection   #
     // ######################
     
-    std::cout << "checking event selection.." << std::endl;
     if (sel.passEventSelection(runningOnData) == false) return false;
-    std::cout << "event passed" << std::endl;
 
     // #####################
     // #   General infos   #
@@ -478,7 +474,8 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.HTPlusLeptonPtPlusMET = myEvent.HT + myEvent.leadingLeptonPt + myEvent.MET;
     TLorentzVector leadingBJet    = sel.leadingBJet();
     myEvent.leadingBPt            = leadingBJet.Pt();
-    myEvent.deltaRLeptonLeadingB  = leadingBJet.DeltaR(myEvent.leadingLepton);
+    if (myEvent.leadingBPt != 0) myEvent.deltaRLeptonLeadingB  = leadingBJet.DeltaR(myEvent.leadingLepton);
+    else                         myEvent.deltaRLeptonLeadingB  = 999.0;
     myEvent.leadingJetPt          = sel.leadingJet().P();
     myEvent.M3b                   = sel.M3b();
     myEvent.Mlb                   = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
@@ -489,7 +486,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     // ####################
 
     if ((datasetName.find("T2tt") != string::npos) 
-    || (datasetName.find("T2bw")  != string::npos)) 
+    ||  (datasetName.find("T2bw")  != string::npos)) 
     {
         myEvent.mStop       = stopMCinfo->GetStopMass();
         myEvent.mNeutralino = stopMCinfo->GetNeutralinoMass();
@@ -517,12 +514,13 @@ Bool_t ProofJob::Process(Long64_t entry)
     {
         myEvent.crossSection          = stopCrossSection(myEvent.mStop);
 
-        TH1F* signalMap = 0;
+        TH2F* signalMap = 0;
+
         if (datasetName.find("T2tt"))          signalMap = mapT2tt; 
         else if (datasetName.find("T2bw-025")) signalMap = mapT2bw025;
         else if (datasetName.find("T2bw-050")) signalMap = mapT2bw050;
         else if (datasetName.find("T2bw-075")) signalMap = mapT2bw075;
-        
+       
         myEvent.numberOfInitialEvents = signalMap->GetBinContent(signalMap->FindBin(myEvent.mStop,myEvent.mNeutralino));
     }
     else
@@ -530,7 +528,7 @@ Bool_t ProofJob::Process(Long64_t entry)
         myEvent.crossSection          = dataset->Xsection();
         myEvent.numberOfInitialEvents = dataset->getNumberOfEventsBeforeMTSkimmer();
     }
-
+    
     myEvent.weightCrossSection = myEvent.crossSection / myEvent.numberOfInitialEvents;
 
     // Pile-up
@@ -554,7 +552,7 @@ Bool_t ProofJob::Process(Long64_t entry)
             if (abs(MCParticles[i].id) == 1000006) StopStopBar += MCParticles[i].p4;
         ISRboost = StopStopBar.Pt();
     }
-    else if (dataset->Name() == "ttbar")
+    else if (datasetName == "ttbar")
     {
         TLorentzVector TopTopBar;
         for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
@@ -570,7 +568,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     // Top Pt weight
     
     myEvent.weightTopPt = 1.0;
-    if (dataset->Name() == "ttbar")
+    if (datasetName == "ttbar")
     {
         float TopPt = 0.0;
         for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
@@ -581,7 +579,7 @@ Bool_t ProofJob::Process(Long64_t entry)
 
     // Signal polarization
 
-    if (dataset->Name() == "T2tt") 
+    if (datasetName.find("T2tt") != string::npos) 
     {
         myEvent.weightT2ttLeftHanded  = Reweight_Stop_to_TopChi0(MCParticles, 0., -1);
         myEvent.weightT2ttRightHanded = Reweight_Stop_to_TopChi0(MCParticles, 0.,  1);
@@ -592,9 +590,7 @@ Bool_t ProofJob::Process(Long64_t entry)
         myEvent.weightT2ttRightHanded = 1.0; 
     }
 
-    if ((dataset->Name() == "T2bw-025")
-            || (dataset->Name() == "T2bw-050")
-            || (dataset->Name() == "T2bw-075"))
+    if (datasetName.find("T2bw") != string::npos)
     {
         myEvent.weightT2bwPolarization_lr = Reweight_T2bW( 0      , 0      , MCParticles );
         myEvent.weightT2bwPolarization_ls = Reweight_T2bW( 0      , PI/4.0 , MCParticles );
@@ -725,7 +721,6 @@ Bool_t ProofJob::Process(Long64_t entry)
         myEvent.scalePDF                    = mcInfo.Q_scale;
     }
 
-
     sel.doObjectSelection(runningOnData,1);
     sel.FillKinematicP4();
    
@@ -739,7 +734,8 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.METoverSqrtHT_JESup             = myEvent.MET / sqrt(myEvent.HT);
     leadingBJet = sel.leadingBJet();
     myEvent.leadingBPt_JESup                = leadingBJet.Pt();
-    myEvent.deltaRLeptonLeadingB_JESup      = leadingBJet.DeltaR(myEvent.leadingLepton);
+    if (myEvent.leadingBPt_JESup != 0) myEvent.deltaRLeptonLeadingB_JESup = leadingBJet.DeltaR(myEvent.leadingLepton);
+    else                               myEvent.deltaRLeptonLeadingB_JESup = 999.0;
     myEvent.leadingJetPt_JESup              = sel.leadingJet().P();
     myEvent.M3b_JESup                       = sel.M3b();
     myEvent.Mlb_JESup                       = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
@@ -760,7 +756,8 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.METoverSqrtHT_JESdown           = myEvent.MET / sqrt(myEvent.HT);
     leadingBJet = sel.leadingBJet();
     myEvent.leadingBPt_JESdown              = leadingBJet.Pt();
-    myEvent.deltaRLeptonLeadingB_JESdown    = leadingBJet.DeltaR(myEvent.leadingLepton);
+    if (myEvent.leadingBPt_JESdown != 0) myEvent.deltaRLeptonLeadingB_JESdown = leadingBJet.DeltaR(myEvent.leadingLepton);
+    else                                 myEvent.deltaRLeptonLeadingB_JESdown = 999.0;
     myEvent.leadingJetPt_JESdown            = sel.leadingJet().P();
     myEvent.M3b_JESdown                     = sel.M3b();
     myEvent.Mlb_JESdown                     = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
@@ -771,8 +768,6 @@ Bool_t ProofJob::Process(Long64_t entry)
     // ###############################
     // #  Add the event to the tree  #
     // ###############################
-
-    std::cout << "event has been filled" << std::endl;
 
     theTree->Fill();
 
