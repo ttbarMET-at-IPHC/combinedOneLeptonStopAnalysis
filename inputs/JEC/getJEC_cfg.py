@@ -27,11 +27,12 @@ process.p = cms.Path(process.readAK5PF)
 
 # Used for the corrections
 #process.GlobalTag.globaltag = 'GR_P_V39_AN3::All'
-process.GlobalTag.globaltag = 'START53_V7G::All'
+#process.GlobalTag.globaltag = 'START53_V7G::All'
+process.GlobalTag.globaltag = 'START53_V20::All'
 
 
 # Used only for the *name* of the printed txt files 
 # (should be the same as GlobalTag.globaltag)
-process.readAK5PF.globalTag = 'START53_V7G'
+process.readAK5PF.globalTag = 'START53_V20'
 
 

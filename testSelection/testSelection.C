@@ -112,13 +112,11 @@ int main (int argc, char *argv[])
         int eventId = event->general.eventNb;
         sel.LoadEvent(event);
 
-        // Apply selection
-        //if (sel.passEventSelection(runningOnData) == false) continue;
-        sel.passEventSelection(runningOnData) == false;
 
-        
+        // Apply selection
+        if (sel.passEventSelection(runningOnData) == false) continue;
+
         // Test JES +1sigma variation
-        
         float nominalMET = sel.Met();
 
         sel.doObjectSelection(runningOnData,1);
@@ -128,8 +126,8 @@ int main (int argc, char *argv[])
         sel.doObjectSelection(runningOnData,-1);
         sel.FillKinematicP4();
         float JESdownMET   = sel.Met();
-
-        //cout << "MET | nominal : " << nominalMET << " ; JESup : " << JESupMET << " ; JESdown " << JESdownMET << endl;
+        cout << "MET | nominal : " << nominalMET << " ; JESup : " << JESupMET << " ; JESdown " << JESdownMET << endl;
+        
 
     }   // End event loop
   }     // End dataset loop
