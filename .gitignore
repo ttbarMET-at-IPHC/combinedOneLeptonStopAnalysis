@@ -18,8 +18,10 @@
 *.png
 
 # Various stuff not needed to be versionned
+*.d
 .list*
 store/
 plots/
 microTupling/
 WTagTMVATraining/weights_*
+oldFiles/
