@@ -729,7 +729,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.MT2W_JESup                      = sel.MT2W();
     myEvent.HTRatio_JESup                   = sel.HT_ratio();
     myEvent.HT_JESup                        = sel.HT();
-    myEvent.METoverSqrtHT_JESup             = myEvent.MET / sqrt(myEvent.HT);
+    myEvent.METoverSqrtHT_JESup             = myEvent.MET_JESup / sqrt(myEvent.HT_JESup);
     leadingBJet = sel.leadingBJet();
     myEvent.leadingBPt_JESup                = leadingBJet.Pt();
     if (myEvent.leadingBPt_JESup != 0) myEvent.deltaRLeptonLeadingB_JESup = leadingBJet.DeltaR(myEvent.leadingLepton);
@@ -738,7 +738,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.M3b_JESup                       = sel.M3b();
     myEvent.Mlb_JESup                       = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
     myEvent.Mlb_hemi_JESup                  = (myEvent.leadingLepton + sel.bJetClosestToLeadingLepton()).M();
-    myEvent.HTPlusLeptonPtPlusMET_JESup     = myEvent.HT + myEvent.leadingLeptonPt + myEvent.MET;
+    myEvent.HTPlusLeptonPtPlusMET_JESup     = myEvent.HT_JESup + myEvent.leadingLeptonPt_JESup + myEvent.MET_JESup;
     myEvent.nJets_JESup                     = sel.GetJetsForAna().size();
 
     sel.doObjectSelection(runningOnData,-1);
@@ -751,7 +751,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.MT2W_JESdown                    = sel.MT2W();
     myEvent.HTRatio_JESdown                 = sel.HT_ratio();
     myEvent.HT_JESdown                      = sel.HT();
-    myEvent.METoverSqrtHT_JESdown           = myEvent.MET / sqrt(myEvent.HT);
+    myEvent.METoverSqrtHT_JESdown           = myEvent.MET_JESdown / sqrt(myEvent.HT_JESdown);
     leadingBJet = sel.leadingBJet();
     myEvent.leadingBPt_JESdown              = leadingBJet.Pt();
     if (myEvent.leadingBPt_JESdown != 0) myEvent.deltaRLeptonLeadingB_JESdown = leadingBJet.DeltaR(myEvent.leadingLepton);
@@ -760,7 +760,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.M3b_JESdown                     = sel.M3b();
     myEvent.Mlb_JESdown                     = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
     myEvent.Mlb_hemi_JESdown                = (myEvent.leadingLepton + sel.bJetClosestToLeadingLepton()).M();
-    myEvent.HTPlusLeptonPtPlusMET_JESdown   = myEvent.HT + myEvent.leadingLeptonPt + myEvent.MET;
+    myEvent.HTPlusLeptonPtPlusMET_JESdown   = myEvent.HT_JESdown + myEvent.leadingLeptonPt_JESdown + myEvent.MET_JESdown;
     myEvent.nJets_JESdown                   = sel.GetJetsForAna().size();
 
     // ###############################
