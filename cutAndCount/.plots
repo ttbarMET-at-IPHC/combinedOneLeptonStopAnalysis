@@ -1,0 +1,9 @@
+
+{
+    TFile::Open("../plots/cutAndCount/1DStack.root");
+    TFile::Open("../plots/cutAndCount/1DSuperpRenorm.root");
+    TFile::Open("../plots/cutAndCount/1DCutSignificance.root");
+    TFile::Open("../plots/cutAndCount/2D.root");
+    new TBrowser();
+}
+
