@@ -16,7 +16,7 @@ using namespace theDoctor;
 #include "../babyReader/Reader_prefinal1024.h"
 #include "../microTupling/formats/Synchro1025.h"
 
-#define INPUT_IPHC "synchronizationBaby1024.root"
+#define INPUT_IPHC "synchronizationBaby1102.root"
 #define INPUT_FNAL "../store/microTuples_Synchro1025/fnal.root"
 
 bool inclusiveChannelSelector() { return true; }
@@ -157,9 +157,7 @@ int main (int argc, char *argv[])
 
          mySonic.AutoFillProcessClass("diff");
 
-         cout << "UCFNAL/IPHC nominal MET : " << myEventFNAL.MET      << " / " << myEventIPHC.MET         << endl;
-         cout << "UCFNAL/IPHC +1JES   MET : " << myEventFNAL.MET_up   << " / " << myEventIPHC.MET_JESup   << endl;
-         cout << "UCFNAL/IPHC -1JES   MET : " << myEventFNAL.MET_down << " / " << myEventIPHC.MET_JESdown << endl;
+         cout << "Chi2 : " << myEventFNAL.hadronicChi2      - myEventIPHC.hadronicChi2        << endl;
 
          METup      = (myEventFNAL.MET_up       - myEventIPHC.MET_JESup       ) / myEventFNAL.MET_up      ;
          int jSelect = 0;

@@ -103,11 +103,11 @@ int main (int argc, char *argv[])
   // ##   Init tools   ##
   // ####################
   
-	 // Create a sonic Screwdriver
- 	 SonicScrewdriver screwdriver;
+     // Create a sonic Screwdriver
+      SonicScrewdriver screwdriver;
 
-  	 // Create a container for the event
-	 babyEvent myEvent;
+       // Create a container for the event
+     babyEvent myEvent;
      myEventPointer = &myEvent;
 
   // ##########################
@@ -115,58 +115,58 @@ int main (int argc, char *argv[])
   // ##########################
 
 
-    Float_t HTPlusLeptonPtPlusMET;              // HT + pT(leading lepton) + MET
+     Float_t HTPlusLeptonPtPlusMET;              // HT + pT(leading lepton) + MET
 
 
- 	 screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY=true");
- 	 screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY=true");
- 	 screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
- 	 screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
- 	 screwdriver.AddVariable("HT",             "H_{T}",                   "",       40,0,400,       &(myEvent.HT),                   "");
- 	 screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),              "");
- 	 screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,20,        &(myEvent.hadronicChi2),         "");
- 	 screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    25,0,500,       &(myEvent.leadingBPt),           "");
- 	 screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    25,0,500,       &(myEvent.leadingJetPt),         "");
- 	 screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    25,0,500,       &(myEvent.leadingLeptonPt),      "");
-   
- 	 screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    25,0,500,       &(myEvent.Mlb),                  "");
- 	 screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    25,0,500,       &(myEvent.Mlb_hemi),             "");
- 	 screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    25,0,500,       &(myEvent.M3b),                  "");
- 	 screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
- 	 screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       40,0,40,        &(myEvent.METoverSqrtHT),        "");
+     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY=true");
+     screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY=true");
+     screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
+     screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
+     screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),                   "");
+     screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),              "");
+     screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,20,        &(myEvent.hadronicChi2),         "");
+     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    25,0,500,       &(myEvent.leadingBPt),           "");
+     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    25,0,500,       &(myEvent.leadingJetPt),         "");
+     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    25,0,500,       &(myEvent.leadingLeptonPt),      "");
 
-     float METoverSqrtHT_JESup;
-     float METoverSqrtHT_JESdown;
+     screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    25,0,500,       &(myEvent.Mlb),                  "");
+     screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    25,0,500,       &(myEvent.Mlb_hemi),             "");
+     screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    25,0,500,       &(myEvent.M3b),                  "");
+     screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
+     screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
 
- 	 screwdriver.AddVariable("METoverSqrtHT_JESup",  "MET / #sqrt{H_{T}} (JES up)",   "",    40,0,40, &(METoverSqrtHT_JESup  ),      ""); 
-     screwdriver.AddVariable("METoverSqrtHT_JESdown","MET / #sqrt{H_{T}} (JES down)", "",    40,0,40, &(METoverSqrtHT_JESdown),      "");
- 	 screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
+     float METoverHT;       screwdriver.AddVariable("METoverHT",      "MET / H_{T}",             "",       30,0,1.5,       &(METoverHT),        "");
+     float METoverPtLepton; screwdriver.AddVariable("METoverLeptonPt","MET / p_{T}(lepton)}",    "",       30,0,10,        &(METoverPtLepton),  "");
+     float METplusHT;       screwdriver.AddVariable("METplusHT",      "MET + H_{T}",             "GeV",    30,0,1500,      &(METplusHT),        "");
+
+     screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
 
      //screwdriver.AddVariable("nJets",          "# of jets",               "",       4, 2.5,6.5,     &(myEvent.nJets),                "");
      //screwdriver.AddVariable("nBTag",          "# of b-tagged jets",      "",       4,-0.5,3.5,     &(myEvent.nBTag),                "");
-     
-     screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),                "");
- 	 screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
 
-  // #########################################################
-  // ##   Create ProcessClasses (and associated datasets)   ##
-  // #########################################################
-      
+     screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),                "");
+     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
+
+     // #########################################################
+     // ##   Create ProcessClasses (and associated datasets)   ##
+     // #########################################################
+
      screwdriver.AddProcessClass("ttbar_1l", "t#bar{t} #rightarrow l+jets","background",kRed-7);
-          screwdriver.AddDataset("ttbar",    "ttbar_1l",  0, 0);
-     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow ll",    "background",kCyan-3);
+            screwdriver.AddDataset("ttbar",    "ttbar_1l",  0, 0);
+     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}",    "background",kCyan-3);
 
      screwdriver.AddProcessClass("W+jets",   "W+jets",                     "background",kOrange-2);
-          screwdriver.AddDataset("Wjets",    "W+jets", 0, 0);
+             screwdriver.AddDataset("Wjets",    "W+jets", 0, 0);
 
      screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
-          screwdriver.AddDataset("others",   "others", 0, 0);
+             screwdriver.AddDataset("others",   "others", 0, 0);
 
-     screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",COLORPLOT_AZURE);
-          screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
+     screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
+             screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
 
-     //screwdriver.AddProcessClass("T2bw-050", "T2bw-050",                   "signal",COLORPLOT_GREEN);
-     //     screwdriver.AddDataset("T2bw-050", "T2bw-050",   0, 0);
+     screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",             "signal",COLORPLOT_AZURE);
+     screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",             "signal",kCyan-3);
+     screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",             "signal",COLORPLOT_GREEN);
 
   // ##########################
   // ##    Create Regions    ##
@@ -185,7 +185,7 @@ int main (int argc, char *argv[])
   // ##   Create Channels    ##
   // ##########################
    
-	 screwdriver.AddChannel("inclusiveChannel","e/#mu channel",&inclusiveChannelSelector);
+     screwdriver.AddChannel("inclusiveChannel","e/#mu channel",&inclusiveChannelSelector);
 
   // ########################################
   // ##       Create histograms and        ##
@@ -194,15 +194,16 @@ int main (int argc, char *argv[])
   
      screwdriver.SetLumi(20000);
 
-	 // Create histograms
-  	 screwdriver.Create1DHistos();
-  	 screwdriver.Add2DHisto("mStop","mNeutralino");
-  	 
-  	 // Schedule plots
-  	 screwdriver.SchedulePlots("1DSuperpRenorm","includeSignal=true");
-  	 screwdriver.SchedulePlots("1DStack","includeSignal=true,includeSignalHow=stack,factorSignal=1.0");
-  	 screwdriver.SchedulePlots("2D");
-     
+     // Create histograms
+       screwdriver.Create1DHistos();
+       screwdriver.Add2DHisto("mStop","mNeutralino");
+       screwdriver.Add2DHisto("MET","HT");
+       
+       // Schedule plots
+       screwdriver.SchedulePlots("1DSuperpRenorm","includeSignal=true");
+       screwdriver.SchedulePlots("1DStack","includeSignal=true,includeSignalHow=stack,factorSignal=1.0");
+       screwdriver.SchedulePlots("2D");
+
      screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=MET,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
      screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=MT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
      screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=deltaPhiMETJets,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
@@ -219,6 +220,62 @@ int main (int argc, char *argv[])
      screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=METoverSqrtHT_JESup,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
      screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=METoverSqrtHT_JESdown,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
      screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=HTLeptonPtMET,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=METoverHT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=METoverLeptonPt,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=T2tt,var=METplusHT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+
+/*
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=MET,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=MT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=deltaPhiMETJets,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=MT2W,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=HTratio,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=HadronicChi2,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=leadingBPt,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=leadingJetPt,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=leptonPt,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=Mlb_hemi,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=M3b,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=deltaRLeptonB,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=METoverSqrtHT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=METoverSqrtHT_JESup,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=METoverSqrtHT_JESdown,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_450_100,var=HTLeptonPtMET,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=MET,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=MT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=deltaPhiMETJets,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=MT2W,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=HTratio,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=HadronicChi2,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=leadingBPt,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=leadingJetPt,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=leptonPt,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=Mlb_hemi,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=M3b,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=deltaRLeptonB,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=METoverSqrtHT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=METoverSqrtHT_JESup,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=METoverSqrtHT_JESdown,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_650_100,var=HTLeptonPtMET,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=MET,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=MT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=deltaPhiMETJets,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=MT2W,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=HTratio,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=HadronicChi2,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=leadingBPt,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=leadingJetPt,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=leptonPt,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=Mlb_hemi,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=M3b,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=deltaRLeptonB,cutType=keepLowValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=METoverSqrtHT,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=METoverSqrtHT_JESup,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=METoverSqrtHT_JESdown,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+     screwdriver.SchedulePlots("1DCutSignificance","signal=signal_250_100,var=HTLeptonPtMET,cutType=keepHighValues,backgroundSystematicUncertainty=0.15");
+*/
 
   // ########################################
   // ##       Run over the datasets        ##
@@ -270,13 +327,21 @@ int main (int argc, char *argv[])
               currentProcessClass_ = "ttbar_2l";
 
           if (myEvent.hadronicChi2  >= 20) myEvent.hadronicChi2  = 19.99;
-          if (myEvent.METoverSqrtHT >= 40) myEvent.METoverSqrtHT = 39.99;
+          if (myEvent.METoverSqrtHT >= 32) myEvent.METoverSqrtHT = 31.99;
 
-          METoverSqrtHT_JESup   = myEvent.MET_JESup   / sqrt(myEvent.HT_JESup)  ;
-          METoverSqrtHT_JESdown = myEvent.MET_JESdown / sqrt(myEvent.HT_JESdown);
+          METoverHT       = myEvent.MET / myEvent.HT;
+          METoverPtLepton = myEvent.MET / myEvent.leadingLeptonPt;
+          METplusHT       = myEvent.MET + myEvent.HT;
 
           // Fill all the variables with autoFill-mode activated
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+
+          if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
+              screwdriver.AutoFillProcessClass("signal_250_100",myEvent.weightCrossSection * screwdriver.GetLumi());
+          if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 100))
+              screwdriver.AutoFillProcessClass("signal_450_100",myEvent.weightCrossSection * screwdriver.GetLumi());
+          if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 100))
+              screwdriver.AutoFillProcessClass("signal_650_100",myEvent.weightCrossSection * screwdriver.GetLumi());
 
       } 
       
@@ -291,8 +356,8 @@ int main (int argc, char *argv[])
  
   std::ostringstream lumiInString;
   lumiInString << screwdriver.GetLumi() / 1000;
-  string infoText("CMS Internal      #sqrt{s} = 8 TeV, ");
-  infoText += string("L = ")+lumiInString.str()+string(" fb^{-1}, ");
+  string infoText("CMS Internal         #sqrt{s} = 8 TeV, ");
+  infoText += string("L = ")+lumiInString.str()+string(" fb^{-1} ");
   
   cout << endl;
   cout << "   > Making plots..." << endl;
@@ -378,7 +443,7 @@ void printProgressBar(int current, int max)
     {
         if( i < (percent/2))       bar.replace(i,1,"=");
         else if( i == (percent/2)) bar.replace(i,1,">");
-        else					   bar.replace(i,1," ");
+        else                       bar.replace(i,1," ");
     }
 
     std::cout << "  [Progress]  ";

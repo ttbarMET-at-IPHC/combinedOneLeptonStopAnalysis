@@ -39,7 +39,8 @@ int main (int argc, char *argv[])
   // ##        Run over the events         ##
   // ########################################
 
-  for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
+  //for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
+  for (int i = 0 ; i < 10 ; i++)
   {
       ReadEvent(theInputTree,i,&pointers,&myEvent);
 
@@ -93,6 +94,8 @@ int main (int argc, char *argv[])
       }
 
       cout << endl;
+      
+      cout << " scalePDF = " << myEvent.scalePDF << endl;
       
   } 
 

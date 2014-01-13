@@ -9,9 +9,8 @@
 #include <iostream>
 using namespace std;
 
-#include "../microTupling/MicroTuple_Format_Synchro0902.h"
-
-#define INPUT "../store/microTuples_Synchro0902/fnal.root"
+#include "../microTupling/formats/Synchro1025.h"
+#define INPUT "../store/microTuples_Synchro1025/fnal.root"
 
 // #########################################################################
 //                              Main function

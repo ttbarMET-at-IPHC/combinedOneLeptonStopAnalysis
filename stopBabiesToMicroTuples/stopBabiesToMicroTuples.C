@@ -25,7 +25,7 @@ using namespace std;
 
 #include "../microTupling/formats/Synchro1025.h"
 
-#define INPUT "/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v1/store/synchro/baby_RelValTTbar_CMSSW_5_3_2_patch1-START53_V7A-v1_GEN-SIM-RECO.root"
+#define INPUT "/opt/sbg/data/data4/cms/aaubin/stopBabySynchro.root"
 
 #define OUTPUT "./microTuple_babyStopSynchro.root"
 
@@ -102,11 +102,18 @@ int main (int argc, char *argv[])
   theInputTree->SetBranchAddress("mini_mtdown",       &(myEvent.MT_down      )); 
   
   theInputTree->SetBranchAddress("mini_puweight",     &(myEvent.pileUpWeight )); 
+  
+
+  UInt_t runNumber;  theInputTree->SetBranchAddress("run",    &runNumber );  
+  UInt_t lumiNumber; theInputTree->SetBranchAddress("lumi",   &lumiNumber);  
+  float caloMET;    theInputTree->SetBranchAddress("calomet",&caloMET   ); 
 
   for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
   {
 	  // Get the i-th entry
       theInputTree->GetEntry(i); 
+      
+      cout << "(run,lumi,event) " << runNumber << " " << lumiNumber << " " << myEvent.event << " ; (PFMET,CaloMET) " << myEvent.rawMET << " " << caloMET << endl;
       
       myEvent.leptonPt     = lepton->Pt();
       myEvent.leptonEta    = lepton->Eta();

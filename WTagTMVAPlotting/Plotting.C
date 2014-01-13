@@ -347,7 +347,8 @@ int main (int argc, char *argv[])
           */
 
           // Fill all the variables with autoFill-mode activated
-          mySonic.AutoFillProcessClass(currentProcessClass,weight);
+          //mySonic.AutoFillProcessClass(currentProcessClass,weight);
+          mySonic.AutoFillProcessClass(currentProcessClass);
 
       } 
       
@@ -375,7 +376,7 @@ int main (int argc, char *argv[])
   cout << "   │   Plot generation completed  │  " << endl;
   cout << "   └──────────────────────────────┘  " << endl; 
   cout << endl;
-/* 
+
   cout << endl;
   cout << "   ┌──────────────────────────────┐  " << endl;
   cout << "   │  Starting tables generation  │  " << endl;
@@ -393,10 +394,7 @@ int main (int argc, char *argv[])
       processClassList.push_back("signal_750_25");
       
       vector<string> regions;
-      regions.push_back("presel");
       regions.push_back("signalRegion");
-      regions.push_back("afterBDTNoWTagCut");
-      regions.push_back("afterBDTWithWTagCut");
         
       Table table(regions,processClassList);
       fillMCSignalTable(&mySonic,regions,processClassList,&table);
@@ -407,7 +405,7 @@ int main (int argc, char *argv[])
   cout << "   │  Tables generation completed  │  " << endl;
   cout << "   └───────────────────────────────┘  " << endl; 
   cout << endl;
-*/
+
     //makeHistosForEric(&mySonic,"BDTOutputGradBoost");
     //makeHistosForEric(&mySonic,"BDTOutputAdaBoost");
 
@@ -685,7 +683,7 @@ void makeHistosForEric(SonicScrewdriver* mySonic, string BDT)
 
 void fillMCSignalTable(SonicScrewdriver* mySonic, vector<string> region, vector<string> process, Table* table)
 {
-    string varUsedToGetYields = "BDTOutputNoWTag";
+    string varUsedToGetYields = "BDTOutputAdaBoostNoWTag";
     string channelUsedToGetYields = "inclusiveChannel";
 
     for (unsigned int r = 0 ; r < region.size()          ; r++)

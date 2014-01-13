@@ -1,0 +1,11 @@
+
+{
+    TFile::Open("../plots/cutAndCount/1DStack.root");
+    TFile::Open("../plots/cutAndCount/1DSuperimposed.root");
+    TFile::Open("../plots/cutAndCount/1DFigureOfMerit.root");
+    TFile::Open("../plots/cutAndCount/1DFrom2DProjection.root");
+    TFile::Open("../plots/cutAndCount/2D.root");
+    TFile::Open("../plots/cutAndCount/2DSuperimposed.root");
+    new TBrowser();
+}
+
