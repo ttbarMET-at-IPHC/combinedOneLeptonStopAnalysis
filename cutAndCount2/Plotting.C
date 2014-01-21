@@ -51,7 +51,7 @@ bool Selector_presel()
     if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0))     return false; 
 
     // Apply vetos
-    if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto)) return false;     // TODO : check this is the good way to do this
+    if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
 
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
@@ -103,6 +103,17 @@ bool Selector_SR4() { return Selector_SR(4); }
 bool Selector_SR5() { return Selector_SR(5); }
 bool Selector_SR6() { return Selector_SR(6); }
 
+bool Selector_MTAnalysis()
+{
+    if (myEventPointer->MT              < 120) return false;
+    if (myEventPointer->MET             < 200) return false;
+    //if (myEventPointer->MT2W            < 200) return false;
+    if (myEventPointer->deltaPhiMETJets < 0.8) return false;
+    if (myEventPointer->hadronicChi2    > 5) return false;
+
+    return Selector_presel();
+}
+
 // #########################################################################
 //                          Others tools/stuff
 // #########################################################################
@@ -111,10 +122,11 @@ void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vec
 float stopCrossSection(float inputMass);
 void printProgressBar(int current, int max);
 
- 
+/* 
 void optimizeCuts(vector< vector<float> > listBackground, vector< vector<float> > listSignal);
 void optimizeCutsTriangular(vector< vector<float> > listBackground, vector< vector<float> > listSignal);
 void optimizeCutsTriangular2(vector< vector<float> > listBackground, vector< vector<float> > listSignal);
+*/
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
@@ -149,9 +161,6 @@ int main (int argc, char *argv[])
   // ##########################
   // ##   Create Variables   ##
   // ##########################
-
-
-     Float_t HTPlusLeptonPtPlusMET;              // HT + pT(leading lepton) + MET
 
      screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY=true");
      screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY=true");
@@ -280,6 +289,9 @@ int main (int argc, char *argv[])
   vector< vector<float> > listBackground;
   vector< vector<float> > listSignal;
 
+  float yieldSignalMTAnalysis = 0.0; 
+  float yieldBackgroundMTAnalysis = 0.0; 
+
   for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
   {
      string currentDataset = datasetsList[d];
@@ -297,7 +309,6 @@ int main (int argc, char *argv[])
   // ##        Run over the events         ##
   // ########################################
 
-      float weight_lumi = 0.0;
       for (int i = 0 ; i < theTree->GetEntries() ; i++)
       //for (int i = 0 ; i < 20000; i++)
       {
@@ -339,7 +350,10 @@ int main (int argc, char *argv[])
           values.push_back(myEvent.HTRatio);
           values.push_back(weight);
 
-          if ((currentDataset == "T2tt") && (myEvent.mStop == 550) && (myEvent.mNeutralino == 300)) listSignal.push_back(values);
+          float stopMassForTest = 350;
+          float neutralinoMassForTest = 100;
+
+          if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
           else if  (currentDataset != "T2tt")                       listBackground.push_back(values);
 
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
@@ -348,6 +362,15 @@ int main (int argc, char *argv[])
               screwdriver.AutoFillProcessClass("signal_450_100",weight);
           if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_650_100",weight);
+
+          if (Selector_MTAnalysis())
+          {
+                if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest))
+                    yieldSignalMTAnalysis += weight;
+           else if (currentDataset != "T2tt")
+                    yieldBackgroundMTAnalysis += weight;
+
+          }
       } 
       
       cout << endl;
@@ -370,6 +393,13 @@ int main (int argc, char *argv[])
   cout << "   │   Plot generation completed  │  " << endl;
   cout << "   └──────────────────────────────┘  " << endl; 
   cout << endl;
+
+  float FOMMTAnalysis = yieldSignalMTAnalysis / sqrt(yieldBackgroundMTAnalysis + 0.15*0.15*yieldBackgroundMTAnalysis*yieldBackgroundMTAnalysis);
+  if (yieldBackgroundMTAnalysis < 1) FOMMTAnalysis = yieldSignalMTAnalysis / sqrt(1.0 + 0.15*0.15);
+  //if (yieldSignalMTAnalysis < 3) FOMMTAnalysis = 0;
+
+  cout << "MT analysis yields (sig, bkg) : (" << yieldSignalMTAnalysis << "," << yieldBackgroundMTAnalysis << ")" << endl;
+  cout << "                        FOM   :  " << FOMMTAnalysis << endl;
 
   //optimizeCuts(listBackground,listSignal);
   //optimizeCutsTriangular(listBackground,listSignal);
@@ -452,7 +482,7 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts)
 {
-    float yield;
+    float yield = 0.0;
 
     for (unsigned int evt = 0 ; evt < listEvent.size() ; evt++)
     {
@@ -475,19 +505,7 @@ float getYield(vector< vector<float> > listEvent, vector<float> cuts)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
 void optimizeCutsTriangular(vector< vector<float> > listBackground, vector< vector<float> > listSignal)
 {
  
@@ -687,7 +705,7 @@ void optimizeCuts(vector< vector<float> > listBackground, vector< vector<float> 
 
 
 }
-
+*/
 void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table)
 {
     string varUsedToGetYields = "BDTOutputAdaBoostNoWTag";
