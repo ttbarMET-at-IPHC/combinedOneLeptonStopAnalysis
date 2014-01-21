@@ -27,7 +27,7 @@ using namespace theDoctor;
 // BabyTuple format and location
 
 //#define FOLDER_BABYTUPLES "../store/babyTuples_1102/"
-#define FOLDER_BABYTUPLES "../babySkimmer/skimmedBabyTuples/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_1102_skimmed/"
 #include "Reader.h"
 babyEventSkimmed* myEventPointer;
 

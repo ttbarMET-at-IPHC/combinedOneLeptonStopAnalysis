@@ -14,7 +14,7 @@ CXXFLAGS      += $(ROOTCFLAGS) -I./
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
-LDFLAGS       += -l:`pwd`/.vectorDictionnary_C.so 
+LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
 LDFLAGS       += -I ../sonicScrewdriver -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 
 
@@ -27,10 +27,10 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
 
-all: .vectorDictionnary_C.so Plotting
+all: ../.vectorDictionnary_C.so Plotting
 
-.vectorDictionnary_C.so: .vectorDictionnary.C
-	root -l -L .vectorDictionnary.C+
+../.vectorDictionnary_C.so: ../.vectorDictionnary.C
+	cd ..; root -l -L .vectorDictionnary.C+
 
 %.o: %.c
 	$(CXX) $(CXXFLAGS) -c $<
