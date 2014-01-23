@@ -47,12 +47,12 @@
      isData = 1 for data; = 0  for MC
 
 -->
-<!--
 <d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
-    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_July13-v1/store/synchro/our*.root" />
--->
-<!-- Signals -->
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root"
+/>
 
+<!-- Signals -->
+<!--
 <d  name="T2bw-025_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_withLSP0/T2bw_x-025_*/*.root" />
 <d  name="T2bw-050_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
@@ -78,7 +78,7 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2tt_noLSP0/*/*.root" />
 <d  name="T2tt_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2tt_withLSP0/*/*.root" />
-
+-->
 <!-- ttbar -->
 
 <!--

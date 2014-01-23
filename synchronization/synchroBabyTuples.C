@@ -16,7 +16,7 @@ using namespace theDoctor;
 #include "../babyReader/Reader_prefinal1024.h"
 #include "../microTupling/formats/Synchro1025.h"
 
-#define INPUT_IPHC "synchronizationBaby1102.root"
+#define INPUT_IPHC "synchronizationBaby0123.root"
 #define INPUT_FNAL "../store/microTuples_Synchro1025/fnal.root"
 
 bool inclusiveChannelSelector() { return true; }
@@ -90,10 +90,10 @@ int main (int argc, char *argv[])
 	 mySonic_jets.AddChannel("inclusiveChannel","",&inclusiveChannelSelector);
   	 
   	 mySonic.Create1DHistos();
-     mySonic.SchedulePlots("1DSuperpRenorm");
+     mySonic.SchedulePlots("1DSuperimposed");
          
    	 mySonic_jets.Create1DHistos();
-     mySonic_jets.SchedulePlots("1DSuperpRenorm");
+     mySonic_jets.SchedulePlots("1DSuperimposed");
 
   // #################################
   // ##        Fill the map         ##
@@ -114,7 +114,6 @@ int main (int argc, char *argv[])
      vector<int> eventsIPHC;
      for (int i = 0 ; i < theTreeIPHC->GetEntries() ; i++) { theTreeIPHC->GetEntry(i); eventsIPHC.push_back(myEventIPHC.event); }
 
-         int nReject = 0;
      vector<int> eventsFNAL;
      for (int i = 0 ; i < theTreeFNAL->GetEntries() ; i++) 
      { 
@@ -123,7 +122,7 @@ int main (int argc, char *argv[])
          eventsFNAL.push_back(myEventFNAL.event);
 
          int eventIPHC = -1;
-         for (int j = 0 ; j < eventsIPHC.size() ; j++)
+         for (unsigned int j = 0 ; j < eventsIPHC.size() ; j++)
          {
              if (eventsIPHC[j] == myEventFNAL.event) { eventIPHC = j; break; }
          }
@@ -156,8 +155,6 @@ int main (int argc, char *argv[])
          tauVeto    = (myEventFNAL.tauVeto      - myEventIPHC.tauVeto          );      
 
          mySonic.AutoFillProcessClass("diff");
-
-         cout << "Chi2 : " << myEventFNAL.hadronicChi2      - myEventIPHC.hadronicChi2        << endl;
 
          METup      = (myEventFNAL.MET_up       - myEventIPHC.MET_JESup       ) / myEventFNAL.MET_up      ;
          int jSelect = 0;
@@ -205,8 +202,8 @@ int main (int argc, char *argv[])
      mySonic.MakePlots();
      mySonic_jets.MakePlots();
      cout << "   > Saving plots..." << endl;
-     mySonic.WritePlots("../plots/checkBabySynchro/","");
-     mySonic_jets.WritePlots("../plots/checkBabySynchro_jets/","");
+     mySonic.WritePlots("../plots/checkBabySynchro/");
+     mySonic_jets.WritePlots("../plots/checkBabySynchro_jets/");
 
 
      return (0);

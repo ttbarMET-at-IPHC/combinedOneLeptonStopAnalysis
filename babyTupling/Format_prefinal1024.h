@@ -738,7 +738,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.M3b_JESup                       = sel.M3b();
     myEvent.Mlb_JESup                       = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
     myEvent.Mlb_hemi_JESup                  = (myEvent.leadingLepton + sel.bJetClosestToLeadingLepton()).M();
-    myEvent.HTPlusLeptonPtPlusMET_JESup     = myEvent.HT_JESup + myEvent.leadingLeptonPt_JESup + myEvent.MET_JESup;
+    myEvent.HTPlusLeptonPtPlusMET_JESup     = myEvent.HT_JESup + myEvent.leadingLeptonPt + myEvent.MET_JESup;
     myEvent.nJets_JESup                     = sel.GetJetsForAna().size();
 
     sel.doObjectSelection(runningOnData,-1);
@@ -760,7 +760,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.M3b_JESdown                     = sel.M3b();
     myEvent.Mlb_JESdown                     = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
     myEvent.Mlb_hemi_JESdown                = (myEvent.leadingLepton + sel.bJetClosestToLeadingLepton()).M();
-    myEvent.HTPlusLeptonPtPlusMET_JESdown   = myEvent.HT_JESdown + myEvent.leadingLeptonPt_JESdown + myEvent.MET_JESdown;
+    myEvent.HTPlusLeptonPtPlusMET_JESdown   = myEvent.HT_JESdown + myEvent.leadingLeptonPt + myEvent.MET_JESdown;
     myEvent.nJets_JESdown                   = sel.GetJetsForAna().size();
 
     // ###############################
