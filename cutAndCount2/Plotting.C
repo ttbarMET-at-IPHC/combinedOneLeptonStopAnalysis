@@ -56,6 +56,9 @@ bool Selector_presel()
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
 
+    if (myEvent.deltaPhiMETJets < 0.8) return false;
+    if (myEvent.hadronicChi2    > 5) return false;
+
     return true; 
 }
 
@@ -106,8 +109,8 @@ bool Selector_SR6() { return Selector_SR(6); }
 bool Selector_MTAnalysis()
 {
     if (myEventPointer->MT              < 120) return false;
-    if (myEventPointer->MET             < 200) return false;
-    //if (myEventPointer->MT2W            < 200) return false;
+    if (myEventPointer->MET             < 300) return false;
+    if (myEventPointer->MT2W            < 200) return false;
     if (myEventPointer->deltaPhiMETJets < 0.8) return false;
     if (myEventPointer->hadronicChi2    > 5) return false;
 
@@ -178,6 +181,8 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    25,0,500,       &(myEvent.M3b),                  "");
      screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
+     float METoverHT;
+     screwdriver.AddVariable("METoverHT",      "MET / H_{T}",             "",       20,0,5,         &(METoverHT),                    "");
 
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
 
@@ -267,6 +272,10 @@ int main (int argc, char *argv[])
      screwdriver.SchedulePlots("1DStack");
      screwdriver.SchedulePlots("2D");
      screwdriver.SchedulePlots("2DSuperimposed");
+     screwdriver.SchedulePlots("1DFigureOfMerit","var=METoverSqrtHT,cutType=keepHighValues");
+     screwdriver.SchedulePlots("1DFigureOfMerit","var=METoverHT,cutType=keepHighValues");
+     screwdriver.SchedulePlots("1DFigureOfMerit","var=MET,cutType=keepHighValues");
+     screwdriver.SchedulePlots("1DFigureOfMerit","var=HT,cutType=keepHighValues");
 
      // Config plots
 
@@ -337,6 +346,8 @@ int main (int argc, char *argv[])
 
           deltaM = myEvent.mStop - myEvent.mNeutralino;
 
+          METoverHT = myEvent.MET / myEvent.HT;
+
           // Fill all the variables with autoFill-mode activated
           if (currentDataset != "T2tt")
               screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
@@ -350,7 +361,7 @@ int main (int argc, char *argv[])
           values.push_back(myEvent.HTRatio);
           values.push_back(weight);
 
-          float stopMassForTest = 350;
+          float stopMassForTest = 450;
           float neutralinoMassForTest = 100;
 
           if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);

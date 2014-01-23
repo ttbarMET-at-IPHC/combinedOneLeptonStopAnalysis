@@ -4,19 +4,17 @@ SrcSuf        = C
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
 
-# Linux with egcs
 DEFINES       = 
 
 CXX           = g++
 CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
-CXXFLAGS      += $(ROOTCFLAGS) -I./
+CXXFLAGS      += $(ROOTCFLAGS) -I./ -I../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
 LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
-LDFLAGS       += -I ../sonicScrewdriver -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
-
+LDFLAGS       += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 
 SOFLAGS       = -shared
 LIBS          = 
