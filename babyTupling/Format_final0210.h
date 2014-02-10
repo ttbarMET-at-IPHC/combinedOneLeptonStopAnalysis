@@ -178,6 +178,10 @@ typedef struct
     vector<TLorentzVector> nonSelectedLeptons;              // p4 of the non selected leptons
     vector<Short_t>        nonSelectedLeptonsPDGId;         // pdgid of the non selected leptons 
 
+        // Raw MET (used as a cross check for when applying MET filters after production)
+
+    Float_t rawPFMET;                           // Raw MET from PF-based algorithm 
+
         // Infos for PDF uncertainties
    
     Float_t x_firstIncomingParton;              // Momentum fraction carried by the first incoming parton
@@ -351,6 +355,8 @@ void ProofJob::InitializeBranches(TTree* theTree, babyEvent* myEvent)
     
     theTree->Branch("nonSelectedLeptons",          "std::vector<TLorentzVector>",   &(myEvent->nonSelectedLeptons));
     theTree->Branch("nonSelectedLeptonsPDGId",     "std::vector<Short_t>",          &(myEvent->nonSelectedLeptonsPDGId));
+    
+    theTree->Branch("rawPFMET",                     &(myEvent->rawPFMET));
 
     theTree->Branch("x_firstIncomingParton",        &(myEvent->x_firstIncomingParton));       
     theTree->Branch("x_secondIncomingParton",       &(myEvent->x_secondIncomingParton));      
@@ -544,10 +550,17 @@ Bool_t ProofJob::Process(Long64_t entry)
 
     // Pile-up
 
-    if (runningOnData)
-        myEvent.numberOfTruePU = -1.0;
+    // Don't take PU weight into account for data and signal (signal is Fastsim)
+    if ((runningOnData)
+    ||  (datasetName.find("T2tt") != string::npos) 
+    ||  (datasetName.find("T2bw") != string::npos))
+    {    
+        myEvent.numberOfTruePU = 1.0;
+    }
     else
+    {
         myEvent.numberOfTruePU = sel.getTnpv();
+    }
 
     myEvent.numberOfPrimaryVertices = sel.GetVertex().size();;
     myEvent.weightPileUp = sel.getPileUpWeight(myEvent.numberOfTruePU,runningOnData);
@@ -751,7 +764,9 @@ Bool_t ProofJob::Process(Long64_t entry)
         myEvent.nonSelectedLeptonsPDGId.push_back(goodMuons[i].charge * (-15));
     }
 
-
+        // Raw MET
+        
+    myEvent.rawPFMET = sel.rawMet();
 
         // PDF infos
 
