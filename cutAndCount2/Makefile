@@ -25,7 +25,17 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
 
-all: ../.vectorDictionnary_C.so Plotting
+DEFAULT_FILE  = Plotting
+
+all: compile run browse 
+	
+compile: ../.vectorDictionnary_C.so $(DEFAULT_FILE)
+
+run:
+	./$(DEFAULT_FILE)
+
+browse:
+	root -l -X .plots
 
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
 	cd ..; root -l -L .vectorDictionnary.C+
