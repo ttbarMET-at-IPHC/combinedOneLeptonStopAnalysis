@@ -35,7 +35,6 @@ void printBoxedMessage(string message);
 void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table);
 void printProgressBar(int current, int max);
 
-
 // #########################################################################
 //                          Region selectors
 // #########################################################################
@@ -61,11 +60,32 @@ bool Selector_presel()
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
 
-    //if (myEvent.deltaPhiMETJets < 0.8) return false;
-    //if (myEvent.hadronicChi2    > 5) return false;
+    if (myEvent.deltaPhiMETJets < 0.8) return false;
+    if (myEvent.hadronicChi2    > 5) return false;
 
     return true; 
 }
+
+bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, bool enableDeltaPhiAndChi2Cuts)
+{
+    if (myEventPointer->METoverSqrtHT < cutMEToverSqrtHT) return false;
+    if (myEventPointer->MT            < cutMT)            return false;
+    if (myEventPointer->MT2W          < cutMT2W)          return false;
+    
+    if (enableDeltaPhiAndChi2Cuts)
+    {
+        if (myEventPointer->deltaPhiMETJets < 0.8) return false;
+        if (myEventPointer->hadronicChi2    > 5)   return false;
+    }
+
+    return Selector_presel();
+}
+
+bool Selector_cutAndCount_highDeltaMTight() { return Selector_cutAndCount(15,190,240,false); }
+bool Selector_cutAndCount_highDeltaMLoose() { return Selector_cutAndCount(13,170,220,false); }
+
+bool Selector_cutAndCount_lowDeltaMTight() { return Selector_cutAndCount(10,140,180,true); }
+bool Selector_cutAndCount_lowDeltaMLoose() { return Selector_cutAndCount(7,140,120,true);  }
 
 bool Selector_MTAnalysis()
 {
@@ -81,8 +101,8 @@ bool Selector_MTAnalysis()
     //if (myEventPointer->MT2W            < 200) return false;
 
     // For mStop = 550 ; 650 ; 750
-    if (myEventPointer->MET             < 300) return false;
-    if (myEventPointer->MT2W            < 200) return false;
+    //if (myEventPointer->MET             < 300) return false;
+    //if (myEventPointer->MT2W            < 200) return false;
 
     return Selector_presel();
 }
@@ -93,7 +113,7 @@ bool Selector_MTAnalysis()
 
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
-vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vector<float> > listBackground2,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
+vector<float> optimizeCuts(vector< vector<float> > listBackground,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
 
 // #########################################################################
 //                              Main function
@@ -159,19 +179,23 @@ int main (int argc, char *argv[])
      screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
              screwdriver.AddDataset("others",   "others", 0, 0);
 
-     //screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
+     screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
      
              screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
-     screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",             "signal",COLORPLOT_AZURE);
-     screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",             "signal",kCyan-3);
-     screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",             "signal",COLORPLOT_GREEN);
+     //screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",             "signal",COLORPLOT_AZURE);
+     //screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",             "signal",kCyan-3);
+     //screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",             "signal",COLORPLOT_GREEN);
 
   // ##########################
   // ##    Create Regions    ##
   // 
   // ##########################
 
-     screwdriver.AddRegion("presel",             "Preselection",               &Selector_presel);
+     screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
+     screwdriver.AddRegion("CC_highDM_Tight",    "Cut&Count high#DeltaM Tight",  &Selector_cutAndCount_highDeltaMTight);
+     screwdriver.AddRegion("CC_highDM_Loose",    "Cut&Count high#DeltaM Loose",  &Selector_cutAndCount_highDeltaMLoose);
+     screwdriver.AddRegion("CC_lowDM_Tight",     "Cut&Count low#DeltaM  Tight",  &Selector_cutAndCount_lowDeltaMTight);
+     screwdriver.AddRegion("CC_lowDM_Loose",     "Cut&Count low#DeltaM  Loose",  &Selector_cutAndCount_lowDeltaMLoose);
 
   // ##########################
   // ##   Create Channels    ##
@@ -189,24 +213,6 @@ int main (int argc, char *argv[])
      // Create histograms
      screwdriver.Create1DHistos();
      screwdriver.Add2DHisto("mStop","mNeutralino");
-     screwdriver.Add2DHisto("deltaM","MET");
-     screwdriver.Add2DHisto("deltaM","MT");
-     screwdriver.Add2DHisto("deltaM","deltaPhiMETJets");
-     screwdriver.Add2DHisto("deltaM","MT2W");
-     screwdriver.Add2DHisto("deltaM","HTratio");
-     screwdriver.Add2DHisto("deltaM","leadingBPt");
-     screwdriver.Add2DHisto("deltaM","METoverSqrtHT");
-     screwdriver.Add2DHisto("deltaM","HTLeptonPtMET");
-     
-     screwdriver.Add2DHisto("MET","MT");
-     screwdriver.Add2DHisto("MET","MT2W");
-
-     screwdriver.Add2DHisto("METoverSqrtHT","MT");
-     screwdriver.Add2DHisto("METoverSqrtHT","MT2W");
-     screwdriver.Add2DHisto("METoverSqrtHT","HTLeptonPtMET");
-     screwdriver.Add2DHisto("MT","MT2W");
-     screwdriver.Add2DHisto("MT","HTLeptonPtMET");
-     screwdriver.Add2DHisto("MT2W","HTLeptonPtMET");
 
      screwdriver.SetGlobalBoolOption  ("1DSuperimposed",   "includeSignal",                   true   );
 
@@ -224,7 +230,6 @@ int main (int argc, char *argv[])
      screwdriver.SchedulePlots("2D");
      screwdriver.SchedulePlots("2DSuperimposed");
      screwdriver.SchedulePlots("1DFigureOfMerit","var=METoverSqrtHT,cutType=keepHighValues");
-     screwdriver.SchedulePlots("1DFigureOfMerit","var=METoverHT,cutType=keepHighValues");
 
      // Config plots
 
@@ -245,11 +250,7 @@ int main (int argc, char *argv[])
   cout << "   > Running on dataset : " << endl;
 
   vector< vector<float> > listBackground;
-  vector< vector<float> > listBackground2;
   vector< vector<float> > listSignal;
-
-  float yieldSignalMTAnalysis = 0.0; 
-  float yieldBackgroundMTAnalysis = 0.0; 
 
   for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
   {
@@ -297,10 +298,11 @@ int main (int argc, char *argv[])
           deltaM = myEvent.mStop - myEvent.mNeutralino;
 
           // Fill all the variables with autoFill-mode activated
-          if (currentDataset != "T2tt")
+          //if (currentDataset != "T2tt")
               screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
           // Store stuff for cut optimization
+          /*
           vector<float> values;
           values.push_back(myEvent.METoverSqrtHT);
           values.push_back(myEvent.MT);
@@ -309,31 +311,24 @@ int main (int argc, char *argv[])
           values.push_back(myEvent.HTRatio);
           values.push_back(weight);
 
-          float stopMassForTest = 750;
-          float neutralinoMassForTest = 100;
+          float stopMassForTest = 400;
+          float neutralinoMassForTest = 200;
 
           if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
           else if  (currentDataset != "T2tt")
           {
-              if (currentProcessClass_ == "ttbar_1l") listBackground2.push_back(values);
-              else listBackground.push_back(values);
+              listBackground.push_back(values);
           }
+          */
 
+          /*
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_250_100",weight);
           if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_450_100",weight);
           if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_650_100",weight);
-
-          if (Selector_MTAnalysis())
-          {
-                if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest))
-                    yieldSignalMTAnalysis += weight;
-           else if (currentDataset != "T2tt")
-                    yieldBackgroundMTAnalysis += weight;
-
-          }
+          */
       } 
       
       cout << endl;
@@ -352,8 +347,80 @@ int main (int argc, char *argv[])
   screwdriver.WritePlots("../plots/cutAndCount/");
 
   printBoxedMessage("Plot generation completed");
+
+  // #############################
+  // ##   Post-plotting tests   ##
+  // #############################
+  
   printBoxedMessage("Now computing misc tests ... ");
 
+  vector<string> cutAndCountRegions;
+  cutAndCountRegions.push_back("CC_lowDM_Loose");
+  cutAndCountRegions.push_back("CC_lowDM_Tight");
+  cutAndCountRegions.push_back("CC_highDM_Loose");
+  cutAndCountRegions.push_back("CC_highDM_Tight");
+
+  vector<TH2F*> signalMaps;
+  vector<TH2F*> backgroundMaps;
+  vector<TH2F*> FOMMaps;
+
+  int nBinsX = -1;
+  int nBinsY = -1;
+
+  for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
+  {
+      signalMaps.push_back(screwdriver.get2DHistoClone("mStop","mNeutralino","T2tt",cutAndCountRegions[i],"inclusiveChannel"));
+      backgroundMaps.push_back(screwdriver.get2DCompositeHistoClone("mStop","mNeutralino","2DSumBackground",cutAndCountRegions[i],"inclusiveChannel",""));
+
+      FOMMaps.push_back((TH2F*) signalMaps[i]->Clone());
+      FOMMaps[i]->SetName((string("FOM_")+cutAndCountRegions[i]).c_str());
+
+      if (nBinsX == -1) nBinsX = FOMMaps[i]->GetNbinsX();
+      if (nBinsY == -1) nBinsY = FOMMaps[i]->GetNbinsY();
+
+      float B = backgroundMaps[i]->Integral(0,nBinsX+1,0,nBinsY+1);
+      if (B < 1.0) B = 1.0;
+
+      for (int x = 1 ; x <= nBinsX ; x++)
+      for (int y = 1 ; y <= nBinsY ; y++)
+      {
+          float S = signalMaps[i]->GetBinContent(x,y);
+          float FOM = S / sqrt(B + 0.15*0.15*B*B);
+          FOMMaps[i]->SetBinContent(x,y,FOM);
+      }
+  }
+
+  TH2F* bestFOMMap = (TH2F*) signalMaps[0]->Clone();  bestFOMMap->SetName("bestFOM");
+  TH2F* bestSetMap = (TH2F*) signalMaps[0]->Clone();  bestSetMap->SetName("bestSet");
+  
+  for (int x = 1 ; x <= nBinsX ; x++)
+  for (int y = 1 ; y <= nBinsY ; y++)
+  {
+      float bestFOM = -1.0;
+      int bestSet = 0;
+      for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
+      {
+          float FOM = FOMMaps[i]->GetBinContent(x,y);
+          if (bestFOM < FOM)
+          {
+              bestFOM = FOM;
+              if (bestFOM > 0) bestSet = i+1;
+          }
+      }
+      bestFOMMap->SetBinContent(x,y,bestFOM);
+      bestSetMap->SetBinContent(x,y,bestSet);
+  }
+
+  TFile fOutput("../plots/cutAndCount/customPlots.root","RECREATE");
+  for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
+  {
+      FOMMaps[i]->Write();
+  }
+  bestFOMMap->Write();
+  bestSetMap->Write();
+  fOutput.Close();
+
+  /*
   TH2F* METvsHTforSignal = screwdriver.get2DHistoClone("MET","HT","signal_450_100","presel","inclusiveChannel");
   TH2F* METvsHTforBackgr = screwdriver.get2DCompositeHistoClone("MET","HT","2DSumBackground","presel","inclusiveChannel","");
 
@@ -366,14 +433,16 @@ int main (int argc, char *argv[])
 
   float bestFOM, bestYieldSig, bestYieldBkg;
 
-  bool scenario_3_123[5] = {1,1,1,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listBackground2, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
+  bool scenario_3_123[5] = {1,1,1,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
+  */
+
 
   printBoxedMessage("Program done.");
   return (0);
 }
 
-vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vector<float> > listBackground2, vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg)
+vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg)
 {
     vector<float> bestCuts;
     (*bestFOM)      = 0.0;
@@ -396,24 +465,18 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
     for (cuts[4] = 1.2 ; cuts[4] >= 1.2 ; cuts[4] -= 0.2)
     */ 
     for (cuts[0] = 5   ; cuts[0] <= (use[0] ? 20   : 0  ) ; cuts[0] += 1  ) {
-    for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 300  : 100) ; cuts[1] += 40 ) {
-    for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 300  : 100) ; cuts[2] += 50 ) {
+              printProgressBar(cuts[0]-5,15);
+    for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 300  : 100) ; cuts[1] += 10 ) {
+    for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 300  : 100) ; cuts[2] += 10 ) {
     for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 1100 : 100) ; cuts[3] += 200) {
     for (cuts[4] = 1.2 ; cuts[4] >= (use[4] ? 0    : 1.2) ; cuts[4] -= 0.2)
     {
         float yieldBackground  = getYield(listBackground,cuts);
-        float yieldBackground2 = getYield(listBackground2,cuts);
         float yieldSignal      = getYield(listSignal,cuts);
 
-        float yieldBackgroundTot = yieldBackground + yieldBackground2;
-        if (yieldBackgroundTot < 1) 
-        {
-            yieldBackgroundTot = 1.0;
-            yieldBackground    = 0.5;
-            yieldBackground2   = 0.5;
-        }
+        if (yieldBackground < 1.0) yieldBackground = 1.0;
 
-        float FOM = yieldSignal / sqrt(yieldBackgroundTot + 0.15*0.15*yieldBackground*yieldBackground + 0.30*0.30*yieldBackground2*yieldBackground2);
+        float FOM = yieldSignal / sqrt(yieldBackground + 0.15*0.15*yieldBackground*yieldBackground);
         if (yieldSignal < 3) FOM = 0;
 
         if (FOM > *bestFOM)
@@ -421,7 +484,7 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
             bestCuts        = cuts; 
             (*bestFOM)      = FOM;
             (*bestYieldSig) = yieldSignal;
-            (*bestYieldBkg) = yieldBackgroundTot;
+            (*bestYieldBkg) = yieldBackground;
         }
         
     } } } } }
