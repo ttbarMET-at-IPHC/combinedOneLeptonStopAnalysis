@@ -6,7 +6,7 @@
     TFile::Open("../plots/cutAndCount/1DFrom2DProjection.root");
     TFile::Open("../plots/cutAndCount/2D.root");
     TFile::Open("../plots/cutAndCount/2DSuperimposed.root");
-    TFile::Open("../plots/cutAndCount/customPlots.root");
+    TFile::Open("../plots/cutAndCount/custom.root");
     new TBrowser();
 }
 

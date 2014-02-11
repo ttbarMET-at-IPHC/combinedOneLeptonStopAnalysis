@@ -114,6 +114,7 @@ bool Selector_MTAnalysis()
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 vector<float> optimizeCuts(vector< vector<float> > listBackground,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
+void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText);
 
 // #########################################################################
 //                              Main function
@@ -162,8 +163,6 @@ int main (int argc, char *argv[])
 
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),                "");
      screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
-     float deltaM;
-     screwdriver.AddVariable("deltaM",         "#Delta M",                "GeV",    16,25,825,       &(deltaM),         "");
 
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
@@ -280,26 +279,31 @@ int main (int argc, char *argv[])
 
           // Keep only events that pass preselection
           if (!Selector_presel()) continue;
-  
+ 
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi();
+          
+          // Apply PU weight except for signal
+          if (currentDataset != "T2tt")  weight *= myEvent.weightPileUp;
+          
+          // For ttbar, apply topPt reweighting
+          if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
 
-          // Don't take x-sec into account for signal
-          //if ((currentDataset == "T2tt") || (currentDataset == "T2bw-050"))
-          //    weight = 0.01 * screwdriver.GetLumi() / myEvent.numberOfInitialEvents;
+          // For signal, apply isr reweighting
+          if (currentDataset == "T2tt")  weight *= myEvent.weightISRmodeling;
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
           if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
 
+          // Dirty overflow management
           if (myEvent.hadronicChi2  >= 20) myEvent.hadronicChi2  = 19.99;
           if (myEvent.METoverSqrtHT >= 32) myEvent.METoverSqrtHT = 31.99;
 
-          deltaM = myEvent.mStop - myEvent.mNeutralino;
-
           // Fill all the variables with autoFill-mode activated
           //if (currentDataset != "T2tt")
-              screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+          
+          screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
           // Store stuff for cut optimization
           /*
@@ -411,13 +415,13 @@ int main (int argc, char *argv[])
       bestSetMap->SetBinContent(x,y,bestSet);
   }
 
-  TFile fOutput("../plots/cutAndCount/customPlots.root","RECREATE");
+  TFile fOutput("../plots/cutAndCount/custom.root","RECREATE");
   for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
   {
-      FOMMaps[i]->Write();
+      formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], false);
   }
-  bestFOMMap->Write();
-  bestSetMap->Write();
+  formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",false);
+  formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"Best set of cuts",true);
   fOutput.Close();
 
   /*
@@ -440,6 +444,43 @@ int main (int argc, char *argv[])
 
   printBoxedMessage("Program done.");
   return (0);
+}
+
+void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText)
+{
+    Plot thePlot(name,"custom",screwdriver->GetGlobalOptions());
+    thePlot.SetParameter("name",name);
+    thePlot.AddToInPlotInfo(comment);
+
+    thePlot.getCanvas()->SetRightMargin(0.1);
+	theHisto->GetXaxis()->SetTitle("m_{#tilde{t}} [GeV]");
+	theHisto->GetXaxis()->SetTitleFont(PLOTDEFAULTSTYLES_FONT+2);
+	theHisto->GetXaxis()->SetTitleSize(0.05);
+	theHisto->GetXaxis()->SetTitleOffset(0.9);
+	theHisto->GetXaxis()->SetLabelFont(PLOTDEFAULTSTYLES_FONT+3);
+	theHisto->GetXaxis()->SetLabelSize(22);
+	theHisto->GetYaxis()->SetTitle("m_{#chi^{0}} [GeV]");
+	theHisto->GetYaxis()->SetTitleFont(PLOTDEFAULTSTYLES_FONT+2);
+	theHisto->GetYaxis()->SetTitleSize(0.05);
+	theHisto->GetYaxis()->SetTitleOffset(0.9);
+	theHisto->GetYaxis()->SetLabelFont(PLOTDEFAULTSTYLES_FONT+3);
+	theHisto->GetYaxis()->SetLabelSize(22);
+    theHisto->SetTitle("");
+    theHisto->SetStats(0);
+
+    if (!enableText) theHisto->Draw("COLZ");
+    else             theHisto->Draw("COLZ TEXT");
+    thePlot.Update();
+    TPaletteAxis *pal = (TPaletteAxis*) theHisto->GetListOfFunctions()->FindObject("palette");
+    if (pal != 0) 
+    {
+        pal->SetX1NDC(0.901);
+        pal->SetY1NDC(0.1);
+        pal->SetX2NDC(0.93);
+        pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
+    }
+
+    thePlot.Write("../plots/cutAndCount/","custom",screwdriver->GetGlobalOptions());
 }
 
 vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg)
