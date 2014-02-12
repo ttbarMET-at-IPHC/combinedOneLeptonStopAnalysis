@@ -60,17 +60,18 @@ bool Selector_presel()
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
 
-    if (myEvent.deltaPhiMETJets < 0.8) return false;
-    if (myEvent.hadronicChi2    > 5) return false;
+    //if (myEvent.deltaPhiMETJets < 0.8) return false;
+    //if (myEvent.hadronicChi2    > 5) return false;
 
     return true; 
 }
 
-bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, bool enableDeltaPhiAndChi2Cuts)
+bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, float cutMET, bool enableDeltaPhiAndChi2Cuts, bool enableISRJetRequirement)
 {
     if (myEventPointer->METoverSqrtHT < cutMEToverSqrtHT) return false;
     if (myEventPointer->MT            < cutMT)            return false;
     if (myEventPointer->MT2W          < cutMT2W)          return false;
+    if (myEventPointer->MET           < cutMET)           return false;
     
     if (enableDeltaPhiAndChi2Cuts)
     {
@@ -78,14 +79,32 @@ bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, bo
         if (myEventPointer->hadronicChi2    > 5)   return false;
     }
 
+    if (enableISRJetRequirement)
+    {
+       if (myEventPointer->nJets < 5) return false;
+
+       bool foundISRJet = false;
+       for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
+       {
+          // Check jet is high-pt
+         if ((myEventPointer->jets)[i].Pt() < 200) continue;
+          // Check jet isn't b-tagged
+         if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
+
+         foundISRJet = true;
+       }
+       if (foundISRJet == false) return false;
+    }
+
     return Selector_presel();
 }
 
-bool Selector_cutAndCount_highDeltaMTight() { return Selector_cutAndCount(15,190,240,false); }
-bool Selector_cutAndCount_highDeltaMLoose() { return Selector_cutAndCount(13,170,220,false); }
+bool Selector_cutAndCount_highDeltaM()        { return Selector_cutAndCount(15,190,240,-1,false,false); }
+bool Selector_cutAndCount_mediumDeltaM() { return Selector_cutAndCount(10,140,180,-1,true,false); }
+bool Selector_cutAndCount_lowDeltaM()         { return Selector_cutAndCount(7,140,120,-1,true,true);  }
 
-bool Selector_cutAndCount_lowDeltaMTight() { return Selector_cutAndCount(10,140,180,true); }
-bool Selector_cutAndCount_lowDeltaMLoose() { return Selector_cutAndCount(7,140,120,true);  }
+bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,110,-1,100,true,false);  }
+bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,100,true,false);  }
 
 bool Selector_MTAnalysis()
 {
@@ -191,10 +210,11 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
-     screwdriver.AddRegion("CC_highDM_Tight",    "Cut&Count high#DeltaM Tight",  &Selector_cutAndCount_highDeltaMTight);
-     screwdriver.AddRegion("CC_highDM_Loose",    "Cut&Count high#DeltaM Loose",  &Selector_cutAndCount_highDeltaMLoose);
-     screwdriver.AddRegion("CC_lowDM_Tight",     "Cut&Count low#DeltaM  Tight",  &Selector_cutAndCount_lowDeltaMTight);
-     screwdriver.AddRegion("CC_lowDM_Loose",     "Cut&Count low#DeltaM  Loose",  &Selector_cutAndCount_lowDeltaMLoose);
+     screwdriver.AddRegion("CC_highDM",          "Cut&Count high#DeltaM",        &Selector_cutAndCount_highDeltaM);
+     screwdriver.AddRegion("CC_mediumDM",        "Cut&Count medium#DeltaM",      &Selector_cutAndCount_mediumDeltaM);
+     screwdriver.AddRegion("CC_lowDM",           "Cut&Count low#DeltaM",         &Selector_cutAndCount_lowDeltaM);
+     screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count offShell Tight",     &Selector_cutAndCount_offShellLoose);
+     screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count offShell Loose",     &Selector_cutAndCount_offShellTight);
 
   // ##########################
   // ##   Create Channels    ##
@@ -306,24 +326,20 @@ int main (int argc, char *argv[])
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
           // Store stuff for cut optimization
-          /*
+          
           vector<float> values;
           values.push_back(myEvent.METoverSqrtHT);
           values.push_back(myEvent.MT);
           values.push_back(myEvent.MT2W);
+          values.push_back(myEvent.MET);
           values.push_back(myEvent.HTPlusLeptonPtPlusMET);
-          values.push_back(myEvent.HTRatio);
           values.push_back(weight);
 
-          float stopMassForTest = 400;
-          float neutralinoMassForTest = 200;
+          float stopMassForTest = 300;
+          float neutralinoMassForTest = 100;
 
           if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
-          else if  (currentDataset != "T2tt")
-          {
-              listBackground.push_back(values);
-          }
-          */
+          else if  (currentDataset != "T2tt")  listBackground.push_back(values);
 
           /*
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
@@ -359,10 +375,11 @@ int main (int argc, char *argv[])
   printBoxedMessage("Now computing misc tests ... ");
 
   vector<string> cutAndCountRegions;
-  cutAndCountRegions.push_back("CC_lowDM_Loose");
-  cutAndCountRegions.push_back("CC_lowDM_Tight");
-  cutAndCountRegions.push_back("CC_highDM_Loose");
-  cutAndCountRegions.push_back("CC_highDM_Tight");
+  cutAndCountRegions.push_back("CC_offShell_Loose");
+  cutAndCountRegions.push_back("CC_offShell_Tight");
+  cutAndCountRegions.push_back("CC_lowDM");
+  cutAndCountRegions.push_back("CC_mediumDM");
+  cutAndCountRegions.push_back("CC_highDM");
 
   vector<TH2F*> signalMaps;
   vector<TH2F*> backgroundMaps;
@@ -420,8 +437,9 @@ int main (int argc, char *argv[])
   {
       formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], false);
   }
-  formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",false);
   formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"Best set of cuts",true);
+  gStyle->SetPaintTextFormat("4.1f");
+  formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",true);
   fOutput.Close();
 
   /*
@@ -430,17 +448,22 @@ int main (int argc, char *argv[])
 
   float FOMMTAnalysis = yieldSignalMTAnalysis / sqrt(yieldBackgroundMTAnalysis + 0.15*0.15*yieldBackgroundMTAnalysis*yieldBackgroundMTAnalysis);
   if (yieldBackgroundMTAnalysis < 1) FOMMTAnalysis = yieldSignalMTAnalysis / sqrt(1.0 + 0.15*0.15);
-  //if (yieldSignalMTAnalysis < 3) FOMMTAnalysis = 0;
+  if (yieldSignalMTAnalysis < 3) FOMMTAnalysis = 0;
 
   cout << "MT analysis yields (sig, bkg) : (" << yieldSignalMTAnalysis << "," << yieldBackgroundMTAnalysis << ")" << endl;
   cout << "                        FOM   :  " << FOMMTAnalysis << endl;
+  */
 
   float bestFOM, bestYieldSig, bestYieldBkg;
 
   bool scenario_3_123[5] = {1,1,1,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-  */
 
+  //bool scenario_3_123[5] = {1,1,0,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
+  //cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
+  
+  //bool scenario_3_245[5] = {0,1,0,1,0}; vector<float> cuts_3_245 = optimizeCuts(listBackground, listSignal, scenario_3_245, &bestFOM, &bestYieldSig, &bestYieldBkg  );
+  //cout << "MET,MT - " << cuts_3_245[4] << " ; " << cuts_3_245[1] << " -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
 
   printBoxedMessage("Program done.");
   return (0);
@@ -505,12 +528,12 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
     for (cuts[3] = 100 ; cuts[3] <= 100 ; cuts[3] += 200) {
     for (cuts[4] = 1.2 ; cuts[4] >= 1.2 ; cuts[4] -= 0.2)
     */ 
-    for (cuts[0] = 5   ; cuts[0] <= (use[0] ? 20   : 0  ) ; cuts[0] += 1  ) {
-              printProgressBar(cuts[0]-5,15);
+    for (cuts[0] = 5   ; cuts[0] <= (use[0] ? 20   : 5  ) ; cuts[0] += 1  ) {
+        printProgressBar(cuts[0]-5,15);
     for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 300  : 100) ; cuts[1] += 10 ) {
     for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 300  : 100) ; cuts[2] += 10 ) {
-    for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 1100 : 100) ; cuts[3] += 200) {
-    for (cuts[4] = 1.2 ; cuts[4] >= (use[4] ? 0    : 1.2) ; cuts[4] -= 0.2)
+    for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 500 : 100)  ; cuts[3] += 25) {
+    for (cuts[4] = 100 ; cuts[4] <= (use[4] ? 2100 : 100)  ; cuts[4] += 200)
     {
         float yieldBackground  = getYield(listBackground,cuts);
         float yieldSignal      = getYield(listSignal,cuts);
@@ -544,10 +567,7 @@ float getYield(vector< vector<float> > listEvent, vector<float> cuts)
         bool flagPassSelection = true;
         for (unsigned int i = 0 ; i < event.size()-1 ; i++)
         {
-            if (i < event.size() - 2)
-            {    if (event[i] < cuts[i]) { flagPassSelection = false; break; } }
-            else
-            {    if (event[i] > cuts[i]) { flagPassSelection = false; break; } }
+            if (event[i] < cuts[i]) { flagPassSelection = false; break; }
         }
 
         if (flagPassSelection) yield += event[event.size() - 1];
