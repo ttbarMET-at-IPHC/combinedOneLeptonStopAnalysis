@@ -99,9 +99,9 @@ bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, fl
     return Selector_presel();
 }
 
-bool Selector_cutAndCount_highDeltaM()        { return Selector_cutAndCount(15,190,240,-1,false,false); }
-bool Selector_cutAndCount_mediumDeltaM() { return Selector_cutAndCount(10,140,180,-1,true,false); }
-bool Selector_cutAndCount_lowDeltaM()         { return Selector_cutAndCount(7,140,120,-1,true,true);  }
+bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,190,240,-1,false,false); }
+bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,180,-1,true,false); }
+bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(7,140,120,-1,true,true);  }
 
 bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,110,-1,100,true,false);  }
 bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,100,true,false);  }
@@ -213,8 +213,8 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("CC_highDM",          "Cut&Count high#DeltaM",        &Selector_cutAndCount_highDeltaM);
      screwdriver.AddRegion("CC_mediumDM",        "Cut&Count medium#DeltaM",      &Selector_cutAndCount_mediumDeltaM);
      screwdriver.AddRegion("CC_lowDM",           "Cut&Count low#DeltaM",         &Selector_cutAndCount_lowDeltaM);
-     screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count offShell Tight",     &Selector_cutAndCount_offShellLoose);
-     screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count offShell Loose",     &Selector_cutAndCount_offShellTight);
+     screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count offShell Tight",     &Selector_cutAndCount_offShellTight);
+     screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count offShell Loose",     &Selector_cutAndCount_offShellLoose);
 
   // ##########################
   // ##   Create Channels    ##
@@ -456,8 +456,8 @@ int main (int argc, char *argv[])
 
   float bestFOM, bestYieldSig, bestYieldBkg;
 
-  bool scenario_3_123[5] = {1,1,1,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
+  //bool scenario_3_123[5] = {1,1,1,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
+  //cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
 
   //bool scenario_3_123[5] = {1,1,0,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   //cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
@@ -502,6 +502,11 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
         pal->SetX2NDC(0.93);
         pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
     }
+
+    TLine* line1 = new TLine(160,-12.5,560,387.5);
+    line1->SetLineWidth(2);
+    line1->SetLineStyle(2);
+    line1->Draw();
 
     thePlot.Write("../plots/cutAndCount/","custom",screwdriver->GetGlobalOptions());
 }
