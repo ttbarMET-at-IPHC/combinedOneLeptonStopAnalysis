@@ -106,6 +106,7 @@ typedef struct
     Float_t weightPileUp;                       // Weight for PU-reweighting
     Float_t weightISRmodeling;                  // Weight for ISR modeling
     Float_t weightTopPt;                        // Weight for top Pt reweighting
+    Float_t weightTriggerEfficiency;            // Weight for singleLepton trigger efficiency (only for MC)
 
     Float_t weightT2ttLeftHanded;               // Polarization reweighting
     Float_t weightT2ttRightHanded;              // Polarization reweighting
@@ -297,6 +298,7 @@ void ProofJob::InitializeBranches(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("weightPileUp",                                 &(myEvent->weightPileUp));
     theTree->Branch("weightISRmodeling",                            &(myEvent->weightISRmodeling));
     theTree->Branch("weightTopPt",                                  &(myEvent->weightTopPt));
+    theTree->Branch("weightTriggerEfficiency",                      &(myEvent->weightTriggerEfficiency));
     theTree->Branch("weightT2ttLeftHanded",                         &(myEvent->weightT2ttLeftHanded));
     theTree->Branch("weightT2ttRightHanded",                        &(myEvent->weightT2ttRightHanded));
     theTree->Branch("weightT2bwPolarization_ss",                    &(myEvent->weightT2bwPolarization_ss));
@@ -368,6 +370,7 @@ void ProofJob::InitializeBranches(TTree* theTree, babyEvent* myEvent)
 
 #define PI 3.141592653
 #include "polarizationReweighting.C"
+#include "triggerEfficiencyReweighting.C"
 bool badSignalEventFilter(string datasetName,StopMCinfo* stopMCinfo);
 float stopCrossSection(float inputMass);
 
@@ -491,8 +494,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.HTPlusLeptonPtPlusMET = myEvent.HT + myEvent.leadingLeptonPt + myEvent.MET;
     TLorentzVector leadingBJet    = sel.leadingBJet();
     myEvent.leadingBPt            = leadingBJet.Pt();
-    if (myEvent.leadingBPt != 0) myEvent.deltaRLeptonLeadingB  = leadingBJet.DeltaR(myEvent.leadingLepton);
-    else                         myEvent.deltaRLeptonLeadingB  = 999.0;
+    myEvent.deltaRLeptonLeadingB  = leadingBJet.DeltaR(myEvent.leadingLepton);
     myEvent.leadingJetPt          = sel.leadingJet().P();
     myEvent.M3b                   = sel.M3b();
     myEvent.Mlb                   = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
@@ -600,6 +602,15 @@ Bool_t ProofJob::Process(Long64_t entry)
 
         myEvent.weightTopPt = exp(0.156 - 0.00137 * TopPt); 
     }
+    
+    // Trigger efficiency weight
+
+    if (abs(myEvent.leadingLeptonPDGId) == 11) 
+        myEvent.weightTriggerEfficiency = singleLeptonTriggerWeight(11,myEvent.leadingLepton.Pt(),myEvent.leadingLepton.Eta());
+    else if ((abs(myEvent.leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() > 25))
+        myEvent.weightTriggerEfficiency = singleLeptonTriggerWeight(13,myEvent.leadingLepton.Pt(),myEvent.leadingLepton.Eta());
+    else
+        myEvent.weightTriggerEfficiency = crossTriggerWeight(myEvent.leadingLepton.Pt(),myEvent.jets[0].Pt(),myEvent.jets[1].Pt(),myEvent.jets[2].Pt());
 
     // Signal polarization
 
@@ -749,7 +760,7 @@ Bool_t ProofJob::Process(Long64_t entry)
         if (goodElectronIsSelected) continue;
 
         myEvent.nonSelectedLeptons.push_back(goodElectrons[i].p4);
-        myEvent.nonSelectedLeptonsPDGId.push_back(goodElectrons[i].charge * (-13));
+        myEvent.nonSelectedLeptonsPDGId.push_back(goodElectrons[i].charge * (-11));
     }
 
     for (unsigned i = 0 ; i < goodMuons.size() ; i++)
@@ -761,7 +772,7 @@ Bool_t ProofJob::Process(Long64_t entry)
         if (goodMuonIsSelected) continue;
 
         myEvent.nonSelectedLeptons.push_back(goodMuons[i].p4);
-        myEvent.nonSelectedLeptonsPDGId.push_back(goodMuons[i].charge * (-15));
+        myEvent.nonSelectedLeptonsPDGId.push_back(goodMuons[i].charge * (-13));
     }
 
         // Raw MET
@@ -792,8 +803,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.METoverSqrtHT_JESup             = myEvent.MET_JESup / sqrt(myEvent.HT_JESup);
     leadingBJet = sel.leadingBJet();
     myEvent.leadingBPt_JESup                = leadingBJet.Pt();
-    if (myEvent.leadingBPt_JESup != 0) myEvent.deltaRLeptonLeadingB_JESup = leadingBJet.DeltaR(myEvent.leadingLepton);
-    else                               myEvent.deltaRLeptonLeadingB_JESup = 999.0;
+    myEvent.deltaRLeptonLeadingB_JESup = leadingBJet.DeltaR(myEvent.leadingLepton);
     myEvent.leadingJetPt_JESup              = sel.leadingJet().P();
     myEvent.M3b_JESup                       = sel.M3b();
     myEvent.Mlb_JESup                       = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
@@ -814,8 +824,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.METoverSqrtHT_JESdown           = myEvent.MET_JESdown / sqrt(myEvent.HT_JESdown);
     leadingBJet = sel.leadingBJet();
     myEvent.leadingBPt_JESdown              = leadingBJet.Pt();
-    if (myEvent.leadingBPt_JESdown != 0) myEvent.deltaRLeptonLeadingB_JESdown = leadingBJet.DeltaR(myEvent.leadingLepton);
-    else                                 myEvent.deltaRLeptonLeadingB_JESdown = 999.0;
+    myEvent.deltaRLeptonLeadingB_JESdown = leadingBJet.DeltaR(myEvent.leadingLepton);
     myEvent.leadingJetPt_JESdown            = sel.leadingJet().P();
     myEvent.M3b_JESdown                     = sel.M3b();
     myEvent.Mlb_JESdown                     = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
