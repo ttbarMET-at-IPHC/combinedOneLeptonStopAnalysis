@@ -37,6 +37,7 @@ babyReader/compile
 babyReader/validation
 babyTupling/ProofLauncher
 babyTupling/proofBox
+babySkimmer/babySkimmer
 cutAndCount/test
 sonicScrewdriver
 sonicScrewdriver_old

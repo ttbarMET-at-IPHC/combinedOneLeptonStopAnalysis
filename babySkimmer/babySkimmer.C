@@ -25,6 +25,7 @@ using namespace std;
 
 #define OUTPUT "output.root"
 
+void printProgressBar(int current, int max);
 
 
 // ###################
