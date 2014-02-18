@@ -106,7 +106,7 @@ typedef struct
     Float_t weightPileUp;                       // Weight for PU-reweighting
     Float_t weightISRmodeling;                  // Weight for ISR modeling
     Float_t weightTopPt;                        // Weight for top Pt reweighting
-    Float_t weightTriggerEfficiency;            // Weight for singleLepton trigger efficiency (only for MC)
+    Float_t weightTriggerEfficiency;            // Weight for singleLepton trigger efficiency
 
     Float_t weightT2ttLeftHanded;               // Polarization reweighting
     Float_t weightT2ttRightHanded;              // Polarization reweighting
@@ -142,6 +142,7 @@ typedef struct
     Float_t METoverSqrtHT_JESup;                // MET/sqrt(HT)                                               (+1sigma JES applied)
     Float_t HTPlusLeptonPtPlusMET_JESup;        // HT + pT(leading lepton) + MET                              (+1sigma JES applied)
     Short_t nJets_JESup;                        // Jet multiplicity with                                      (+1sigma JES applied)
+    Float_t weightTriggerEfficiency_JESup;      // Weight for singleLepton trigger efficiency                 (+1sigma JES applied)
 
     Float_t MET_JESdown;                        // Type-1 - phi-corrected PF MET                              (-1sigma JES applied)
     Float_t MT_JESdown;                         // transverse mass of leading lepton - MET                    (-1sigma JES applied)
@@ -159,6 +160,7 @@ typedef struct
     Float_t METoverSqrtHT_JESdown;              // MET/sqrt(HT)                                               (-1sigma JES applied)
     Float_t HTPlusLeptonPtPlusMET_JESdown;      // HT - pT(leading lepton) - MET                              (-1sigma JES applied)
     Short_t nJets_JESdown;                      // Jet multiplicity with                                      (-1sigma JES applied)
+    Float_t weightTriggerEfficiency_JESdown;    // Weight for singleLepton trigger efficiency                 (-1sigma JES applied)
 
         // CSV reshaping
         
@@ -190,8 +192,6 @@ typedef struct
     Int_t   flavor_firstIncomingParton;         // PDGId of the first incoming parton
     Int_t   flavor_secondIncomingParton;        // PDGId of the second incoming parton
     Float_t scalePDF;                           // The PDF scale
-
-
 
 
 } babyEvent;
@@ -327,6 +327,7 @@ void ProofJob::InitializeBranches(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("METoverSqrtHT_JESup",                          &(myEvent->METoverSqrtHT_JESup));
     theTree->Branch("HTPlusLeptonPtPlusMET_JESup",                  &(myEvent->HTPlusLeptonPtPlusMET_JESup));
     theTree->Branch("nJets_JESup",                                  &(myEvent->nJets_JESup));
+    theTree->Branch("weightTriggerEfficiency_JESup",                &(myEvent->weightTriggerEfficiency_JESup));
     
     theTree->Branch("MET_JESdown",                                  &(myEvent->MET_JESdown));
     theTree->Branch("MT_JESdown",                                   &(myEvent->MT_JESdown));
@@ -344,6 +345,7 @@ void ProofJob::InitializeBranches(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("METoverSqrtHT_JESdown",                        &(myEvent->METoverSqrtHT_JESdown));
     theTree->Branch("HTPlusLeptonPtPlusMET_JESdown",                &(myEvent->HTPlusLeptonPtPlusMET_JESdown));
     theTree->Branch("nJets_JESdown",                                &(myEvent->nJets_JESdown));
+    theTree->Branch("weightTriggerEfficiency_JESdown",              &(myEvent->weightTriggerEfficiency_JESdown));
 
     theTree->Branch("jets_CSV_reshapedUpBC",       "std::vector<Float_t>",          &(myEvent->jets_CSV_reshapedUpBC));
     theTree->Branch("jets_CSV_reshapedDownBC",     "std::vector<Float_t>",          &(myEvent->jets_CSV_reshapedDownBC));
@@ -606,11 +608,17 @@ Bool_t ProofJob::Process(Long64_t entry)
     // Trigger efficiency weight
 
     if (abs(myEvent.leadingLeptonPDGId) == 11) 
-        myEvent.weightTriggerEfficiency = singleLeptonTriggerWeight(11,myEvent.leadingLepton.Pt(),myEvent.leadingLepton.Eta());
-    else if ((abs(myEvent.leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() > 25))
-        myEvent.weightTriggerEfficiency = singleLeptonTriggerWeight(13,myEvent.leadingLepton.Pt(),myEvent.leadingLepton.Eta());
+        myEvent.weightTriggerEfficiency = singleLeptonTriggerWeight(11,myEvent.leadingLepton.Pt(),
+                                                                       myEvent.leadingLepton.Eta());
+    else if ((abs(myEvent.leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() > 26))
+        myEvent.weightTriggerEfficiency = singleLeptonTriggerWeight(13,myEvent.leadingLepton.Pt(),
+                                                                       myEvent.leadingLepton.Eta());
+    else if (myEvent.nJets >= 4)
+        myEvent.weightTriggerEfficiency = crossTriggerWeight(myEvent.leadingLepton.Pt(),
+                                                             myEvent.leadingLepton.Eta(),
+                                                             myEvent.jets[3].Pt());
     else
-        myEvent.weightTriggerEfficiency = crossTriggerWeight(myEvent.leadingLepton.Pt(),myEvent.jets[0].Pt(),myEvent.jets[1].Pt(),myEvent.jets[2].Pt());
+        myEvent.weightTriggerEfficiency = -1.0;
 
     // Signal polarization
 
@@ -811,6 +819,19 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.HTPlusLeptonPtPlusMET_JESup     = myEvent.HT_JESup + myEvent.leadingLeptonPt + myEvent.MET_JESup;
     myEvent.nJets_JESup                     = sel.GetJetsForAna().size();
 
+    if (abs(myEvent.leadingLeptonPDGId) == 11) 
+        myEvent.weightTriggerEfficiency_JESup = singleLeptonTriggerWeight(11,myEvent.leadingLepton.Pt(),
+                                                                             myEvent.leadingLepton.Eta());
+    else if ((abs(myEvent.leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() > 26))
+        myEvent.weightTriggerEfficiency_JESup = singleLeptonTriggerWeight(13,myEvent.leadingLepton.Pt(),
+                                                                             myEvent.leadingLepton.Eta());
+    else if (myEvent.nJets_JESup >= 4)
+        myEvent.weightTriggerEfficiency_JESup = crossTriggerWeight(myEvent.leadingLepton.Pt(),
+                                                                   myEvent.leadingLepton.Eta(),
+                                                                   myEvent.jets[3].Pt());
+    else
+        myEvent.weightTriggerEfficiency_JESup = -1.0;
+
     sel.doObjectSelection(runningOnData,-1);
     sel.FillKinematicP4();
     
@@ -831,6 +852,19 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.Mlb_hemi_JESdown                = (myEvent.leadingLepton + sel.bJetClosestToLeadingLepton()).M();
     myEvent.HTPlusLeptonPtPlusMET_JESdown   = myEvent.HT_JESdown + myEvent.leadingLeptonPt + myEvent.MET_JESdown;
     myEvent.nJets_JESdown                   = sel.GetJetsForAna().size();
+
+    if (abs(myEvent.leadingLeptonPDGId) == 11) 
+        myEvent.weightTriggerEfficiency_JESdown = singleLeptonTriggerWeight(11,myEvent.leadingLepton.Pt(),
+                                                                               myEvent.leadingLepton.Eta());
+    else if ((abs(myEvent.leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() > 26))
+        myEvent.weightTriggerEfficiency_JESdown = singleLeptonTriggerWeight(13,myEvent.leadingLepton.Pt(),
+                                                                               myEvent.leadingLepton.Eta());
+    else if (myEvent.nJets_JESdown >= 4)
+        myEvent.weightTriggerEfficiency_JESdown = crossTriggerWeight(myEvent.leadingLepton.Pt(),
+                                                                     myEvent.leadingLepton.Eta(),
+                                                                     myEvent.jets[3].Pt());
+    else
+        myEvent.weightTriggerEfficiency_JESdown = -1.0;
 
     // ###############################
     // #  Add the event to the tree  #
