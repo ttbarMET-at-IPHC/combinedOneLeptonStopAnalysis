@@ -102,34 +102,32 @@ bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, fl
 bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,190,240,-1,false,false); }
 bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,180,-1,true,false); }
 bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(7,140,120,-1,true,true);  }
-
 bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,110,-1,100,true,false);  }
 bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,100,true,false);  }
 
-bool Selector_MTAnalysis()
+bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
 {
-    if (myEventPointer->MT              < 120) return false;
     if (myEventPointer->deltaPhiMETJets < 0.8) return false;
     if (myEventPointer->hadronicChi2    > 5) return false;
-   
-    // For mStop = 350
-    //if (myEventPointer->MET             < 200) return false;
-
-    // For mStop = 450
-    //if (myEventPointer->MET             < 250) return false;
-    //if (myEventPointer->MT2W            < 200) return false;
-
-    // For mStop = 550 ; 650 ; 750
-    //if (myEventPointer->MET             < 300) return false;
-    //if (myEventPointer->MT2W            < 200) return false;
+    if (myEventPointer->MT              < 120) return false;
+    if (myEventPointer->MET             < METcut) return false;
+    if (useMT2Wcut && (myEventPointer->MT2W < 200)) return false;
 
     return Selector_presel();
 }
 
+bool Selector_MTAnalysis_LM150() { return Selector_MTAnalysis(150,false); }
+bool Selector_MTAnalysis_LM200() { return Selector_MTAnalysis(200,false); }
+bool Selector_MTAnalysis_LM250() { return Selector_MTAnalysis(250,false); }
+bool Selector_MTAnalysis_LM300() { return Selector_MTAnalysis(300,false); }
+bool Selector_MTAnalysis_HM150() { return Selector_MTAnalysis(150,true);  }
+bool Selector_MTAnalysis_HM200() { return Selector_MTAnalysis(200,true);  }
+bool Selector_MTAnalysis_HM250() { return Selector_MTAnalysis(250,true);  }
+bool Selector_MTAnalysis_HM300() { return Selector_MTAnalysis(300,true);  }
+
 // #########################################################################
 //                          Others tools/stuff
 // #########################################################################
-
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 vector<float> optimizeCuts(vector< vector<float> > listBackground,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
@@ -177,9 +175,6 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
 
-     //screwdriver.AddVariable("nJets",          "# of jets",               "",       4, 2.5,6.5,     &(myEvent.nJets),                "");
-     //screwdriver.AddVariable("nBTag",          "# of b-tagged jets",      "",       4,-0.5,3.5,     &(myEvent.nBTag),                "");
-
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),                "");
      screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
 
@@ -206,7 +201,6 @@ int main (int argc, char *argv[])
 
   // ##########################
   // ##    Create Regions    ##
-  // 
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
@@ -215,6 +209,15 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("CC_lowDM",           "Cut&Count low#DeltaM",         &Selector_cutAndCount_lowDeltaM);
      screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count offShell Tight",     &Selector_cutAndCount_offShellTight);
      screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count offShell Loose",     &Selector_cutAndCount_offShellLoose);
+     screwdriver.AddRegion("MT_LM150",           "MT analysis LM150",            &Selector_MTAnalysis_LM150);
+     screwdriver.AddRegion("MT_LM200",           "MT analysis LM200",            &Selector_MTAnalysis_LM200);
+     screwdriver.AddRegion("MT_LM250",           "MT analysis LM250",            &Selector_MTAnalysis_LM250);
+     screwdriver.AddRegion("MT_LM300",           "MT analysis LM300",            &Selector_MTAnalysis_LM300);
+     screwdriver.AddRegion("MT_HM150",           "MT analysis HM150",            &Selector_MTAnalysis_HM150);
+     screwdriver.AddRegion("MT_HM200",           "MT analysis HM200",            &Selector_MTAnalysis_HM200);
+     screwdriver.AddRegion("MT_HM250",           "MT analysis HM250",            &Selector_MTAnalysis_HM250);
+     screwdriver.AddRegion("MT_HM300",           "MT analysis HM300",            &Selector_MTAnalysis_HM300);
+
 
   // ##########################
   // ##   Create Channels    ##
@@ -289,7 +292,7 @@ int main (int argc, char *argv[])
   // ########################################
 
       for (int i = 0 ; i < theTree->GetEntries() ; i++)
-      //for (int i = 0 ; i < 20000; i++)
+      //for (int i = 0 ; i < min(200000, (int) theTree->GetEntries()); i++)
       {
           if (i % (theTree->GetEntries() / 50) == 0) 
               printProgressBar(i,theTree->GetEntries());
@@ -374,6 +377,10 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
 
+  // ##########################
+  // ##   Compute FOM maps   ##
+  // ##########################
+
   vector<string> cutAndCountRegions;
   cutAndCountRegions.push_back("CC_offShell_Loose");
   cutAndCountRegions.push_back("CC_offShell_Tight");
@@ -411,6 +418,10 @@ int main (int argc, char *argv[])
       }
   }
 
+  // ################################
+  // ##   Compute "best" FOM map   ##
+  // ################################
+
   TH2F* bestFOMMap = (TH2F*) signalMaps[0]->Clone();  bestFOMMap->SetName("bestFOM");
   TH2F* bestSetMap = (TH2F*) signalMaps[0]->Clone();  bestSetMap->SetName("bestSet");
   
@@ -432,16 +443,92 @@ int main (int argc, char *argv[])
       bestSetMap->SetBinContent(x,y,bestSet);
   }
 
-  TFile fOutput("../plots/cutAndCount/custom.root","RECREATE");
-  for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
+  // #####################################
+  // ##   Compute map for MT analysis   ##
+  // #####################################
+
+  vector<string> cutAndCountRegions_MTanalysis;
+  cutAndCountRegions_MTanalysis.push_back("MT_LM150");
+  cutAndCountRegions_MTanalysis.push_back("MT_LM200");
+  cutAndCountRegions_MTanalysis.push_back("MT_LM250");
+  cutAndCountRegions_MTanalysis.push_back("MT_LM300");
+  cutAndCountRegions_MTanalysis.push_back("MT_HM150");
+  cutAndCountRegions_MTanalysis.push_back("MT_HM200");
+  cutAndCountRegions_MTanalysis.push_back("MT_HM250");
+  cutAndCountRegions_MTanalysis.push_back("MT_HM300");
+
+  vector<TH2F*> signalMaps_MTanalysis;
+  vector<TH2F*> backgroundMaps_MTanalysis;
+  vector<TH2F*> FOMMaps_MTanalysis;
+
+  for (unsigned int i = 0 ; i < cutAndCountRegions_MTanalysis.size() ; i++)
   {
-      formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], false);
+      signalMaps_MTanalysis.push_back(screwdriver.get2DHistoClone("mStop","mNeutralino","T2tt",cutAndCountRegions_MTanalysis[i],"inclusiveChannel"));
+      backgroundMaps_MTanalysis.push_back(screwdriver.get2DCompositeHistoClone("mStop","mNeutralino","2DSumBackground",cutAndCountRegions_MTanalysis[i],"inclusiveChannel",""));
+
+      FOMMaps_MTanalysis.push_back((TH2F*) signalMaps_MTanalysis[i]->Clone());
+      FOMMaps_MTanalysis[i]->SetName((string("FOM_")+cutAndCountRegions_MTanalysis[i]).c_str());
+
+      float B = backgroundMaps_MTanalysis[i]->Integral(0,nBinsX+1,0,nBinsY+1);
+      if (B < 1.0) B = 1.0;
+
+      for (int x = 1 ; x <= nBinsX ; x++)
+      for (int y = 1 ; y <= nBinsY ; y++)
+      {
+          float S = signalMaps_MTanalysis[i]->GetBinContent(x,y);
+          float FOM = S / sqrt(B + 0.15*0.15*B*B);
+          FOMMaps_MTanalysis[i]->SetBinContent(x,y,FOM);
+      }
   }
+  
+  TH2F* bestFOMMap_MTanalysis = (TH2F*) FOMMaps_MTanalysis[0]->Clone();
+  bestFOMMap_MTanalysis->SetName("bestFOMMap_MTanalysis");
+  TH2F* ratio_newCC_MTanalysisCC = (TH2F*) FOMMaps_MTanalysis[0]->Clone();
+  ratio_newCC_MTanalysisCC->SetName("ratio_newCC_MTanalysisCC");
+  
+  TFile bestSetMap_MTanalysis_File("CC_MTanalysis_mapBestSet.root","READ");
+  TH2F* bestSetMap_MTanalysis;
+  bestSetMap_MTanalysis_File.GetObject("map",bestSetMap_MTanalysis);
+  bestSetMap_MTanalysis->SetName("bestSetMap_MTanalysis");
+
+  for (int x = 1 ; x <= nBinsX ; x++)
+  for (int y = 1 ; y <= nBinsY ; y++)
+  {
+      int bestSet = bestSetMap_MTanalysis->GetBinContent(x,y);
+      DEBUG_MSG << "x, y = " << x << ", " << y << " bestSet = " << bestSet << endl;
+      if (bestSet == 0) continue;
+      float bestFOM = FOMMaps_MTanalysis[bestSet-1]->GetBinContent(x,y);
+      DEBUG_MSG << "bestFom = " << bestFOM << endl;
+      bestFOMMap_MTanalysis->SetBinContent(x,y,bestFOM);
+      
+      if (bestFOM == 0)
+        ratio_newCC_MTanalysisCC->SetBinContent(x,y,0.0);
+      else
+        ratio_newCC_MTanalysisCC->SetBinContent(x,y,bestFOMMap->GetBinContent(x,y)/bestFOM);
+  }
+  
+  //bestSetMap_MTanalysis_File.Close();
+
+  // #########################
+  // ##   Save those maps   ##
+  // #########################
+
+  TFile fOutput("../plots/cutAndCount/custom.root","RECREATE");
   formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"Best set of cuts",true);
   gStyle->SetPaintTextFormat("4.1f");
+  for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
+  {
+      formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], true);
+  }
   formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",true);
+  formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"Best FOM from MT analysis",true);
+  formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain wrt MT analysis",true);
   fOutput.Close();
-
+  
+  // #####################################
+  // ##   Other optimization stuff...   ##
+  // #####################################
+  
   /*
   TH2F* METvsHTforSignal = screwdriver.get2DHistoClone("MET","HT","signal_450_100","presel","inclusiveChannel");
   TH2F* METvsHTforBackgr = screwdriver.get2DCompositeHistoClone("MET","HT","2DSumBackground","presel","inclusiveChannel","");
@@ -454,7 +541,7 @@ int main (int argc, char *argv[])
   cout << "                        FOM   :  " << FOMMTAnalysis << endl;
   */
 
-  float bestFOM, bestYieldSig, bestYieldBkg;
+  //float bestFOM, bestYieldSig, bestYieldBkg;
 
   //bool scenario_3_123[5] = {1,1,1,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   //cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
@@ -465,7 +552,9 @@ int main (int argc, char *argv[])
   //bool scenario_3_245[5] = {0,1,0,1,0}; vector<float> cuts_3_245 = optimizeCuts(listBackground, listSignal, scenario_3_245, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   //cout << "MET,MT - " << cuts_3_245[4] << " ; " << cuts_3_245[1] << " -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
 
+  DEBUG_MSG << endl;
   printBoxedMessage("Program done.");
+  DEBUG_MSG << endl;
   return (0);
 }
 
@@ -507,7 +596,6 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
     line1->SetLineWidth(2);
     line1->SetLineStyle(2);
     line1->Draw();
-
     thePlot.Write("../plots/cutAndCount/","custom",screwdriver->GetGlobalOptions());
 }
 
