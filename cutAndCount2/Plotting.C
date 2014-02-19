@@ -495,10 +495,8 @@ int main (int argc, char *argv[])
   for (int y = 1 ; y <= nBinsY ; y++)
   {
       int bestSet = bestSetMap_MTanalysis->GetBinContent(x,y);
-      DEBUG_MSG << "x, y = " << x << ", " << y << " bestSet = " << bestSet << endl;
       if (bestSet == 0) continue;
       float bestFOM = FOMMaps_MTanalysis[bestSet-1]->GetBinContent(x,y);
-      DEBUG_MSG << "bestFom = " << bestFOM << endl;
       bestFOMMap_MTanalysis->SetBinContent(x,y,bestFOM);
       
       if (bestFOM == 0)
@@ -509,6 +507,37 @@ int main (int argc, char *argv[])
   
   //bestSetMap_MTanalysis_File.Close();
 
+  // #################################
+  // ##   Make ratio map with BDT   ##
+  // #################################
+
+  TH2F* ratio_newCC_newBDT = (TH2F*) FOMMaps_MTanalysis[0]->Clone();
+  ratio_newCC_newBDT->SetName("ratio_newCC_newBDT");
+  for (int x = 1 ; x <= nBinsX ; x++)
+  for (int y = 1 ; y <= nBinsY ; y++)
+  {
+      ratio_newCC_newBDT->SetBinContent(x,y,0.0);
+  }
+
+
+  TFile bestFOMMap_BDT_File("BDT_mapFOM.root","READ");
+  TH2D* bestFOMMap_BDT;
+  bestFOMMap_BDT_File.GetObject("twodplot",bestFOMMap_BDT);
+
+  for (int x = 3 ; x <= nBinsX ; x++)
+  for (int y = 2 ; y <= nBinsY ; y++)
+  {
+      float bestFOM = bestFOMMap_BDT->GetBinContent(x-2,y-1);
+      if (bestFOM == 0)
+        ratio_newCC_newBDT->SetBinContent(x,y,0.0);
+      else 
+      {
+        float ratio_ = bestFOMMap->GetBinContent(x,y)/bestFOM;
+        if (ratio_ >= 2) ratio_ = 2;
+        ratio_newCC_newBDT->SetBinContent(x,y,ratio_);
+      }
+  }
+ 
   // #########################
   // ##   Save those maps   ##
   // #########################
@@ -523,6 +552,7 @@ int main (int argc, char *argv[])
   formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",true);
   formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"Best FOM from MT analysis",true);
   formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain wrt MT analysis",true);
+  formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain wrt BDT",true);
   fOutput.Close();
   
   // #####################################
@@ -552,9 +582,7 @@ int main (int argc, char *argv[])
   //bool scenario_3_245[5] = {0,1,0,1,0}; vector<float> cuts_3_245 = optimizeCuts(listBackground, listSignal, scenario_3_245, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   //cout << "MET,MT - " << cuts_3_245[4] << " ; " << cuts_3_245[1] << " -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
 
-  DEBUG_MSG << endl;
   printBoxedMessage("Program done.");
-  DEBUG_MSG << endl;
   return (0);
 }
 
