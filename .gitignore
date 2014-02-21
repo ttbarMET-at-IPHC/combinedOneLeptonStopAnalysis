@@ -27,7 +27,6 @@ WTagTMVATraining/weights_*
 oldFiles/
 
 */Plotting
-*/.plots
 */backup*
 WTagTMVATraining/trainMVA_AdaBoost
 WTagTMVATraining/trainMVA_GradBoost

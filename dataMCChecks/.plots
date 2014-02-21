@@ -1,0 +1,8 @@
+
+{
+    TFile::Open("../plots/dataMCChecks/1DStack.root");
+    TFile::Open("../plots/dataMCChecks/1DSuperimposed.root");
+    TFile::Open("../plots/dataMCChecks/1DDataMCComparison.root");
+    new TBrowser();
+}
+
