@@ -47,11 +47,8 @@
      isData = 1 for data; = 0  for MC
 
 -->
-<!--
 <d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
-    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root"
->
--->
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root" />
 
 <!-- Signals -->
 <!--
@@ -83,11 +80,14 @@
 -->
 <!-- ttbar -->
 
+<!--
 <d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar-v*/*.root" />
+-->
 
 <!-- W+jets -->
 
+<!--
 <d  name="W1jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="6663.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/W1jets/*.root" />
 <d  name="W2jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="2159.0"
@@ -96,8 +96,10 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/W3jets/*.root" />
 <d  name="W4jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="264.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/W4jets/*.root" />
+-->
 
 <!-- DY+jets -->
+<!--
 
 <d  name="DY1jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="671.83"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/DY1jets/*.root" />
@@ -107,9 +109,11 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/DY3jets/*.root" />
 <d  name="DY4jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="27.6"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/DY4jets/*.root" />
+-->
 
 <!-- SingleTop -->
 
+<!--
 <d  name="SingleTbar-s" add="1" isData="0" NofEvts="-1" normf="1" xsection="1.8"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/SingleTbar-s/*.root" />
 <d  name="SingleTbar-t" add="1" isData="0" NofEvts="-1" normf="1" xsection="30.0"
@@ -122,9 +126,11 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/SingleT-t/*.root" />
 <d  name="SingleT-tW" add="1" isData="0" NofEvts="-1" normf="1" xsection="11.2"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/SingleT-tW/*.root" />
+-->
 
 <!-- Others -->
 
+<!--
 <d  name="TBZ" add="1" isData="0" NofEvts="-1" normf="1" xsection=""
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/TBZ/*.root" />
 <d  name="TTG" add="1" isData="0" NofEvts="-1" normf="1" xsection="2.166"
@@ -157,7 +163,7 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ZZTo4L/*.root" />
 <d  name="ZZZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.0055269"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ZZZ/*.root" />
-
+-->
 <!-- DoubleLepton Data -->
 
 <!--
@@ -168,6 +174,7 @@
 <d  name="MuEl" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/MuEl_*/*.root" />
 -->
+
 <!-- SingleLepton Data -->
 
 <!--

@@ -17,13 +17,21 @@ using namespace std;
 
 #define FOLDER_BABYTUPLES "../store/babyTuples_1102/"
 
-//#define INPUT "../store/babyTuples_1102/babyTuple_T2tt.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_ttbar.root"
 //#define INPUT "../store/babyTuples_1102/babyTuple_Wjets.root"
 //#define INPUT "../store/babyTuples_1102/babyTuple_others.root"
-#define INPUT "../store/babyTuples_1102/babyTuple_ttbar.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_DoubleElec.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_DoubleMuon.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_MuEl.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_SingleElec.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_SingleMuon.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_T2tt.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_T2bw-025.root"
+//#define INPUT "../store/babyTuples_1102/babyTuple_T2bw-050.root"
+#define INPUT "../store/babyTuples_1102/babyTuple_T2bw-075.root"
 //#define INPUT "synchronizationBaby1102.root"
 
-#define OUTPUT "output.root"
+#define OUTPUT "T2bw-075.root"
 
 void printProgressBar(int current, int max);
 
@@ -70,7 +78,7 @@ int main (int argc, char *argv[])
 
       // Apply selection
     
-        if ((!myEvent.triggerMuon) && (!myEvent.triggerElec))   continue;
+        //if ((!myEvent.triggerMuon) && (!myEvent.triggerElec))   continue;
         if (myEvent.numberOfLepton != 1)                        continue;
         if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0))       continue;
         if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto)) continue;
