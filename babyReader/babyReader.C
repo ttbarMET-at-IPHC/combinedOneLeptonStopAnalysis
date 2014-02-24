@@ -27,7 +27,7 @@ int main (int argc, char *argv[])
   // ################################
 
   // Input tree   
-  TFile fInput(INPUT,"UPDATE");
+  TFile fInput(INPUT,"READ");
   TTree* theInputTree = (TTree*) fInput.Get("babyTuple"); 
 
   babyEvent myEvent;

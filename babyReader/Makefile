@@ -1,5 +1,5 @@
 ObjSuf        = o
-SrcSuf        = cc
+SrcSuf        = C
 ExeSuf        = 
 DllSuf        = so
 OutPutOpt     = -o
@@ -17,17 +17,29 @@ CXXFLAGS      += $(ROOTCFLAGS) -I./
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
-LDFLAGS       += $(ROOTLIBS)  -lEG -l:`pwd`/vectorDictionnary_C.so
+LDFLAGS       += $(ROOTLIBS)  -lEG -l:`pwd`/.vectorDictionnary_C.so
 
 SOFLAGS       = -shared
 LIBS          = 
 
 #------------------------------------------------------------------------------
-SOURCES       = $(wildcard src/*.cc)
+SOURCES       = $(wildcard *.C)
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
+EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
 
-all: babyReader
+DEFAULT_FILE  = babyReader
+
+all: compile run
+
+compile: .vectorDictionnary_C.so $(DEFAULT_FILE)
+
+run:
+	./$(DEFAULT_FILE)
+
+
+.vectorDictionnary_C.so: .vectorDictionnary.C
+	root -l -L .vectorDictionnary.C+
 
 %.o: %.c
 	$(CXX) $(CXXFLAGS) -c $<
@@ -37,7 +49,7 @@ all: babyReader
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS)
+	@rm -f $(OBJECTS) $(EXECUTABLES)
 
 .SUFFIXES: .$(SrcSuf) .C .o .so
 
