@@ -12,8 +12,8 @@ using namespace std;
 #include <TLorentzVector.h>
 
 // Define format and input file
-#include "Reader_prefinal1024.h"
-#define INPUT "synchronizationBaby1102.root"
+#include "Reader_final0210.h"
+#define INPUT "synchronizationBaby0210.root"
 
 // ###################
 // #  Main function  #
@@ -33,7 +33,6 @@ int main (int argc, char *argv[])
   babyEvent myEvent;
   intermediatePointers pointers;
   InitializeBranches(theInputTree,&myEvent,&pointers);
-  
 
   // ########################################
   // ##        Run over the events         ##
