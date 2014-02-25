@@ -2,6 +2,7 @@
 // C / C++ headers
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 // ROOT headers
@@ -29,6 +30,12 @@ typedef struct
 } EventId;
 
 void printProgressBar(int current, int max);
+
+bool sortingFunction(EventId a, EventId b) {  return (a.eventId < b.eventId); }
+void sortVector( vector<EventId>* v)
+{
+    sort(v->begin(),v->end(),sortingFunction);
+}
 
 // ###################
 // #  Main function  #
@@ -74,12 +81,16 @@ int main (int argc, char *argv[])
       eventsToFilter.push_back(eventToFilter);
   }
 
+  sortVector(&eventsToFilter);
+
   // ########################################
   // ##        Run over the events         ##
   // ########################################
 
+  cout << "nFilter =" << eventsToFilter.size() << endl;
+
   int nFiltered = 0;
-  for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
+  for (int i = 0 ; i < 100000 ; i++)
   {
 
       //if (i % (theInputTree->GetEntries() / 50) == 0) 
@@ -88,33 +99,47 @@ int main (int argc, char *argv[])
 
       // Read event
       
-      theInputTree->GetEntry(i);
-      //ReadEvent(theInputTree,i,&pointers,&myEvent);
+      ReadEvent(theInputTree,i,&pointers,&myEvent);
+      
+      // Filter event with MET < 50
+      
+      if ((myEvent.MET < 50) && (myEvent.MET_JESup < 50) && (myEvent.MET_JESdown < 50)) continue;
 
       // Check if current is event is supposed to be filter
-   
-      /*
+
+      int min = 0;
+      int max = eventsToFilter.size()  - 1;
+      int mid = (max - min)/2;
+      
+      int k = 0;
+      while ((eventsToFilter[min].eventId != eventsToFilter[max].eventId) && (abs(max-min) > 1))
+      {
+               if ((eventsToFilter[mid].eventId) > ((float) myEvent.event))  { max = mid; mid -= (max - min) / 2; }
+          else if ((eventsToFilter[mid].eventId) < ((float) myEvent.event))  { min = mid; mid += (max - min) / 2; }
+          else break;
+          k++;
+      }
+
       bool foundInFilter = false;
-      for (unsigned int j = 0 ; j < eventsToFilter.size() ; j++)
+      for (unsigned int j = min ; j < max ; j++)
       {
           EventId check = eventsToFilter[j];
-          if ((((int) check.eventId) == myEvent.event)
+          if ((check.eventId == ((float) myEvent.event))
            && (check.rawPFMET - myEvent.rawPFMET == 0)
-           && (((int) check.lumiId)  == myEvent.lumi ) 
-           && (((int) check.runId)   == myEvent.run  )) 
+           && (check.lumiId  == ((float) myEvent.lumi) ) 
+           && (check.runId   == ((float) myEvent.run)  )) 
           {
               nFiltered++;
               foundInFilter = true;
               break;
           }
       }
-        
+       
       if (foundInFilter) continue;
-      */
 
       // Keep event
     
-      //  theOutputTree->Fill();
+      theOutputTree->Fill();
   }           
              
   cout << "nTot = " << theInputTree->GetEntries() << endl;
