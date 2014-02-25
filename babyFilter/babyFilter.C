@@ -90,21 +90,16 @@ int main (int argc, char *argv[])
   cout << "nFilter =" << eventsToFilter.size() << endl;
 
   int nFiltered = 0;
-  for (int i = 0 ; i < 100000 ; i++)
+  for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
   {
 
-      //if (i % (theInputTree->GetEntries() / 50) == 0) 
-      if (i % 1000  == 0) 
+      if (i % (theInputTree->GetEntries() / 200) == 0) 
               printProgressBar(i,theInputTree->GetEntries());
 
       // Read event
       
       ReadEvent(theInputTree,i,&pointers,&myEvent);
       
-      // Filter event with MET < 50
-      
-      if ((myEvent.MET < 50) && (myEvent.MET_JESup < 50) && (myEvent.MET_JESdown < 50)) continue;
-
       // Check if current is event is supposed to be filter
 
       int min = 0;
