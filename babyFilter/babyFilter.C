@@ -15,9 +15,9 @@ using namespace std;
 // Define format and input file
 #include "Reader.h"
 
-#define INPUT "../store/babyTuples_0219/toBeFiltered/babyTuple_ttbar.root"
-#define OUTPUT "test.root"
-#define FILTER "filter.root"
+#define INPUT_FOLDER "../store/babyTuples_0219/toBeFiltered/babyTuple_"
+#define OUTPUT_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/babyTuple_filtered/"
+#define FILTER_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/filters/"
 
 typedef struct
 {
@@ -44,12 +44,17 @@ void sortVector( vector<EventId>* v)
 int main (int argc, char *argv[])
 {
 
+  string dataset = argv[1]; 
+  string input = string(INPUT_FOLDER)+dataset+".root";
+  string output = string(OUTPUT_FOLDER)+dataset+".root";
+  string filter = string(FILTER_FOLDER)+dataset+".root";
+
   // ################################
   // ##       Open the tree        ##
   // ################################
 
   // Input tree   
-  TFile fInput(INPUT,"READ");
+  TFile fInput(input.c_str(),"READ");
   TTree* theInputTree = (TTree*) fInput.Get("babyTuple"); 
 
   babyEvent myEvent;
@@ -58,12 +63,12 @@ int main (int argc, char *argv[])
 
   // Filter tree
   EventId eventToFilter;
-  TFile fFilter(FILTER,"READ");
+  TFile fFilter(filter.c_str(),"READ");
   TTree* theFilterTree = (TTree*) fFilter.Get("eventsToFilter");
   theFilterTree->SetBranchAddress("eventsToFilter",&eventToFilter);
 
   // Output tree
-  TFile fOutput(OUTPUT,"RECREATE");
+  TFile fOutput(output.c_str(),"RECREATE");
   TTree* theOutputTree = new TTree("babyTuple","");
   
   babyEvent myEventFiltered;
@@ -87,7 +92,7 @@ int main (int argc, char *argv[])
   // ##        Run over the events         ##
   // ########################################
 
-  cout << "nFilter =" << eventsToFilter.size() << endl;
+  cout << "nEvent in filter =" << eventsToFilter.size() << endl;
 
   int nFiltered = 0;
   for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
@@ -136,7 +141,8 @@ int main (int argc, char *argv[])
     
       theOutputTree->Fill();
   }           
-             
+   
+  cout << endl;
   cout << "nTot = " << theInputTree->GetEntries() << endl;
   cout << "nFiltered = " << nFiltered << endl;
 
