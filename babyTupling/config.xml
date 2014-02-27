@@ -47,8 +47,10 @@
      isData = 1 for data; = 0  for MC
 
 -->
+<!--
 <d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root" />
+-->
 
 <!-- Signals -->
 <!--
@@ -130,9 +132,9 @@
 
 <!-- Others -->
 
-<!--
-<d  name="TBZ" add="1" isData="0" NofEvts="-1" normf="1" xsection=""
+<d  name="TBZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.0114"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/TBZ/*.root" />
+<!--
 <d  name="TTG" add="1" isData="0" NofEvts="-1" normf="1" xsection="2.166"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/TTG/*.root" />
 <d  name="TTW" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.23"
