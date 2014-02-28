@@ -15,8 +15,9 @@ using namespace std;
 // Define format and input file
 #include "Reader.h"
 
-#define INPUT_FOLDER "../store/babyTuples_0219/toBeFiltered/babyTuple_"
-#define OUTPUT_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/babyTuple_filtered/"
+#define INPUT_FOLDER  "/opt/sbg/data/data1/cms/aaubin/METFilters/babyTuple_toBeFiltered/babyTuple_"
+//#define OUTPUT_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/babyTuple_filtered/"
+#define OUTPUT_FOLDER "./"
 #define FILTER_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/filters/"
 
 typedef struct
@@ -110,21 +111,24 @@ int main (int argc, char *argv[])
       int min = 0;
       int max = eventsToFilter.size()  - 1;
       int mid = (max - min)/2;
-      
-      int k = 0;
-      while ((eventsToFilter[min].eventId != eventsToFilter[max].eventId) && (abs(max-min) > 1))
+
+      if (myEvent.event > 0)
       {
-               if ((eventsToFilter[mid].eventId) > ((float) myEvent.event))  { max = mid; mid -= (max - min) / 2; }
-          else if ((eventsToFilter[mid].eventId) < ((float) myEvent.event))  { min = mid; mid += (max - min) / 2; }
-          else break;
-          k++;
+          int k = 0;
+          while ((eventsToFilter[min].eventId != eventsToFilter[max].eventId) && (abs(max-min) > 1))
+          {
+              if ((eventsToFilter[mid].eventId) > ((float) myEvent.event))  { max = mid; mid -= (max - min) / 2; }
+              else if ((eventsToFilter[mid].eventId) < ((float) myEvent.event))  { min = mid; mid += (max - min) / 2; }
+              else break;
+              k++;
+          }
       }
 
       bool foundInFilter = false;
       for (unsigned int j = min ; j < max ; j++)
       {
           EventId check = eventsToFilter[j];
-          if ((check.eventId == ((float) myEvent.event))
+          if (((check.eventId == ((float) myEvent.event)) || (myEvent.event < 0))
            && (check.rawPFMET - myEvent.rawPFMET == 0)
            && (check.lumiId  == ((float) myEvent.lumi) ) 
            && (check.runId   == ((float) myEvent.run)  )) 
@@ -134,7 +138,7 @@ int main (int argc, char *argv[])
               break;
           }
       }
-       
+      
       if (foundInFilter) continue;
 
       // Keep event
