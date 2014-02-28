@@ -18,35 +18,34 @@ LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so
 SOFLAGS       = -shared
 LIBS          = 
 
+# Uncomment this line if you want to use a script to parse & colorize gcc output
+# (You can also export this variable from your bashrc)
+#GCCPARSER     = 2>&1 | python ~/littleScripts/colorGcc.py
+
 #------------------------------------------------------------------------------
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
-
-DEFAULT_FILE  = babyFilter
+DEFAULT_TARGET = babyFilter
+#------------------------------------------------------------------------------
 
 all: compile run 
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_FILE)
+compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET)
 
 run:
-	./$(DEFAULT_FILE)
-
-../.vectorDictionnary_C.so: ../.vectorDictionnary.C
-	cd ..; root -l -L .vectorDictionnary.C+
-
-%.o: %.c
-	$(CXX) $(CXXFLAGS) -c $<
-
-%: %.o
-	$(LD) $(LDFLAGS) -o $@ $< $(LIBS) 
+	./$(DEFAULT_TARGET)
 
 clean:
 	@echo "Cleaning..."
 	@rm -f $(OBJECTS) $(EXECUTABLES)
 
-#.SUFFIXES: .$(SrcSuf) .C .o .so
+#------------------------------------------------------------------------------
 
+../.vectorDictionnary_C.so: ../.vectorDictionnary.C
+	cd ..; root -l -L .vectorDictionnary.C+
 
+$(DEFAULT_TARGET): $(DEFAULT_TARGET).$(SrcSuf)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 
