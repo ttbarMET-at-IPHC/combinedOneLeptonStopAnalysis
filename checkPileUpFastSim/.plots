@@ -1,0 +1,8 @@
+
+{
+    TFile::Open("../plots/checkPileUpFastSim/1DStack.root");
+    TFile::Open("../plots/checkPileUpFastSim/1DSuperimposed.root");
+    TFile::Open("../plots/checkPileUpFastSim/1DDataMCComparison.root");
+    new TBrowser();
+}
+
