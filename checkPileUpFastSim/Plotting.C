@@ -145,6 +145,7 @@ int main (int argc, char *argv[])
   vector< vector<float> > listBackground;
   vector< vector<float> > listSignal;
 
+  float yield = 0;
   for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
   {
      string currentDataset = datasetsList[d];
@@ -163,7 +164,7 @@ int main (int argc, char *argv[])
   // ########################################
 
       //for (int i = 0 ; i < theTree->GetEntries() ; i++)
-      for (int i = 0 ; i < 1000000 ; i++)
+      for (int i = 0 ; i < 3000000 ; i++)
       {
           if (i % (theTree->GetEntries() / 50) == 0) 
               printProgressBar(i,theTree->GetEntries());
@@ -176,7 +177,8 @@ int main (int argc, char *argv[])
           if (currentProcessClass != "data")
           {
               // Apply PU reweighting
-              //weight *= weightS10[myEvent.numberOfTruePU];
+              weight *= weightS7[myEvent.numberOfTruePU];
+              yield += weight;
           }
 
           numberOfPrimaryVertices = myEvent.numberOfPrimaryVertices;
@@ -189,6 +191,8 @@ int main (int argc, char *argv[])
       f.Close();
 
   }
+
+  cout << "Yield signal = " << yield << endl;
 
   // ###################################
   // ##   Make plots and write them   ##
