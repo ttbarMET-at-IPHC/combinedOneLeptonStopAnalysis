@@ -26,27 +26,50 @@ using namespace theDoctor;
 
 // BabyTuple format and location
 
-//#define FOLDER_BABYTUPLES "../store/babyTuples_1102/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_1102/"
-#include "Reader.h"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0219/"
+#include "Reader_final0210.h"
 babyEvent* myEventPointer;
 
 void printBoxedMessage(string message);
 void printProgressBar(int current, int max);
-
-float weightS10[60] = {0.246323,0.195985,0.217915,0.331417,0.3034,0.475434,0.429483,0.421169,0.582882,0.903066,1.31179,1.69658,1.75778,1.56258,1.32624,1.15559,1.07227,1.05049,1.07055,1.11465,1.15467,1.17724,1.1861,1.18228,1.15941,1.11262,1.04233,0.951951,0.844631,0.725668,0.603026,0.484859,0.376801,0.282502,0.203678,0.140667,0.093096,0.0592184,0.0363736,0.0217555,0.0128045,0.00751369,0.00446529,0.00273412,0.00175596,0.00119529,0.000864613,0.000661264,0.000529328,0.0004387,0.000373219,0.000323506,0.00028436,0.000252393,0.000225177,0.000201384,0.000180034,0.000160547,0.000142487,2.41963};
-
-float weightS7[60] = {0.0269021,0.043804,0.132013,0.707654,0.0647969,0.274386,1.2209,2.72771,4.9408,7.79127,8.97063,10.7276,9.00422,7.67177,6.42841,5.13058,3.91257,2.95823,2.30159,1.86724,1.57693,1.38108,1.24625,1.14121,1.03899,0.924164,0.796685,0.664279,0.535259,0.416568,0.313718,0.229296,0.162909,0.112386,0.0751246,0.0485403,0.0303353,0.0184099,0.0109312,0.00642164,0.00378445,0.00227666,0.00142716,0.000951419,0.000688742,0.000548894,0.000484397,0.000471327,0.000501664,0.000578531,0.000717492,0.000950629,0.00133986,0.00200221,0.00315807,0.00524998,0.0091659,0.0167848,0.0322017,591.61};
 
 // #########################################################################
 //                          Region selectors
 // #########################################################################
 
 bool inclusiveChannelSelector() { return true; }
-bool elecChannelSelector() { return (abs(myEventPointer->leadingLeptonPDGId) == 11); }
-bool muonChannelSelector() { return (abs(myEventPointer->leadingLeptonPDGId) == 13); }
 
-bool inclusiveRegionSelector() { if (myEventPointer->numberOfLepton != 1) return false; else return true; }
+bool Selector_presel() 
+{
+    babyEvent myEvent = *myEventPointer;
+
+    // Reject event that don't pass the trigger
+    if (abs(myEvent.leadingLeptonPDGId) == 11)
+    { 
+        if (!myEvent.triggerElec) return false; 
+    }
+    if (abs(myEvent.leadingLeptonPDGId) == 13)
+    {   
+        if (myEvent.leadingLepton.Pt() < 26)
+        { if (!myEvent.xtriggerMuon) return false; }
+        else
+        { if (!myEvent.triggerMuon)  return false; }
+    }
+
+    // Require nLepton == 1
+    if (myEvent.numberOfLepton != 1)                      return false;
+
+    // Require nJets >= 4, nBTag >= 1
+    if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0))     return false; 
+
+    // Apply vetos
+    if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
+
+    // Apply MET and MT cuts
+    if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
+
+    return true; 
+}
 
 // #########################################################################
 //                              Main function
@@ -72,62 +95,49 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-     float numberOfPrimaryVertices;
-     float numberOfTruePU;
-     screwdriver.AddVariable("nPV",       "# of primary vertices",        "",    51,-0.5,50.5,       &(numberOfPrimaryVertices), "");
-     screwdriver.AddVariable("nTPU",      "# of true pile-up",            "",    60,0,60,            &(numberOfTruePU), "");
-
-     // #########################################################
-     // ##   Create ProcessClasses (and associated datasets)   ##
-     // #########################################################
-
-     screwdriver.AddProcessClass("signal",   "T2tt",     "background",kAzure+2);
-             screwdriver.AddDataset("T2tt",   "signal", 0, 0);
+     screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",   "GeV",    28,112.5,812.5,  &(myEvent.mStop),           "");
+     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",    "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),     "");
      
-     screwdriver.AddProcessClass("data",   "data",                     "data",COLORPLOT_BLACK);
-             //screwdriver.AddDataset("SingleElec",   "data", 0, 0);
-             screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
+  // #########################################################
+  // ##   Create ProcessClasses (and associated datasets)   ##
+  // #########################################################
 
+     screwdriver.AddProcessClass("T2tt",     "T2tt",          "signal",kAzure+2);
+            screwdriver.AddDataset("T2tt", "T2tt",  0, 0);
+     
+     screwdriver.AddProcessClass("T2bw-050", "T2bw (x=0.5)",  "signal",kRed+2);
+            screwdriver.AddDataset("T2bw-050", "T2bw-050",  0, 0);
+     
   // ##########################
   // ##    Create Regions    ##
   // ##########################
 
-     screwdriver.AddRegion("skimming", "Skimming : 1 lep, >= 3jets", &inclusiveRegionSelector);
+     screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
 
   // ##########################
   // ##   Create Channels    ##
   // ##########################
    
      screwdriver.AddChannel("inclusiveChannel","",&inclusiveChannelSelector);
-     //screwdriver.AddChannel("elecChannel","e-channel",&elecChannelSelector);
-     screwdriver.AddChannel("muonChannel","#mu-channel",&muonChannelSelector);
 
   // ########################################
   // ##       Create histograms and        ##
   // ##  schedule type of plots to produce ##
   // ########################################
 
+     screwdriver.SetLumi(20000);
+     
      // Create histograms
      screwdriver.Create1DHistos();
-
-     screwdriver.SetGlobalBoolOption  ("1DSuperimposed",   "includeSignal",                   true   );
-     screwdriver.SetGlobalBoolOption  ("1DSuperimposed",   "includeData",                     true   );
-
-     screwdriver.SetGlobalStringOption("1DStack",          "includeSignal",                   "stack");
-     screwdriver.SetGlobalFloatOption ("1DStack",          "factorSignal",                    1.0    );
-
-     screwdriver.SetGlobalStringOption("DataMCComparison", "includeSignal",                   "stack");
-     screwdriver.SetGlobalFloatOption ("DataMCComparison", "factorSignal",                    1.0    );
+     screwdriver.Add2DHisto("mStop","mNeutralino");
 
      // Schedule plots
-     screwdriver.SchedulePlots("1DSuperimposed");
-     screwdriver.SchedulePlots("1DStack");
-     screwdriver.SchedulePlots("1DDataMCComparison");
+     screwdriver.SchedulePlots("2D");
 
      // Config plots
 
      screwdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
-     screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV");
+     screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
 
      screwdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
      screwdriver.SetGlobalBoolOption("Plot", "exportEps", false);
@@ -150,7 +160,7 @@ int main (int argc, char *argv[])
      string currentDataset = datasetsList[d];
      string currentProcessClass = screwdriver.GetProcessClass(currentDataset); 
      // Open the tree
-     TFile f((string(FOLDER_BABYTUPLES)+"babyTuple_"+currentDataset+".root").c_str());
+     TFile f((string(FOLDER_BABYTUPLES)+currentDataset+".root").c_str());
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
 
      intermediatePointers pointers;
@@ -162,8 +172,7 @@ int main (int argc, char *argv[])
   // ##        Run over the events         ##
   // ########################################
 
-      //for (int i = 0 ; i < theTree->GetEntries() ; i++)
-      for (int i = 0 ; i < 1000000 ; i++)
+      for (int i = 0 ; i < theTree->GetEntries() ; i++)
       {
           if (i % (theTree->GetEntries() / 50) == 0) 
               printProgressBar(i,theTree->GetEntries());
@@ -171,18 +180,9 @@ int main (int argc, char *argv[])
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
 
-          float weight = 1.0;
+          float weight = myEvent.weightCrossSection;
 
-          if (currentProcessClass != "data")
-          {
-              // Apply PU reweighting
-              //weight *= weightS10[myEvent.numberOfTruePU];
-          }
-
-          numberOfPrimaryVertices = myEvent.numberOfPrimaryVertices;
-          numberOfTruePU          = myEvent.numberOfTruePU;
           screwdriver.AutoFillProcessClass(currentProcessClass,weight);
-
       } 
       
       cout << endl;
@@ -198,7 +198,7 @@ int main (int argc, char *argv[])
   cout << "   > Making plots..." << endl;
   screwdriver.MakePlots();
   cout << "   > Saving plots..." << endl;
-  screwdriver.WritePlots("../plots/checkPileUpFastSim/");
+  screwdriver.WritePlots("./");
 
   printBoxedMessage("Plot generation completed");
 

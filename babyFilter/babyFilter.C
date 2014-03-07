@@ -123,7 +123,6 @@ int main (int argc, char *argv[])
               k++;
           }
       }
-
       bool foundInFilter = false;
       for (unsigned int j = min ; j < max ; j++)
       {

@@ -976,10 +976,11 @@ bool badSignalEventFilter(string datasetName,StopMCinfo* stopMCinfo)
             float mStop       = stopMCinfo->GetStopMass();
             float mNeutralino = stopMCinfo->GetNeutralinoMass();
 
-            if (mNeutralino - (int) mNeutralino > 0.00001) return false;
-            if (mStop       - (int) mStop       > 0.00001) return false;
-            if ((int) mNeutralino % 25 != 0) return false;
-            if ((int) mStop       % 25 != 0) return false;
+            if (mNeutralino - int(mNeutralino) > 0.000001) return false;
+            if (mStop       - int(mStop)       > 0.000001) return false;
+            if (int(mNeutralino) % 25 != 0) return false;
+            if (int(mStop)       % 25 != 0) return false;
+
             if ((datasetName.find("withLSP0") != string::npos) && (mNeutralino == 500)) return false;
         }
 
