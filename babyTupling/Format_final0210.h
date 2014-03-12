@@ -554,20 +554,20 @@ Bool_t ProofJob::Process(Long64_t entry)
 
     // Pile-up
 
-    // Don't take PU weight into account for data and signal (signal is Fastsim)
-    if ((runningOnData)
-    ||  (datasetName.find("T2tt") != string::npos) 
-    ||  (datasetName.find("T2bw") != string::npos))
-    {    
+    // Don't take PU weight into account for data
+    if (runningOnData)
+    {
         myEvent.numberOfTruePU = 1.0;
+        myEvent.weightPileUp = 1.0;
     }
     else
     {
+
         myEvent.numberOfTruePU = sel.getTnpv();
+        myEvent.weightPileUp = sel.getPileUpWeight(myEvent.numberOfTruePU,runningOnData);
     }
 
     myEvent.numberOfPrimaryVertices = sel.GetVertex().size();;
-    myEvent.weightPileUp = sel.getPileUpWeight(myEvent.numberOfTruePU,runningOnData);
 
     // ISR
 
