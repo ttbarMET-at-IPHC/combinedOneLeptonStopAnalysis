@@ -26,10 +26,9 @@ using namespace theDoctor;
 
 // BabyTuple format and location
 
-//#define FOLDER_BABYTUPLES "../store/babyTuples_1102/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_1102_skimmed/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0219_preSelectionSkimmed/"
 #include "Reader.h"
-babyEventSkimmed* myEventPointer;
+babyEvent* myEventPointer;
 
 void printBoxedMessage(string message);
 void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table);
@@ -43,7 +42,7 @@ bool inclusiveChannelSelector() { return true; }
 
 bool Selector_presel() 
 {
-    babyEventSkimmed myEvent = *myEventPointer;
+    babyEvent myEvent = *myEventPointer;
 
     // Reject event that don't pass the trigger
     if ((!myEvent.triggerMuon) && (!myEvent.triggerElec)) return false;     // TODO : add xtrigger + switch to trigger efficiency
@@ -150,7 +149,7 @@ int main (int argc, char *argv[])
       SonicScrewdriver screwdriver;
 
        // Create a container for the event
-     babyEventSkimmed myEvent;
+     babyEvent myEvent;
      myEventPointer = &myEvent;
 
   // ##########################
@@ -282,7 +281,7 @@ int main (int argc, char *argv[])
      TFile f((string(FOLDER_BABYTUPLES)+currentDataset+".root").c_str());
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
 
-     intermediatePointersSkimmed pointers;
+     intermediatePointers pointers;
      InitializeBranches(theTree,&myEvent,&pointers);
 
      cout << "                    " << currentDataset << endl; 
@@ -367,7 +366,7 @@ int main (int argc, char *argv[])
   cout << "   > Making plots..." << endl;
   screwdriver.MakePlots();
   cout << "   > Saving plots..." << endl;
-  screwdriver.WritePlots("../plots/cutAndCount/");
+  screwdriver.WritePlots("../plots/cutAndCount_T2tt/");
 
   printBoxedMessage("Plot generation completed");
 
@@ -542,7 +541,7 @@ int main (int argc, char *argv[])
   // ##   Save those maps   ##
   // #########################
 
-  TFile fOutput("../plots/cutAndCount/custom.root","RECREATE");
+  TFile fOutput("../plots/cutAndCount_T2tt/custom.root","RECREATE");
   formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"Best set of cuts",true);
   gStyle->SetPaintTextFormat("4.1f");
   for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)

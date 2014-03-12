@@ -8,7 +8,8 @@ DEFINES       =
 
 CXX           = g++
 CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
-CXXFLAGS      += $(ROOTCFLAGS) -I./ -I../sonicScrewdriver/
+CXXFLAGS      += $(ROOTCFLAGS) -I./
+CXXFLAGS      += -I../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
@@ -19,38 +20,37 @@ LDFLAGS       += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 SOFLAGS       = -shared
 LIBS          = 
 
+# Uncomment this line if you want to use a script to parse & colorize gcc output
+# (You can also export this variable from your bashrc)
+#GCCPARSER     = 2>&1 | python ~/littleScripts/colorGcc.py
+
 #------------------------------------------------------------------------------
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
+DEFAULT_TARGET = Plotting
+#------------------------------------------------------------------------------
 
-DEFAULT_FILE  = Plotting
-
-all: compile run browse 
+all: compile run browse
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_FILE)
+compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET)
 
 run:
-	./$(DEFAULT_FILE)
+	./$(DEFAULT_TARGET)
 
 browse:
-	root -l -X .plots
-
-../.vectorDictionnary_C.so: ../.vectorDictionnary.C
-	cd ..; root -l -L .vectorDictionnary.C+
-
-%.o: %.c
-	$(CXX) $(CXXFLAGS) -c $<
-
-%: %.o
-	$(LD) $(LDFLAGS) -o $@ $< $(LIBS) 
+	PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse
 
 clean:
 	@echo "Cleaning..."
 	@rm -f $(OBJECTS) $(EXECUTABLES)
 
-#.SUFFIXES: .$(SrcSuf) .C .o .so
+#------------------------------------------------------------------------------
 
+../.vectorDictionnary_C.so: ../.vectorDictionnary.C
+	cd ..; root -l -L .vectorDictionnary.C+
 
+$(DEFAULT_TARGET): $(DEFAULT_TARGET).$(SrcSuf)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 

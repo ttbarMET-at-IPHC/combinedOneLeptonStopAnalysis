@@ -16,7 +16,7 @@ using namespace std;
 
 #define FOLDER_INPUT  "../store/babyTuples_0219/"
 #define FOLDER_OUTPUT "../store/babyTuples_0219_preSelectionSkimmed/"
-#define DATASET       "T2bw-075.root"
+#define DATASET       "MuEl.root"
 
 void printProgressBar(int current, int max);
 

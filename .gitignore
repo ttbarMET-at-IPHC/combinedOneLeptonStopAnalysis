@@ -24,6 +24,7 @@ plots/
 microTupling/
 WTagTMVATraining/weights_*
 oldFiles/
+sonicScrewdriver/
 
 */Plotting
 */backup*
@@ -37,8 +38,6 @@ babyTupling/ProofLauncher
 babyTupling/proofBox
 babySkimmer/babySkimmer
 cutAndCount/test
-sonicScrewdriver
-sonicScrewdriver_old
 stopBabiesToMicroTuples/dump.dat
 stopBabiesToMicroTuples/stopBabiesToMicroTuples
 synchronization/synchroBabyTuples
