@@ -1,0 +1,561 @@
+el ; max FOM = 2.95699 ; cut value = 320
+var = MET ; reg = SR1 ; max FOM = 0 ; cut value = 50
+var = MET ; reg = SR2 ; max FOM = 0 ; cut value = 50
+var = MET ; reg = SR3 ; max FOM = 2.95699 ; cut value = 320
+var = MET ; reg = SR4 ; max FOM = 0 ; cut value = 50
+var = MET ; reg = SR5 ; max FOM = 0 ; cut value = 50
+var = MET ; reg = SR6 ; max FOM = 0 ; cut value = 50
+var = MT ; reg = presel ; max FOM = 1.34867 ; cut value = 300
+var = MT ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = MT ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = MT ; reg = SR3 ; max FOM = 1.34867 ; cut value = 300
+var = MT ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = MT ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = MT ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = deltaPhiMETJets ; reg = presel ; max FOM = 0.29701 ; cut value = 2.6
+var = deltaPhiMETJets ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = deltaPhiMETJets ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = deltaPhiMETJets ; reg = SR3 ; max FOM = 0.29701 ; cut value = 2.6
+var = deltaPhiMETJets ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = deltaPhiMETJets ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = deltaPhiMETJets ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = MT2W ; reg = presel ; max FOM = 1.20503 ; cut value = 475
+var = MT2W ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = MT2W ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = MT2W ; reg = SR3 ; max FOM = 1.20503 ; cut value = 475
+var = MT2W ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = MT2W ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = MT2W ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = HTratio ; reg = presel ; max FOM = 0.462578 ; cut value = 0.06
+var = HTratio ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = HTratio ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = HTratio ; reg = SR3 ; max FOM = 0.462578 ; cut value = 0.06
+var = HTratio ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = HTratio ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = HTratio ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = HadronicChi2 ; reg = presel ; max FOM = 0.163927 ; cut value = 0
+var = HadronicChi2 ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = HadronicChi2 ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = HadronicChi2 ; reg = SR3 ; max FOM = 0.163927 ; cut value = 0
+var = HadronicChi2 ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = HadronicChi2 ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = HadronicChi2 ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = leadingBPt ; reg = presel ; max FOM = 0.233235 ; cut value = 280
+var = leadingBPt ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = leadingBPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = leadingBPt ; reg = SR3 ; max FOM = 0.233235 ; cut value = 280
+var = leadingBPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = leadingBPt ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = leadingBPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = leadingJetPt ; reg = presel ; max FOM = 0.126012 ; cut value = 200
+var = leadingJetPt ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = leadingJetPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = leadingJetPt ; reg = SR3 ; max FOM = 0.126012 ; cut value = 200
+var = leadingJetPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = leadingJetPt ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = leadingJetPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = leptonPt ; reg = presel ; max FOM = 0.105345 ; cut value = 400
+var = leptonPt ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = leptonPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = leptonPt ; reg = SR3 ; max FOM = 0.105345 ; cut value = 400
+var = leptonPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = leptonPt ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = leptonPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = Mlb_hemi ; reg = presel ; max FOM = 0.113207 ; cut value = 140
+var = Mlb_hemi ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = Mlb_hemi ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = Mlb_hemi ; reg = SR3 ; max FOM = 0.113207 ; cut value = 140
+var = Mlb_hemi ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = Mlb_hemi ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = Mlb_hemi ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = M3b ; reg = presel ; max FOM = 0.11354 ; cut value = 420
+var = M3b ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = M3b ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = M3b ; reg = SR3 ; max FOM = 0.11354 ; cut value = 420
+var = M3b ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = M3b ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = M3b ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = deltaRLeptonB ; reg = presel ; max FOM = 0.200342 ; cut value = 0.6
+var = deltaRLeptonB ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = deltaRLeptonB ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = deltaRLeptonB ; reg = SR3 ; max FOM = 0.200342 ; cut value = 0.6
+var = deltaRLeptonB ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = deltaRLeptonB ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = deltaRLeptonB ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT ; reg = presel ; max FOM = 3.6892 ; cut value = 15
+var = METoverSqrtHT ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT ; reg = SR3 ; max FOM = 3.6892 ; cut value = 15
+var = METoverSqrtHT ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESup ; reg = presel ; max FOM = 3.78072 ; cut value = 16
+var = METoverSqrtHT_JESup ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESup ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESup ; reg = SR3 ; max FOM = 3.78072 ; cut value = 16
+var = METoverSqrtHT_JESup ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESup ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESup ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESdown ; reg = presel ; max FOM = 3.61166 ; cut value = 15
+var = METoverSqrtHT_JESdown ; reg = SR1 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESdown ; reg = SR2 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESdown ; reg = SR3 ; max FOM = 3.61166 ; cut value = 15
+var = METoverSqrtHT_JESdown ; reg = SR4 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESdown ; reg = SR5 ; max FOM = 0 ; cut value = 0
+var = METoverSqrtHT_JESdown ; reg = SR6 ; max FOM = 0 ; cut value = 0
+var = HTLeptonPtMET ; reg = presel ; max FOM = 0.33433 ; cut value = 1000
+var = HTLeptonPtMET ; reg = SR1 ; max FOM = 0 ; cut value = 100
+var = HTLeptonPtMET ; reg = SR2 ; max FOM = 0 ; cut value = 100
+var = HTLeptonPtMET ; reg = SR3 ; max FOM = 0.33433 ; cut value = 1000
+var = HTLeptonPtMET ; reg = SR4 ; max FOM = 0 ; cut value = 100
+var = HTLeptonPtMET ; reg = SR5 ; max FOM = 0 ; cut value = 100
+var = HTLeptonPtMET ; reg = SR6 ; max FOM = 0 ; cut value = 100
+rning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = presel ; max FOM = 1.22401 ; cut value = 440
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR1 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR2 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR3 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR4 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR5 ; max FOM = 1.22401 ; cut value = 440
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR6 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = presel ; max FOM = 0.412903 ; cut value = 360
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR5 ; max FOM = 0.412903 ; cut value = 360
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = presel ; max FOM = 0.0364633 ; cut value = 2.4
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR5 ; max FOM = 0.0364633 ; cut value = 2.4
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = presel ; max FOM = 0.302205 ; cut value = 350
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR5 ; max FOM = 0.302205 ; cut value = 350
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = presel ; max FOM = 0.0731683 ; cut value = 0.06
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR5 ; max FOM = 0.0731683 ; cut value = 0.06
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = presel ; max FOM = 0.018151 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR5 ; max FOM = 0.018151 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = presel ; max FOM = 0.0585659 ; cut value = 240
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR5 ; max FOM = 0.0585659 ; cut value = 240
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = presel ; max FOM = 0.0174813 ; cut value = 320
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR5 ; max FOM = 0.0174813 ; cut value = 320
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = presel ; max FOM = 0.0105318 ; cut value = 480
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR5 ; max FOM = 0.0105318 ; cut value = 480
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = presel ; max FOM = 0.0139528 ; cut value = 160
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR5 ; max FOM = 0.0139528 ; cut value = 160
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = presel ; max FOM = 0.0171026 ; cut value = 480
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR5 ; max FOM = 0.0171026 ; cut value = 480
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = presel ; max FOM = 0.0285171 ; cut value = 0.6
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR5 ; max FOM = 0.0285171 ; cut value = 0.6
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = presel ; max FOM = 1.54199 ; cut value = 18
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR5 ; max FOM = 1.54199 ; cut value = 18
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = presel ; max FOM = 1.47575 ; cut value = 18
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR5 ; max FOM = 1.47575 ; cut value = 18
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = presel ; max FOM = 1.41327 ; cut value = 18
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR1 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR5 ; max FOM = 1.41327 ; cut value = 18
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = presel ; max FOM = 0.111373 ; cut value = 1200
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR1 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR2 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR3 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR4 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR5 ; max FOM = 0.111373 ; cut value = 1200
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR6 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = presel ; max FOM = 2.79725 ; cut value = 320
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR1 ; max FOM = 2.79725 ; cut value = 320
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR2 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR3 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR4 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR5 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MET|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = MET ; reg = SR6 ; max FOM = 0 ; cut value = 50
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = presel ; max FOM = 1.17823 ; cut value = 150
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR1 ; max FOM = 1.17823 ; cut value = 150
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = MT ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = presel ; max FOM = 0.940473 ; cut value = 2.6
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR1 ; max FOM = 0.940473 ; cut value = 2.6
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaPhiMETJets|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaPhiMETJets ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = presel ; max FOM = 0.868612 ; cut value = 475
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR1 ; max FOM = 0.868612 ; cut value = 475
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:MT2W|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = MT2W ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = presel ; max FOM = 0.945503 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR1 ; max FOM = 0.945503 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTratio|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = HTratio ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = presel ; max FOM = 0.60682 ; cut value = 13
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR1 ; max FOM = 0.60682 ; cut value = 13
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HadronicChi2|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = HadronicChi2 ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = presel ; max FOM = 0.545119 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR1 ; max FOM = 0.545119 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingBPt|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingBPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = presel ; max FOM = 0.58069 ; cut value = 480
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR1 ; max FOM = 0.58069 ; cut value = 480
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leadingJetPt|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = leadingJetPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = presel ; max FOM = 0.604118 ; cut value = 20
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR1 ; max FOM = 0.604118 ; cut value = 20
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:leptonPt|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = leptonPt ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = presel ; max FOM = 0.545137 ; cut value = 20
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR1 ; max FOM = 0.545137 ; cut value = 20
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:Mlb_hemi|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = Mlb_hemi ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = presel ; max FOM = 0.545169 ; cut value = 60
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR1 ; max FOM = 0.545169 ; cut value = 60
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:M3b|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = M3b ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = presel ; max FOM = 0.937649 ; cut value = 0.4
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR1 ; max FOM = 0.937649 ; cut value = 0.4
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:deltaRLeptonB|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = deltaRLeptonB ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = presel ; max FOM = 2.1675 ; cut value = 11
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR1 ; max FOM = 2.1675 ; cut value = 11
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = presel ; max FOM = 2.19002 ; cut value = 12
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR1 ; max FOM = 2.19002 ; cut value = 12
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESup|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESup ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = presel ; max FOM = 2.21 ; cut value = 11
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR1 ; max FOM = 2.21 ; cut value = 11
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR2 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR3 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR4 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR5 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:METoverSqrtHT_JESdown|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = METoverSqrtHT_JESdown ; reg = SR6 ; max FOM = 0 ; cut value = 0
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:presel|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = presel ; max FOM = 0.675058 ; cut value = 800
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR1|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR1 ; max FOM = 0.675058 ; cut value = 800
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR2|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR2 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR3|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR3 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR4|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR4 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR5|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR5 ; max FOM = 0 ; cut value = 100
+Warning in <TCanvas::Constructor>: Deleting canvas with same name: var:HTLeptonPtMET|region:SR6|channel:inclusiveChannel|type:1DCutSignificance
+var = HTLeptonPtMET ; reg = SR6 ; max FOM = 0 ; cut value = 100
+

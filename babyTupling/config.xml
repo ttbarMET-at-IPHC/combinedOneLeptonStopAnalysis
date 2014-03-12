@@ -26,7 +26,7 @@
 
 <a
     type="Corrections"
-    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/pileUp/puWeights_S7.root"
+    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/pileUp/puWeights_S10.root"
     bTagReshaping="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/bTagReshaping/bTagReshaping.root"
     jetEnergyCorrectionMC="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/JEC/Fall12_Uncertainty_MC_AK5PF.txt"
     jetEnergyCorrectionData="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/JEC/Fall12_Uncertainty_Data_AK5PF.txt"
@@ -76,7 +76,6 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_LSP0to700/T2bw_x-050_*/*.root" />
 <d  name="T2bw-075_LSP0to700" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_LSP0to700/T2bw_x-075_*/*.root" />
--->
 
 <d  name="T2bw-025_mLSP1" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_mLSP1/T2bw_x-025_*/*.root" />
@@ -85,7 +84,6 @@
 <d  name="T2bw-075_mLSP1" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_mLSP1/T2bw_x-075_*/*.root" />
 
-<!--
 <d  name="T2tt_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2tt_withLSP0/*/*.root" />
 <d  name="T2tt_noLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
@@ -100,6 +98,23 @@
 <d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar-v*/*.root" />
 -->
+
+<d  name="ttbar_madgraph_1l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="103.5"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_1l/*.root" />
+<d  name="ttbar_madgraph_2l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="25.5"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_2l/*.root" />
+<d  name="ttbar_madgraph_mass166-5"    add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_mass166-5/*.root" />
+<d  name="ttbar_madgraph_mass178-5"    add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_mass178-5/*.root" />
+<d  name="ttbar_madgraph_matchingdown" add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_matchingdown/*.root" />
+<d  name="ttbar_madgraph_matchingup"   add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_matchingup/*.root" />
+<d  name="ttbar_madgraph_scaledown"    add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_scaledown/*.root" />
+<d  name="ttbar_madgraph_scaleup"      add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_scaleup/*.root" />
 
 <!-- W+jets -->
 

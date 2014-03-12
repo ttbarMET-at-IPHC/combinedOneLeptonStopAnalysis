@@ -14,9 +14,9 @@ using namespace std;
 // Define format and input file
 #include "Reader.h"
 
-#define FOLDER_INPUT "../store/babyTuples_0219/"
+#define FOLDER_INPUT  "../store/babyTuples_0219/"
 #define FOLDER_OUTPUT "../store/babyTuples_0219_preSelectionSkimmed/"
-#define DATASET "ttbar.root"
+#define DATASET       "T2bw-075.root"
 
 void printProgressBar(int current, int max);
 
