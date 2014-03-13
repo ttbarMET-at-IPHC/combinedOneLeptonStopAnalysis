@@ -6,18 +6,6 @@
 // Used to print info
 #define INFO1_MSG cout << "     > "
 
-double pi=acos(-1.);
-
-
-
-struct SortByPt
-{
-    bool operator()( TLorentzVector j1, TLorentzVector j2 ) const
-    {
-        return j1.Pt() > j2.Pt() ;
-    }
-};
-
 void printProgressBar(int current, int max)
 {
     std::string bar;
@@ -27,25 +15,30 @@ void printProgressBar(int current, int max)
     {
         if( i < (percent/2))       bar.replace(i,1,"=");
         else if( i == (percent/2)) bar.replace(i,1,">");
-        else					   bar.replace(i,1," ");
+        else                       bar.replace(i,1," ");
     }
 
     std::cout << "  [Progress]  ";
     std::cout << "[" << bar << "] ";
     std::cout.width( 3 );
     std::cout << percent << "%     ";
-    std::cout << "(" << current << " / " << max << ")" << std::endl;
+    std::cout << "(" << current << " / " << max << ")" << "\r" << std::flush;
 }
 
 void printBoxedMessage(string message)
 {
-    string line;
-    for (int i = 0 ; i < message.length() ; i++)
-        line.replace(i,1,"-");
+    cout << endl;
 
+    cout << "   ┌──";
+    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
+    cout << "─┐  " << endl;
+
+    cout << "   │  " << message << "  │  " << endl;
+    
+    cout << "   └──";
+    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
+    cout << "─┘  " << endl; 
+ 
     cout << endl;
-    cout << "   ,---" <<  line   << "---," << endl;
-    cout << "   |   " << message << "   |" << endl;
-    cout << "   `---" <<  line   << "---`" << endl;
-    cout << endl;
+
 }

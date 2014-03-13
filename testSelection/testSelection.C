@@ -19,7 +19,7 @@ using namespace IPHCTree;
 #include "Tools/interface/Dataset.h"
 #include "Tools/interface/AnalysisEnvironmentLoader.h"
 
-#include "miscTools.h"
+#include "../common.h"
 
 // #########################################################################""
 // #########################################################################""
@@ -29,7 +29,6 @@ int main (int argc, char *argv[])
 {
   
   printBoxedMessage("Starting test");
-  
 
   // ############################
   // #  Initializing variables  #
@@ -100,7 +99,7 @@ int main (int argc, char *argv[])
               
     if (verbosity > 0) printBoxedMessage("Starting loop over events");
 
-    for (unsigned int ievt = 0; ievt < datasets[datasetId].NofEvtsToRunOver(); ievt++)
+    for (int ievt = 0; ievt < datasets[datasetId].NofEvtsToRunOver(); ievt++)
     {
 
         if (ievt % 100000 == 0) printProgressBar(ievt,datasets[datasetId].NofEvtsToRunOver());
@@ -112,22 +111,20 @@ int main (int argc, char *argv[])
         int eventId = event->general.eventNb;
         sel.LoadEvent(event);
 
+        cout << "event = " << eventId << endl;
 
         // Apply selection
         if (sel.passEventSelection(runningOnData) == false) continue;
 
-        // Test JES +1sigma variation
-        float nominalMET = sel.Met();
-
-        sel.doObjectSelection(runningOnData,1);
-        sel.FillKinematicP4();
-        float JESupMET   = sel.Met();
-
-        sel.doObjectSelection(runningOnData,-1);
-        sel.FillKinematicP4();
-        float JESdownMET   = sel.Met();
-        cout << "MET | nominal : " << nominalMET << " ; JESup : " << JESupMET << " ; JESdown " << JESdownMET << endl;
+        TLorentzVector leadingLepton      = sel.getTheLeadingLepton();
+        Short_t        leadingLeptonPDGId = sel.getTheLeadingLeptonPDGId();
         
+        float leptonCharge;
+        if (leadingLeptonPDGId > 0) leptonCharge = -1.0;
+        else                        leptonCharge = +1.0;
+
+        bool isolatedTrackVeto = sel.GetSUSYstopIsolatedTrackVeto(leadingLepton,leptonCharge);
+        bool tauVeto           = sel.GetSUSYstopTauVeto(leadingLepton,leptonCharge);        
 
     }   // End event loop
   }     // End dataset loop
