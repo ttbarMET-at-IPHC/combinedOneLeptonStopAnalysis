@@ -29,6 +29,7 @@ SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
+#DEFAULT_TARGET = optimizeCuts
 DEFAULT_TARGET = Plotting
 #------------------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ run:
 	./$(DEFAULT_TARGET)
 
 browse:
-	PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse
+	export PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse
 
 clean:
 	@echo "Cleaning..."
