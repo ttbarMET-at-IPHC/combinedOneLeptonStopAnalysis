@@ -24,15 +24,17 @@ using namespace std;
 #include "interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
+// Misc
+
+#include "../common.h"
+
 // BabyTuple format and location
 
 #define FOLDER_BABYTUPLES "../store/babyTuples_0219_preSelectionSkimmed/"
 #include "Reader.h"
 babyEvent* myEventPointer;
 
-void printBoxedMessage(string message);
 void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table);
-void printProgressBar(int current, int max);
 
 // #########################################################################
 //                          Region selectors
@@ -58,9 +60,6 @@ bool Selector_presel()
 
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
-
-    //if (myEvent.deltaPhiMETJets < 0.8) return false;
-    //if (myEvent.hadronicChi2    > 5) return false;
 
     return true; 
 }
@@ -100,12 +99,16 @@ bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, fl
 
 bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,190,240,-1,false,false); }
 bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,180,-1,true,false); }
-bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(7,140,120,-1,true,true);  }
+bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(-1,130,-1,130,true,false);  }
 bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,120,-1,200,false,true);  }
 bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,250,false,true);  }
 
 bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
 {
+    // Don't consider muon with pT < 25 for MT analysis
+    if ((abs(myEventPointer->leadingLeptonPDGId) == 13) 
+         && (myEventPointer->leadingLepton.Pt()   < 25)) return false;
+
     if (myEventPointer->deltaPhiMETJets < 0.8) return false;
     if (myEventPointer->hadronicChi2    > 5) return false;
     if (myEventPointer->MT              < 120) return false;
@@ -192,8 +195,8 @@ int main (int argc, char *argv[])
              screwdriver.AddDataset("others",   "others", 0, 0);
 
      screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
-     
-     ////        screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
+             screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
+
      //screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",             "signal",COLORPLOT_AZURE);
      //screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",             "signal",kCyan-3);
      //screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",             "signal",COLORPLOT_GREEN);
@@ -301,8 +304,9 @@ int main (int argc, char *argv[])
 
           // Keep only events that pass preselection
           if (!Selector_presel()) continue;
- 
-          float weight = myEvent.weightCrossSection * screwdriver.GetLumi();
+
+          // Weight to lumi and apply trigger efficiency
+          float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
           // Apply PU weight except for signal
           if (currentDataset != "T2tt")  weight *= myEvent.weightPileUp;
@@ -310,7 +314,7 @@ int main (int argc, char *argv[])
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
 
-          // For signal, apply isr reweighting
+          // For signal, apply ISR reweighting
           if (currentDataset == "T2tt")  weight *= myEvent.weightISRmodeling;
 
           // Split 1-lepton ttbar and 2-lepton ttbar
@@ -326,22 +330,6 @@ int main (int argc, char *argv[])
           //if (currentDataset != "T2tt")
           
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
-
-          // Store stuff for cut optimization
-          
-          vector<float> values;
-          values.push_back(myEvent.METoverSqrtHT);
-          values.push_back(myEvent.MT);
-          values.push_back(myEvent.MT2W);
-          values.push_back(myEvent.MET);
-          values.push_back(myEvent.HTPlusLeptonPtPlusMET);
-          values.push_back(weight);
-
-          float stopMassForTest = 300;
-          float neutralinoMassForTest = 100;
-
-          if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
-          else if  (currentDataset != "T2tt")  listBackground.push_back(values);
 
           /*
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
@@ -416,11 +404,6 @@ int main (int argc, char *argv[])
           FOMMaps[i]->SetBinContent(x,y,FOM);
       }
   }
-
-  TH2F* backgroundpresel = screwdriver.get2DCompositeHistoClone("mStop","mNeutralino","2DSumBackground","presel","inclusiveChannel","");
-  float Bpresel = backgroundpresel->Integral(0,nBinsX+1,0,nBinsY+1);
-  cout<< "yield presel =" << Bpresel <<  endl;
-
 
   // ################################
   // ##   Compute "best" FOM map   ##
@@ -558,33 +541,6 @@ int main (int argc, char *argv[])
   formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain wrt MT analysis",true);
   formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain wrt BDT",true);
   fOutput.Close();
-  
-  // #####################################
-  // ##   Other optimization stuff...   ##
-  // #####################################
-  
-  /*
-  TH2F* METvsHTforSignal = screwdriver.get2DHistoClone("MET","HT","signal_450_100","presel","inclusiveChannel");
-  TH2F* METvsHTforBackgr = screwdriver.get2DCompositeHistoClone("MET","HT","2DSumBackground","presel","inclusiveChannel","");
-
-  float FOMMTAnalysis = yieldSignalMTAnalysis / sqrt(yieldBackgroundMTAnalysis + 0.15*0.15*yieldBackgroundMTAnalysis*yieldBackgroundMTAnalysis);
-  if (yieldBackgroundMTAnalysis < 1) FOMMTAnalysis = yieldSignalMTAnalysis / sqrt(1.0 + 0.15*0.15);
-  if (yieldSignalMTAnalysis < 3) FOMMTAnalysis = 0;
-
-  cout << "MT analysis yields (sig, bkg) : (" << yieldSignalMTAnalysis << "," << yieldBackgroundMTAnalysis << ")" << endl;
-  cout << "                        FOM   :  " << FOMMTAnalysis << endl;
-  */
-
-  //float bestFOM, bestYieldSig, bestYieldBkg;
-
-  //bool scenario_3_123[5] = {1,1,1,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  //cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-
-  //bool scenario_3_123[5] = {1,1,0,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  //cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-  
-  //bool scenario_3_245[5] = {0,1,0,1,0}; vector<float> cuts_3_245 = optimizeCuts(listBackground, listSignal, scenario_3_245, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  //cout << "MET,MT - " << cuts_3_245[4] << " ; " << cuts_3_245[1] << " -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
 
   printBoxedMessage("Program done.");
   return (0);
@@ -628,78 +584,9 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
     line1->SetLineWidth(2);
     line1->SetLineStyle(2);
     line1->Draw();
-    thePlot.Write("../plots/cutAndCount/","custom",screwdriver->GetGlobalOptions());
+    thePlot.Write("../plots/cutAndCount_T2tt/","custom",screwdriver->GetGlobalOptions());
 }
 
-vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg)
-{
-    vector<float> bestCuts;
-    (*bestFOM)      = 0.0;
-    (*bestYieldSig) = 0.0;
-    (*bestYieldBkg) = 0.0;
-
-    vector<float> cuts;
-    cuts.push_back(0);
-    cuts.push_back(0);
-    cuts.push_back(0);
-    cuts.push_back(0);
-    cuts.push_back(0);
-    bestCuts = cuts;
-
-    /*
-    for (cuts[0] = 13  ; cuts[0] <= 13  ; cuts[0] += 1  ) {
-    for (cuts[1] = 140 ; cuts[1] <= 140 ; cuts[1] += 40 ) {
-    for (cuts[2] = 200 ; cuts[2] <= 200 ; cuts[2] += 50 ) {
-    for (cuts[3] = 100 ; cuts[3] <= 100 ; cuts[3] += 200) {
-    for (cuts[4] = 1.2 ; cuts[4] >= 1.2 ; cuts[4] -= 0.2)
-    */ 
-    for (cuts[0] = 5   ; cuts[0] <= (use[0] ? 20   : 5  ) ; cuts[0] += 1  ) {
-        printProgressBar(cuts[0]-5,15);
-    for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 300  : 100) ; cuts[1] += 10 ) {
-    for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 300  : 100) ; cuts[2] += 10 ) {
-    for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 500 : 100)  ; cuts[3] += 25) {
-    for (cuts[4] = 100 ; cuts[4] <= (use[4] ? 2100 : 100)  ; cuts[4] += 200)
-    {
-        float yieldBackground  = getYield(listBackground,cuts);
-        float yieldSignal      = getYield(listSignal,cuts);
-
-        if (yieldBackground < 1.0) yieldBackground = 1.0;
-
-        float FOM = yieldSignal / sqrt(yieldBackground + 0.15*0.15*yieldBackground*yieldBackground);
-        if (yieldSignal < 3) FOM = 0;
-
-        if (FOM > *bestFOM)
-        { 
-            bestCuts        = cuts; 
-            (*bestFOM)      = FOM;
-            (*bestYieldSig) = yieldSignal;
-            (*bestYieldBkg) = yieldBackground;
-        }
-        
-    } } } } }
-        
-    return bestCuts;
-}
-
-float getYield(vector< vector<float> > listEvent, vector<float> cuts)
-{
-    float yield = 0.0;
-
-    for (unsigned int evt = 0 ; evt < listEvent.size() ; evt++)
-    {
-        vector<float> event = listEvent[evt];
-
-        bool flagPassSelection = true;
-        for (unsigned int i = 0 ; i < event.size()-1 ; i++)
-        {
-            if (event[i] < cuts[i]) { flagPassSelection = false; break; }
-        }
-
-        if (flagPassSelection) yield += event[event.size() - 1];
-    }
-
-    return yield;
-}
 
 /*
 void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table)
@@ -732,39 +619,3 @@ void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vec
 }
 */
 
-void printProgressBar(int current, int max)
-{
-    std::string bar;
-    int percent = 100 * (float) current / (float) max;
-
-    for(int i = 0; i < 50; i++)
-    {
-        if( i < (percent/2))       bar.replace(i,1,"=");
-        else if( i == (percent/2)) bar.replace(i,1,">");
-        else                       bar.replace(i,1," ");
-    }
-
-    std::cout << "  [Progress]  ";
-    std::cout << "[" << bar << "] ";
-    std::cout.width( 3 );
-    std::cout << percent << "%     ";
-    std::cout << "(" << current << " / " << max << ")" << "\r" << std::flush;
-}
-
-void printBoxedMessage(string message)
-{
-    cout << endl;
-
-    cout << "   ┌──";
-    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┐  " << endl;
-
-    cout << "   │  " << message << "  │  " << endl;
-    
-    cout << "   └──";
-    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┘  " << endl; 
- 
-    cout << endl;
-
-}

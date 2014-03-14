@@ -24,14 +24,15 @@ using namespace std;
 #include "interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
+// Misc
+
+#include "../common.h"
+
 // BabyTuple format and location
 
 #define FOLDER_BABYTUPLES "../store/babyTuples_0219_preSelectionSkimmed/"
 #include "Reader.h"
 babyEvent* myEventPointer;
-
-void printBoxedMessage(string message);
-void printProgressBar(int current, int max);
 
 // #########################################################################
 //                          Region selectors
@@ -58,9 +59,10 @@ bool Selector_presel()
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
 
-    //if (myEvent.deltaPhiMETJets < 0.8) return false;
-    //if (myEvent.hadronicChi2    > 5) return false;
+    if (myEvent.deltaPhiMETJets < 0.8) return false;
+    if (myEvent.hadronicChi2    > 5) return false;
 
+    
     if (myEventPointer->nJets < 5) return false;
 
     bool foundISRJet = false;
@@ -78,72 +80,12 @@ bool Selector_presel()
     return true; 
 }
 
-bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, float cutMET, bool enableDeltaPhiAndChi2Cuts, bool enableISRJetRequirement)
-{
-    if (myEventPointer->METoverSqrtHT < cutMEToverSqrtHT) return false;
-    if (myEventPointer->MT            < cutMT)            return false;
-    if (myEventPointer->MT2W          < cutMT2W)          return false;
-    if (myEventPointer->MET           < cutMET)           return false;
-    
-    if (enableDeltaPhiAndChi2Cuts)
-    {
-        if (myEventPointer->deltaPhiMETJets < 0.8) return false;
-        if (myEventPointer->hadronicChi2    > 5)   return false;
-    }
-
-    if (enableISRJetRequirement)
-    {
-       if (myEventPointer->nJets < 5) return false;
-
-       bool foundISRJet = false;
-       for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
-       {
-          // Check jet is high-pt
-         if ((myEventPointer->jets)[i].Pt() < 200) continue;
-          // Check jet isn't b-tagged
-         if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
-
-         foundISRJet = true;
-       }
-       if (foundISRJet == false) return false;
-    }
-
-    return Selector_presel();
-}
-
-bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,190,240,-1,false,false); }
-bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,180,-1,true,false); }
-bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(7,140,120,-1,true,true);  }
-bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,110,-1,100,true,false);  }
-bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,100,true,false);  }
-
-bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
-{
-    if (myEventPointer->deltaPhiMETJets < 0.8) return false;
-    if (myEventPointer->hadronicChi2    > 5) return false;
-    if (myEventPointer->MT              < 120) return false;
-    if (myEventPointer->MET             < METcut) return false;
-    if (useMT2Wcut && (myEventPointer->MT2W < 200)) return false;
-
-    return Selector_presel();
-}
-
-bool Selector_MTAnalysis_LM150() { return Selector_MTAnalysis(150,false); }
-bool Selector_MTAnalysis_LM200() { return Selector_MTAnalysis(200,false); }
-bool Selector_MTAnalysis_LM250() { return Selector_MTAnalysis(250,false); }
-bool Selector_MTAnalysis_LM300() { return Selector_MTAnalysis(300,false); }
-bool Selector_MTAnalysis_HM150() { return Selector_MTAnalysis(150,true);  }
-bool Selector_MTAnalysis_HM200() { return Selector_MTAnalysis(200,true);  }
-bool Selector_MTAnalysis_HM250() { return Selector_MTAnalysis(250,true);  }
-bool Selector_MTAnalysis_HM300() { return Selector_MTAnalysis(300,true);  }
-
 // #########################################################################
 //                          Others tools/stuff
 // #########################################################################
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 vector<float> optimizeCuts(vector< vector<float> > listBackground,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
-void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText);
 
 // #########################################################################
 //                              Main function
@@ -169,6 +111,7 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
+     /*
      screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY=true");
      screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY=true");
      screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
@@ -186,6 +129,7 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
+     */
 
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),                "");
      screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
@@ -205,8 +149,8 @@ int main (int argc, char *argv[])
              screwdriver.AddDataset("others",   "others", 0, 0);
 
      screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
-     
              screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
+
      //screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",             "signal",COLORPLOT_AZURE);
      //screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",             "signal",kCyan-3);
      //screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",             "signal",COLORPLOT_GREEN);
@@ -300,8 +244,9 @@ int main (int argc, char *argv[])
 
           // Keep only events that pass preselection
           if (!Selector_presel()) continue;
- 
-          float weight = myEvent.weightCrossSection * screwdriver.GetLumi();
+
+          // Weight to lumi and apply trigger efficiency
+          float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
           // Apply PU weight except for signal
           if (currentDataset != "T2tt")  weight *= myEvent.weightPileUp;
@@ -336,8 +281,8 @@ int main (int argc, char *argv[])
           values.push_back(myEvent.HTPlusLeptonPtPlusMET);
           values.push_back(weight);
 
-          float stopMassForTest = 300;
-          float neutralinoMassForTest = 175;
+          float stopMassForTest = 250;
+          float neutralinoMassForTest = 25;
 
           if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
           else if  (currentDataset != "T2tt")  listBackground.push_back(values);
@@ -474,39 +419,3 @@ float getYield(vector< vector<float> > listEvent, vector<float> cuts)
 }
 
 
-void printProgressBar(int current, int max)
-{
-    std::string bar;
-    int percent = 100 * (float) current / (float) max;
-
-    for(int i = 0; i < 50; i++)
-    {
-        if( i < (percent/2))       bar.replace(i,1,"=");
-        else if( i == (percent/2)) bar.replace(i,1,">");
-        else                       bar.replace(i,1," ");
-    }
-
-    std::cout << "  [Progress]  ";
-    std::cout << "[" << bar << "] ";
-    std::cout.width( 3 );
-    std::cout << percent << "%     ";
-    std::cout << "(" << current << " / " << max << ")" << "\r" << std::flush;
-}
-
-void printBoxedMessage(string message)
-{
-    cout << endl;
-
-    cout << "   ┌──";
-    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┐  " << endl;
-
-    cout << "   │  " << message << "  │  " << endl;
-    
-    cout << "   └──";
-    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┘  " << endl; 
- 
-    cout << endl;
-
-}

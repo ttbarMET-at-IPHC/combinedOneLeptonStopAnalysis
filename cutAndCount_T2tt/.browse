@@ -1,5 +1,7 @@
 
 {
+    gStyle->SetPaintTextFormat("4.1f");
+
     string plotList(getenv("PLOTS_TO_BROWSE"));
     string plotFile;
     stringstream stream(plotList);
