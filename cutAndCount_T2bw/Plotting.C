@@ -61,45 +61,24 @@ bool Selector_presel()
     return true; 
 }
 
-bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, float cutMET, bool enableDeltaPhiAndChi2Cuts, bool enableISRJetRequirement)
-{
-    if (myEventPointer->METoverSqrtHT < cutMEToverSqrtHT) return false;
-    if (myEventPointer->MT            < cutMT)            return false;
-    if (myEventPointer->MT2W          < cutMT2W)          return false;
-    if (myEventPointer->MET           < cutMET)           return false;
-    
-    if (enableDeltaPhiAndChi2Cuts)
-    {
-        if (myEventPointer->deltaPhiMETJets < 0.8) return false;
-        if (myEventPointer->hadronicChi2    > 5)   return false;
-    }
-
-    if (enableISRJetRequirement)
-    {
-       if (myEventPointer->nJets < 5) return false;
-
-       bool foundISRJet = false;
-       for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
-       {
-          // Check jet is high-pt
-         if ((myEventPointer->jets)[i].Pt() < 200) continue;
-          // Check jet isn't b-tagged
-         if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
-
-         foundISRJet = true;
-       }
-       if (foundISRJet == false) return false;
-    }
-
-    return Selector_presel();
-}
-
-bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,190,240,-1,false,false); }
-bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,180,-1,true,false); }
-bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(-1,130,-1,130,true,false);  }
-bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,120,-1,200,false,true);  }
-bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,250,false,true);  }
-
+bool Selector_Caro1()  { if ((myEventPointer->MET > 200)          && (myEventPointer->MT > 110) && (myEventPointer->deltaPhiMETJets > 0.8) && (myEventPointer->hadronicChi2 < 5)) return Selector_presel(); else return false; }
+bool Selector_Caro2()  { if ((myEventPointer->MET > 300)          && (myEventPointer->MT > 110) && (myEventPointer->deltaPhiMETJets > 0.8) && (myEventPointer->hadronicChi2 < 5)) return Selector_presel(); else return false; }
+bool Selector_Caro3()  { if ((myEventPointer->METoverSqrtHT > 10) && (myEventPointer->MT > 140) && (myEventPointer->MT2W > 180) && (myEventPointer->deltaPhiMETJets > 0.8) && (myEventPointer->hadronicChi2 < 5)) return Selector_presel(); else return false; }
+bool Selector_Caro4()  { if ((myEventPointer->METoverSqrtHT > 15) && (myEventPointer->MT > 190) && (myEventPointer->MT2W > 240)                                            ) return Selector_presel(); else return false; }
+bool Selector_Caro5()  { if ((myEventPointer->MET > 200)          && (myEventPointer->MT > 110) &&                                  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro6()  { if ((myEventPointer->MET > 250)          && (myEventPointer->MT > 110) &&                                  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro7()  { if ((myEventPointer->MET > 300)          && (myEventPointer->MT > 100) &&                                  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro8()  { if ((myEventPointer->MET > 200)          && (myEventPointer->MT > 190) && (myEventPointer->MT2W > 190)  && (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro9()  { if ((myEventPointer->MET > 270)          && (myEventPointer->MT > 270) && (myEventPointer->MT2W > 220)  && (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro10() { if ((myEventPointer->MET > 180)          && (myEventPointer->MT > 100) && (myEventPointer->MT2W > 190)  && (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro11() { if ((myEventPointer->MET > 180)          && (myEventPointer->MT > 160) && (myEventPointer->MT2W > 190)  && (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro12() { if ((myEventPointer->MET > 270)          && (myEventPointer->MT > 190) && (myEventPointer->MT2W > 250)  && (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro13() { if ((myEventPointer->MET > 160)          && (myEventPointer->MT > 100) && (myEventPointer->HT   > 600)  && (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro14() { if ((myEventPointer->MET > 250)          && (myEventPointer->MT > 140) && (myEventPointer->HT   > 1000) && (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro15() { if ((myEventPointer->MET > 180)  && (myEventPointer->leadingBPt > 120) &&                                  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro16() { if ((myEventPointer->MET > 260)  && (myEventPointer->leadingBPt > 140) && (myEventPointer->MT2W > 200) &&  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+bool Selector_Caro17() { if ((myEventPointer->MET > 300)  && (myEventPointer->leadingBPt > 200) && (myEventPointer->MT2W > 290) &&  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
+                                                                                                     
 bool Selector_MTAnalysis(float METcut, bool useHighDeltaMCuts)
 {
     // Don't consider muon with pT < 25 for MT analysis
@@ -129,7 +108,7 @@ bool Selector_MTAnalysis_HM250() { return Selector_MTAnalysis(250,true);  }
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 vector<float> optimizeCuts(vector< vector<float> > listBackground,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
-void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText);
+void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText, float lineOffset);
 
 // #########################################################################
 //                              Main function
@@ -204,6 +183,24 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
+     
+     screwdriver.AddRegion("Caro_1",             "C&C Caro 1",                   &Selector_Caro1);
+     screwdriver.AddRegion("Caro_2",             "C&C Caro 2",                   &Selector_Caro2);
+     screwdriver.AddRegion("Caro_3",             "C&C Caro 3",                   &Selector_Caro3);
+     screwdriver.AddRegion("Caro_4",             "C&C Caro 4",                   &Selector_Caro4);
+     screwdriver.AddRegion("Caro_5",             "C&C Caro 5",                   &Selector_Caro5);
+     screwdriver.AddRegion("Caro_6",             "C&C Caro 6",                   &Selector_Caro6);
+     screwdriver.AddRegion("Caro_7",             "C&C Caro 7",                   &Selector_Caro7);
+     screwdriver.AddRegion("Caro_8",             "C&C Caro 8",                   &Selector_Caro8);
+     screwdriver.AddRegion("Caro_9",             "C&C Caro 9",                   &Selector_Caro9);
+     screwdriver.AddRegion("Caro_10",            "C&C Caro 10",                  &Selector_Caro10);
+     screwdriver.AddRegion("Caro_11",            "C&C Caro 11",                  &Selector_Caro11);
+     screwdriver.AddRegion("Caro_12",            "C&C Caro 12",                  &Selector_Caro12);
+     screwdriver.AddRegion("Caro_13",            "C&C Caro 13",                  &Selector_Caro13);
+     screwdriver.AddRegion("Caro_14",            "C&C Caro 14",                  &Selector_Caro14);
+     screwdriver.AddRegion("Caro_15",            "C&C Caro 15",                  &Selector_Caro15);
+     screwdriver.AddRegion("Caro_16",            "C&C Caro 16",                  &Selector_Caro16);
+     screwdriver.AddRegion("Caro_17",            "C&C Caro 17",                  &Selector_Caro17);
 
      screwdriver.AddRegion("MT_LM100",           "MT analysis LM100",            &Selector_MTAnalysis_LM150);
      screwdriver.AddRegion("MT_LM150",           "MT analysis LM150",            &Selector_MTAnalysis_LM150);
@@ -359,20 +356,23 @@ int main (int argc, char *argv[])
       // ##########################
 
       vector<string> cutAndCountRegions;
-      cutAndCountRegions.push_back("CC_offShell_Loose");
-      cutAndCountRegions.push_back("CC_offShell_Tight");
-      cutAndCountRegions.push_back("CC_lowDM");
-      cutAndCountRegions.push_back("CC_mediumDM");
-      cutAndCountRegions.push_back("CC_highDM");
-    /*
-      cutAndCountRegions.push_back("Eric_1");
-      cutAndCountRegions.push_back("Eric_1");
-      cutAndCountRegions.push_back("Eric_3");
-      cutAndCountRegions.push_back("Eric_4");
-      cutAndCountRegions.push_back("Eric_5");
-      cutAndCountRegions.push_back("Eric_6");
-      cutAndCountRegions.push_back("Eric_7");
-    */
+      cutAndCountRegions.push_back("Caro_1");
+      cutAndCountRegions.push_back("Caro_2");
+      cutAndCountRegions.push_back("Caro_3");
+      cutAndCountRegions.push_back("Caro_4");
+      cutAndCountRegions.push_back("Caro_5");
+      cutAndCountRegions.push_back("Caro_6");
+      cutAndCountRegions.push_back("Caro_7");
+      cutAndCountRegions.push_back("Caro_8");
+      cutAndCountRegions.push_back("Caro_9");
+      cutAndCountRegions.push_back("Caro_10");
+      cutAndCountRegions.push_back("Caro_11");
+      cutAndCountRegions.push_back("Caro_12");
+      cutAndCountRegions.push_back("Caro_13");
+      cutAndCountRegions.push_back("Caro_14");
+      cutAndCountRegions.push_back("Caro_15");
+      cutAndCountRegions.push_back("Caro_16");
+      cutAndCountRegions.push_back("Caro_17");
 
       vector<TH2F*> signalMaps;
       vector<TH2F*> backgroundMaps;
@@ -504,8 +504,8 @@ int main (int argc, char *argv[])
       for (int y = 1 ; y <= nBinsY ; y++)
       {
           int bestSet = bestSetMap_MTanalysis->GetBinContent(x,y);
-          if (bestSet == 0) continue;
-          float bestFOM = FOMMaps_MTanalysis[bestSet-1]->GetBinContent(x,y);
+          float bestFOM = 0.0;
+          if (bestSet != 0) bestFOM = FOMMaps_MTanalysis[bestSet-1]->GetBinContent(x,y);
           bestFOMMap_MTanalysis->SetBinContent(x,y,bestFOM);
           
           if (bestFOM == 0)
@@ -520,6 +520,7 @@ int main (int argc, char *argv[])
       // ##   Make ratio map with BDT   ##
       // #################################
 
+    /*
       TH2F* ratio_newCC_newBDT = (TH2F*) FOMMaps_MTanalysis[0]->Clone();
       ratio_newCC_newBDT->SetName("ratio_newCC_newBDT");
       for (int x = 1 ; x <= nBinsX ; x++)
@@ -546,25 +547,31 @@ int main (int argc, char *argv[])
             ratio_newCC_newBDT->SetBinContent(x,y,ratio_);
           }
       }
-     
+     */
+
       // #########################
       // ##   Save those maps   ##
       // #########################
 
+      float lineOffset = 0.0;
+      if (signals[s] == "T2bw-025") lineOffset = 320; 
+      if (signals[s] == "T2bw-050") lineOffset = 160; 
+      if (signals[s] == "T2bw-075") lineOffset = 105; 
+
       TFile fOutput((string("../plots/cutAndCount_T2bw/custom")+signals[s]+".root").c_str(),"RECREATE");
-      formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"Best set of cuts",true);
+      formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"Best set of cuts",true,lineOffset);
       gStyle->SetPaintTextFormat("4.1f");
       for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
       {
-          formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], true);
-          formatAndWriteMapPlot(&screwdriver,efficiencies[i],efficiencies[i]->GetName(),string("Efficiencies for")+cutAndCountRegions[i], true);
+          formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], true,lineOffset);
+          formatAndWriteMapPlot(&screwdriver,efficiencies[i],efficiencies[i]->GetName(),string("Efficiencies for")+cutAndCountRegions[i], true,lineOffset);
       }
-      formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",true);
-      formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),"Best signal efficiency",true);
-      formatAndWriteMapPlot(&screwdriver,bestBkgEff,bestBkgEff->GetName(),"Best backgr efficiency",true);
-      formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"Best FOM from MT analysis",true);
-      formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain wrt MT analysis",true);
-      formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain wrt BDT",true);
+      formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),"Best signal efficiency",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestBkgEff,bestBkgEff->GetName(),"Best backgr efficiency",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"Best FOM from MT analysis",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain wrt MT analysis",true,lineOffset);
+      //formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain wrt BDT",true,lineOffset);
       fOutput.Close();
   }
 
@@ -572,7 +579,7 @@ int main (int argc, char *argv[])
   return (0);
 }
 
-void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText)
+void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText, float lineOffset)
 {
     Plot thePlot(name,"custom",screwdriver->GetGlobalOptions());
     thePlot.SetParameter("name",name);
@@ -606,7 +613,7 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
         pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
     }
 
-    TLine* line1 = new TLine(160,-12.5,560,387.5);
+    TLine* line1 = new TLine(lineOffset-12.5,-12.5,lineOffset+387.5,387.5);
     line1->SetLineWidth(2);
     line1->SetLineStyle(2);
     line1->Draw();
