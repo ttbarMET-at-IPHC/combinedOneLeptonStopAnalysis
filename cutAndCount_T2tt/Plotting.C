@@ -46,9 +46,6 @@ bool Selector_presel()
 {
     babyEvent myEvent = *myEventPointer;
 
-    // Reject event that don't pass the trigger
-    if ((!myEvent.triggerMuon) && (!myEvent.triggerElec)) return false;     // TODO : add xtrigger + switch to trigger efficiency
-    
     // Require nLepton == 1
     if (myEvent.numberOfLepton != 1)                      return false;
 
@@ -102,6 +99,64 @@ bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,1
 bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(-1,130,-1,130,true,false);  }
 bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,120,-1,200,false,true);  }
 bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,250,false,true);  }
+
+bool Selector_Eric_1() 
+{ 
+    if ((myEventPointer->MT                      >=  135) 
+     && (myEventPointer->MT2W                    <=  110)
+     && (myEventPointer->METoverSqrtHT           >=  5.5)
+     && (myEventPointer->deltaPhiMETJets         >=  0.1)
+     && (myEventPointer->deltaRLeptonLeadingB    <=  4.0)) return true;
+    else return false;
+}
+
+bool Selector_Eric_3() 
+{
+  if ((myEventPointer->MT                   >=  110) 
+   && (myEventPointer->METoverSqrtHT        >=  3.5) 
+   && (myEventPointer->deltaRLeptonLeadingB >=  1.2) 
+   && (myEventPointer->MET                  >=  170)) return true;
+  else return false;
+}
+
+bool Selector_Eric_4() 
+{
+  if ((myEventPointer->MT               >=  130 )
+   && (myEventPointer->METoverSqrtHT    >=  7.5) 
+   && (myEventPointer->deltaPhiMETJets  >=  0.9) 
+   && (myEventPointer->MET              >=  170)) return true;
+  else return false;
+}
+
+bool Selector_Eric_5() 
+{
+  if ((myEventPointer->MT                   >=  270) 
+   && (myEventPointer->MT2W                 >=  300) 
+   && (myEventPointer->METoverSqrtHT        >=  16.5) 
+   && (myEventPointer->deltaPhiMETJets      >=  0.9) 
+   && (myEventPointer->deltaRLeptonLeadingB <=  1.2)) return true;
+  else return false;
+}
+
+bool Selector_Eric_6() 
+{
+  if ((myEventPointer->MT                   >=  260) 
+   && (myEventPointer->MT2W                 >=  280) 
+   && (myEventPointer->METoverSqrtHT        >=  19) 
+   && (myEventPointer->deltaPhiMETJets      >=  0.9) 
+   && (myEventPointer->deltaRLeptonLeadingB <=  1.5) 
+   && (myEventPointer->MET                  >=  300)) return true;
+  else return false;
+}
+
+bool Selector_Eric_7()
+{
+  if ((myEventPointer->MT                   >=  250) 
+   && (myEventPointer->MT2W                 >=  300) 
+   && (myEventPointer->METoverSqrtHT        >=  19) 
+   && (myEventPointer->deltaRLeptonLeadingB <=  1.5)) return true;
+  else return false;
+}
 
 bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
 {
@@ -206,11 +261,13 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
+
      screwdriver.AddRegion("CC_highDM",          "Cut&Count high#DeltaM",        &Selector_cutAndCount_highDeltaM);
      screwdriver.AddRegion("CC_mediumDM",        "Cut&Count medium#DeltaM",      &Selector_cutAndCount_mediumDeltaM);
      screwdriver.AddRegion("CC_lowDM",           "Cut&Count low#DeltaM",         &Selector_cutAndCount_lowDeltaM);
      screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count offShell Tight",     &Selector_cutAndCount_offShellTight);
      screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count offShell Loose",     &Selector_cutAndCount_offShellLoose);
+
      screwdriver.AddRegion("MT_LM150",           "MT analysis LM150",            &Selector_MTAnalysis_LM150);
      screwdriver.AddRegion("MT_LM200",           "MT analysis LM200",            &Selector_MTAnalysis_LM200);
      screwdriver.AddRegion("MT_LM250",           "MT analysis LM250",            &Selector_MTAnalysis_LM250);
@@ -219,6 +276,14 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("MT_HM200",           "MT analysis HM200",            &Selector_MTAnalysis_HM200);
      screwdriver.AddRegion("MT_HM250",           "MT analysis HM250",            &Selector_MTAnalysis_HM250);
      screwdriver.AddRegion("MT_HM300",           "MT analysis HM300",            &Selector_MTAnalysis_HM300);
+/*
+     screwdriver.AddRegion("Eric_1",             "Eric region 1",                &Selector_Eric_1);
+     screwdriver.AddRegion("Eric_3",             "Eric region 3",                &Selector_Eric_3);
+     screwdriver.AddRegion("Eric_4",             "Eric region 4",                &Selector_Eric_4);
+     screwdriver.AddRegion("Eric_5",             "Eric region 5",                &Selector_Eric_5);
+     screwdriver.AddRegion("Eric_6",             "Eric region 6",                &Selector_Eric_6);
+     screwdriver.AddRegion("Eric_7",             "Eric region 7",                &Selector_Eric_7);
+*/
 
 
   // ##########################
@@ -374,27 +439,50 @@ int main (int argc, char *argv[])
   cutAndCountRegions.push_back("CC_lowDM");
   cutAndCountRegions.push_back("CC_mediumDM");
   cutAndCountRegions.push_back("CC_highDM");
+/*
+  cutAndCountRegions.push_back("Eric_1");
+  cutAndCountRegions.push_back("Eric_1");
+  cutAndCountRegions.push_back("Eric_3");
+  cutAndCountRegions.push_back("Eric_4");
+  cutAndCountRegions.push_back("Eric_5");
+  cutAndCountRegions.push_back("Eric_6");
+  cutAndCountRegions.push_back("Eric_7");
+*/
 
   vector<TH2F*> signalMaps;
   vector<TH2F*> backgroundMaps;
   vector<TH2F*> FOMMaps;
+  vector<TH2F*> efficiencies;
 
   int nBinsX = -1;
   int nBinsY = -1;
 
+  TH2F* signalMapPresel  = screwdriver.get2DHistoClone("mStop","mNeutralino","T2tt","presel","inclusiveChannel");
+  TH2F* backgroundPresel = screwdriver.get2DCompositeHistoClone("mStop","mNeutralino","2DSumBackground","presel","inclusiveChannel","");
+
+  if (nBinsX == -1) nBinsX = signalMapPresel->GetNbinsX();
+  if (nBinsY == -1) nBinsY = signalMapPresel->GetNbinsY();
+
+  // Store background eff in (mStop,mLSP) = (200,300)
+  int backgroundBin = signalMapPresel->FindBin(200,300);
+  float backgroundYieldPresel = backgroundPresel->Integral(0,nBinsX+1,0,nBinsY+1);
+
   for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
   {
       signalMaps.push_back(screwdriver.get2DHistoClone("mStop","mNeutralino","T2tt",cutAndCountRegions[i],"inclusiveChannel"));
+      signalMaps[i]->SetName((string("signalMap_")+cutAndCountRegions[i]).c_str());
       backgroundMaps.push_back(screwdriver.get2DCompositeHistoClone("mStop","mNeutralino","2DSumBackground",cutAndCountRegions[i],"inclusiveChannel",""));
-
-      FOMMaps.push_back((TH2F*) signalMaps[i]->Clone());
-      FOMMaps[i]->SetName((string("FOM_")+cutAndCountRegions[i]).c_str());
-
-      if (nBinsX == -1) nBinsX = FOMMaps[i]->GetNbinsX();
-      if (nBinsY == -1) nBinsY = FOMMaps[i]->GetNbinsY();
 
       float B = backgroundMaps[i]->Integral(0,nBinsX+1,0,nBinsY+1);
       if (B < 1.0) B = 1.0;
+ 
+      efficiencies.push_back((TH2F*) signalMaps[i]->Clone());
+      efficiencies[i]->SetName((string("eff_")+cutAndCountRegions[i]).c_str());
+      efficiencies[i]->Divide(signalMapPresel);
+      efficiencies[i]->SetBinContent(backgroundBin,B/backgroundYieldPresel);
+      
+      FOMMaps.push_back((TH2F*) signalMaps[i]->Clone());
+      FOMMaps[i]->SetName((string("FOM_")+cutAndCountRegions[i]).c_str());
 
       for (int x = 1 ; x <= nBinsX ; x++)
       for (int y = 1 ; y <= nBinsY ; y++)
@@ -403,6 +491,7 @@ int main (int argc, char *argv[])
           float FOM = S / sqrt(B + 0.15*0.15*B*B);
           FOMMaps[i]->SetBinContent(x,y,FOM);
       }
+
   }
 
   // ################################
@@ -411,12 +500,16 @@ int main (int argc, char *argv[])
 
   TH2F* bestFOMMap = (TH2F*) signalMaps[0]->Clone();  bestFOMMap->SetName("bestFOM");
   TH2F* bestSetMap = (TH2F*) signalMaps[0]->Clone();  bestSetMap->SetName("bestSet");
+  TH2F* bestSigEff = (TH2F*) signalMaps[0]->Clone();  bestSigEff->SetName("bestSigEff");
+  TH2F* bestBkgEff = (TH2F*) signalMaps[0]->Clone();  bestBkgEff->SetName("bestBkgEff");
   
   for (int x = 1 ; x <= nBinsX ; x++)
   for (int y = 1 ; y <= nBinsY ; y++)
   {
       float bestFOM = -1.0;
       int bestSet = 0;
+      float bestSigEff_ = -1.0;
+      float bestBkgEff_ = -1.0;
       for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
       {
           float FOM = FOMMaps[i]->GetBinContent(x,y);
@@ -424,10 +517,14 @@ int main (int argc, char *argv[])
           {
               bestFOM = FOM;
               if (bestFOM > 0) bestSet = i+1;
+              bestSigEff_ = efficiencies[i]->GetBinContent(x,y);
+              bestBkgEff_ = efficiencies[i]->GetBinContent(backgroundBin);
           }
       }
       bestFOMMap->SetBinContent(x,y,bestFOM);
       bestSetMap->SetBinContent(x,y,bestSet);
+      bestSigEff->SetBinContent(x,y,bestSigEff_);
+      bestBkgEff->SetBinContent(x,y,bestBkgEff_);
   }
 
   // #####################################
@@ -535,8 +632,11 @@ int main (int argc, char *argv[])
   for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
   {
       formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], true);
+      formatAndWriteMapPlot(&screwdriver,efficiencies[i],efficiencies[i]->GetName(),string("Efficiencies for")+cutAndCountRegions[i], true);
   }
   formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",true);
+  formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),"Best signal efficiency",true);
+  formatAndWriteMapPlot(&screwdriver,bestBkgEff,bestBkgEff->GetName(),"Best backgr efficiency",true);
   formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"Best FOM from MT analysis",true);
   formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain wrt MT analysis",true);
   formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain wrt BDT",true);
@@ -588,34 +688,4 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
 }
 
 
-/*
-void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table)
-{
-    string varUsedToGetYields = "BDTOutputAdaBoostNoWTag";
-    string channelUsedToGetYields = "inclusiveChannel";
-
-    for (unsigned int r = 0 ; r < region.size()          ; r++)
-    {
-        Figure tmpTotal(0.0,0.0);
-        for (unsigned int p = 0 ; p < process.size() ; p++)
-        {
-            if (process[p] == "total") continue;
-            table->Set(region[r],
-                      process[p],
-                      screwdriver->GetYieldAndError(varUsedToGetYields,
-                                               process[p],
-                                               region[r],
-                                               channelUsedToGetYields));
-            
-            if ((process[p] != "signal_550_25") && (process[p] != "signal_650_25") && (process[p] != "signal_750_25"))
-                tmpTotal += screwdriver->GetYieldAndError(varUsedToGetYields,
-                                                     process[p],
-                                                     region[r],
-                                                     channelUsedToGetYields);
-        }
-        table->Set(region[r],"total",tmpTotal);
-    }
-
-}
-*/
 
