@@ -687,5 +687,34 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
     thePlot.Write("../plots/cutAndCount_T2tt/","custom",screwdriver->GetGlobalOptions());
 }
 
+void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table)
+{
+    string varUsedToGetYields = "BDTOutputAdaBoostNoWTag";
+    string channelUsedToGetYields = "inclusiveChannel";
+
+    for (unsigned int r = 0 ; r < region.size()          ; r++)
+    {
+        Figure tmpTotal(0.0,0.0);
+        for (unsigned int p = 0 ; p < process.size() ; p++)
+        {
+            if (process[p] == "total") continue;
+            table->Set(region[r],
+                      process[p],
+                      screwdriver->GetYieldAndError(varUsedToGetYields,
+                                               process[p],
+                                               region[r],
+                                               channelUsedToGetYields));
+            
+            if ((process[p] != "signal_550_25") && (process[p] != "signal_650_25") && (process[p] != "signal_750_25"))
+                tmpTotal += screwdriver->GetYieldAndError(varUsedToGetYields,
+                                                     process[p],
+                                                     region[r],
+                                                     channelUsedToGetYields);
+        }
+        table->Set(region[r],"total",tmpTotal);
+    }
+
+}
+
 
 
