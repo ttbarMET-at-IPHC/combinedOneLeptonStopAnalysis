@@ -59,10 +59,10 @@ bool Selector_presel()
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
 
-    if (myEvent.deltaPhiMETJets < 0.8) return false;
-    if (myEvent.hadronicChi2    > 5) return false;
+   if (myEvent.deltaPhiMETJets < 0.8) return false;
+    //if (myEvent.hadronicChi2    > 5) return false;
 
-    
+   /* 
     if (myEventPointer->nJets < 5) return false;
 
     bool foundISRJet = false;
@@ -76,6 +76,7 @@ bool Selector_presel()
       foundISRJet = true;
     }
     if (foundISRJet == false) return false;
+    */
 
     return true; 
 }
@@ -147,13 +148,16 @@ int main (int argc, char *argv[])
 
      screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
              screwdriver.AddDataset("others",   "others", 0, 0);
-
-     screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
-             screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
-
-     //screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",             "signal",COLORPLOT_AZURE);
-     //screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",             "signal",kCyan-3);
-     //screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",             "signal",COLORPLOT_GREEN);
+/*
+     screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",COLORPLOT_AZURE);
+          screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
+*/
+     screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
+          screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
+/*
+     screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
+          screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
+*/
 
   // ##########################
   // ##    Create Regions    ##
@@ -202,7 +206,7 @@ int main (int argc, char *argv[])
 
      screwdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
      screwdriver.SetGlobalBoolOption("Plot", "exportEps", false);
-     screwdriver.SetGlobalBoolOption("Plot", "exportPng", false);
+     screwdriver.SetGlobalBoolOption("Plot", "exportPng", true);
 
   // ########################################
   // ##       Run over the datasets        ##
@@ -249,13 +253,17 @@ int main (int argc, char *argv[])
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
           // Apply PU weight except for signal
-          if (currentDataset != "T2tt")  weight *= myEvent.weightPileUp;
+          if  ((currentDataset != "T2bw-025")
+            && (currentDataset != "T2bw-050")
+            && (currentDataset != "T2bw-075")) weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
 
           // For signal, apply isr reweighting
-          if (currentDataset == "T2tt")  weight *= myEvent.weightISRmodeling;
+          if  ((currentDataset == "T2bw-025")
+            || (currentDataset == "T2bw-050")
+            || (currentDataset == "T2bw-075")) weight *= myEvent.weightISRmodeling;
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
@@ -275,17 +283,20 @@ int main (int argc, char *argv[])
           
           vector<float> values;
           values.push_back(myEvent.METoverSqrtHT);
+          values.push_back(myEvent.MET);
           values.push_back(myEvent.MT);
           values.push_back(myEvent.MT2W);
-          values.push_back(myEvent.MET);
-          values.push_back(myEvent.HTPlusLeptonPtPlusMET);
+          values.push_back(myEvent.leadingBPt);
+          values.push_back(myEvent.M3b);
+          values.push_back(myEvent.Mlb);
+          values.push_back(myEvent.Mlb_hemi);
           values.push_back(weight);
 
-          float stopMassForTest = 250;
+          float stopMassForTest = 300;
           float neutralinoMassForTest = 25;
 
-          if ((currentDataset == "T2tt") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
-          else if  (currentDataset != "T2tt")  listBackground.push_back(values);
+          if ((currentDataset == "T2bw-050") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
+          else if  (currentDataset != "T2bw-050")  listBackground.push_back(values);
 
           /*
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
@@ -308,7 +319,7 @@ int main (int argc, char *argv[])
  
   cout << endl;
   cout << "   > Making plots..." << endl;
-  screwdriver.MakePlots();
+  //screwdriver.MakePlots();
   cout << "   > Saving plots..." << endl;
   //screwdriver.WritePlots("../plots/cutAndCount_T2tt/");
 
@@ -323,26 +334,21 @@ int main (int argc, char *argv[])
   // #####################################
   // ##   Other optimization stuff...   ##
   // #####################################
+ 
+   {
+      float bestFOM, bestYieldSig, bestYieldBkg;
+      bool scenario[8] = {1,0,1,1,1,0,0,0};
+      vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   
-  float bestFOM, bestYieldSig, bestYieldBkg;
+      cout << "  METsig   MET   MT   MT2W   BPt   M3b   Mlb   Mlbhemi" << endl;
+      cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
+           << "      " << scenario[4] << "     "    << scenario[5] << "      " << scenario[6] << "     " << scenario[7] << endl;
+      cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
+          << "    " << cuts[4]     << "    "    << cuts[5]     << "    " << cuts[6]     << "    " << cuts[7]     << endl;
 
-  bool scenario_3_123[5] = {1,1,1,0,0}; vector<float> cuts_3_123 = optimizeCuts(listBackground, listSignal, scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  cout << "MET/sqrt(HT),MT,MT2W - " << cuts_3_123[0] << " ; " << cuts_3_123[1] << " ; " << cuts_3_123[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-
-  bool scenario_3_234[5] = {0,1,1,1,0}; vector<float> cuts_3_234 = optimizeCuts(listBackground, listSignal, scenario_3_234, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  cout << "MET,MT,MT2W - " << cuts_3_234[3] << " ; " << cuts_3_234[1] << " ; " << cuts_3_234[2] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-
-  bool scenario_3_245[5] = {0,1,0,1,1}; vector<float> cuts_3_245 = optimizeCuts(listBackground, listSignal, scenario_3_245, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  cout << "MET,MT,HTLeptonPtMET - " << cuts_3_245[3] << " ; " << cuts_3_245[1] << " ; " << cuts_3_245[4] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-
-  bool scenario_2_12[5] = {1,1,0,0,0}; vector<float> cuts_2_12 = optimizeCuts(listBackground, listSignal, scenario_2_12, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  cout << "MET/sqrt(HT),MT - " << cuts_2_12[0] << " ; " << cuts_2_12[1] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-
-  bool scenario_2_24[5] = {0,1,0,1,0}; vector<float> cuts_2_24 = optimizeCuts(listBackground, listSignal, scenario_2_24, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  cout << "MET, MT - " << cuts_2_24[3] << " ; " << cuts_2_24[1] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-
-  bool scenario_2_45[5] = {0,0,0,1,1}; vector<float> cuts_2_45 = optimizeCuts(listBackground, listSignal, scenario_2_45, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  cout << "MET, HTLeptonPtMET - " << cuts_2_45[3] << " ; " << cuts_2_45[4] << "  -  FOM,yieldSig,yieldBkg - " << bestFOM << " - " << bestYieldSig << " ; " << bestYieldBkg << endl;
+      cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
+      cout << endl;
+  }   
 
   printBoxedMessage("Program done.");
   return (0);
@@ -361,21 +367,29 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
     cuts.push_back(0);
     cuts.push_back(0);
     cuts.push_back(0);
+    cuts.push_back(0);
+    cuts.push_back(0);
+    cuts.push_back(0);
     bestCuts = cuts;
 
-    /*
-    for (cuts[0] = 13  ; cuts[0] <= 13  ; cuts[0] += 1  ) {
-    for (cuts[1] = 140 ; cuts[1] <= 140 ; cuts[1] += 40 ) {
-    for (cuts[2] = 200 ; cuts[2] <= 200 ; cuts[2] += 50 ) {
-    for (cuts[3] = 100 ; cuts[3] <= 100 ; cuts[3] += 200) {
-    for (cuts[4] = 1.2 ; cuts[4] >= 1.2 ; cuts[4] -= 0.2)
-    */ 
-    for (cuts[0] = 5   ; cuts[0] <= (use[0] ? 20   : 5  ) ; cuts[0] += 1  ) {  // MET / sqrt(HT)
-        printProgressBar(cuts[0]-5,15);
-    for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 300  : 100) ; cuts[1] += 10 ) {  // MT
-    for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 300  : 100) ; cuts[2] += 10 ) {  // MT2W
-    for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 500 : 100)  ; cuts[3] += 25) {   // MET
-    for (cuts[4] = 100 ; cuts[4] <= (use[4] ? 2100 : 100)  ; cuts[4] += 200)   // HT + pTLepton + MET
+    for (cuts[0] = 0   ; cuts[0] <= (use[0] ? 20   : 0  ) ; cuts[0] += 1   ) {  // MET / sqrt(HT)
+    for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 400  : 100) ; cuts[1] += 25  ) {  // MET
+    for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 300  : 100) ; cuts[2] += 25  ) {  // MT
+    for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 300  : 100) ; cuts[3] += 25  ) {  // MT2W
+    for (cuts[4] = 30  ; cuts[4] <= (use[4] ? 330  : 30 ) ; cuts[4] += 25  ) {  // leadingBPt
+    for (cuts[5] = 0   ; cuts[5] <= (use[5] ? 300  : 0 )  ; cuts[5] += 25  ) {  // M3b
+    for (cuts[6] = 0   ; cuts[6] <= (use[6] ? 300  : 0 )  ; cuts[6] += 25  ) {  // Mlb
+    for (cuts[7] = 0   ; cuts[7] <= (use[7] ? 300  : 0 )  ; cuts[7] += 25  ) {  // Mlb_hemi
+        /*
+    for (cuts[0] = 0   ; cuts[0] <= (use[0] ? 20   : 0  ) ; cuts[0] += 2   ) {  // MET / sqrt(HT)
+    for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 400  : 100) ; cuts[1] += 50  ) {  // MET
+    for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 400  : 100) ; cuts[2] += 50  ) {  // MT
+    for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 300  : 100) ; cuts[3] += 50  ) {  // MT2W
+    for (cuts[4] = 30  ; cuts[4] <= (use[4] ? 430  : 30 ) ; cuts[4] += 50  ) {  // leadingBPt
+    for (cuts[5] = 0   ; cuts[5] <= (use[5] ? 500  : 0 )  ; cuts[5] += 50  ) {  // M3b
+    for (cuts[6] = 0   ; cuts[6] <= (use[6] ? 500  : 0 )  ; cuts[6] += 50  ) {  // Mlb
+    for (cuts[7] = 0   ; cuts[7] <= (use[7] ? 500  : 0 )  ; cuts[7] += 50  ) {  // Mlb_hemi
+    */
     {
         float yieldBackground  = getYield(listBackground,cuts);
         float yieldSignal      = getYield(listSignal,cuts);
@@ -393,7 +407,7 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
             (*bestYieldBkg) = yieldBackground;
         }
         
-    } } } } }
+    } } } } } } } } }
         
     return bestCuts;
 }

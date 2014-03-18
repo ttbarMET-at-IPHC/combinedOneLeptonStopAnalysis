@@ -78,7 +78,9 @@ bool Selector_Caro14() { if ((myEventPointer->MET > 250)          && (myEventPoi
 bool Selector_Caro15() { if ((myEventPointer->MET > 180)  && (myEventPointer->leadingBPt > 120) &&                                  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
 bool Selector_Caro16() { if ((myEventPointer->MET > 260)  && (myEventPointer->leadingBPt > 140) && (myEventPointer->MT2W > 200) &&  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
 bool Selector_Caro17() { if ((myEventPointer->MET > 300)  && (myEventPointer->leadingBPt > 200) && (myEventPointer->MT2W > 290) &&  (myEventPointer->deltaPhiMETJets > 0.8)) return Selector_presel(); else return false; }
-                                                                                                     
+bool Selector_Caro18() { if ((myEventPointer->MET > 150)          && (myEventPointer->MT > 120) && (myEventPointer->MT2W > 200)  && (myEventPointer->deltaPhiMETJets > 0.8) && (myEventPointer->leadingBPt > 150)) return Selector_presel(); else return false; }
+bool Selector_Caro19() { if ((myEventPointer->METoverSqrtHT > 6)  && (myEventPointer->MT > 120) && (myEventPointer->MT2W > 200)  && (myEventPointer->deltaPhiMETJets > 0.8) && (myEventPointer->leadingBPt > 80)) return Selector_presel(); else return false; }
+
 bool Selector_MTAnalysis(float METcut, bool useHighDeltaMCuts)
 {
     // Don't consider muon with pT < 25 for MT analysis
@@ -184,32 +186,34 @@ int main (int argc, char *argv[])
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
      
-     screwdriver.AddRegion("Caro_1",             "C&C Caro 1",                   &Selector_Caro1);
-     screwdriver.AddRegion("Caro_2",             "C&C Caro 2",                   &Selector_Caro2);
-     screwdriver.AddRegion("Caro_3",             "C&C Caro 3",                   &Selector_Caro3);
-     screwdriver.AddRegion("Caro_4",             "C&C Caro 4",                   &Selector_Caro4);
-     screwdriver.AddRegion("Caro_5",             "C&C Caro 5",                   &Selector_Caro5);
-     screwdriver.AddRegion("Caro_6",             "C&C Caro 6",                   &Selector_Caro6);
-     screwdriver.AddRegion("Caro_7",             "C&C Caro 7",                   &Selector_Caro7);
-     screwdriver.AddRegion("Caro_8",             "C&C Caro 8",                   &Selector_Caro8);
-     screwdriver.AddRegion("Caro_9",             "C&C Caro 9",                   &Selector_Caro9);
-     screwdriver.AddRegion("Caro_10",            "C&C Caro 10",                  &Selector_Caro10);
-     screwdriver.AddRegion("Caro_11",            "C&C Caro 11",                  &Selector_Caro11);
-     screwdriver.AddRegion("Caro_12",            "C&C Caro 12",                  &Selector_Caro12);
-     screwdriver.AddRegion("Caro_13",            "C&C Caro 13",                  &Selector_Caro13);
-     screwdriver.AddRegion("Caro_14",            "C&C Caro 14",                  &Selector_Caro14);
-     screwdriver.AddRegion("Caro_15",            "C&C Caro 15",                  &Selector_Caro15);
-     screwdriver.AddRegion("Caro_16",            "C&C Caro 16",                  &Selector_Caro16);
-     screwdriver.AddRegion("Caro_17",            "C&C Caro 17",                  &Selector_Caro17);
+     screwdriver.AddRegion("Caro_1",             "C&C;Caro 1",                   &Selector_Caro1);
+     screwdriver.AddRegion("Caro_2",             "C&C;Caro 2",                   &Selector_Caro2);
+     screwdriver.AddRegion("Caro_3",             "C&C;Caro 3",                   &Selector_Caro3);
+     screwdriver.AddRegion("Caro_4",             "C&C;Caro 4",                   &Selector_Caro4);
+     screwdriver.AddRegion("Caro_5",             "C&C;Caro 5",                   &Selector_Caro5);
+     screwdriver.AddRegion("Caro_6",             "C&C;Caro 6",                   &Selector_Caro6);
+     screwdriver.AddRegion("Caro_7",             "C&C;Caro 7",                   &Selector_Caro7);
+     screwdriver.AddRegion("Caro_8",             "C&C;Caro 8",                   &Selector_Caro8);
+     screwdriver.AddRegion("Caro_9",             "C&C;Caro 9",                   &Selector_Caro9);
+     screwdriver.AddRegion("Caro_10",            "C&C;Caro 10",                  &Selector_Caro10);
+     screwdriver.AddRegion("Caro_11",            "C&C;Caro 11",                  &Selector_Caro11);
+     screwdriver.AddRegion("Caro_12",            "C&C;Caro 12",                  &Selector_Caro12);
+     screwdriver.AddRegion("Caro_13",            "C&C;Caro 13",                  &Selector_Caro13);
+     screwdriver.AddRegion("Caro_14",            "C&C;Caro 14",                  &Selector_Caro14);
+     screwdriver.AddRegion("Caro_15",            "C&C;Caro 15",                  &Selector_Caro15);
+     screwdriver.AddRegion("Caro_16",            "C&C;Caro 16",                  &Selector_Caro16);
+     screwdriver.AddRegion("Caro_17",            "C&C;Caro 17",                  &Selector_Caro17);
+     screwdriver.AddRegion("Caro_18",            "C&C;Caro 18",                  &Selector_Caro18);
+     screwdriver.AddRegion("Caro_19",            "C&C;Caro 19",                  &Selector_Caro19);
 
-     screwdriver.AddRegion("MT_LM100",           "MT analysis LM100",            &Selector_MTAnalysis_LM150);
-     screwdriver.AddRegion("MT_LM150",           "MT analysis LM150",            &Selector_MTAnalysis_LM150);
-     screwdriver.AddRegion("MT_LM200",           "MT analysis LM200",            &Selector_MTAnalysis_LM200);
-     screwdriver.AddRegion("MT_LM250",           "MT analysis LM250",            &Selector_MTAnalysis_LM250);
-     screwdriver.AddRegion("MT_HM100",           "MT analysis HM100",            &Selector_MTAnalysis_HM150);
-     screwdriver.AddRegion("MT_HM150",           "MT analysis HM150",            &Selector_MTAnalysis_HM150);
-     screwdriver.AddRegion("MT_HM200",           "MT analysis HM200",            &Selector_MTAnalysis_HM200);
-     screwdriver.AddRegion("MT_HM250",           "MT analysis HM250",            &Selector_MTAnalysis_HM250);
+     screwdriver.AddRegion("MT_LM100",           "MT analysis;(LM 100)",         &Selector_MTAnalysis_LM150);
+     screwdriver.AddRegion("MT_LM150",           "MT analysis;(LM 150)",         &Selector_MTAnalysis_LM150);
+     screwdriver.AddRegion("MT_LM200",           "MT analysis;(LM 200)",         &Selector_MTAnalysis_LM200);
+     screwdriver.AddRegion("MT_LM250",           "MT analysis;(LM 250)",         &Selector_MTAnalysis_LM250);
+     screwdriver.AddRegion("MT_HM100",           "MT analysis;(HM 100)",         &Selector_MTAnalysis_HM150);
+     screwdriver.AddRegion("MT_HM150",           "MT analysis;(HM 150)",         &Selector_MTAnalysis_HM150);
+     screwdriver.AddRegion("MT_HM200",           "MT analysis;(HM 200)",         &Selector_MTAnalysis_HM200);
+     screwdriver.AddRegion("MT_HM250",           "MT analysis;(HM 250)",         &Selector_MTAnalysis_HM250);
 
   // ##########################
   // ##   Create Channels    ##
@@ -299,9 +303,10 @@ int main (int argc, char *argv[])
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
           // Apply PU weight except for signal
-          if  ((currentDataset != "T2bw-025")
-            && (currentDataset != "T2bw-050")
-            && (currentDataset != "T2bw-075")) weight *= myEvent.weightPileUp;
+          //if  ((currentDataset != "T2bw-025")
+          //&& (currentDataset != "T2bw-050")
+          //&& (currentDataset != "T2bw-075")) 
+              weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
@@ -373,6 +378,8 @@ int main (int argc, char *argv[])
       cutAndCountRegions.push_back("Caro_15");
       cutAndCountRegions.push_back("Caro_16");
       cutAndCountRegions.push_back("Caro_17");
+      cutAndCountRegions.push_back("Caro_18");
+      cutAndCountRegions.push_back("Caro_19");
 
       vector<TH2F*> signalMaps;
       vector<TH2F*> backgroundMaps;
@@ -554,23 +561,28 @@ int main (int argc, char *argv[])
       // #########################
 
       float lineOffset = 0.0;
-      if (signals[s] == "T2bw-025") lineOffset = 320; 
-      if (signals[s] == "T2bw-050") lineOffset = 160; 
-      if (signals[s] == "T2bw-075") lineOffset = 105; 
+      string label;
+      if (signals[s] == "T2bw-025") { lineOffset = 320; label = "T2bw (x = 0.25);"; }
+      if (signals[s] == "T2bw-050") { lineOffset = 160; label = "T2bw (x = 0.50);"; }
+      if (signals[s] == "T2bw-075") { lineOffset = 105; label = "T2bw (x = 0.75);"; }
 
       TFile fOutput((string("../plots/cutAndCount_T2bw/custom")+signals[s]+".root").c_str(),"RECREATE");
-      formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"Best set of cuts",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),label+"Best set of cuts",true,lineOffset);
       gStyle->SetPaintTextFormat("4.1f");
       for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
       {
-          formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], true,lineOffset);
-          formatAndWriteMapPlot(&screwdriver,efficiencies[i],efficiencies[i]->GetName(),string("Efficiencies for")+cutAndCountRegions[i], true,lineOffset);
+          FOMMaps[i]->SetMaximum(5.0);
+          formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),label+string("FOM for ")+cutAndCountRegions[i], true,lineOffset);
+          formatAndWriteMapPlot(&screwdriver,efficiencies[i],efficiencies[i]->GetName(),label+string("Efficiencies for")+cutAndCountRegions[i], true,lineOffset);
       }
-      formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",true,lineOffset);
-      formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),"Best signal efficiency",true,lineOffset);
-      formatAndWriteMapPlot(&screwdriver,bestBkgEff,bestBkgEff->GetName(),"Best backgr efficiency",true,lineOffset);
-      formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"Best FOM from MT analysis",true,lineOffset);
-      formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain wrt MT analysis",true,lineOffset);
+      bestFOMMap->SetMaximum(5.0);
+      bestFOMMap_MTanalysis->SetMaximum(5.0);
+      ratio_newCC_MTanalysisCC->SetMaximum(2.0);
+      formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),label+"Best FOM",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),label+"Best signal efficiency",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestBkgEff,bestBkgEff->GetName(),label+"Best backgr efficiency",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),label+"Best FOM;from MT analysis",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),label+"FOM gain;wrt MT analysis",true,lineOffset);
       //formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain wrt BDT",true,lineOffset);
       fOutput.Close();
   }
