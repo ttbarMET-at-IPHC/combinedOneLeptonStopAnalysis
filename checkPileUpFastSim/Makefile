@@ -40,7 +40,7 @@ run:
 	./$(DEFAULT_TARGET)
 
 browse:
-	root -l -X .plots
+	root -q -l -X .plots
 
 clean:
 	@echo "Cleaning..."

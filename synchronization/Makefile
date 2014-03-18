@@ -28,7 +28,7 @@ EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 all: ../.vectorDictionnary_C.so synchroBabyTuples
 
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
-	cd ..; root -l -L .vectorDictionnary.C+
+	cd ..; root -q -l -L .vectorDictionnary.C+
 
 %.o: %.c
 	$(CXX) $(CXXFLAGS) -c $<

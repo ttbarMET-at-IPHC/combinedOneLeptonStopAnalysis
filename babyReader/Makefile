@@ -39,7 +39,7 @@ run:
 
 
 .vectorDictionnary_C.so: .vectorDictionnary.C
-	root -l -L .vectorDictionnary.C+
+	root -q -l -L .vectorDictionnary.C+
 
 %.o: %.c
 	$(CXX) $(CXXFLAGS) -c $<

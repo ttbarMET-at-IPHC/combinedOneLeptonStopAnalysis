@@ -30,7 +30,8 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
 #DEFAULT_TARGET = optimizeCuts
-DEFAULT_TARGET = Table
+#DEFAULT_TARGET = Table
+DEFAULT_TARGET = Plotting
 #------------------------------------------------------------------------------
 
 all: compile run browse
@@ -50,7 +51,7 @@ clean:
 #------------------------------------------------------------------------------
 
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
-	cd ..; root -l -L .vectorDictionnary.C+
+	cd ..; root -q -l -L .vectorDictionnary.C+
 
 $(DEFAULT_TARGET): $(DEFAULT_TARGET).$(SrcSuf)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
