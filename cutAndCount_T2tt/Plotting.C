@@ -102,60 +102,35 @@ bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-
 
 bool Selector_Eric_1() 
 { 
-    if ((myEventPointer->MT                      >=  135) 
-     && (myEventPointer->MT2W                    <=  110)
-     && (myEventPointer->METoverSqrtHT           >=  5.5)
-     && (myEventPointer->deltaPhiMETJets         >=  0.1)
-     && (myEventPointer->deltaRLeptonLeadingB    <=  4.0)) return true;
-    else return false;
+    if ((myEventPointer->MT >= 250) 
+     && (myEventPointer->deltaRLeptonLeadingB >= 1) 
+     && (myEventPointer->MET >= 400)) 
+        return Selector_presel(); 
+    return false;
 }
-
 bool Selector_Eric_3() 
-{
-  if ((myEventPointer->MT                   >=  110) 
-   && (myEventPointer->METoverSqrtHT        >=  3.5) 
-   && (myEventPointer->deltaRLeptonLeadingB >=  1.2) 
-   && (myEventPointer->MET                  >=  170)) return true;
-  else return false;
+{ 
+    if ((myEventPointer->MT  >= 120)
+     && (myEventPointer->MET >= 120))  
+        return Selector_presel(); 
+    return false;
 }
-
 bool Selector_Eric_4() 
-{
-  if ((myEventPointer->MT               >=  130 )
-   && (myEventPointer->METoverSqrtHT    >=  7.5) 
-   && (myEventPointer->deltaPhiMETJets  >=  0.9) 
-   && (myEventPointer->MET              >=  170)) return true;
-  else return false;
+{ 
+    if ((myEventPointer->MT   >= 280) 
+     && (myEventPointer->MT2W >= 480) 
+     && (myEventPointer->METoverSqrtHT >= 8) 
+     && (myEventPointer->deltaPhiMETJets >= 1.6)) 
+        return Selector_presel(); 
+    return false;
 }
-
 bool Selector_Eric_5() 
-{
-  if ((myEventPointer->MT                   >=  270) 
-   && (myEventPointer->MT2W                 >=  300) 
-   && (myEventPointer->METoverSqrtHT        >=  16.5) 
-   && (myEventPointer->deltaPhiMETJets      >=  0.9) 
-   && (myEventPointer->deltaRLeptonLeadingB <=  1.2)) return true;
-  else return false;
-}
-
-bool Selector_Eric_6() 
-{
-  if ((myEventPointer->MT                   >=  260) 
-   && (myEventPointer->MT2W                 >=  280) 
-   && (myEventPointer->METoverSqrtHT        >=  19) 
-   && (myEventPointer->deltaPhiMETJets      >=  0.9) 
-   && (myEventPointer->deltaRLeptonLeadingB <=  1.5) 
-   && (myEventPointer->MET                  >=  300)) return true;
-  else return false;
-}
-
-bool Selector_Eric_7()
-{
-  if ((myEventPointer->MT                   >=  250) 
-   && (myEventPointer->MT2W                 >=  300) 
-   && (myEventPointer->METoverSqrtHT        >=  19) 
-   && (myEventPointer->deltaRLeptonLeadingB <=  1.5)) return true;
-  else return false;
+{ 
+    if ((myEventPointer->MT   >= 120) 
+     && (myEventPointer->MT2W >= 120) 
+     && (myEventPointer->METoverSqrtHT >= 7)) 
+        return Selector_presel();
+    return false;
 }
 
 bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
@@ -231,6 +206,8 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
+     
+     screwdriver.AddVariable("weightPileUp",  "Pile-up weight",           "",       44,0,11,        &(myEvent.weightPileUp),"");
 
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
      screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
@@ -261,28 +238,26 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
-
-     screwdriver.AddRegion("CC_highDM",          "Cut&Count high#DeltaM",        &Selector_cutAndCount_highDeltaM);
-     screwdriver.AddRegion("CC_mediumDM",        "Cut&Count medium#DeltaM",      &Selector_cutAndCount_mediumDeltaM);
-     screwdriver.AddRegion("CC_lowDM",           "Cut&Count low#DeltaM",         &Selector_cutAndCount_lowDeltaM);
-     screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count offShell Tight",     &Selector_cutAndCount_offShellTight);
-     screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count offShell Loose",     &Selector_cutAndCount_offShellLoose);
-
-     screwdriver.AddRegion("MT_LM150",           "MT analysis LM150",            &Selector_MTAnalysis_LM150);
-     screwdriver.AddRegion("MT_LM200",           "MT analysis LM200",            &Selector_MTAnalysis_LM200);
-     screwdriver.AddRegion("MT_LM250",           "MT analysis LM250",            &Selector_MTAnalysis_LM250);
-     screwdriver.AddRegion("MT_LM300",           "MT analysis LM300",            &Selector_MTAnalysis_LM300);
-     screwdriver.AddRegion("MT_HM150",           "MT analysis HM150",            &Selector_MTAnalysis_HM150);
-     screwdriver.AddRegion("MT_HM200",           "MT analysis HM200",            &Selector_MTAnalysis_HM200);
-     screwdriver.AddRegion("MT_HM250",           "MT analysis HM250",            &Selector_MTAnalysis_HM250);
-     screwdriver.AddRegion("MT_HM300",           "MT analysis HM300",            &Selector_MTAnalysis_HM300);
+     
+     screwdriver.AddRegion("CC_highDM",          "Cut&Count;High #DeltaM",       &Selector_cutAndCount_highDeltaM);
+     screwdriver.AddRegion("CC_mediumDM",        "Cut&Count;Medium #DeltaM",     &Selector_cutAndCount_mediumDeltaM);
+     screwdriver.AddRegion("CC_lowDM",           "Cut&Count;Low #DeltaM",        &Selector_cutAndCount_lowDeltaM);
+     screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count;Off-shell tight",    &Selector_cutAndCount_offShellTight);
+     screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count;Off-shell Loose",    &Selector_cutAndCount_offShellLoose);
+     
+     screwdriver.AddRegion("MT_LM150",           "MT analysis (LM 150)",            &Selector_MTAnalysis_LM150);
+     screwdriver.AddRegion("MT_LM200",           "MT analysis (LM 200)",            &Selector_MTAnalysis_LM200);
+     screwdriver.AddRegion("MT_LM250",           "MT analysis (LM 250)",            &Selector_MTAnalysis_LM250);
+     screwdriver.AddRegion("MT_LM300",           "MT analysis (LM 300)",            &Selector_MTAnalysis_LM300);
+     screwdriver.AddRegion("MT_HM150",           "MT analysis (HM 150)",            &Selector_MTAnalysis_HM150);
+     screwdriver.AddRegion("MT_HM200",           "MT analysis (HM 200)",            &Selector_MTAnalysis_HM200);
+     screwdriver.AddRegion("MT_HM250",           "MT analysis (HM 250)",            &Selector_MTAnalysis_HM250);
+     screwdriver.AddRegion("MT_HM300",           "MT analysis (HM 300)",            &Selector_MTAnalysis_HM300);
 /*
      screwdriver.AddRegion("Eric_1",             "Eric region 1",                &Selector_Eric_1);
      screwdriver.AddRegion("Eric_3",             "Eric region 3",                &Selector_Eric_3);
      screwdriver.AddRegion("Eric_4",             "Eric region 4",                &Selector_Eric_4);
      screwdriver.AddRegion("Eric_5",             "Eric region 5",                &Selector_Eric_5);
-     screwdriver.AddRegion("Eric_6",             "Eric region 6",                &Selector_Eric_6);
-     screwdriver.AddRegion("Eric_7",             "Eric region 7",                &Selector_Eric_7);
 */
 
 
@@ -374,7 +349,8 @@ int main (int argc, char *argv[])
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
           // Apply PU weight except for signal
-          if (currentDataset != "T2tt")  weight *= myEvent.weightPileUp;
+          //if (currentDataset != "T2tt")  
+              weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
@@ -445,8 +421,6 @@ int main (int argc, char *argv[])
   cutAndCountRegions.push_back("Eric_3");
   cutAndCountRegions.push_back("Eric_4");
   cutAndCountRegions.push_back("Eric_5");
-  cutAndCountRegions.push_back("Eric_6");
-  cutAndCountRegions.push_back("Eric_7");
 */
 
   vector<TH2F*> signalMaps;
@@ -631,15 +605,20 @@ int main (int argc, char *argv[])
   gStyle->SetPaintTextFormat("4.1f");
   for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
   {
+      FOMMaps[i]->SetMaximum(5.0);
       formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], true);
       formatAndWriteMapPlot(&screwdriver,efficiencies[i],efficiencies[i]->GetName(),string("Efficiencies for")+cutAndCountRegions[i], true);
   }
+  bestFOMMap->SetMaximum(5.0);
+  bestFOMMap_MTanalysis->SetMaximum(5.0);
+  ratio_newCC_MTanalysisCC->SetMaximum(2.0);
+  ratio_newCC_newBDT->SetMaximum(2.0);
   formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"Best FOM",true);
   formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),"Best signal efficiency",true);
   formatAndWriteMapPlot(&screwdriver,bestBkgEff,bestBkgEff->GetName(),"Best backgr efficiency",true);
-  formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"Best FOM from MT analysis",true);
-  formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain wrt MT analysis",true);
-  formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain wrt BDT",true);
+  formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"Best FOM;from MT analysis",true);
+  formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"FOM gain;wrt MT analysis",true);
+  formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain;wrt BDT",true);
   fOutput.Close();
 
   printBoxedMessage("Program done.");
