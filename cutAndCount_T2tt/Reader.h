@@ -233,7 +233,7 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       myEvent->genParticles                 = *(pointers->pointerToGenParticles);
       myEvent->genParticlesPDGId            = *(pointers->pointerToGenParticlesPDGId);
       myEvent->genParticlesMother           = *(pointers->pointerToGenParticlesMother);
-      
+     /* 
       myEvent->jets_CSV_reshapedUpBC        = *(pointers->pointerToJets_CSV_reshapedUpBC);
       myEvent->jets_CSV_reshapedDownBC      = *(pointers->pointerToJets_CSV_reshapedDownBC);
       myEvent->jets_CSV_reshapedUpLight     = *(pointers->pointerToJets_CSV_reshapedUpLight);
@@ -242,7 +242,7 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       myEvent->nonSelectedJets_CSV_raw      = *(pointers->pointerToNonSelectedJets_CSV_raw);      
       myEvent->nonSelectedJets_CSV_reshaped = *(pointers->pointerToNonSelectedJets_CSV_reshaped); 
       myEvent->nonSelectedJets_partonFlav   = *(pointers->pointerToNonSelectedJets_partonFlav);   
-
+    */
 
 }
 
@@ -323,6 +323,7 @@ void InitializeBranches(TTree* theTree, babyEvent* myEvent,intermediatePointers*
     theTree->SetBranchAddress("weightISRmodeling",                            &(myEvent->weightISRmodeling));
     theTree->SetBranchAddress("weightTopPt",                                  &(myEvent->weightTopPt));
     theTree->SetBranchAddress("weightTriggerEfficiency",                      &(myEvent->weightTriggerEfficiency));
+/*
     theTree->SetBranchAddress("weightT2ttLeftHanded",                         &(myEvent->weightT2ttLeftHanded));
     theTree->SetBranchAddress("weightT2ttRightHanded",                        &(myEvent->weightT2ttRightHanded));
     theTree->SetBranchAddress("weightT2bwPolarization_ss",                    &(myEvent->weightT2bwPolarization_ss));
@@ -401,7 +402,7 @@ void InitializeBranches(TTree* theTree, babyEvent* myEvent,intermediatePointers*
     theTree->SetBranchAddress("flavor_firstIncomingParton",                   &(myEvent->flavor_firstIncomingParton)); 
     theTree->SetBranchAddress("flavor_secondIncomingParton",                  &(myEvent->flavor_secondIncomingParton));
     theTree->SetBranchAddress("scalePDF",                                     &(myEvent->scalePDF));                   
-
+*/
 }
 
 
