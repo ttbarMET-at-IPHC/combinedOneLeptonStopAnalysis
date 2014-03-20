@@ -6,7 +6,7 @@
 // Used to print info
 #define INFO1_MSG cout << "     > "
 
-void printProgressBar(int current, int max)
+void printProgressBar(int current, int max, string name = "Progress")
 {
     std::string bar;
     int percent = 100 * (float) current / (float) max;
@@ -18,7 +18,7 @@ void printProgressBar(int current, int max)
         else                       bar.replace(i,1," ");
     }
 
-    std::cout << "  [Progress]  ";
+    std::cout << "  [" << name << "]  \t";
     std::cout << "[" << bar << "] ";
     std::cout.width( 3 );
     std::cout << percent << "%     ";

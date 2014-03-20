@@ -61,6 +61,24 @@ bool Selector_presel()
     return true; 
 }
 
+bool findISRJet()
+{
+    if (myEventPointer->nJets < 5) return false;
+
+    bool foundISRJet = false;
+    for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
+    {
+        // Check jet is high-pt
+        if ((myEventPointer->jets)[i].Pt() < 200) continue;
+        // Check jet isn't b-tagged
+        if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
+
+        foundISRJet = true;
+    }
+
+    return foundISRJet;
+}
+
 bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, float cutMET, bool enableDeltaPhiAndChi2Cuts, bool enableISRJetRequirement)
 {
     if (myEventPointer->METoverSqrtHT < cutMEToverSqrtHT) return false;
@@ -74,25 +92,12 @@ bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, fl
         if (myEventPointer->hadronicChi2    > 5)   return false;
     }
 
-    if (enableISRJetRequirement)
-    {
-       if (myEventPointer->nJets < 5) return false;
-
-       bool foundISRJet = false;
-       for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
-       {
-          // Check jet is high-pt
-         if ((myEventPointer->jets)[i].Pt() < 200) continue;
-          // Check jet isn't b-tagged
-         if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
-
-         foundISRJet = true;
-       }
-       if (foundISRJet == false) return false;
-    }
+    if ((enableISRJetRequirement) && (!findISRJet())) return false;
 
     return Selector_presel();
 }
+
+
 
 bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,190,240,-1,false,false); }
 bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,180,-1,true,false); }
@@ -100,38 +105,13 @@ bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(-1,130,-
 bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,120,-1,200,false,true);  }
 bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,250,false,true);  }
 
-bool Selector_Eric_1() 
-{ 
-    if ((myEventPointer->MT >= 250) 
-     && (myEventPointer->deltaRLeptonLeadingB >= 1) 
-     && (myEventPointer->MET >= 400)) 
-        return Selector_presel(); 
-    return false;
-}
-bool Selector_Eric_3() 
-{ 
-    if ((myEventPointer->MT  >= 120)
-     && (myEventPointer->MET >= 120))  
-        return Selector_presel(); 
-    return false;
-}
-bool Selector_Eric_4() 
-{ 
-    if ((myEventPointer->MT   >= 280) 
-     && (myEventPointer->MT2W >= 480) 
-     && (myEventPointer->METoverSqrtHT >= 8) 
-     && (myEventPointer->deltaPhiMETJets >= 1.6)) 
-        return Selector_presel(); 
-    return false;
-}
-bool Selector_Eric_5() 
-{ 
-    if ((myEventPointer->MT   >= 120) 
-     && (myEventPointer->MT2W >= 120) 
-     && (myEventPointer->METoverSqrtHT >= 7)) 
-        return Selector_presel();
-    return false;
-}
+bool Selector_Eric_1() { return Selector_cutAndCount(-1,180,-1, 130,true,true); }
+bool Selector_Eric_2() { return Selector_cutAndCount(-1,250,-1, 150,true,true); }
+bool Selector_Eric_3() { return Selector_cutAndCount(-1,130,180,160,true,false); }
+bool Selector_Eric_4() { return Selector_cutAndCount(13,190,190,-1, true,false); }
+bool Selector_Eric_5() { return Selector_cutAndCount(16,190,190,-1, true,false); }
+bool Selector_Eric_6() { return Selector_cutAndCount(-1,100,160,250,true,false); }
+
 
 bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
 {
@@ -238,13 +218,14 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
-     
+
+     /*
      screwdriver.AddRegion("CC_highDM",          "Cut&Count;High #DeltaM",       &Selector_cutAndCount_highDeltaM);
      screwdriver.AddRegion("CC_mediumDM",        "Cut&Count;Medium #DeltaM",     &Selector_cutAndCount_mediumDeltaM);
      screwdriver.AddRegion("CC_lowDM",           "Cut&Count;Low #DeltaM",        &Selector_cutAndCount_lowDeltaM);
      screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count;Off-shell tight",    &Selector_cutAndCount_offShellTight);
      screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count;Off-shell Loose",    &Selector_cutAndCount_offShellLoose);
-     
+     */
      screwdriver.AddRegion("MT_LM150",           "MT analysis (LM 150)",            &Selector_MTAnalysis_LM150);
      screwdriver.AddRegion("MT_LM200",           "MT analysis (LM 200)",            &Selector_MTAnalysis_LM200);
      screwdriver.AddRegion("MT_LM250",           "MT analysis (LM 250)",            &Selector_MTAnalysis_LM250);
@@ -253,12 +234,13 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("MT_HM200",           "MT analysis (HM 200)",            &Selector_MTAnalysis_HM200);
      screwdriver.AddRegion("MT_HM250",           "MT analysis (HM 250)",            &Selector_MTAnalysis_HM250);
      screwdriver.AddRegion("MT_HM300",           "MT analysis (HM 300)",            &Selector_MTAnalysis_HM300);
-/*
+     
      screwdriver.AddRegion("Eric_1",             "Eric region 1",                &Selector_Eric_1);
+     screwdriver.AddRegion("Eric_2",             "Eric region 5",                &Selector_Eric_2);
      screwdriver.AddRegion("Eric_3",             "Eric region 3",                &Selector_Eric_3);
      screwdriver.AddRegion("Eric_4",             "Eric region 4",                &Selector_Eric_4);
      screwdriver.AddRegion("Eric_5",             "Eric region 5",                &Selector_Eric_5);
-*/
+     screwdriver.AddRegion("Eric_6",             "Eric region 5",                &Selector_Eric_6);
 
 
   // ##########################
@@ -311,10 +293,8 @@ int main (int argc, char *argv[])
   vector<string> datasetsList;
   screwdriver.GetDatasetList(&datasetsList);
 
-  cout << "   > Running on dataset : " << endl;
-
-  vector< vector<float> > listBackground;
-  vector< vector<float> > listSignal;
+  cout << "   > Reading datasets... " << endl;
+  cout << endl;
 
   for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
   {
@@ -327,17 +307,15 @@ int main (int argc, char *argv[])
      intermediatePointers pointers;
      InitializeBranches(theTree,&myEvent,&pointers);
 
-     cout << "                    " << currentDataset << endl; 
-
   // ########################################
   // ##        Run over the events         ##
   // ########################################
 
-      for (int i = 0 ; i < theTree->GetEntries() ; i++)
+      int nEntries = theTree->GetEntries();
+      for (int i = 0 ; i < nEntries ; i++)
       //for (int i = 0 ; i < min(200000, (int) theTree->GetEntries()); i++)
       {
-          if (i % (theTree->GetEntries() / 50) == 0) 
-              printProgressBar(i,theTree->GetEntries());
+          if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
@@ -381,7 +359,7 @@ int main (int argc, char *argv[])
               screwdriver.AutoFillProcessClass("signal_650_100",weight);
           */
       } 
-      
+      printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
       f.Close();
 
@@ -410,18 +388,19 @@ int main (int argc, char *argv[])
   // ##########################
 
   vector<string> cutAndCountRegions;
+  /*
   cutAndCountRegions.push_back("CC_offShell_Loose");
   cutAndCountRegions.push_back("CC_offShell_Tight");
   cutAndCountRegions.push_back("CC_lowDM");
   cutAndCountRegions.push_back("CC_mediumDM");
   cutAndCountRegions.push_back("CC_highDM");
-/*
+  */
   cutAndCountRegions.push_back("Eric_1");
-  cutAndCountRegions.push_back("Eric_1");
+  cutAndCountRegions.push_back("Eric_2");
   cutAndCountRegions.push_back("Eric_3");
   cutAndCountRegions.push_back("Eric_4");
   cutAndCountRegions.push_back("Eric_5");
-*/
+  cutAndCountRegions.push_back("Eric_6");
 
   vector<TH2F*> signalMaps;
   vector<TH2F*> backgroundMaps;
@@ -695,6 +674,5 @@ void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vec
     }
 
 }
-
 
 
