@@ -30,8 +30,8 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
 #DEFAULT_TARGET = optimizeCuts
-#DEFAULT_TARGET = Table
-DEFAULT_TARGET = Plotting
+DEFAULT_TARGET = Table
+#DEFAULT_TARGET = Plotting
 #------------------------------------------------------------------------------
 
 all: compile run browse

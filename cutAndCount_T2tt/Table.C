@@ -292,7 +292,8 @@ int main (int argc, char *argv[])
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
           // Apply PU weight except for signal
-          if (currentDataset != "T2tt")  weight *= myEvent.weightPileUp;
+          //if (currentDataset != "T2tt")  
+              weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
@@ -382,9 +383,9 @@ int main (int argc, char *argv[])
   fillMCSignalTable(&screwdriver,regionsOldCC_HM,processes,&yieldTableOldCC_HM);
   fillMCSignalTable(&screwdriver,regionsNewCC,processes,&yieldTableNewCC);
 
-  yieldTableOldCC_LM.PrintTable();
-  yieldTableOldCC_HM.PrintTable();
-  yieldTableNewCC.PrintTable();
+  yieldTableOldCC_LM.PrintTableLatex();
+  yieldTableOldCC_HM.PrintTableLatex();
+  yieldTableNewCC.PrintTableLatex();
 
   printBoxedMessage("Program done.");
   return (0);

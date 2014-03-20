@@ -350,7 +350,7 @@ int main (int argc, char *argv[])
           
           // Apply PU weight except for signal
           //if (currentDataset != "T2tt")  
-              weight *= myEvent.weightPileUp;
+             weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
@@ -601,6 +601,7 @@ int main (int argc, char *argv[])
   // #########################
 
   TFile fOutput("../plots/cutAndCount_T2tt/custom.root","RECREATE");
+  gStyle->SetPaintTextFormat("4.0f");
   formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"Best set of cuts",true);
   gStyle->SetPaintTextFormat("4.1f");
   for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
