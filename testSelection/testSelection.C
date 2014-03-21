@@ -111,7 +111,9 @@ int main (int argc, char *argv[])
         int eventId = event->general.eventNb;
         sel.LoadEvent(event);
 
-        cout << "event = " << eventId << endl;
+        cout    << "run   = " << event->general.runNb
+             << " ; lumi  = " << event->general.lumiblock
+             << " ; event = " << event->general.eventNb << endl;
 
         // Apply selection
         if (sel.passEventSelection(runningOnData) == false) continue;

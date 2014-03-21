@@ -16,31 +16,52 @@
 *.root
 *.eps
 *.png
-
-# Various stuff not needed to be versionned
-*.d
-.list*
 plots/
+
+# Log files
+*.log
+
+# Non versionned folders and links
 microTupling/
 WTagTMVATraining/weights_*
-oldFiles/
-sonicScrewdriver/
-
-*/Plotting
-*/backup*
 WTagTMVATraining/trainMVA_AdaBoost
 WTagTMVATraining/trainMVA_GradBoost
+oldFiles/
+sonicScrewdriver
+babyTupling/proofBox
+
+# Executables
 babyExtender/babyExtender
 babyReader/babyReader
 babyReader/compile
 babyReader/validation
 babyTupling/ProofLauncher
-babyTupling/proofBox
 babySkimmer/babySkimmer
-cutAndCount/test
-stopBabiesToMicroTuples/dump.dat
 stopBabiesToMicroTuples/stopBabiesToMicroTuples
+*/Plotting
+*/Table
+testSelection/testSelection
+babyFilter/babyFilter
+cutAndCount_T2tt/optimizeCuts
+
+# Various crap
+*.d
+.list*
+*/backup*
+stopBabiesToMicroTuples/dump.dat
 synchronization/synchroBabyTuples
 synchronization/synchroDump
 synchronization/tmp
-testSelection/testSelection
+babyFilter/list
+babyValidation/Validation_signal
+
+
+
+
+
+
+
+
+
+
+

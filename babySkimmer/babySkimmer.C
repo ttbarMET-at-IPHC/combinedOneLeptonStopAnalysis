@@ -15,8 +15,9 @@ using namespace std;
 #include "Reader.h"
 
 #define FOLDER_INPUT  "../store/babyTuples_0219/"
-#define FOLDER_OUTPUT "../store/babyTuples_0219_preSelectionSkimmed/"
-#define DATASET       "MuEl.root"
+//#define FOLDER_OUTPUT "../store/babyTuples_0219_preSelectionSkimmed/"
+#define FOLDER_OUTPUT "./"
+#define DATASET       "T2bw-050.root"
 
 void printProgressBar(int current, int max);
 

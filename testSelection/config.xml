@@ -213,9 +213,12 @@
 <!--
 <d  name="SingleElec" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/SingleElec_*/*.root" />
--->
 <d  name="SingleMuon" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/SingleMuon_*/*.root" />
+-->
+
+<d  name="testSync" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/SingleMuon_C2/NTuple_5_*.root" />
 
 </Datasets>
 
