@@ -163,6 +163,32 @@ bool Selector_highDeltaM_4()
         return false; 
 }
 
+bool Selector_Eric(float cutMT, float cutMET, float cutMETsig, float cutMT2W, float cutBPt, float cutM3b)
+{
+    if ((myEventPointer->MT            > cutMT)
+     && (myEventPointer->MET           > cutMET)
+     && (myEventPointer->METoverSqrtHT > cutMETsig)
+     && (myEventPointer->MT2W          > cutMT2W)
+     && (myEventPointer->leadingBPt    > cutBPt)
+     && (myEventPointer->M3b           > cutM3b))
+    {
+        return Selector_presel();
+    }
+    else return false;
+}
+
+bool Selector_Eric1()  { return Selector_Eric(150,  -1,  11, -1,  250, -1); } 
+bool Selector_Eric2()  { return Selector_Eric(150, 300,  -1, 200, 280, -1); } 
+bool Selector_Eric3()  { return Selector_Eric(-1,   -1,  11, 280, -1,  -1); } 
+bool Selector_Eric4()  { return Selector_Eric(100,  -1,  11, 230, -1,  -1); } 
+bool Selector_Eric5()  { return Selector_Eric(120,  120, -1, 120, -1,  -1); } 
+bool Selector_Eric6()  { return Selector_Eric(120,  -1,  -1, 100, -1,  -1); } 
+bool Selector_Eric7()  { return Selector_Eric(130,  -1,  10, 190, 150, -1); } 
+bool Selector_Eric8()  { return Selector_Eric(130,  -1,  12, 230, 250, -1); } 
+bool Selector_Eric9()  { return Selector_Eric(160,  150, -1, 90,  100, -1); } 
+bool Selector_Eric10() { return Selector_Eric(160,  -1,  15, 200, -1, 280); } 
+bool Selector_Eric11() { return Selector_Eric(130,  -1,  6,  130,  80, -1); } 
+bool Selector_Eric12() { return Selector_Eric(120,  400, -1, 120, -1,  -1); } 
 
 bool Selector_MTAnalysis(float METcut, bool useHighDeltaMCuts)
 {
@@ -280,14 +306,27 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("highDeltaM_3",       "high #DeltaM - 3",             &Selector_highDeltaM_3      );
      screwdriver.AddRegion("highDeltaM_4",       "high #DeltaM - 4",             &Selector_highDeltaM_4      );
 
-     screwdriver.AddRegion("MT_LM100",           "MT analysis;(LM 100)",         &Selector_MTAnalysis_LM150);
+     screwdriver.AddRegion("MT_LM100",           "MT analysis;(LM 100)",         &Selector_MTAnalysis_LM100);
      screwdriver.AddRegion("MT_LM150",           "MT analysis;(LM 150)",         &Selector_MTAnalysis_LM150);
      screwdriver.AddRegion("MT_LM200",           "MT analysis;(LM 200)",         &Selector_MTAnalysis_LM200);
      screwdriver.AddRegion("MT_LM250",           "MT analysis;(LM 250)",         &Selector_MTAnalysis_LM250);
-     screwdriver.AddRegion("MT_HM100",           "MT analysis;(HM 100)",         &Selector_MTAnalysis_HM150);
+     screwdriver.AddRegion("MT_HM100",           "MT analysis;(HM 100)",         &Selector_MTAnalysis_HM100);
      screwdriver.AddRegion("MT_HM150",           "MT analysis;(HM 150)",         &Selector_MTAnalysis_HM150);
      screwdriver.AddRegion("MT_HM200",           "MT analysis;(HM 200)",         &Selector_MTAnalysis_HM200);
      screwdriver.AddRegion("MT_HM250",           "MT analysis;(HM 250)",         &Selector_MTAnalysis_HM250);
+     
+     screwdriver.AddRegion("Eric_1",             "Eric 1",                       &Selector_Eric1);
+     screwdriver.AddRegion("Eric_2",             "Eric 2",                       &Selector_Eric2);
+     screwdriver.AddRegion("Eric_3",             "Eric 3",                       &Selector_Eric3);
+     screwdriver.AddRegion("Eric_4",             "Eric 4",                       &Selector_Eric4);
+     screwdriver.AddRegion("Eric_5",             "Eric 5",                       &Selector_Eric5);
+     screwdriver.AddRegion("Eric_6",             "Eric 6",                       &Selector_Eric6);
+     screwdriver.AddRegion("Eric_7",             "Eric 7",                       &Selector_Eric7);
+     screwdriver.AddRegion("Eric_8",             "Eric 8",                       &Selector_Eric8);
+     screwdriver.AddRegion("Eric_9",             "Eric 9",                       &Selector_Eric9);
+     screwdriver.AddRegion("Eric_10",            "Eric 10",                      &Selector_Eric10);
+     screwdriver.AddRegion("Eric_11",            "Eric 11",                      &Selector_Eric11);
+     screwdriver.AddRegion("Eric_12",            "Eric 12",                      &Selector_Eric12);
 
   // ##########################
   // ##   Create Channels    ##
@@ -339,7 +378,8 @@ int main (int argc, char *argv[])
   vector<string> datasetsList;
   screwdriver.GetDatasetList(&datasetsList);
 
-  cout << "   > Running on dataset : " << endl;
+  cout << "   > Reading datasets... " << endl;
+  cout << endl;
 
   vector< vector<float> > listBackground;
   vector< vector<float> > listSignal;
@@ -355,17 +395,15 @@ int main (int argc, char *argv[])
      intermediatePointers pointers;
      InitializeBranches(theTree,&myEvent,&pointers);
 
-     cout << "                    " << currentDataset << endl; 
-
   // ########################################
   // ##        Run over the events         ##
   // ########################################
 
-      for (int i = 0 ; i < theTree->GetEntries() ; i++)
+      int nEntries = theTree->GetEntries();
+      for (int i = 0 ; i < nEntries ; i++)
       //for (int i = 0 ; i < min(100000, (int) theTree->GetEntries()); i++)
       {
-          if (i % (theTree->GetEntries() / 50) == 0) 
-              printProgressBar(i,theTree->GetEntries());
+          if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
@@ -376,11 +414,8 @@ int main (int argc, char *argv[])
           // Weight to lumi and apply trigger efficiency
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
-          // Apply PU weight except for signal
-          //if  ((currentDataset != "T2bw-025")
-          //&& (currentDataset != "T2bw-050")
-          //&& (currentDataset != "T2bw-075")) 
-              weight *= myEvent.weightPileUp;
+          // Apply PU weight
+          weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
@@ -397,7 +432,8 @@ int main (int argc, char *argv[])
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
       } 
-      
+
+      printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
       f.Close();
 
@@ -435,6 +471,7 @@ int main (int argc, char *argv[])
       // ##########################
 
       vector<string> cutAndCountRegions;
+      /*
       cutAndCountRegions.push_back("offShellLoose"     );
       cutAndCountRegions.push_back("offShellTight"     );
       cutAndCountRegions.push_back("lowDeltaM_1"       );
@@ -445,6 +482,19 @@ int main (int argc, char *argv[])
       cutAndCountRegions.push_back("highDeltaM_2"      );
       cutAndCountRegions.push_back("highDeltaM_3"      );
       cutAndCountRegions.push_back("highDeltaM_4"      );
+      */ 
+      cutAndCountRegions.push_back("Eric_1" );
+      cutAndCountRegions.push_back("Eric_2" );
+      cutAndCountRegions.push_back("Eric_3" );
+      cutAndCountRegions.push_back("Eric_4" );
+      cutAndCountRegions.push_back("Eric_5" );
+      cutAndCountRegions.push_back("Eric_6" );
+      cutAndCountRegions.push_back("Eric_7" );
+      cutAndCountRegions.push_back("Eric_8" );
+      cutAndCountRegions.push_back("Eric_9" );
+      cutAndCountRegions.push_back("Eric_10");
+      cutAndCountRegions.push_back("Eric_11");
+      cutAndCountRegions.push_back("Eric_12");
      
       vector<TH2F*> signalMaps;
       vector<TH2F*> backgroundMaps;
