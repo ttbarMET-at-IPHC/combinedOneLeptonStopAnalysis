@@ -20,7 +20,7 @@ using namespace std;
 
 // Sonic Screwdriver headers
 
-#include "interface/Table.h" 
+#include "interface/tables/TableBackgroundSignal.h" 
 #include "interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
@@ -33,8 +33,6 @@ using namespace theDoctor;
 #define FOLDER_BABYTUPLES "../store/babyTuples_0219_preSelectionSkimmed/"
 #include "Reader.h"
 babyEvent* myEventPointer;
-
-void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table);
 
 // #########################################################################
 //                          Region selectors
@@ -188,14 +186,6 @@ bool Selector_MTAnalysis_HM200() { return Selector_MTAnalysis(200,true);  }
 bool Selector_MTAnalysis_HM250() { return Selector_MTAnalysis(250,true);  }
 
 // #########################################################################
-//                          Others tools/stuff
-// #########################################################################
-
-float getYield(vector< vector<float> > listEvent, vector<float> cuts);
-vector<float> optimizeCuts(vector< vector<float> > listBackground,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
-void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText, float lineOffset);
-
-// #########################################################################
 //                              Main function
 // #########################################################################
 
@@ -244,7 +234,7 @@ int main (int argc, char *argv[])
 //     screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
 //          screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
 
-     screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
+//     screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
           screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
     
      screwdriver.AddProcessClass("signal_300_50", "T2bw (300/50)",         "signal",COLORPLOT_GREEN);
@@ -268,11 +258,11 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("highDeltaM_3",       "high #DeltaM - 3",             &Selector_highDeltaM_3      );
      screwdriver.AddRegion("highDeltaM_4",       "high #DeltaM - 4",             &Selector_highDeltaM_4      );
 
-     screwdriver.AddRegion("MT_LM100",           "MT analysis;(LM 100)",         &Selector_MTAnalysis_LM150);
+     screwdriver.AddRegion("MT_LM100",           "MT analysis;(LM 100)",         &Selector_MTAnalysis_LM100);
      screwdriver.AddRegion("MT_LM150",           "MT analysis;(LM 150)",         &Selector_MTAnalysis_LM150);
      screwdriver.AddRegion("MT_LM200",           "MT analysis;(LM 200)",         &Selector_MTAnalysis_LM200);
      screwdriver.AddRegion("MT_LM250",           "MT analysis;(LM 250)",         &Selector_MTAnalysis_LM250);
-     screwdriver.AddRegion("MT_HM100",           "MT analysis;(HM 100)",         &Selector_MTAnalysis_HM150);
+     screwdriver.AddRegion("MT_HM100",           "MT analysis;(HM 100)",         &Selector_MTAnalysis_HM100);
      screwdriver.AddRegion("MT_HM150",           "MT analysis;(HM 150)",         &Selector_MTAnalysis_HM150);
      screwdriver.AddRegion("MT_HM200",           "MT analysis;(HM 200)",         &Selector_MTAnalysis_HM200);
      screwdriver.AddRegion("MT_HM250",           "MT analysis;(HM 250)",         &Selector_MTAnalysis_HM250);
@@ -327,7 +317,8 @@ int main (int argc, char *argv[])
   vector<string> datasetsList;
   screwdriver.GetDatasetList(&datasetsList);
 
-  cout << "   > Running on dataset : " << endl;
+  cout << "   > Reading datasets... " << endl;
+  cout << endl;
 
   vector< vector<float> > listBackground;
   vector< vector<float> > listSignal;
@@ -349,11 +340,11 @@ int main (int argc, char *argv[])
   // ##        Run over the events         ##
   // ########################################
 
-      for (int i = 0 ; i < theTree->GetEntries() ; i++)
+      int nEntries = theTree->GetEntries();
+      for (int i = 0 ; i < nEntries ; i++)
       //for (int i = 0 ; i < min(100000, (int) theTree->GetEntries()); i++)
       {
-          if (i % (theTree->GetEntries() / 50) == 0) 
-              printProgressBar(i,theTree->GetEntries());
+          if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
@@ -364,11 +355,8 @@ int main (int argc, char *argv[])
           // Weight to lumi and apply trigger efficiency
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
-          // Apply PU weight except for signal
-          //if  ((currentDataset != "T2bw-025")
-          //&& (currentDataset != "T2bw-050")
-          //&& (currentDataset != "T2bw-075")) 
-              weight *= myEvent.weightPileUp;
+          // Apply PU weight
+          weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
@@ -431,57 +419,12 @@ int main (int argc, char *argv[])
   //regionsNewCC.push_back("highDeltaM_3");
   //regionsNewCC.push_back("highDeltaM_4");
 
-  vector<string> processes;
-  processes.push_back("ttbar_1l");
-  processes.push_back("ttbar_2l");
-  processes.push_back("W+jets");
-  processes.push_back("others");
-  processes.push_back("total");
-  processes.push_back("signal_300_50");
-  processes.push_back("signal_450_50");
-  processes.push_back("signal_600_50");
-
-
-  Table yieldTableNewCC(regionsNewCC,processes);
-
-  fillMCSignalTable(&screwdriver,regionsNewCC,processes,&yieldTableNewCC);
-
-  yieldTableNewCC.PrintTableLatex();
+  //TableBackgroundSignal tableOldCC_LM(&screwdriver,regionsOldCC_LM,"inclusiveChannel","MET");
+  //TableBackgroundSignal tableOldCC_HM(&screwdriver,regionsOldCC_HM,"inclusiveChannel","MET");
+  TableBackgroundSignal tableNewCC   (&screwdriver,regionsNewCC   ,"inclusiveChannel","MET");
+  tableNewCC.PrintTable();
 
   printBoxedMessage("Program done.");
   return (0);
 }
-
-void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table)
-{
-    string varUsedToGetYields = "MET";
-    string channelUsedToGetYields = "inclusiveChannel";
-
-    for (unsigned int r = 0 ; r < region.size()          ; r++)
-    {
-        Figure tmpTotal(0.0,0.0);
-        for (unsigned int p = 0 ; p < process.size() ; p++)
-        {
-            if (process[p] == "total") continue;
-            table->Set(region[r],
-                      process[p],
-                      screwdriver->GetYieldAndError(varUsedToGetYields,
-                                               process[p],
-                                               region[r],
-                                               channelUsedToGetYields));
-            
-            if ((process[p] != "signal_300_50") 
-             && (process[p] != "signal_450_50") 
-             && (process[p] != "signal_600_50"))
-                tmpTotal += screwdriver->GetYieldAndError(varUsedToGetYields,
-                                                     process[p],
-                                                     region[r],
-                                                     channelUsedToGetYields);
-        }
-        table->Set(region[r],"total",tmpTotal);
-    }
-
-}
-
-
 

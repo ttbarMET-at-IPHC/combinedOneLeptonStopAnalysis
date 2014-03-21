@@ -20,7 +20,7 @@ using namespace std;
 
 // Sonic Screwdriver headers
 
-#include "interface/Table.h" 
+#include "interface/tables/TableBackgroundSignal.h" 
 #include "interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
@@ -33,8 +33,6 @@ using namespace theDoctor;
 #define FOLDER_BABYTUPLES "../store/babyTuples_0219_preSelectionSkimmed/"
 #include "Reader.h"
 babyEvent* myEventPointer;
-
-void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table);
 
 // #########################################################################
 //                          Region selectors
@@ -61,6 +59,24 @@ bool Selector_presel()
     return true; 
 }
 
+bool findISRJet()
+{
+    if (myEventPointer->nJets < 5) return false;
+
+    bool foundISRJet = false;
+    for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
+    {
+        // Check jet is high-pt
+        if ((myEventPointer->jets)[i].Pt() < 200) continue;
+        // Check jet isn't b-tagged
+        if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
+
+        foundISRJet = true;
+    }
+
+    return foundISRJet;
+}
+
 bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, float cutMET, bool enableDeltaPhiAndChi2Cuts, bool enableISRJetRequirement)
 {
     if (myEventPointer->METoverSqrtHT < cutMEToverSqrtHT) return false;
@@ -74,22 +90,7 @@ bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, fl
         if (myEventPointer->hadronicChi2    > 5)   return false;
     }
 
-    if (enableISRJetRequirement)
-    {
-       if (myEventPointer->nJets < 5) return false;
-
-       bool foundISRJet = false;
-       for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
-       {
-          // Check jet is high-pt
-         if ((myEventPointer->jets)[i].Pt() < 200) continue;
-          // Check jet isn't b-tagged
-         if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
-
-         foundISRJet = true;
-       }
-       if (foundISRJet == false) return false;
-    }
+    if ((enableISRJetRequirement) && (!findISRJet())) return false;
 
     return Selector_presel();
 }
@@ -123,14 +124,6 @@ bool Selector_MTAnalysis_HM150() { return Selector_MTAnalysis(150,true);  }
 bool Selector_MTAnalysis_HM200() { return Selector_MTAnalysis(200,true);  }
 bool Selector_MTAnalysis_HM250() { return Selector_MTAnalysis(250,true);  }
 bool Selector_MTAnalysis_HM300() { return Selector_MTAnalysis(300,true);  }
-
-// #########################################################################
-//                          Others tools/stuff
-// #########################################################################
-
-float getYield(vector< vector<float> > listEvent, vector<float> cuts);
-vector<float> optimizeCuts(vector< vector<float> > listBackground,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
-void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText);
 
 // #########################################################################
 //                              Main function
@@ -254,7 +247,9 @@ int main (int argc, char *argv[])
   vector<string> datasetsList;
   screwdriver.GetDatasetList(&datasetsList);
 
-  cout << "   > Running on dataset : " << endl;
+  cout << "   > Reading datasets... " << endl;
+  cout << endl;
+
 
   vector< vector<float> > listBackground;
   vector< vector<float> > listSignal;
@@ -270,17 +265,15 @@ int main (int argc, char *argv[])
      intermediatePointers pointers;
      InitializeBranches(theTree,&myEvent,&pointers);
 
-     cout << "                    " << currentDataset << endl; 
-
   // ########################################
   // ##        Run over the events         ##
   // ########################################
 
-      for (int i = 0 ; i < theTree->GetEntries() ; i++)
+      int nEntries = theTree->GetEntries();
+      for (int i = 0 ; i < nEntries ; i++)
       //for (int i = 0 ; i < min(200000, (int) theTree->GetEntries()); i++)
       {
-          if (i % (theTree->GetEntries() / 50) == 0) 
-              printProgressBar(i,theTree->GetEntries());
+          if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
@@ -291,9 +284,8 @@ int main (int argc, char *argv[])
           // Weight to lumi and apply trigger efficiency
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
-          // Apply PU weight except for signal
-          //if (currentDataset != "T2tt")  
-              weight *= myEvent.weightPileUp;
+          // Apply PU weight
+          weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
@@ -316,7 +308,8 @@ int main (int argc, char *argv[])
           if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_650_100",weight);
       } 
-      
+
+      printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
       f.Close();
 
@@ -365,62 +358,15 @@ int main (int argc, char *argv[])
   regionsNewCC.push_back("CC_mediumDM");
   regionsNewCC.push_back("CC_highDM");
 
-  vector<string> processes;
-  processes.push_back("ttbar_1l");
-  processes.push_back("ttbar_2l");
-  processes.push_back("W+jets");
-  processes.push_back("others");
-  processes.push_back("total");
-  processes.push_back("signal_250_100");
-  processes.push_back("signal_450_100");
-  processes.push_back("signal_650_100"); 
+  TableBackgroundSignal tableOldCC_LM(&screwdriver,regionsOldCC_LM,"inclusiveChannel","MET");
+  TableBackgroundSignal tableOldCC_HM(&screwdriver,regionsOldCC_HM,"inclusiveChannel","MET");
+  TableBackgroundSignal tableNewCC   (&screwdriver,regionsNewCC   ,"inclusiveChannel","MET");
 
-  Table yieldTableOldCC_LM(regionsOldCC_LM,processes);
-  Table yieldTableOldCC_HM(regionsOldCC_HM,processes);
-  Table yieldTableNewCC(regionsNewCC,processes);
-
-  fillMCSignalTable(&screwdriver,regionsOldCC_LM,processes,&yieldTableOldCC_LM);
-  fillMCSignalTable(&screwdriver,regionsOldCC_HM,processes,&yieldTableOldCC_HM);
-  fillMCSignalTable(&screwdriver,regionsNewCC,processes,&yieldTableNewCC);
-
-  yieldTableOldCC_LM.PrintTableLatex();
-  yieldTableOldCC_HM.PrintTableLatex();
-  yieldTableNewCC.PrintTableLatex();
+  tableOldCC_LM.PrintTable();
+  tableOldCC_HM.PrintTable();
+  tableNewCC.PrintTable();
 
   printBoxedMessage("Program done.");
   return (0);
 }
-
-void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table)
-{
-    string varUsedToGetYields = "MET";
-    string channelUsedToGetYields = "inclusiveChannel";
-
-    for (unsigned int r = 0 ; r < region.size()          ; r++)
-    {
-        Figure tmpTotal(0.0,0.0);
-        for (unsigned int p = 0 ; p < process.size() ; p++)
-        {
-            if (process[p] == "total") continue;
-            table->Set(region[r],
-                      process[p],
-                      screwdriver->GetYieldAndError(varUsedToGetYields,
-                                               process[p],
-                                               region[r],
-                                               channelUsedToGetYields));
-            
-            if ((process[p] != "signal_250_100") 
-             && (process[p] != "signal_450_100") 
-             && (process[p] != "signal_650_100"))
-                tmpTotal += screwdriver->GetYieldAndError(varUsedToGetYields,
-                                                     process[p],
-                                                     region[r],
-                                                     channelUsedToGetYields);
-        }
-        table->Set(region[r],"total",tmpTotal);
-    }
-
-}
-
-
 

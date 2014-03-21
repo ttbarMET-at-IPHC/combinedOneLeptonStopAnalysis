@@ -326,9 +326,8 @@ int main (int argc, char *argv[])
           // Weight to lumi and apply trigger efficiency
           float weight = myEvent.weightCrossSection * screwdriver.GetLumi() * myEvent.weightTriggerEfficiency;
           
-          // Apply PU weight except for signal
-          //if (currentDataset != "T2tt")  
-             weight *= myEvent.weightPileUp;
+          // Apply PU weight
+          weight *= myEvent.weightPileUp;
           
           // For ttbar, apply topPt reweighting
           if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
@@ -340,10 +339,6 @@ int main (int argc, char *argv[])
           string currentProcessClass_ = currentProcessClass;
           if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
-
-          // Dirty overflow management
-          if (myEvent.hadronicChi2  >= 20) myEvent.hadronicChi2  = 19.99;
-          if (myEvent.METoverSqrtHT >= 32) myEvent.METoverSqrtHT = 31.99;
 
           // Fill all the variables with autoFill-mode activated
           //if (currentDataset != "T2tt")
