@@ -61,6 +61,14 @@ bool Selector_presel()
     return true; 
 }
 
+bool Selector_lowLeptonPt()
+{
+    if (myEventPointer->leadingLepton.Pt() > 26) return false;
+
+    return Selector_presel();
+}
+
+
 // #########################################################################
 //                              Main function
 // #########################################################################
@@ -112,6 +120,7 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
+     screwdriver.AddRegion("lowLeptonPt",        "p_{T}(lepton) < 26 GeV",       &Selector_lowLeptonPt);
 
   // ##########################
   // ##   Create Channels    ##
