@@ -24,15 +24,15 @@ using namespace std;
 #include "interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
+// Misc
+
+#include "../common.h"
+
 // BabyTuple format and location
 
-//#define FOLDER_BABYTUPLES "../store/babyTuples_1102/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_1102_skimmed/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0219_preSelectionSkimmed/"
 #include "Reader.h"
-babyEventSkimmed* myEventPointer;
-
-void printBoxedMessage(string message);
-void printProgressBar(int current, int max);
+babyEvent* myEventPointer;
 
 // #########################################################################
 //                          Region selectors
@@ -44,11 +44,8 @@ bool muonChannelSelector() { return (abs(myEventPointer->leadingLeptonPDGId) == 
 
 bool Selector_presel() 
 {
-    babyEventSkimmed myEvent = *myEventPointer;
+    babyEvent myEvent = *myEventPointer;
 
-    // Reject event that don't pass the trigger
-    if ((!myEvent.triggerMuon) && (!myEvent.xtriggerMuon) && (!myEvent.triggerElec)) return false;
-    
     // Require nLepton == 1
     if (myEvent.numberOfLepton != 1)                      return false;
 
@@ -63,45 +60,6 @@ bool Selector_presel()
 
     return true; 
 }
-
-bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, float cutMET, bool enableDeltaPhiAndChi2Cuts, bool enableISRJetRequirement)
-{
-    if (myEventPointer->METoverSqrtHT < cutMEToverSqrtHT) return false;
-    if (myEventPointer->MT            < cutMT)            return false;
-    if (myEventPointer->MT2W          < cutMT2W)          return false;
-    if (myEventPointer->MET           < cutMET)           return false;
-    
-    if (enableDeltaPhiAndChi2Cuts)
-    {
-        if (myEventPointer->deltaPhiMETJets < 0.8) return false;
-        if (myEventPointer->hadronicChi2    > 5)   return false;
-    }
-
-    if (enableISRJetRequirement)
-    {
-       if (myEventPointer->nJets < 5) return false;
-
-       bool foundISRJet = false;
-       for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
-       {
-          // Check jet is high-pt
-         if ((myEventPointer->jets)[i].Pt() < 200) continue;
-          // Check jet isn't b-tagged
-         if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
-
-         foundISRJet = true;
-       }
-       if (foundISRJet == false) return false;
-    }
-
-    return Selector_presel();
-}
-
-bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,190,240,-1,false,false); }
-bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,180,-1,true,false); }
-bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(7,140,120,-1,true,true);  }
-bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,110,-1,100,true,false);  }
-bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,100,true,false);  }
 
 // #########################################################################
 //                              Main function
@@ -120,24 +78,16 @@ int main (int argc, char *argv[])
       SonicScrewdriver screwdriver;
 
        // Create a container for the event
-     babyEventSkimmed myEvent;
+     babyEvent myEvent;
      myEventPointer = &myEvent;
 
   // ##########################
   // ##   Create Variables   ##
   // ##########################
 
-/*
-     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),             "logY=true");
-     screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),              "logY=true");
-     screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets), "");
-     screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),            "");
-     screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),              "");
-     screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),         "");
-     screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,20,        &(myEvent.hadronicChi2),    "");
-     screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),   "");
-*/
-     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    25,0,500,       &(myEvent.leadingLeptonPt), "logY=true");
+     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    25,0,500,       &(myEvent.leadingBPt),           "");
+     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    25,0,500,       &(myEvent.leadingJetPt),         "");
+     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    35,15,50,       &(myEvent.leadingLeptonPt),      "");
 
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
@@ -152,7 +102,7 @@ int main (int argc, char *argv[])
 
      screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
              screwdriver.AddDataset("others",   "others", 0, 0);
-     
+
      screwdriver.AddProcessClass("data",   "data",                     "data",COLORPLOT_BLACK);
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
@@ -162,19 +112,12 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
-/*
-     screwdriver.AddRegion("CC_highDM",          "Cut&Count high#DeltaM",        &Selector_cutAndCount_highDeltaM);
-     screwdriver.AddRegion("CC_mediumDM",        "Cut&Count medium#DeltaM",      &Selector_cutAndCount_mediumDeltaM);
-     screwdriver.AddRegion("CC_lowDM",           "Cut&Count low#DeltaM",         &Selector_cutAndCount_lowDeltaM);
-     screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count offShell Tight",     &Selector_cutAndCount_offShellTight);
-     screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count offShell Loose",     &Selector_cutAndCount_offShellLoose);
-*/
 
   // ##########################
   // ##   Create Channels    ##
   // ##########################
    
-     screwdriver.AddChannel("inclusiveChannel","",&inclusiveChannelSelector);
+     screwdriver.AddChannel("inclusiveChannel","e-channel + #mu-channel",&inclusiveChannelSelector);
      screwdriver.AddChannel("elecChannel","e-channel",&elecChannelSelector);
      screwdriver.AddChannel("muonChannel","#mu-channel",&muonChannelSelector);
 
@@ -219,10 +162,8 @@ int main (int argc, char *argv[])
   vector<string> datasetsList;
   screwdriver.GetDatasetList(&datasetsList);
 
-  cout << "   > Running on dataset : " << endl;
-
-  vector< vector<float> > listBackground;
-  vector< vector<float> > listSignal;
+  cout << "   > Reading datasets... " << endl;
+  cout << endl;
 
   for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
   {
@@ -232,49 +173,62 @@ int main (int argc, char *argv[])
      TFile f((string(FOLDER_BABYTUPLES)+currentDataset+".root").c_str());
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
 
-     intermediatePointersSkimmed pointers;
+     intermediatePointers pointers;
      InitializeBranches(theTree,&myEvent,&pointers);
-
-     cout << "                    " << currentDataset << endl; 
 
   // ########################################
   // ##        Run over the events         ##
   // ########################################
 
-      for (int i = 0 ; i < theTree->GetEntries() ; i++)
+      int nEntries = theTree->GetEntries();
+      for (int i = 0 ; i < nEntries ; i++)
+      //for (int i = 0 ; i < min(200000, (int) theTree->GetEntries()); i++)
       {
-          if (i % (theTree->GetEntries() / 50) == 0) 
-              printProgressBar(i,theTree->GetEntries());
+          if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
 
           // Keep only events that pass preselection
           if (!Selector_presel()) continue;
- 
+
           float weight = 1.0;
           if (currentProcessClass != "data")
           {
-              if (abs(myEvent.leadingLeptonPDGId) == 11)       weight *= myEvent.weightCrossSection * 17100;
+              if (abs(myEvent.leadingLeptonPDGId) == 11)       weight *= myEvent.weightCrossSection * 19400;    // FIXME
               else if (abs(myEvent.leadingLeptonPDGId) == 13)  weight *= myEvent.weightCrossSection * 19200;
               else                                             weight *= 0.0;
 
+              // Apply trigger efficiency weights
+              weight *= myEvent.weightTriggerEfficiency;
               // Apply pile-up weight
               weight *= myEvent.weightPileUp;
               // For ttbar, apply topPt reweighting
               if (currentDataset == "ttbar") 
                   weight *= myEvent.weightTopPt;
           }
-          
+          else
+          {
+              if (abs(myEvent.leadingLeptonPDGId) == 11)
+              {
+                 if (myEvent.triggerElec == false) continue;
+              }
+              else
+              {
+                  if ((myEvent.leadingLepton.Pt() < 26) && (myEvent.xtriggerMuon == false)) continue;
+                  if ((myEvent.leadingLepton.Pt() > 26) && (myEvent.triggerMuon  == false)) continue;
+              }
+          }
+
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
           if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
-
+          
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
       } 
-      
+      printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
       f.Close();
 
@@ -302,39 +256,3 @@ int main (int argc, char *argv[])
   return (0);
 }
 
-void printProgressBar(int current, int max)
-{
-    std::string bar;
-    int percent = 100 * (float) current / (float) max;
-
-    for(int i = 0; i < 50; i++)
-    {
-        if( i < (percent/2))       bar.replace(i,1,"=");
-        else if( i == (percent/2)) bar.replace(i,1,">");
-        else                       bar.replace(i,1," ");
-    }
-
-    std::cout << "  [Progress]  ";
-    std::cout << "[" << bar << "] ";
-    std::cout.width( 3 );
-    std::cout << percent << "%     ";
-    std::cout << "(" << current << " / " << max << ")" << "\r" << std::flush;
-}
-
-void printBoxedMessage(string message)
-{
-    cout << endl;
-
-    cout << "   ┌──";
-    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┐  " << endl;
-
-    cout << "   │  " << message << "  │  " << endl;
-    
-    cout << "   └──";
-    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┘  " << endl; 
- 
-    cout << endl;
-
-}
