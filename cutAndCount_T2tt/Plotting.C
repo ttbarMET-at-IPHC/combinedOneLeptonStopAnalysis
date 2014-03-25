@@ -79,38 +79,39 @@ bool findISRJet()
     return foundISRJet;
 }
 
-bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, float cutMET, bool enableDeltaPhiAndChi2Cuts, bool enableISRJetRequirement)
+bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, float cutMET, float cutDeltaPhi, float cutHadronicChi2, bool enableISRJetRequirement, float cutHTratio)
 {
-    if (myEventPointer->METoverSqrtHT < cutMEToverSqrtHT) return false;
-    if (myEventPointer->MT            < cutMT)            return false;
-    if (myEventPointer->MT2W          < cutMT2W)          return false;
-    if (myEventPointer->MET           < cutMET)           return false;
-    
-    if (enableDeltaPhiAndChi2Cuts)
-    {
-        if (myEventPointer->deltaPhiMETJets < 0.8) return false;
-        if (myEventPointer->hadronicChi2    > 5)   return false;
-    }
-
-    if ((enableISRJetRequirement) && (!findISRJet())) return false;
+    if (myEventPointer->METoverSqrtHT   < cutMEToverSqrtHT) return false;
+    if (myEventPointer->MT              < cutMT)            return false;
+    if (myEventPointer->MT2W            < cutMT2W)          return false;
+    if (myEventPointer->MET             < cutMET)           return false;
+    if (myEventPointer->deltaPhiMETJets < cutDeltaPhi)      return false;
+    if (myEventPointer->hadronicChi2    > cutHadronicChi2)  return false;
+    if (myEventPointer->HTRatio         > cutHTratio)       return false;
+    if ((enableISRJetRequirement) && (!findISRJet()))       return false;
 
     return Selector_presel();
 }
 
+bool Selector_cutAndCount_testLooseCuts()    { return Selector_cutAndCount(-1,120,-1,200,-1,999999,false,99); }
 
 
-bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,190,240,-1,false,false); }
-bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,140,180,-1,true,false); }
-bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(-1,130,-1,130,true,false);  }
-bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,120,-1,200,false,true);  }
-bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,140,-1,250,false,true);  }
+bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1, 120, -1,  200, -1,  999999, true ,99); }
+bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1, 140, -1,  250, -1,  999999, true ,99); }
+bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(-1, 130, -1,  130, 0.8, 5,      false,9); }
+bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10, 140, 180, -1,  0.8, 5,      false,99); }
+bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15, 190, 240, -1,  -1,  999999, false,99); }
 
-bool Selector_Eric_1() { return Selector_cutAndCount(-1,180,-1, 130,true,true); }
-bool Selector_Eric_2() { return Selector_cutAndCount(-1,250,-1, 150,true,true); }
-bool Selector_Eric_3() { return Selector_cutAndCount(-1,130,180,160,true,false); }
-bool Selector_Eric_4() { return Selector_cutAndCount(13,190,190,-1, true,false); }
-bool Selector_Eric_5() { return Selector_cutAndCount(16,190,190,-1, true,false); }
-bool Selector_Eric_6() { return Selector_cutAndCount(-1,100,160,250,true,false); }
+bool Selector_cutAndCount_offShellLoose_mod1() { return Selector_cutAndCount(-1, 120, -1,  200, -1,  999999, true, 0.5 ); }
+bool Selector_cutAndCount_offShellLoose_mod2() { return Selector_cutAndCount(7,  120, -1,  -1,  -1,  999999, true ,99);   }
+bool Selector_cutAndCount_offShellTight_mod1() { return Selector_cutAndCount(-1, 140, -1,  250, -1,  999999, true ,0.4);  }
+bool Selector_cutAndCount_offShellTight_mod2() { return Selector_cutAndCount(10, 140, -1,  -1,  -1,  999999, true ,99);   }
+bool Selector_cutAndCount_lowDeltaM_mod1()     { return Selector_cutAndCount(-1, 130, -1,  130, -1,  5,      false,99);   }
+bool Selector_cutAndCount_mediumDeltaM_mod1()  { return Selector_cutAndCount(10, 140, 180, -1,  0.8, 3,      false,99);   }
+bool Selector_cutAndCount_mediumDeltaM_mod2()  { return Selector_cutAndCount(-1, 140, 180, 190, 0.8, 5,      false,99);   }
+bool Selector_cutAndCount_highDeltaM_mod1()    { return Selector_cutAndCount(13, 190, 240, -1,  -1,  999999, false,99);   }
+bool Selector_cutAndCount_highDeltaM_mod2()    { return Selector_cutAndCount(15, 190, 240, -1,  0.8, 5,      false,99);   }
+bool Selector_cutAndCount_highDeltaM_mod3()    { return Selector_cutAndCount(15, 190, 240, -1,  1.0, 3,      false,99);   }
 
 
 bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
@@ -209,9 +210,9 @@ int main (int argc, char *argv[])
      screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
              screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
 
-     //screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",             "signal",COLORPLOT_AZURE);
-     //screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",             "signal",kCyan-3);
-     //screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",             "signal",COLORPLOT_GREEN);
+     screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",      "signal",COLORPLOT_AZURE);
+     screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",      "signal",kCyan-3);
+     screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",      "signal",COLORPLOT_GREEN);
 
   // ##########################
   // ##    Create Regions    ##
@@ -219,13 +220,25 @@ int main (int argc, char *argv[])
 
      screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
 
-     /*
-     screwdriver.AddRegion("CC_highDM",          "Cut&Count;High #DeltaM",       &Selector_cutAndCount_highDeltaM);
-     screwdriver.AddRegion("CC_mediumDM",        "Cut&Count;Medium #DeltaM",     &Selector_cutAndCount_mediumDeltaM);
-     screwdriver.AddRegion("CC_lowDM",           "Cut&Count;Low #DeltaM",        &Selector_cutAndCount_lowDeltaM);
-     screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count;Off-shell tight",    &Selector_cutAndCount_offShellTight);
+     screwdriver.AddRegion("CC_testLooseCuts",   "MT > 120;MET > 200",&Selector_cutAndCount_testLooseCuts);
+
      screwdriver.AddRegion("CC_offShell_Loose",  "Cut&Count;Off-shell Loose",    &Selector_cutAndCount_offShellLoose);
-     */
+     screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count;Off-shell tight",    &Selector_cutAndCount_offShellTight);
+     screwdriver.AddRegion("CC_lowDM",           "Cut&Count;Low #DeltaM",        &Selector_cutAndCount_lowDeltaM);
+     screwdriver.AddRegion("CC_mediumDM",        "Cut&Count;Medium #DeltaM",     &Selector_cutAndCount_mediumDeltaM);
+     //screwdriver.AddRegion("CC_highDM",          "Cut&Count;High #DeltaM",       &Selector_cutAndCount_highDeltaM);
+     
+     screwdriver.AddRegion("CC_offShell_Loose_mod1",  "Cut&Count;Off-shell Loose;mod 1",    &Selector_cutAndCount_offShellLoose_mod1);
+     screwdriver.AddRegion("CC_offShell_Loose_mod2",  "Cut&Count;Off-shell Loose;mod 2",    &Selector_cutAndCount_offShellLoose_mod2);
+     screwdriver.AddRegion("CC_offShell_Tight_mod1",  "Cut&Count;Off-shell tight;mod 1",    &Selector_cutAndCount_offShellTight_mod1);
+     screwdriver.AddRegion("CC_offShell_Tight_mod2",  "Cut&Count;Off-shell tight;mod 2",    &Selector_cutAndCount_offShellTight_mod2);
+     screwdriver.AddRegion("CC_lowDM_mod1",           "Cut&Count;Low #DeltaM;mod 1",        &Selector_cutAndCount_lowDeltaM_mod1);
+     screwdriver.AddRegion("CC_mediumDM_mod1",        "Cut&Count;Medium #DeltaM;mod 1",     &Selector_cutAndCount_mediumDeltaM_mod1);
+     screwdriver.AddRegion("CC_mediumDM_mod2",        "Cut&Count;Medium #DeltaM;mod 2",     &Selector_cutAndCount_mediumDeltaM_mod2);
+     screwdriver.AddRegion("CC_highDM_mod1",          "Cut&Count;High #DeltaM;mod1",       &Selector_cutAndCount_highDeltaM_mod1);
+     screwdriver.AddRegion("CC_highDM_mod2",          "Cut&Count;High #DeltaM;mod2",       &Selector_cutAndCount_highDeltaM_mod2);
+     screwdriver.AddRegion("CC_highDM_mod3",          "Cut&Count;High #DeltaM;mod3",       &Selector_cutAndCount_highDeltaM_mod3);
+
      screwdriver.AddRegion("MT_LM150",           "MT analysis (LM 150)",            &Selector_MTAnalysis_LM150);
      screwdriver.AddRegion("MT_LM200",           "MT analysis (LM 200)",            &Selector_MTAnalysis_LM200);
      screwdriver.AddRegion("MT_LM250",           "MT analysis (LM 250)",            &Selector_MTAnalysis_LM250);
@@ -234,14 +247,14 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("MT_HM200",           "MT analysis (HM 200)",            &Selector_MTAnalysis_HM200);
      screwdriver.AddRegion("MT_HM250",           "MT analysis (HM 250)",            &Selector_MTAnalysis_HM250);
      screwdriver.AddRegion("MT_HM300",           "MT analysis (HM 300)",            &Selector_MTAnalysis_HM300);
-     
+    /* 
      screwdriver.AddRegion("Eric_1",             "Eric region 1",                &Selector_Eric_1);
      screwdriver.AddRegion("Eric_2",             "Eric region 5",                &Selector_Eric_2);
      screwdriver.AddRegion("Eric_3",             "Eric region 3",                &Selector_Eric_3);
      screwdriver.AddRegion("Eric_4",             "Eric region 4",                &Selector_Eric_4);
      screwdriver.AddRegion("Eric_5",             "Eric region 5",                &Selector_Eric_5);
      screwdriver.AddRegion("Eric_6",             "Eric region 5",                &Selector_Eric_6);
-
+*/
 
   // ##########################
   // ##   Create Channels    ##
@@ -345,14 +358,12 @@ int main (int argc, char *argv[])
           
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
-          /*
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_250_100",weight);
           if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_450_100",weight);
           if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_650_100",weight);
-          */
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
@@ -383,19 +394,31 @@ int main (int argc, char *argv[])
   // ##########################
 
   vector<string> cutAndCountRegions;
-  /*
   cutAndCountRegions.push_back("CC_offShell_Loose");
   cutAndCountRegions.push_back("CC_offShell_Tight");
   cutAndCountRegions.push_back("CC_lowDM");
   cutAndCountRegions.push_back("CC_mediumDM");
-  cutAndCountRegions.push_back("CC_highDM");
-  */
+  //cutAndCountRegions.push_back("CC_highDM");
+  
+  cutAndCountRegions.push_back("CC_offShell_Loose_mod1");
+  cutAndCountRegions.push_back("CC_offShell_Loose_mod2");
+  cutAndCountRegions.push_back("CC_offShell_Tight_mod1");
+  cutAndCountRegions.push_back("CC_offShell_Tight_mod2");
+  cutAndCountRegions.push_back("CC_lowDM_mod1");
+  cutAndCountRegions.push_back("CC_mediumDM_mod1");
+  cutAndCountRegions.push_back("CC_mediumDM_mod2");
+  cutAndCountRegions.push_back("CC_highDM_mod1");
+  cutAndCountRegions.push_back("CC_highDM_mod2");
+  cutAndCountRegions.push_back("CC_highDM_mod3");
+
+  /*
   cutAndCountRegions.push_back("Eric_1");
   cutAndCountRegions.push_back("Eric_2");
   cutAndCountRegions.push_back("Eric_3");
   cutAndCountRegions.push_back("Eric_4");
   cutAndCountRegions.push_back("Eric_5");
   cutAndCountRegions.push_back("Eric_6");
+  */
 
   vector<TH2F*> signalMaps;
   vector<TH2F*> backgroundMaps;
