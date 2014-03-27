@@ -30,7 +30,8 @@ using namespace theDoctor;
 
 // BabyTuple format and location
 
-#define FOLDER_BABYTUPLES "../store/babyTuples_0219_preSelectionSkimmed/"
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0219_preSelectionSkimmed/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0219/"
 #include "Reader.h"
 babyEvent* myEventPointer;
 
@@ -39,35 +40,37 @@ babyEvent* myEventPointer;
 // #########################################################################
 
 bool inclusiveChannelSelector() { return true; }
-bool elecChannelSelector() { return (abs(myEventPointer->leadingLeptonPDGId) == 11); }
-bool muonChannelSelector() { return (abs(myEventPointer->leadingLeptonPDGId) == 13); }
+
+bool elecChannelSelector() { return ((abs(myEventPointer->leadingLeptonPDGId) == 11) 
+                                  && (abs(myEventPointer->secondLeptonPDGId) == 11)); }
+
+bool muonChannelSelector() { return ((abs(myEventPointer->leadingLeptonPDGId) == 13) 
+                                  && (abs(myEventPointer->secondLeptonPDGId) == 13)); }
+
+bool muelChannelSelector() { return   (((abs(myEventPointer->leadingLeptonPDGId) == 13) 
+                                    && (abs(myEventPointer->secondLeptonPDGId) == 11))
+                                ||     ((abs(myEventPointer->leadingLeptonPDGId) == 11) 
+                                    && (abs(myEventPointer->secondLeptonPDGId) == 13)));
+                           }
 
 bool Selector_presel() 
 {
     babyEvent myEvent = *myEventPointer;
 
-    // Require nLepton == 1
-    if (myEvent.numberOfLepton != 1)                      return false;
+    // Require nLepton == 2
+    if (myEvent.numberOfLepton != 2)                      return false;
 
     // Require nJets >= 4, nBTag >= 1
     if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0))     return false; 
 
     // Apply vetos
-    if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
+    //if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
 
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
 
     return true; 
 }
-
-bool Selector_lowLeptonPt()
-{
-    if (myEventPointer->leadingLepton.Pt() > 26) return false;
-
-    return Selector_presel();
-}
-
 
 // #########################################################################
 //                              Main function
@@ -114,21 +117,24 @@ int main (int argc, char *argv[])
      screwdriver.AddProcessClass("data",   "data",                     "data",COLORPLOT_BLACK);
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
+             screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
+             screwdriver.AddDataset("DoubleElec",   "data", 0, 0);
+             screwdriver.AddDataset("MuEl",         "data", 0, 0);
 
   // ##########################
   // ##    Create Regions    ##
   // ##########################
 
-     screwdriver.AddRegion("presel",             "Preselection",                 &Selector_presel);
-     screwdriver.AddRegion("lowLeptonPt",        "p_{T}(lepton) < 26 GeV",       &Selector_lowLeptonPt);
+     screwdriver.AddRegion("presel",             "2#ell control region",                 &Selector_presel);
 
   // ##########################
   // ##   Create Channels    ##
   // ##########################
    
-     screwdriver.AddChannel("inclusiveChannel","e-channel + #mu-channel",&inclusiveChannelSelector);
-     screwdriver.AddChannel("elecChannel","e-channel",&elecChannelSelector);
-     screwdriver.AddChannel("muonChannel","#mu-channel",&muonChannelSelector);
+     screwdriver.AddChannel("inclusiveChannel","ee/#mu#mu/e#mu-channels",&inclusiveChannelSelector);
+     screwdriver.AddChannel("elecChannel",     "ee-channel",             &elecChannelSelector);
+     screwdriver.AddChannel("muonChannel",     "#mu#mu-channel",         &muonChannelSelector);
+     screwdriver.AddChannel("muelChannel",     "e#mu-channel",           &muelChannelSelector);
 
   // ########################################
   // ##       Create histograms and        ##
@@ -204,29 +210,27 @@ int main (int argc, char *argv[])
           float weight = 1.0;
           if (currentProcessClass != "data")
           {
-              if (abs(myEvent.leadingLeptonPDGId) == 11)       weight *= myEvent.weightCrossSection * 19400;    // FIXME
-              else if (abs(myEvent.leadingLeptonPDGId) == 13)  weight *= myEvent.weightCrossSection * 19200;
-              else                                             weight *= 0.0;
+              float lumi;
 
+                   if (muelChannelSelector()) lumi = 19447.0;
+              else if (muonChannelSelector()) lumi = 14690.0;
+              else if (elecChannelSelector()) lumi = 19316.0;
+              else                            lumi = 0.0;
+
+              // Normalize to cross section times lumi
+              weight *= myEvent.weightCrossSection * lumi;
               // Apply trigger efficiency weights
               weight *= myEvent.weightTriggerEfficiency;
               // Apply pile-up weight
               weight *= myEvent.weightPileUp;
               // For ttbar, apply topPt reweighting
-              if (currentDataset == "ttbar") 
-                  weight *= myEvent.weightTopPt;
+              if (currentDataset == "ttbar") weight *= myEvent.weightTopPt;
           }
           else
           {
-              if (abs(myEvent.leadingLeptonPDGId) == 11)
-              {
-                 if (myEvent.triggerElec == false) continue;
-              }
-              else
-              {
-                  if ((myEvent.leadingLepton.Pt() < 26) && (myEvent.xtriggerMuon == false)) continue;
-                  if ((myEvent.leadingLepton.Pt() > 26) && (myEvent.triggerMuon  == false)) continue;
-              }
+              if ((currentDataset == "MuEl")       && ((!muelChannelSelector()) || (!myEvent.triggerMuonElec)))   continue;
+              if ((currentDataset == "DoubleMuon") && ((!muonChannelSelector()) || (!myEvent.triggerDoubleMuon))) continue;
+              if ((currentDataset == "DoubleElec") && ((!elecChannelSelector()) || (!myEvent.triggerDoubleElec))) continue;
           }
 
           // Split 1-lepton ttbar and 2-lepton ttbar
