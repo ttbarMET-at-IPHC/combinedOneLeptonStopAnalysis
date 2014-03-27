@@ -34,8 +34,6 @@ using namespace theDoctor;
 #include "Reader.h"
 babyEvent* myEventPointer;
 
-void fillMCSignalTable(SonicScrewdriver* screwdriver, vector<string> region, vector<string> process, Table* table);
-
 // #########################################################################
 //                          Region selectors
 // #########################################################################
@@ -61,134 +59,67 @@ bool Selector_presel()
     return true; 
 }
 
-bool Selector_offShellLoose() 
-{ 
-    if ((myEventPointer->MET > 200)         
-     && (myEventPointer->MT  > 100) 
-     && (myEventPointer->deltaPhiMETJets > 0.8)) 
-        return Selector_presel(); 
-    else 
-        return false; 
-}
-bool Selector_offShellTight()  
-{ 
-    if ((myEventPointer->MET > 300)         
-     && (myEventPointer->MT  > 120) 
-     && (myEventPointer->deltaPhiMETJets > 0.8)) 
-        return Selector_presel(); 
-    else 
-        return false; 
-}
 
-bool Selector_lowDeltaM_1()  
-{ 
-    if ((myEventPointer->METoverSqrtHT > 10) 
-     && (myEventPointer->MT > 140) 
-     && (myEventPointer->MT2W > 180) 
-     && (myEventPointer->deltaPhiMETJets > 0.8) 
-     && (myEventPointer->hadronicChi2 < 5)) 
-        return Selector_presel(); 
-    else return false; 
-}
-bool Selector_lowDeltaM_1_noChi2()  
-{ 
-    if ((myEventPointer->METoverSqrtHT > 10) 
-     && (myEventPointer->MT > 140) 
-     && (myEventPointer->MT2W > 180) 
-     && (myEventPointer->deltaPhiMETJets > 0.8)) 
-        return Selector_presel(); 
-    else 
-        return false; 
-}
-bool Selector_lowDeltaM_2() 
-{ 
-    if ((myEventPointer->METoverSqrtHT > 6)  
-     && (myEventPointer->MT > 120) 
-     && (myEventPointer->MT2W > 200)  
-     && (myEventPointer->deltaPhiMETJets > 0.8) 
-     && (myEventPointer->leadingBPt > 100)) 
-        return Selector_presel(); 
-    else 
-        return false; 
-}
-bool Selector_lowDeltaM_3() 
-{ 
-    if ((myEventPointer->MET > 150)          
-     && (myEventPointer->MT > 120) 
-     && (myEventPointer->MT2W > 200)  
-     && (myEventPointer->deltaPhiMETJets > 0.8) 
-     && (myEventPointer->leadingBPt > 150)) 
-        return Selector_presel(); 
-    else 
-        return false; 
-}
-bool Selector_highDeltaM_1()
-{ 
-    if ((myEventPointer->MET > 270)
-     && (myEventPointer->MT > 270)
-     && (myEventPointer->MT2W > 220) 
-     && (myEventPointer->deltaPhiMETJets > 0.8)) 
-        return Selector_presel(); 
-    else 
-        return false; 
-}
-bool Selector_highDeltaM_2()
-{ 
-    if ((myEventPointer->MET > 270)
-     && (myEventPointer->MT > 190) 
-     && (myEventPointer->MT2W > 250)  
-     && (myEventPointer->deltaPhiMETJets > 0.8)) 
-        return Selector_presel();
-    else 
-        return false; 
-}
-bool Selector_highDeltaM_3() 
-{ 
-    if ((myEventPointer->MET > 260)  
-        && (myEventPointer->leadingBPt > 140) 
-        && (myEventPointer->MT2W > 200) 
-        &&  (myEventPointer->deltaPhiMETJets > 0.8)) 
-        return Selector_presel(); 
-    else 
-        return false; 
-}
-bool Selector_highDeltaM_4() 
-{ 
-    if ((myEventPointer->MET > 300)  
-     && (myEventPointer->leadingBPt > 200) 
-     && (myEventPointer->MT2W > 290) 
-     && (myEventPointer->deltaPhiMETJets > 0.8)) 
-        return Selector_presel(); 
-    else
-        return false; 
-}
-
-bool Selector_Eric(float cutMT, float cutMET, float cutMETsig, float cutMT2W, float cutBPt, float cutM3b)
+bool findISRJet()
 {
-    if ((myEventPointer->MT            > cutMT)
-     && (myEventPointer->MET           > cutMET)
-     && (myEventPointer->METoverSqrtHT > cutMETsig)
-     && (myEventPointer->MT2W          > cutMT2W)
-     && (myEventPointer->leadingBPt    > cutBPt)
-     && (myEventPointer->M3b           > cutM3b))
+    if (myEventPointer->nJets < 5) return false;
+
+    bool foundISRJet = false;
+    for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
     {
-        return Selector_presel();
+        // Check jet is high-pt
+        if ((myEventPointer->jets)[i].Pt() < 200) continue;
+        // Check jet isn't b-tagged
+        if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
+
+        foundISRJet = true;
     }
-    else return false;
+
+    return foundISRJet;
 }
 
-bool Selector_Eric1()  { return Selector_Eric(150,  -1,  11, -1,  250, -1); } 
-bool Selector_Eric2()  { return Selector_Eric(150, 300,  -1, 200, 280, -1); } 
-bool Selector_Eric3()  { return Selector_Eric(-1,   -1,  11, 280, -1,  -1); } 
-bool Selector_Eric4()  { return Selector_Eric(100,  -1,  11, 230, -1,  -1); } 
-bool Selector_Eric5()  { return Selector_Eric(120,  120, -1, 120, -1,  -1); } 
-bool Selector_Eric6()  { return Selector_Eric(120,  -1,  -1, 100, -1,  -1); } 
-bool Selector_Eric7()  { return Selector_Eric(130,  -1,  10, 190, 150, -1); } 
-bool Selector_Eric8()  { return Selector_Eric(130,  -1,  12, 230, 250, -1); } 
-bool Selector_Eric9()  { return Selector_Eric(160,  150, -1, 90,  100, -1); } 
-bool Selector_Eric10() { return Selector_Eric(160,  -1,  15, 200, -1, 280); } 
-bool Selector_Eric11() { return Selector_Eric(130,  -1,  6,  130,  80, -1); } 
-bool Selector_Eric12() { return Selector_Eric(120,  400, -1, 120, -1,  -1); } 
+bool Selector_cutAndCount(float cutMET, float cutMETsig, float cutMT, float cutMT2W, float cutBPt, float cutDeltaPhi, float cutChi2, bool enableISRJetRequirement)
+{
+    if (myEventPointer->MET             < cutMET)           return false;
+    if (myEventPointer->METoverSqrtHT   < cutMETsig)        return false;
+    if (myEventPointer->MT              < cutMT)            return false;
+    if (myEventPointer->MT2W            < cutMT2W)          return false;
+    if (myEventPointer->leadingBPt      < cutBPt)           return false;
+    if (myEventPointer->deltaPhiMETJets < cutDeltaPhi)      return false;
+    if (myEventPointer->hadronicChi2    < cutChi2)          return false;
+    if ((enableISRJetRequirement) && (!findISRJet()))       return false;
+
+    return Selector_presel();
+}
+
+bool Selector_offShellLoose() { return Selector_cutAndCount(200, -1, 100, -1,  -1, 0.8, -1, false); } // 1
+bool Selector_offShellTight() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.8, -1, false); } // 2
+bool Selector_lowDeltaM_1()   { return Selector_cutAndCount(-1,  10, 140, 180, -1, 0.8, -1, false); } // 3/4
+bool Selector_lowDeltaM_2()   { return Selector_cutAndCount(-1,   6, 120, 200, 100,0.8, -1, false); } // 5
+bool Selector_lowDeltaM_3()   { return Selector_cutAndCount(150, -1, 120, 200, 150,0.8, -1, false); } // 6
+bool Selector_highDeltaM_1()  { return Selector_cutAndCount(270, -1, 270, 220, -1, 0.8, -1, false); } // 7
+bool Selector_highDeltaM_2()  { return Selector_cutAndCount(270, -1, 190, 250, -1, 0.8, -1, false); } // 8
+bool Selector_highDeltaM_3()  { return Selector_cutAndCount(260, -1, -1,  200, 140,0.8, -1, false); } // 9
+bool Selector_highDeltaM_4()  { return Selector_cutAndCount(300, -1, -1,  290, 200,0.8, -1, false); } // 10
+
+
+// TODO ADD SCENARIO 1 MOD                                   // MET METsig MT MT2W BPt dPhi Chi2 ISRjet
+bool Selector_offShellLoose_mod1() { return Selector_cutAndCount(200, -1, 100, -1,  -1, -1,  -1, false); }
+bool Selector_offShellLoose_mod2() { return Selector_cutAndCount(150, -1, 100, -1,  -1, 0.8, -1, false); }
+bool Selector_offShellLoose_mod3() { return Selector_cutAndCount(200, -1, 100, -1,  -1, 0.8, 1,  false); }
+bool Selector_offShellTight_mod1() { return Selector_cutAndCount(300, -1, 150, -1,  -1, 0.8, -1, false); } 
+bool Selector_offShellTight_mod4() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.8, -1, true ); } 
+bool Selector_offShellTight_mod5() { return Selector_cutAndCount(350, -1, 120, -1,  -1, 0.8, -1, true ); } 
+bool Selector_offShellTight_mod6() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.8, 1,  false); } 
+bool Selector_offShellTight_mod7() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.8, 1,  true ); } 
+bool Selector_offShellTight_mod8() { return Selector_cutAndCount(350, -1, 120, -1,  -1, 0.8, 1,  true ); } 
+bool Selector_lowDeltaM_3_mod1()   { return Selector_cutAndCount(170, -1, 140, 200, 150,0.8, -1, false); }
+bool Selector_lowDeltaM_3_mod2()   { return Selector_cutAndCount(0,    8, 120, 200, 150,0.8, -1, false); }
+bool Selector_lowDeltaM_3_mod3()   { return Selector_cutAndCount(150, -1, 120, 200, 150,0.8, 1,  false); }
+bool Selector_lowDeltaM_3_mod4()   { return Selector_cutAndCount(0,    8, 150, 200, 150,0.8, -1, false); }
+bool Selector_lowDeltaM_3_mod5()   { return Selector_cutAndCount(150, -1, 150, 200, 150,0.8, 1,  false); }
+bool Selector_highDeltaM_4_mod1()  { return Selector_cutAndCount(-1,  -1, 200, 290, 200,0.8, -1, false); }
+bool Selector_highDeltaM_4_mod2()  { return Selector_cutAndCount(-1,  11,  -1, 290, 200,0.8, -1, false); }
 
 bool Selector_MTAnalysis(float METcut, bool useHighDeltaMCuts)
 {
@@ -213,14 +144,7 @@ bool Selector_MTAnalysis_HM150() { return Selector_MTAnalysis(150,true);  }
 bool Selector_MTAnalysis_HM200() { return Selector_MTAnalysis(200,true);  }
 bool Selector_MTAnalysis_HM250() { return Selector_MTAnalysis(250,true);  }
 
-// #########################################################################
-//                          Others tools/stuff
-// #########################################################################
-
-float getYield(vector< vector<float> > listEvent, vector<float> cuts);
-vector<float> optimizeCuts(vector< vector<float> > listBackground,  vector< vector<float> > listSignal, bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg);
 void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText, float lineOffset);
-
 // #########################################################################
 //                              Main function
 // #########################################################################
@@ -284,10 +208,10 @@ int main (int argc, char *argv[])
           screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
 
      screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
-          screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
+    //      screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
 
      screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
-          screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
+    //      screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
   
   // ##########################
   // ##    Create Regions    ##
@@ -298,7 +222,6 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("offShellLoose",      "Off-shell loose",              &Selector_offShellLoose     );
      screwdriver.AddRegion("offShellTight",      "Off-shell tight",              &Selector_offShellTight     );
      screwdriver.AddRegion("lowDeltaM_1",        "low #DeltaM - 1",              &Selector_lowDeltaM_1       ); 
-     screwdriver.AddRegion("lowDeltaM_1_noChi2", "low #DeltaM - 1noChi2",        &Selector_lowDeltaM_1_noChi2);
      screwdriver.AddRegion("lowDeltaM_2",        "low #DeltaM - 2",              &Selector_lowDeltaM_2       );
      screwdriver.AddRegion("lowDeltaM_3",        "low #DeltaM - 3",              &Selector_lowDeltaM_3       );
      screwdriver.AddRegion("highDeltaM_1",       "high #DeltaM - 1",             &Selector_highDeltaM_1      );
@@ -315,19 +238,20 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("MT_HM200",           "MT analysis;(HM 200)",         &Selector_MTAnalysis_HM200);
      screwdriver.AddRegion("MT_HM250",           "MT analysis;(HM 250)",         &Selector_MTAnalysis_HM250);
      
-     screwdriver.AddRegion("Eric_1",             "Eric 1",                       &Selector_Eric1);
-     screwdriver.AddRegion("Eric_2",             "Eric 2",                       &Selector_Eric2);
-     screwdriver.AddRegion("Eric_3",             "Eric 3",                       &Selector_Eric3);
-     screwdriver.AddRegion("Eric_4",             "Eric 4",                       &Selector_Eric4);
-     screwdriver.AddRegion("Eric_5",             "Eric 5",                       &Selector_Eric5);
-     screwdriver.AddRegion("Eric_6",             "Eric 6",                       &Selector_Eric6);
-     screwdriver.AddRegion("Eric_7",             "Eric 7",                       &Selector_Eric7);
-     screwdriver.AddRegion("Eric_8",             "Eric 8",                       &Selector_Eric8);
-     screwdriver.AddRegion("Eric_9",             "Eric 9",                       &Selector_Eric9);
-     screwdriver.AddRegion("Eric_10",            "Eric 10",                      &Selector_Eric10);
-     screwdriver.AddRegion("Eric_11",            "Eric 11",                      &Selector_Eric11);
-     screwdriver.AddRegion("Eric_12",            "Eric 12",                      &Selector_Eric12);
-
+     screwdriver.AddRegion("offShellTight_mod1", "Off-shell tight;mod 1",        &Selector_offShellTight_mod1);
+     screwdriver.AddRegion("offShellTight_mod2", "Off-shell tight;mod 2",        &Selector_offShellTight_mod2);
+     screwdriver.AddRegion("offShellTight_mod3", "Off-shell tight;mod 3",        &Selector_offShellTight_mod3);
+     screwdriver.AddRegion("offShellTight_mod4", "Off-shell tight;mod 4",        &Selector_offShellTight_mod4);
+     screwdriver.AddRegion("offShellTight_mod5", "Off-shell tight;mod 5",        &Selector_offShellTight_mod5);
+     screwdriver.AddRegion("offShellTight_mod6", "Off-shell tight;mod 6",        &Selector_offShellTight_mod6);
+     
+     screwdriver.AddRegion("lowDeltaM_3_mod1",   "low #DeltaM - 3;mod 1",        &Selector_lowDeltaM_3_mod1);
+     screwdriver.AddRegion("lowDeltaM_3_mod2",   "low #DeltaM - 3;mod 2",        &Selector_lowDeltaM_3_mod2);
+     screwdriver.AddRegion("lowDeltaM_3_mod3",   "low #DeltaM - 3;mod 3",        &Selector_lowDeltaM_3_mod3);
+     
+     screwdriver.AddRegion("highDeltaM_4_mod1",  "high #DeltaM - 4;mod 1",       &Selector_highDeltaM_4_mod1);
+     screwdriver.AddRegion("highDeltaM_4_mod2",  "high #DeltaM - 4;mod 2",       &Selector_highDeltaM_4_mod2);
+     
   // ##########################
   // ##   Create Channels    ##
   // ##########################
@@ -460,8 +384,8 @@ int main (int argc, char *argv[])
 
   vector<string> signals;
   signals.push_back("T2bw-025");
-  signals.push_back("T2bw-050");
-  signals.push_back("T2bw-075");
+  //signals.push_back("T2bw-050");
+  //signals.push_back("T2bw-075");
 
   for (unsigned int s = 0 ; s < signals.size() ; s++)
   {
@@ -471,31 +395,28 @@ int main (int argc, char *argv[])
       // ##########################
 
       vector<string> cutAndCountRegions;
-      /*
       cutAndCountRegions.push_back("offShellLoose"     );
       cutAndCountRegions.push_back("offShellTight"     );
       cutAndCountRegions.push_back("lowDeltaM_1"       );
-      cutAndCountRegions.push_back("lowDeltaM_1_noChi2");
+      cutAndCountRegions.push_back("lowDeltaM_1"       );
       cutAndCountRegions.push_back("lowDeltaM_2"       );
       cutAndCountRegions.push_back("lowDeltaM_3"       );
       cutAndCountRegions.push_back("highDeltaM_1"      );
       cutAndCountRegions.push_back("highDeltaM_2"      );
       cutAndCountRegions.push_back("highDeltaM_3"      );
       cutAndCountRegions.push_back("highDeltaM_4"      );
-      */ 
-      cutAndCountRegions.push_back("Eric_1" );
-      cutAndCountRegions.push_back("Eric_2" );
-      cutAndCountRegions.push_back("Eric_3" );
-      cutAndCountRegions.push_back("Eric_4" );
-      cutAndCountRegions.push_back("Eric_5" );
-      cutAndCountRegions.push_back("Eric_6" );
-      cutAndCountRegions.push_back("Eric_7" );
-      cutAndCountRegions.push_back("Eric_8" );
-      cutAndCountRegions.push_back("Eric_9" );
-      cutAndCountRegions.push_back("Eric_10");
-      cutAndCountRegions.push_back("Eric_11");
-      cutAndCountRegions.push_back("Eric_12");
-     
+      cutAndCountRegions.push_back("offShellTight_mod1");
+      cutAndCountRegions.push_back("offShellTight_mod2");
+      cutAndCountRegions.push_back("offShellTight_mod3");
+      cutAndCountRegions.push_back("offShellTight_mod4");
+      cutAndCountRegions.push_back("offShellTight_mod5");
+      cutAndCountRegions.push_back("offShellTight_mod6");
+      cutAndCountRegions.push_back("lowDeltaM_3_mod1");
+      cutAndCountRegions.push_back("lowDeltaM_3_mod2");
+      cutAndCountRegions.push_back("lowDeltaM_3_mod3");
+      cutAndCountRegions.push_back("highDeltaM_4_mod1");
+      cutAndCountRegions.push_back("highDeltaM_4_mod2");
+    
       vector<TH2F*> signalMaps;
       vector<TH2F*> backgroundMaps;
       vector<TH2F*> FOMMaps;
@@ -549,12 +470,22 @@ int main (int argc, char *argv[])
       TH2F* bestSetMap = (TH2F*) signalMaps[0]->Clone();  bestSetMap->SetName("bestSet");
       TH2F* bestSigEff = (TH2F*) signalMaps[0]->Clone();  bestSigEff->SetName("bestSigEff");
       TH2F* bestBkgEff = (TH2F*) signalMaps[0]->Clone();  bestBkgEff->SetName("bestBkgEff");
+
+      TH2F* nextBestFOMMap = (TH2F*) signalMaps[0]->Clone();  nextBestFOMMap->SetName("nextBestFOM");
+      TH2F* nextBestSetMap = (TH2F*) signalMaps[0]->Clone();  nextBestSetMap->SetName("nextBestSet");
+      
+      TH2F* nextNextBestFOMMap = (TH2F*) signalMaps[0]->Clone();  nextNextBestFOMMap->SetName("nextNextBestFOM");
+      TH2F* nextNextBestSetMap = (TH2F*) signalMaps[0]->Clone();  nextNextBestSetMap->SetName("nextNextBestSet");
       
       for (int x = 1 ; x <= nBinsX ; x++)
       for (int y = 1 ; y <= nBinsY ; y++)
       {
           float bestFOM = -1.0;
+          float nextBestFOM = -1.0;
+          float nextNextBestFOM = -1.0;
           int bestSet = 0;
+          int nextBestSet = 0;
+          int nextNextBestSet = 0;
           float bestSigEff_ = -1.0;
           float bestBkgEff_ = -1.0;
           for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
@@ -562,17 +493,71 @@ int main (int argc, char *argv[])
               float FOM = FOMMaps[i]->GetBinContent(x,y);
               if (bestFOM < FOM)
               {
+                  nextNextBestFOM = nextBestFOM;
+                  nextNextBestSet = nextBestSet;
+                  nextBestFOM = bestFOM;
+                  nextBestSet = bestSet;
+
                   bestFOM = FOM;
                   if (bestFOM > 0) bestSet = i+1;
                   bestSigEff_ = efficiencies[i]->GetBinContent(x,y);
                   bestBkgEff_ = efficiencies[i]->GetBinContent(backgroundBin);
               }
+              else if (nextBestFOM < FOM)
+              {
+                  nextNextBestFOM = nextBestFOM;
+                  nextNextBestSet = nextBestSet;
+                  nextBestFOM = FOM;
+                  if (nextBestFOM > 0) nextBestSet = i+1;
+              }
+              else if (nextNextBestFOM < FOM)
+              {
+                  nextNextBestFOM = FOM;
+                  if (nextNextBestFOM > 0) nextNextBestSet = i+1;
+              }
+
           }
           bestFOMMap->SetBinContent(x,y,bestFOM);
           bestSetMap->SetBinContent(x,y,bestSet);
+          nextBestFOMMap->SetBinContent(x,y,nextBestFOM);
+          nextBestSetMap->SetBinContent(x,y,nextBestSet);
+          nextNextBestFOMMap->SetBinContent(x,y,nextNextBestFOM);
+          nextNextBestSetMap->SetBinContent(x,y,nextNextBestSet);
           bestSigEff->SetBinContent(x,y,bestSigEff_);
           bestBkgEff->SetBinContent(x,y,bestBkgEff_);
       }
+
+      // #####################################
+      // ##   Ratio between next-to-best,   ##
+      // ##   nextnext-to-best and best     ##
+      // #####################################
+     
+      TH2F* ratio_nextBest = (TH2F*) bestFOMMap->Clone();
+      TH2F* ratio_nextNextBest = (TH2F*) bestFOMMap->Clone();
+
+      ratio_nextBest->SetName("ratio_nextBest");
+      ratio_nextNextBest->SetName("ratio_nextNextBest");
+
+      for (int x = 1 ; x <= nBinsX ; x++)
+      for (int y = 1 ; y <= nBinsY ; y++)
+      {
+          float bestFOM           = bestFOMMap->GetBinContent(x,y);
+          float nextBestFOM     = nextBestFOMMap->GetBinContent(x,y);
+          float nextNextBestFOM = nextNextBestFOMMap->GetBinContent(x,y);
+          if (bestFOM == 0)
+          {
+             ratio_nextBest->SetBinContent(x,y,0.0);
+             ratio_nextNextBest->SetBinContent(x,y,0.0);
+          }
+          else 
+          {
+            if (nextBestFOM == 0) ratio_nextBest->SetBinContent(x,y,0.0);
+            else                    ratio_nextBest->SetBinContent(x,y,bestFOM/nextBestFOM);
+
+            if (nextNextBestFOM == 0) ratio_nextNextBest->SetBinContent(x,y,0.0);
+            else                        ratio_nextNextBest->SetBinContent(x,y,bestFOM/nextNextBestFOM);
+          }
+      } 
 
       // #####################################
       // ##   Compute map for MT analysis   ##
@@ -684,6 +669,8 @@ int main (int argc, char *argv[])
       TFile fOutput((string("../plots/cutAndCount_T2bw/custom")+signals[s]+".root").c_str(),"RECREATE");
       gStyle->SetPaintTextFormat("4.0f");
       formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),label+"Best set of cuts",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,nextBestSetMap,nextBestSetMap->GetName(),label+"Next-to-best;set of cuts",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,nextNextBestSetMap,nextNextBestSetMap->GetName(),label+"NextNext-Best;set of cuts",true,lineOffset);
       gStyle->SetPaintTextFormat("4.1f");
       for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
       {
@@ -694,10 +681,16 @@ int main (int argc, char *argv[])
       bestFOMMap->SetMaximum(5.0);
       bestFOMMap_MTanalysis->SetMaximum(5.0);
       ratio_newCC_MTanalysisCC->SetMaximum(2.0);
+      ratio_nextBest->SetMaximum(2.0);
+      ratio_nextNextBest->SetMaximum(2.0);
       formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),label+"Best FOM",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,nextBestFOMMap,nextBestFOMMap->GetName(),label+"Next-to-best FOM",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,nextNextBestFOMMap,nextNextBestFOMMap->GetName(),label+"NextNext-to-best FOM",true,lineOffset);
       formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),label+"Best signal efficiency",true,lineOffset);
       formatAndWriteMapPlot(&screwdriver,bestBkgEff,bestBkgEff->GetName(),label+"Best backgr efficiency",true,lineOffset);
       formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),label+"Best FOM;from MT analysis",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,ratio_nextBest,ratio_nextBest->GetName(),label+"Best / nextBest",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,ratio_nextNextBest,ratio_nextNextBest->GetName(),label+"Best / nextNextBest",true,lineOffset);
       formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),label+"FOM gain;wrt MT analysis",true,lineOffset);
       //formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"FOM gain wrt BDT",true,lineOffset);
       fOutput.Close();

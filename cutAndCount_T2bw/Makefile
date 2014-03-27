@@ -31,6 +31,7 @@ EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
 #DEFAULT_TARGET = optimizeCuts
 DEFAULT_TARGET = Plotting
+#DEFAULT_TARGET = Plotting2
 #DEFAULT_TARGET = Table
 #------------------------------------------------------------------------------
 

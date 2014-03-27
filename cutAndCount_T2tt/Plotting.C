@@ -95,24 +95,11 @@ bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, fl
 
 bool Selector_cutAndCount_testLooseCuts()    { return Selector_cutAndCount(-1,120,-1,200,-1,999999,false,99); }
 
-
 bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1, 120, -1,  200, -1,  999999, true ,99); }
-bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1, 140, -1,  250, -1,  999999, true ,99); }
-bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(-1, 130, -1,  130, 0.8, 5,      false,9); }
-bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10, 140, 180, -1,  0.8, 5,      false,99); }
+bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(10, 140, -1,  -1,  -1,  999999, true ,99); }
+bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(-1, 130, -1,  130, 0.8, 5,      false,9);  }
+bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10, 140, 180, -1,  0.8, 3,      false,99); }
 bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15, 190, 240, -1,  -1,  999999, false,99); }
-
-bool Selector_cutAndCount_offShellLoose_mod1() { return Selector_cutAndCount(-1, 120, -1,  200, -1,  999999, true, 0.5 ); }
-bool Selector_cutAndCount_offShellLoose_mod2() { return Selector_cutAndCount(7,  120, -1,  -1,  -1,  999999, true ,99);   }
-bool Selector_cutAndCount_offShellTight_mod1() { return Selector_cutAndCount(-1, 140, -1,  250, -1,  999999, true ,0.4);  }
-bool Selector_cutAndCount_offShellTight_mod2() { return Selector_cutAndCount(10, 140, -1,  -1,  -1,  999999, true ,99);   }
-bool Selector_cutAndCount_lowDeltaM_mod1()     { return Selector_cutAndCount(-1, 130, -1,  130, -1,  5,      false,99);   }
-bool Selector_cutAndCount_mediumDeltaM_mod1()  { return Selector_cutAndCount(10, 140, 180, -1,  0.8, 3,      false,99);   }
-bool Selector_cutAndCount_mediumDeltaM_mod2()  { return Selector_cutAndCount(-1, 140, 180, 190, 0.8, 5,      false,99);   }
-bool Selector_cutAndCount_highDeltaM_mod1()    { return Selector_cutAndCount(13, 190, 240, -1,  -1,  999999, false,99);   }
-bool Selector_cutAndCount_highDeltaM_mod2()    { return Selector_cutAndCount(15, 190, 240, -1,  0.8, 5,      false,99);   }
-bool Selector_cutAndCount_highDeltaM_mod3()    { return Selector_cutAndCount(15, 190, 240, -1,  1.0, 3,      false,99);   }
-
 
 bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
 {
@@ -174,22 +161,21 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY=true");
      screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
      screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
-     screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),                   "");
      screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),              "");
      screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,20,        &(myEvent.hadronicChi2),         "");
+/*
+     screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),                   "");
      screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    25,0,500,       &(myEvent.leadingBPt),           "");
      screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    25,0,500,       &(myEvent.leadingJetPt),         "");
      screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    25,0,500,       &(myEvent.leadingLeptonPt),      "");
-
      screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    25,0,500,       &(myEvent.Mlb),                  "");
      screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    25,0,500,       &(myEvent.Mlb_hemi),             "");
      screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    25,0,500,       &(myEvent.M3b),                  "");
      screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
-     screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
+*/
+     screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
      
-     screwdriver.AddVariable("weightPileUp",  "Pile-up weight",           "",       44,0,11,        &(myEvent.weightPileUp),"");
-
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
      screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
      
@@ -226,19 +212,10 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("CC_offShell_Tight",  "Cut&Count;Off-shell tight",    &Selector_cutAndCount_offShellTight);
      screwdriver.AddRegion("CC_lowDM",           "Cut&Count;Low #DeltaM",        &Selector_cutAndCount_lowDeltaM);
      screwdriver.AddRegion("CC_mediumDM",        "Cut&Count;Medium #DeltaM",     &Selector_cutAndCount_mediumDeltaM);
-     //screwdriver.AddRegion("CC_highDM",          "Cut&Count;High #DeltaM",       &Selector_cutAndCount_highDeltaM);
+     screwdriver.AddRegion("CC_highDM",          "Cut&Count;High #DeltaM",       &Selector_cutAndCount_highDeltaM);
      
-     screwdriver.AddRegion("CC_offShell_Loose_mod1",  "Cut&Count;Off-shell Loose;mod 1",    &Selector_cutAndCount_offShellLoose_mod1);
-     screwdriver.AddRegion("CC_offShell_Loose_mod2",  "Cut&Count;Off-shell Loose;mod 2",    &Selector_cutAndCount_offShellLoose_mod2);
-     screwdriver.AddRegion("CC_offShell_Tight_mod1",  "Cut&Count;Off-shell tight;mod 1",    &Selector_cutAndCount_offShellTight_mod1);
-     screwdriver.AddRegion("CC_offShell_Tight_mod2",  "Cut&Count;Off-shell tight;mod 2",    &Selector_cutAndCount_offShellTight_mod2);
-     screwdriver.AddRegion("CC_lowDM_mod1",           "Cut&Count;Low #DeltaM;mod 1",        &Selector_cutAndCount_lowDeltaM_mod1);
-     screwdriver.AddRegion("CC_mediumDM_mod1",        "Cut&Count;Medium #DeltaM;mod 1",     &Selector_cutAndCount_mediumDeltaM_mod1);
-     screwdriver.AddRegion("CC_mediumDM_mod2",        "Cut&Count;Medium #DeltaM;mod 2",     &Selector_cutAndCount_mediumDeltaM_mod2);
-     screwdriver.AddRegion("CC_highDM_mod1",          "Cut&Count;High #DeltaM;mod1",       &Selector_cutAndCount_highDeltaM_mod1);
-     screwdriver.AddRegion("CC_highDM_mod2",          "Cut&Count;High #DeltaM;mod2",       &Selector_cutAndCount_highDeltaM_mod2);
-     screwdriver.AddRegion("CC_highDM_mod3",          "Cut&Count;High #DeltaM;mod3",       &Selector_cutAndCount_highDeltaM_mod3);
-
+     screwdriver.AddRegion("CC_lowDM_mod",  "Cut&Count;Off-shell low deltaM;mod",    &Selector_cutAndCount_lowDeltaM_mod);
+     
      screwdriver.AddRegion("MT_LM150",           "MT analysis (LM 150)",            &Selector_MTAnalysis_LM150);
      screwdriver.AddRegion("MT_LM200",           "MT analysis (LM 200)",            &Selector_MTAnalysis_LM200);
      screwdriver.AddRegion("MT_LM250",           "MT analysis (LM 250)",            &Selector_MTAnalysis_LM250);
@@ -398,28 +375,9 @@ int main (int argc, char *argv[])
   cutAndCountRegions.push_back("CC_offShell_Tight");
   cutAndCountRegions.push_back("CC_lowDM");
   cutAndCountRegions.push_back("CC_mediumDM");
-  //cutAndCountRegions.push_back("CC_highDM");
+  cutAndCountRegions.push_back("CC_highDM");
+  cutAndCountRegions.push_back("CC_lowDM_mod");
   
-  cutAndCountRegions.push_back("CC_offShell_Loose_mod1");
-  cutAndCountRegions.push_back("CC_offShell_Loose_mod2");
-  cutAndCountRegions.push_back("CC_offShell_Tight_mod1");
-  cutAndCountRegions.push_back("CC_offShell_Tight_mod2");
-  cutAndCountRegions.push_back("CC_lowDM_mod1");
-  cutAndCountRegions.push_back("CC_mediumDM_mod1");
-  cutAndCountRegions.push_back("CC_mediumDM_mod2");
-  cutAndCountRegions.push_back("CC_highDM_mod1");
-  cutAndCountRegions.push_back("CC_highDM_mod2");
-  cutAndCountRegions.push_back("CC_highDM_mod3");
-
-  /*
-  cutAndCountRegions.push_back("Eric_1");
-  cutAndCountRegions.push_back("Eric_2");
-  cutAndCountRegions.push_back("Eric_3");
-  cutAndCountRegions.push_back("Eric_4");
-  cutAndCountRegions.push_back("Eric_5");
-  cutAndCountRegions.push_back("Eric_6");
-  */
-
   vector<TH2F*> signalMaps;
   vector<TH2F*> backgroundMaps;
   vector<TH2F*> FOMMaps;
