@@ -57,6 +57,11 @@ bool Selector_presel()
 {
     babyEvent myEvent = *myEventPointer;
 
+    // Apply double-lepton trigger requirement (for both MC and data)
+    if ((!myEvent.triggerMuonElec) 
+     && (!myEvent.triggerDoubleMuon)
+     && (!myEvent.triggerDoubleElec)) return false;
+    
     // Require nLepton == 2
     if (myEvent.numberOfLepton != 2)                      return false;
 
@@ -96,9 +101,9 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    25,0,500,       &(myEvent.leadingBPt),           "");
-     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    25,0,500,       &(myEvent.leadingJetPt),         "");
-     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    35,15,50,       &(myEvent.leadingLeptonPt),      "");
+     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    14,0,500,       &(myEvent.leadingBPt),           "");
+     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    14,0,500,       &(myEvent.leadingJetPt),         "");
+     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    14,15,500,       &(myEvent.leadingLeptonPt),      "");
 
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
@@ -115,8 +120,8 @@ int main (int argc, char *argv[])
              screwdriver.AddDataset("others",   "others", 0, 0);
 
      screwdriver.AddProcessClass("data",   "data",                     "data",COLORPLOT_BLACK);
-             screwdriver.AddDataset("SingleElec",   "data", 0, 0);
-             screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
+             //screwdriver.AddDataset("SingleElec",   "data", 0, 0);
+             //screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
              screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
              screwdriver.AddDataset("DoubleElec",   "data", 0, 0);
              screwdriver.AddDataset("MuEl",         "data", 0, 0);
@@ -219,8 +224,12 @@ int main (int argc, char *argv[])
 
               // Normalize to cross section times lumi
               weight *= myEvent.weightCrossSection * lumi;
-              // Apply trigger efficiency weights
-              weight *= myEvent.weightTriggerEfficiency;
+              // Apply trigger efficiency weights 
+              // (uh, wait, no. these are single-lepton trigger efficiency,
+              //  what we could like is double-lepton but we don't have these (need to ask Verena)
+              //  so let's require the trigger to be fired instead..)
+              // weight *= myEvent.weightTriggerEfficiency;
+
               // Apply pile-up weight
               weight *= myEvent.weightPileUp;
               // For ttbar, apply topPt reweighting
