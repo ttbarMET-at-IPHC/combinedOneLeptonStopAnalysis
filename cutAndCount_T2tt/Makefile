@@ -1,5 +1,6 @@
 ObjSuf        = o
 SrcSuf        = C
+LogSuf        = log
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
@@ -28,6 +29,7 @@ LIBS          =
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
+LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
 #DEFAULT_TARGET = optimizeCuts
 #DEFAULT_TARGET = Table
@@ -46,7 +48,7 @@ browse:
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(EXECUTABLES)
+	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
 
 #------------------------------------------------------------------------------
 

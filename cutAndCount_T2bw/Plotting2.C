@@ -103,22 +103,24 @@ bool Selector_highDeltaM_3()  { return Selector_cutAndCount(260, -1, -1,  200, 1
 bool Selector_highDeltaM_4()  { return Selector_cutAndCount(300, -1, -1,  290, 200,0.8, -1, false); } // 10
 
                                                               // MET METsig MT MT2W BPt dPhi Chi2 ISRjet
-bool Selector_offShellLoose_mod1() { return Selector_cutAndCount(200, -1, 100, -1,  -1, -1,  -1, false); }
-bool Selector_offShellLoose_mod2() { return Selector_cutAndCount(150, -1, 100, -1,  -1, 0.8, -1, false); }
-bool Selector_offShellLoose_mod3() { return Selector_cutAndCount(200, -1, 100, -1,  -1, 0.8, 1,  false); }
-bool Selector_offShellTight_mod1() { return Selector_cutAndCount(300, -1, 150, -1,  -1, 0.8, -1, false); } 
-bool Selector_offShellTight_mod4() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.8, -1, true ); } 
-bool Selector_offShellTight_mod5() { return Selector_cutAndCount(350, -1, 120, -1,  -1, 0.8, -1, true ); } 
-bool Selector_offShellTight_mod6() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.8, 1,  false); } 
-bool Selector_offShellTight_mod7() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.8, 1,  true ); } 
-bool Selector_offShellTight_mod8() { return Selector_cutAndCount(350, -1, 120, -1,  -1, 0.8, 1,  true ); } 
-bool Selector_lowDeltaM_3_mod1()   { return Selector_cutAndCount(170, -1, 140, 200, 150,0.8, -1, false); }
-bool Selector_lowDeltaM_3_mod2()   { return Selector_cutAndCount(0,    8, 120, 200, 150,0.8, -1, false); }
-bool Selector_lowDeltaM_3_mod3()   { return Selector_cutAndCount(150, -1, 120, 200, 150,0.8, 1,  false); }
-bool Selector_lowDeltaM_3_mod4()   { return Selector_cutAndCount(0,    8, 150, 200, 150,0.8, -1, false); }
-bool Selector_lowDeltaM_3_mod5()   { return Selector_cutAndCount(150, -1, 150, 200, 150,0.8, 1,  false); }
-bool Selector_highDeltaM_4_mod1()  { return Selector_cutAndCount(-1,  -1, 200, 290, 200,0.8, -1, false); }
-bool Selector_highDeltaM_4_mod2()  { return Selector_cutAndCount(-1,  11,  -1, 290, 200,0.8, -1, false); }
+bool Selector_offShellTight_mod1() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.2, -1, false); } // 11 
+bool Selector_offShellTight_mod2() { return Selector_cutAndCount(300, -1, 120, -1,  -1, -1,  -1, false); } // 12
+bool Selector_offShellTight_mod5() { return Selector_cutAndCount(300, -1, 120, -1,  -1, 0.8, -1, true ); } // 13
+bool Selector_offShellTight_mod6() { return Selector_cutAndCount(-1,  10, 120, -1,  -1, 0.8, -1, true ); } // 14
+bool Selector_offShellTight_mod7() { return Selector_cutAndCount(-1,   9, 120, -1,  -1, 0.2, -1, false); } // 15
+bool Selector_offShellTight_mod8() { return Selector_cutAndCount(-1,  10, 120, -1,  -1, 0.2, -1, false); } // 16
+bool Selector_offShellTight_mod9() { return Selector_cutAndCount(-1,   9, 120, -1,  -1, 0.2, -1, true ); } // 17
+bool Selector_offShellTight_mod10(){ return Selector_cutAndCount(-1,  10, 120, -1,  -1, 0.2, -1, true ); } // 18
+bool Selector_lowDeltaM_1_mod1()   { return Selector_cutAndCount(-1,  9,  140, 180, -1, 0.8, -1, false); } // 19
+bool Selector_lowDeltaM_1_mod2()   { return Selector_cutAndCount(-1,  10, 140, 180,100, 0.8, -1, false); } // 20
+bool Selector_lowDeltaM_1_mod4()   { return Selector_cutAndCount(-1,  9,  140, 180,100, 0.8, -1, false); } // 21
+bool Selector_lowDeltaM_1_mod5()   { return Selector_cutAndCount(-1,  9,  140, 180, 80, 0.8, -1, false); } // 22
+bool Selector_lowDeltaM_3_mod1()   { return Selector_cutAndCount(180, -1, 120, 200,150, 0.8, -1, false); } // 23
+bool Selector_lowDeltaM_3_mod2()   { return Selector_cutAndCount(-1,   8, 120, 200,150, 0.8, -1, false); } // 24
+bool Selector_lowDeltaM_3_mod3()   { return Selector_cutAndCount(180, -1, 150, 200,150, 0.8, -1, false); } // 25
+bool Selector_lowDeltaM_3_mod4()   { return Selector_cutAndCount(-1,   8, 150, 200,150, 0.8, -1, false); } // 26
+bool Selector_highDeltaM_2_mod3()  { return Selector_cutAndCount(-1,  14, 190, 250, -1, 0.8, -1, false); } // 27
+bool Selector_highDeltaM_2_mod4()  { return Selector_cutAndCount(200, -1, 190, 250,200, 0.8, -1, false); } // 28
 
 bool Selector_MTAnalysis(float METcut, bool useHighDeltaMCuts)
 {
@@ -204,10 +206,10 @@ int main (int argc, char *argv[])
              screwdriver.AddDataset("others",   "others", 0, 0);
 
      screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",COLORPLOT_AZURE);
-          screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
+    //      screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
 
      screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
-    //      screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
+          screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
 
      screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
     //      screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
@@ -236,24 +238,26 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("MT_HM150",           "MT analysis;(HM 150)",         &Selector_MTAnalysis_HM150);
      screwdriver.AddRegion("MT_HM200",           "MT analysis;(HM 200)",         &Selector_MTAnalysis_HM200);
      screwdriver.AddRegion("MT_HM250",           "MT analysis;(HM 250)",         &Selector_MTAnalysis_HM250);
-    
-     screwdriver.AddRegion("offShellLoose_mod1", "offShellLoose;mod1",      &Selector_offShellLoose_mod1);
-     screwdriver.AddRegion("offShellLoose_mod2", "offShellLoose;mod2",      &Selector_offShellLoose_mod2);
-     screwdriver.AddRegion("offShellLoose_mod3", "offShellLoose;mod3",      &Selector_offShellLoose_mod3);
-     screwdriver.AddRegion("offShellTight_mod1", "offShellTight;mod1",      &Selector_offShellTight_mod1);
-     screwdriver.AddRegion("offShellTight_mod4", "offShellTight;mod4",      &Selector_offShellTight_mod4);
-     screwdriver.AddRegion("offShellTight_mod5", "offShellTight;mod5",      &Selector_offShellTight_mod5);
-     screwdriver.AddRegion("offShellTight_mod6", "offShellTight;mod6",      &Selector_offShellTight_mod6);
-     screwdriver.AddRegion("offShellTight_mod7", "offShellTight;mod7",      &Selector_offShellTight_mod7);
-     screwdriver.AddRegion("offShellTight_mod8", "offShellTight;mod8",      &Selector_offShellTight_mod8);
-     screwdriver.AddRegion("lowDeltaM_3_mod1",   "lowDeltaM_3;mod1",        &Selector_lowDeltaM_3_mod1  );
-     screwdriver.AddRegion("lowDeltaM_3_mod2",   "lowDeltaM_3;mod2",        &Selector_lowDeltaM_3_mod2  );
-     screwdriver.AddRegion("lowDeltaM_3_mod3",   "lowDeltaM_3;mod3",        &Selector_lowDeltaM_3_mod3  );
-     screwdriver.AddRegion("lowDeltaM_3_mod4",   "lowDeltaM_3;mod4",        &Selector_lowDeltaM_3_mod4  );
-     screwdriver.AddRegion("lowDeltaM_3_mod5",   "lowDeltaM_3;mod5",        &Selector_lowDeltaM_3_mod5  );
-     screwdriver.AddRegion("highDeltaM_4_mod1",  "highDeltaM_4;mod1",       &Selector_highDeltaM_4_mod1 );
-     screwdriver.AddRegion("highDeltaM_4_mod2",  "highDeltaM_4;mod2",       &Selector_highDeltaM_4_mod2 );
      
+     screwdriver.AddRegion("offShellTight_mod1", "offShellTight;mod1",        &Selector_offShellTight_mod1 );
+     screwdriver.AddRegion("offShellTight_mod2", "offShellTight;mod2",        &Selector_offShellTight_mod2 );
+     screwdriver.AddRegion("offShellTight_mod5", "offShellTight;mod5",        &Selector_offShellTight_mod5 );
+     screwdriver.AddRegion("offShellTight_mod6", "offShellTight;mod6",        &Selector_offShellTight_mod6 );
+     screwdriver.AddRegion("offShellTight_mod7", "offShellTight;mod7",        &Selector_offShellTight_mod7 );
+     screwdriver.AddRegion("offShellTight_mod8", "offShellTight;mod8",        &Selector_offShellTight_mod8 );
+     screwdriver.AddRegion("offShellTight_mod9", "offShellTight;mod9",        &Selector_offShellTight_mod9 );
+     screwdriver.AddRegion("offShellTight_mod10","offShellTight;mod10",       &Selector_offShellTight_mod10);
+     screwdriver.AddRegion("lowDeltaM_1_mod1",   "lowDeltaM_1;mod1",          &Selector_lowDeltaM_1_mod1   );
+     screwdriver.AddRegion("lowDeltaM_1_mod2",   "lowDeltaM_1;mod2",          &Selector_lowDeltaM_1_mod2   );
+     screwdriver.AddRegion("lowDeltaM_1_mod4",   "lowDeltaM_1;mod4",          &Selector_lowDeltaM_1_mod4   );
+     screwdriver.AddRegion("lowDeltaM_1_mod5",   "lowDeltaM_1;mod5",          &Selector_lowDeltaM_1_mod5   );
+     screwdriver.AddRegion("lowDeltaM_3_mod1",   "lowDeltaM_3;mod1",          &Selector_lowDeltaM_3_mod1   );
+     screwdriver.AddRegion("lowDeltaM_3_mod2",   "lowDeltaM_3;mod2",          &Selector_lowDeltaM_3_mod2   );
+     screwdriver.AddRegion("lowDeltaM_3_mod3",   "lowDeltaM_3;mod3",          &Selector_lowDeltaM_3_mod3   );
+     screwdriver.AddRegion("lowDeltaM_3_mod4",   "lowDeltaM_3;mod4",          &Selector_lowDeltaM_3_mod4   );
+     screwdriver.AddRegion("highDeltaM_2_mod3",  "highDeltaM_2;mod3",         &Selector_highDeltaM_2_mod3  );
+     screwdriver.AddRegion("highDeltaM_2_mod4",  "highDeltaM_2;mod4",         &Selector_highDeltaM_2_mod4  );
+    
   // ##########################
   // ##   Create Channels    ##
   // ##########################
@@ -385,8 +389,8 @@ int main (int argc, char *argv[])
 
 
   vector<string> signals;
-  signals.push_back("T2bw-025");
-  //signals.push_back("T2bw-050");
+  //signals.push_back("T2bw-025");
+  signals.push_back("T2bw-050");
   //signals.push_back("T2bw-075");
 
   for (unsigned int s = 0 ; s < signals.size() ; s++)
@@ -407,22 +411,24 @@ int main (int argc, char *argv[])
       cutAndCountRegions.push_back("highDeltaM_2"      );
       cutAndCountRegions.push_back("highDeltaM_3"      );
       cutAndCountRegions.push_back("highDeltaM_4"      );
-      cutAndCountRegions.push_back("offShellLoose_mod1");
-      cutAndCountRegions.push_back("offShellLoose_mod2");
-      cutAndCountRegions.push_back("offShellLoose_mod3");
       cutAndCountRegions.push_back("offShellTight_mod1");
-      cutAndCountRegions.push_back("offShellTight_mod4");
+      cutAndCountRegions.push_back("offShellTight_mod2");
       cutAndCountRegions.push_back("offShellTight_mod5");
       cutAndCountRegions.push_back("offShellTight_mod6");
       cutAndCountRegions.push_back("offShellTight_mod7");
       cutAndCountRegions.push_back("offShellTight_mod8");
+      cutAndCountRegions.push_back("offShellTight_mod9");
+      cutAndCountRegions.push_back("offShellTight_mod10");
+      cutAndCountRegions.push_back("lowDeltaM_1_mod1"  );
+      cutAndCountRegions.push_back("lowDeltaM_1_mod2"  );
+      cutAndCountRegions.push_back("lowDeltaM_1_mod4"  );
+      cutAndCountRegions.push_back("lowDeltaM_1_mod5"  );
       cutAndCountRegions.push_back("lowDeltaM_3_mod1"  );
       cutAndCountRegions.push_back("lowDeltaM_3_mod2"  );
       cutAndCountRegions.push_back("lowDeltaM_3_mod3"  );
       cutAndCountRegions.push_back("lowDeltaM_3_mod4"  );
-      cutAndCountRegions.push_back("lowDeltaM_3_mod5"  );
-      cutAndCountRegions.push_back("highDeltaM_4_mod1" );
-      cutAndCountRegions.push_back("highDeltaM_4_mod2" );
+      cutAndCountRegions.push_back("highDeltaM_2_mod3" );
+      cutAndCountRegions.push_back("highDeltaM_2_mod4" );
 
       vector<TH2F*> signalMaps;
       vector<TH2F*> backgroundMaps;
