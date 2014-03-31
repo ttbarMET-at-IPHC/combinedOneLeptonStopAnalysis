@@ -26,7 +26,7 @@
 
 <a
     type="Corrections"
-    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/pileUp/puWeights_S7.root"
+    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/pileUp/puWeights_S10.root"
     bTagReshaping="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/bTagReshaping/bTagReshaping.root"
     jetEnergyCorrectionMC="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/JEC/Fall12_Uncertainty_MC_AK5PF.txt"
     jetEnergyCorrectionData="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/JEC/Fall12_Uncertainty_Data_AK5PF.txt"
@@ -49,12 +49,11 @@
      isData = 1 for data; = 0  for MC
 
 -->
-<!--
 <d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root" />
--->
 
 <!-- Signals -->
+<!--
 <d  name="T2bw-025_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_withLSP0/T2bw_x-025_*/*.root" />
 <d  name="T2bw-050_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
@@ -89,6 +88,7 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2tt_noLSP0/*/*.root" />
 <d  name="T2tt_mLSP1" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2tt_mLSP1/*/*.root" />
+-->
 
 <!-- ttbar -->
 
@@ -96,8 +96,6 @@
 <d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar-v*/*.root" />
 -->
-
-<!--
 <d  name="ttbar_madgraph_1l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="103.5"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_1l/*.root" />
 <d  name="ttbar_madgraph_2l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="25.5"
@@ -114,10 +112,8 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_scaledown/*.root" />
 <d  name="ttbar_madgraph_scaleup"      add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_scaleup/*.root" />
--->
 
 <!-- W+jets -->
-
 <!--
 <d  name="W1jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="6663.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/W1jets/*.root" />
@@ -128,10 +124,9 @@
 <d  name="W4jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="264.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/W4jets/*.root" />
 -->
-
 <!-- DY+jets -->
-<!--
 
+<!--
 <d  name="DY1jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="671.83"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/DY1jets/*.root" />
 <d  name="DY2jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="216.76"
@@ -195,8 +190,8 @@
 <d  name="ZZZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.0055269"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ZZZ/*.root" />
 -->
-<!-- DoubleLepton Data -->
 
+<!-- DoubleLepton Data -->
 <!--
 <d  name="DoubleElec" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/DoubleElec_*/*.root" />
@@ -205,16 +200,13 @@
 <d  name="MuEl" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/MuEl_*/*.root" />
 -->
-
 <!-- SingleLepton Data -->
-
 <!--
 <d  name="SingleElec" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/SingleElec_*/*.root" />
 <d  name="SingleMuon" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/SingleMuon_*/*.root" />
 -->
-
 </Datasets>
 
 <!--

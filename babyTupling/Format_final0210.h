@@ -378,7 +378,6 @@ float stopCrossSection(float inputMass);
 
 Bool_t ProofJob::Process(Long64_t entry)
 {
-    
     // ########################################
     // #  Load the event from the input tree  #
     // ########################################
@@ -580,7 +579,15 @@ Bool_t ProofJob::Process(Long64_t entry)
             if (abs(MCParticles[i].id) == 1000006) StopStopBar += MCParticles[i].p4;
         ISRboost = StopStopBar.Pt();
     }
-    else if (datasetName == "ttbar")
+    else if ((datasetName == "ttbar"                      )
+          || (datasetName == "ttbar_madgraph_1l"          )
+          || (datasetName == "ttbar_madgraph_2l"          )
+          || (datasetName == "ttbar_madgraph_mass166-5"   )
+          || (datasetName == "ttbar_madgraph_mass178-5"   )
+          || (datasetName == "ttbar_madgraph_matchingdown")
+          || (datasetName == "ttbar_madgraph_matchingup"  )
+          || (datasetName == "ttbar_madgraph_scaledown"   )
+          || (datasetName == "ttbar_madgraph_scaleup"     ))
     {
         TLorentzVector TopTopBar;
         for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
@@ -596,7 +603,15 @@ Bool_t ProofJob::Process(Long64_t entry)
     // Top Pt weight
     
     myEvent.weightTopPt = 1.0;
-    if (datasetName == "ttbar")
+    if ((datasetName == "ttbar"                      )
+     || (datasetName == "ttbar_madgraph_1l"          )
+     || (datasetName == "ttbar_madgraph_2l"          )
+     || (datasetName == "ttbar_madgraph_mass166-5"   )
+     || (datasetName == "ttbar_madgraph_mass178-5"   )
+     || (datasetName == "ttbar_madgraph_matchingdown")
+     || (datasetName == "ttbar_madgraph_matchingup"  )
+     || (datasetName == "ttbar_madgraph_scaledown"   )
+     || (datasetName == "ttbar_madgraph_scaleup"     ))
     {
         float TopPt = 0.0;
         for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
