@@ -1,5 +1,6 @@
 ObjSuf        = o
 SrcSuf        = C
+LogSuf        = log
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
@@ -28,9 +29,10 @@ LIBS          =
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
+LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-#DEFAULT_TARGET = optimizeCuts
-DEFAULT_TARGET = Plotting
+DEFAULT_TARGET = optimizeCuts
+#DEFAULT_TARGET = Plotting
 #DEFAULT_TARGET = Plotting2
 #DEFAULT_TARGET = Plotting3
 #DEFAULT_TARGET = Table
@@ -41,14 +43,14 @@ all: compile run browse
 compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET)
 
 run:
-	./$(DEFAULT_TARGET) | tee $(DEFAULT_TARGET).log
+	./$(DEFAULT_TARGET) | tee $(DEFAULT_TARGET).$(LogSuf)
 
 browse:
 	export PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(EXECUTABLES)
+	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
 
 #------------------------------------------------------------------------------
 

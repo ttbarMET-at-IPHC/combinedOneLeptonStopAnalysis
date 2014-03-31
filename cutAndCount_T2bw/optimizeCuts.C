@@ -44,9 +44,6 @@ bool Selector_presel()
 {
     babyEvent myEvent = *myEventPointer;
 
-    // Reject event that don't pass the trigger
-    if ((!myEvent.triggerMuon) && (!myEvent.triggerElec)) return false;     // TODO : add xtrigger + switch to trigger efficiency
-    
     // Require nLepton == 1
     if (myEvent.numberOfLepton != 1)                      return false;
 
@@ -151,8 +148,10 @@ int main (int argc, char *argv[])
      screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",COLORPLOT_AZURE);
           screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
 */
+
      screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
           screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
+
 /*
      screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
           screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
@@ -269,10 +268,6 @@ int main (int argc, char *argv[])
           if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
 
-          // Dirty overflow management
-          if (myEvent.hadronicChi2  >= 20) myEvent.hadronicChi2  = 19.99;
-          if (myEvent.METoverSqrtHT >= 32) myEvent.METoverSqrtHT = 31.99;
-
           // Fill all the variables with autoFill-mode activated
           //if (currentDataset != "T2tt")
           
@@ -286,13 +281,10 @@ int main (int argc, char *argv[])
           values.push_back(myEvent.MT);
           values.push_back(myEvent.MT2W);
           values.push_back(myEvent.leadingBPt);
-          values.push_back(myEvent.M3b);
-          values.push_back(myEvent.Mlb);
-          values.push_back(myEvent.Mlb_hemi);
           values.push_back(weight);
 
-          float stopMassForTest = 400;
-          float neutralinoMassForTest = 250;
+          float stopMassForTest = 450;
+          float neutralinoMassForTest = 50;
 
           if ((currentDataset == "T2bw-050") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
           else if  (currentDataset != "T2bw-050")  listBackground.push_back(values);
@@ -336,102 +328,19 @@ int main (int argc, char *argv[])
  
    {
       float bestFOM, bestYieldSig, bestYieldBkg;
-      bool scenario[8] = {0,1,1,0,0,0,0,0};
+      bool scenario[8] = {1,0,1,1,1};
       vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   
-      cout << "  METsig   MET   MT   MT2W   BPt   M3b   Mlb   Mlbhemi" << endl;
+      cout << "  METsig   MET   MT   MT2W   BPt" << endl;
       cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
-           << "      " << scenario[4] << "     "    << scenario[5] << "      " << scenario[6] << "     " << scenario[7] << endl;
+           << "      " << scenario[4] << endl;
       cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
-          << "    " << cuts[4]     << "    "    << cuts[5]     << "    " << cuts[6]     << "    " << cuts[7]     << endl;
+          << "    " << cuts[4]     << endl;
 
       cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
       cout << endl;
   }   
-   {
-      float bestFOM, bestYieldSig, bestYieldBkg;
-      bool scenario[8] = {1,0,1,0,0,0,0,0};
-      vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  
-      cout << "  METsig   MET   MT   MT2W   BPt   M3b   Mlb   Mlbhemi" << endl;
-      cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
-           << "      " << scenario[4] << "     "    << scenario[5] << "      " << scenario[6] << "     " << scenario[7] << endl;
-      cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
-          << "    " << cuts[4]     << "    "    << cuts[5]     << "    " << cuts[6]     << "    " << cuts[7]     << endl;
 
-      cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-      cout << endl;
-  }  
-   {
-      float bestFOM, bestYieldSig, bestYieldBkg;
-      bool scenario[8] = {0,1,1,1,0,0,0,0};
-      vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  
-      cout << "  METsig   MET   MT   MT2W   BPt   M3b   Mlb   Mlbhemi" << endl;
-      cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
-           << "      " << scenario[4] << "     "    << scenario[5] << "      " << scenario[6] << "     " << scenario[7] << endl;
-      cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
-          << "    " << cuts[4]     << "    "    << cuts[5]     << "    " << cuts[6]     << "    " << cuts[7]     << endl;
-
-      cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-      cout << endl;
-  }  
-   {
-      float bestFOM, bestYieldSig, bestYieldBkg;
-      bool scenario[8] = {0,1,1,0,1,0,0,0};
-      vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  
-      cout << "  METsig   MET   MT   MT2W   BPt   M3b   Mlb   Mlbhemi" << endl;
-      cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
-           << "      " << scenario[4] << "     "    << scenario[5] << "      " << scenario[6] << "     " << scenario[7] << endl;
-      cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
-          << "    " << cuts[4]     << "    "    << cuts[5]     << "    " << cuts[6]     << "    " << cuts[7]     << endl;
-
-      cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-      cout << endl;
-  }  
-    {
-      float bestFOM, bestYieldSig, bestYieldBkg;
-      bool scenario[8] = {0,1,1,0,0,1,0,0};
-      vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  
-      cout << "  METsig   MET   MT   MT2W   BPt   M3b   Mlb   Mlbhemi" << endl;
-      cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
-           << "      " << scenario[4] << "     "    << scenario[5] << "      " << scenario[6] << "     " << scenario[7] << endl;
-      cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
-          << "    " << cuts[4]     << "    "    << cuts[5]     << "    " << cuts[6]     << "    " << cuts[7]     << endl;
-
-      cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-      cout << endl;
-  }    
-     {
-      float bestFOM, bestYieldSig, bestYieldBkg;
-      bool scenario[8] = {0,1,1,0,0,0,1,0};
-      vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  
-      cout << "  METsig   MET   MT   MT2W   BPt   M3b   Mlb   Mlbhemi" << endl;
-      cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
-           << "      " << scenario[4] << "     "    << scenario[5] << "      " << scenario[6] << "     " << scenario[7] << endl;
-      cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
-          << "    " << cuts[4]     << "    "    << cuts[5]     << "    " << cuts[6]     << "    " << cuts[7]     << endl;
-
-      cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-      cout << endl;
-  }   
-   {
-      float bestFOM, bestYieldSig, bestYieldBkg;
-      bool scenario[8] = {0,1,1,0,0,0,0,1};
-      vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
-  
-      cout << "  METsig   MET   MT   MT2W   BPt   M3b   Mlb   Mlbhemi" << endl;
-      cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
-           << "      " << scenario[4] << "     "    << scenario[5] << "      " << scenario[6] << "     " << scenario[7] << endl;
-      cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
-          << "    " << cuts[4]     << "    "    << cuts[5]     << "    " << cuts[6]     << "    " << cuts[7]     << endl;
-
-      cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
-      cout << endl;
-  }  
   printBoxedMessage("Program done.");
   return (0);
 }
@@ -449,9 +358,6 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
     cuts.push_back(0);
     cuts.push_back(0);
     cuts.push_back(0);
-    cuts.push_back(0);
-    cuts.push_back(0);
-    cuts.push_back(0);
     bestCuts = cuts;
 
     /*
@@ -460,9 +366,6 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
     for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 300  : 100) ; cuts[2] += 25  ) {  // MT
     for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 300  : 100) ; cuts[3] += 25  ) {  // MT2W
     for (cuts[4] = 30  ; cuts[4] <= (use[4] ? 330  : 30 ) ; cuts[4] += 25  ) {  // leadingBPt
-    for (cuts[5] = 0   ; cuts[5] <= (use[5] ? 300  : 0 )  ; cuts[5] += 25  ) {  // M3b
-    for (cuts[6] = 0   ; cuts[6] <= (use[6] ? 300  : 0 )  ; cuts[6] += 25  ) {  // Mlb
-    for (cuts[7] = 0   ; cuts[7] <= (use[7] ? 300  : 0 )  ; cuts[7] += 25  ) {  // Mlb_hemi
     */
 
     for (cuts[0] = 0   ; cuts[0] <= (use[0] ? 20   : 0  ) ; cuts[0] += 1   ) {  // MET / sqrt(HT)
@@ -474,9 +377,6 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
     //for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 400  : 100) ; cuts[2] += 50  ) {  // MT
     for (cuts[3] = 100 ; cuts[3] <= (use[3] ? 300  : 100) ; cuts[3] += 50  ) {  // MT2W
     for (cuts[4] = 30  ; cuts[4] <= (use[4] ? 430  : 30 ) ; cuts[4] += 50  ) {  // leadingBPt
-    for (cuts[5] = 0   ; cuts[5] <= (use[5] ? 500  : 0 )  ; cuts[5] += 50  ) {  // M3b
-    for (cuts[6] = 0   ; cuts[6] <= (use[6] ? 500  : 0 )  ; cuts[6] += 50  ) {  // Mlb
-    for (cuts[7] = 0   ; cuts[7] <= (use[7] ? 500  : 0 )  ; cuts[7] += 50  ) {  // Mlb_hemi
     {
         float yieldBackground  = getYield(listBackground,cuts);
         float yieldSignal      = getYield(listSignal,cuts);
@@ -494,7 +394,7 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
             (*bestYieldBkg) = yieldBackground;
         }
         
-    } } } } } } } } }
+    } } } } } }
         
     return bestCuts;
 }

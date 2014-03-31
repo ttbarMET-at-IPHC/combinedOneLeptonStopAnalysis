@@ -41,7 +41,7 @@ all: compile run browse
 compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET)
 
 run:
-	./$(DEFAULT_TARGET) | tee $(DEFAULT_TARGET).log
+	./$(DEFAULT_TARGET) | tee $(DEFAULT_TARGET).$(LogSuf)
 
 browse:
 	export PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse
