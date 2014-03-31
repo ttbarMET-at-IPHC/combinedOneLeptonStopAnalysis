@@ -11,15 +11,14 @@ using namespace std;
 #include <TBranch.h>
 #include <TLorentzVector.h>
 
+#include "../common.h"
+
 // Define format and input file
 #include "Reader.h"
 
-#define FOLDER_INPUT  "../store/babyTuples_0219/"
+#define FOLDER_INPUT  "../store/babyTuples_0328/"
 //#define FOLDER_OUTPUT "../store/babyTuples_0219_preSelectionSkimmed/"
 #define FOLDER_OUTPUT "./"
-#define DATASET       "T2bw-050.root"
-
-void printProgressBar(int current, int max);
 
 // ###################
 // #  Main function  #
@@ -27,6 +26,7 @@ void printProgressBar(int current, int max);
 
 int main (int argc, char *argv[])
 {
+  string dataset = argv[1]; 
 
   // ################################
   // ##       Open the tree        ##
@@ -37,12 +37,12 @@ int main (int argc, char *argv[])
   intermediatePointers pointers;
 
   // Input tree   
-  TFile fInput((string(FOLDER_INPUT)+DATASET).c_str(),"READ");
+  TFile fInput((FOLDER_INPUT+dataset).c_str(),"READ");
   TTree* theInputTree = (TTree*) fInput.Get("babyTuple"); 
   InitializeBranchesForReading(theInputTree,&myEvent,&pointers);
  
   // Output tree
-  TFile fOutput((string(FOLDER_OUTPUT)+DATASET).c_str(),"RECREATE");
+  TFile fOutput((FOLDER_OUTPUT+dataset).c_str(),"RECREATE");
   TTree* theOutputTree = new TTree("babyTuple","");
   InitializeBranchesForWriting(theOutputTree,&myEvent);
 
@@ -54,7 +54,7 @@ int main (int argc, char *argv[])
   {
       
       if (i % (theInputTree->GetEntries() / 100) == 0) 
-          printProgressBar(i,theInputTree->GetEntries());
+          printProgressBar(i,theInputTree->GetEntries(),dataset);
 
       // Read event
 
@@ -77,25 +77,5 @@ int main (int argc, char *argv[])
 
   return (0); 
 }             
-
-void printProgressBar(int current, int max)
-{
-    std::string bar;
-    int percent = 100 * (float) current / (float) max;
-
-    for(int i = 0; i < 50; i++)
-    {
-        if( i < (percent/2))       bar.replace(i,1,"=");
-        else if( i == (percent/2)) bar.replace(i,1,">");
-        else                       bar.replace(i,1," ");
-    }
-
-    std::cout << "  [Progress]  ";
-    std::cout << "[" << bar << "] ";
-    std::cout.width( 3 );
-    std::cout << percent << "%     ";
-    std::cout << "(" << current << " / " << max << ")" << "\r" << std::flush;
-}
-
 
 
