@@ -144,14 +144,14 @@ int main (int argc, char *argv[])
 
      screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
              screwdriver.AddDataset("others",   "others", 0, 0);
-/*
+
      screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",COLORPLOT_AZURE);
           screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
-*/
 
+/*
      screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
           screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
-
+*/
 /*
      screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
           screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
@@ -283,11 +283,11 @@ int main (int argc, char *argv[])
           values.push_back(myEvent.leadingBPt);
           values.push_back(weight);
 
-          float stopMassForTest = 450;
-          float neutralinoMassForTest = 50;
+          float stopMassForTest = 650;
+          float neutralinoMassForTest = 100;
 
-          if ((currentDataset == "T2bw-050") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
-          else if  (currentDataset != "T2bw-050")  listBackground.push_back(values);
+          if ((currentDataset == "T2bw-025") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
+          else if  (currentDataset != "T2bw-025")  listBackground.push_back(values);
 
           /*
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
@@ -307,7 +307,7 @@ int main (int argc, char *argv[])
   // ###################################
   // ##   Make plots and write them   ##
   // ###################################
- 
+  
   cout << endl;
   cout << "   > Making plots..." << endl;
   //screwdriver.MakePlots();
@@ -328,6 +328,20 @@ int main (int argc, char *argv[])
  
    {
       float bestFOM, bestYieldSig, bestYieldBkg;
+      bool scenario[8] = {0,1,1,1,1};
+      vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
+  
+      cout << "  METsig   MET   MT   MT2W   BPt" << endl;
+      cout << "   "    << scenario[0] << "        " << scenario[1] << "    "   << scenario[2] << "     " << scenario[3] 
+           << "      " << scenario[4] << endl;
+      cout << "   " << cuts[0]     << "       " << cuts[1]     << "   "  << cuts[2]     << "   "  << cuts[3]     
+          << "    " << cuts[4]     << endl;
+
+      cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
+      cout << endl;
+  }   
+  {
+      float bestFOM, bestYieldSig, bestYieldBkg;
       bool scenario[8] = {1,0,1,1,1};
       vector<float> cuts =  optimizeCuts(listBackground, listSignal, scenario, &bestFOM, &bestYieldSig, &bestYieldBkg  );
   
@@ -340,7 +354,6 @@ int main (int argc, char *argv[])
       cout << " FOM,yieldSig,yieldBkg - [" << bestFOM << "] - " << bestYieldSig << " ; " << bestYieldBkg << endl;
       cout << endl;
   }   
-
   printBoxedMessage("Program done.");
   return (0);
 }
@@ -370,7 +383,7 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
 
     for (cuts[0] = 0   ; cuts[0] <= (use[0] ? 20   : 0  ) ; cuts[0] += 1   ) {  // MET / sqrt(HT)
     for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 400  : 100) ; cuts[1] += 20  ) {  // MET
-    for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 400  : 100) ; cuts[2] += 20  ) {  // MT
+    for (cuts[2] = 100 ; cuts[2] <= (use[2] ? 200  : 100) ; cuts[2] += 20  ) {  // MT
 
     //for (cuts[0] = 0   ; cuts[0] <= (use[0] ? 20   : 0  ) ; cuts[0] += 2   ) {  // MET / sqrt(HT)
     //for (cuts[1] = 100 ; cuts[1] <= (use[1] ? 400  : 100) ; cuts[1] += 50  ) {  // MET

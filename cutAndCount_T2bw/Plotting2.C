@@ -112,7 +112,10 @@ bool Selector_lowDeltaM_new2()    { return Selector_cutAndCount(-1,  10, 140, 18
 bool Selector_lowDeltaM_new3()    { return Selector_cutAndCount(-1,   9, 140, 180,100, 0.8, false); } // 18
 bool Selector_offShell_new4()     { return Selector_cutAndCount(-1,   9, 120, -1,  -1, 0.8, true ); } // 19
 bool Selector_offShell_new5()     { return Selector_cutAndCount(-1,  10, 120, -1,  -1, 0.8, true ); } // 20
-bool Selector_mediumDeltaM_new3() { return Selector_cutAndCount(-1,   7, 170, 200,150, 0.8, false); } // 21
+bool Selector_mediumDeltaM_new3() { return Selector_cutAndCount(-1,   7, 150, 200,150, 0.8, false); } // 21
+bool Selector_mediumDeltaM_new4() { return Selector_cutAndCount(-1,   9, 150, 200,150, 0.8, false); } // 22
+bool Selector_lowDeltaM_new4()    { return Selector_cutAndCount(-1,   6, 120, 200,100, 0.2, false); } // 23
+bool Selector_highDeltaM_new1()   { return Selector_cutAndCount(-1,  10, 160, 200,180, 0.8, false); } // 24
 
 
 bool Selector_MTAnalysis(float METcut, bool useHighDeltaMCuts)
@@ -243,6 +246,9 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("offShell_new4",      "off-shell;new4",               &Selector_offShell_new4    );
      screwdriver.AddRegion("offShell_new5",      "off-shell;new5",               &Selector_offShell_new5    );
      screwdriver.AddRegion("mediumDeltaM_new3",  "medium #DeltaM;new3",          &Selector_mediumDeltaM_new3);
+     screwdriver.AddRegion("mediumDeltaM_new4",  "medium #DeltaM;new4",          &Selector_mediumDeltaM_new4);
+     screwdriver.AddRegion("lowDeltaM_new4",     "low #DeltaM;new4",             &Selector_lowDeltaM_new4   );
+     screwdriver.AddRegion("highDeltaM_new1",    "high #DeltaM;new1",            &Selector_highDeltaM_new1  );
 
   // ##########################                                                   
   // ##   Create Channels    ##                                                   
@@ -405,10 +411,12 @@ int main (int argc, char *argv[])
       cutAndCountRegions.push_back("lowDeltaM_new1"    );
       cutAndCountRegions.push_back("lowDeltaM_new2"    );
       cutAndCountRegions.push_back("lowDeltaM_new3"    );
-      cutAndCountRegions.push_back("lowDeltaM_new3"    );
       cutAndCountRegions.push_back("offShell_new4"     );
       cutAndCountRegions.push_back("offShell_new5"     );
       cutAndCountRegions.push_back("mediumDeltaM_new3" );
+      cutAndCountRegions.push_back("mediumDeltaM_new4" );
+      cutAndCountRegions.push_back("lowDeltaM_new4"    );
+      cutAndCountRegions.push_back("highDeltaM_new1"   );
 
       vector<TH2F*> signalMaps;
       vector<TH2F*> backgroundMaps;
