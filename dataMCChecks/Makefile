@@ -29,7 +29,7 @@ SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
-DEFAULT_TARGET = Plotting
+DEFAULT_TARGET = ControlRegions
 #------------------------------------------------------------------------------
 
 all: compile run browse
