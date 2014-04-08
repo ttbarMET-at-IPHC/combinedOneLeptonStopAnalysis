@@ -81,7 +81,7 @@ bool Selector_lowMass()            { return Selector_cutAndCount(-1,   6, 120, 2
 bool Selector_lowDeltaM()          { return Selector_cutAndCount(-1,   9, 140, 180, -1, 0.8, false); } // 4
 bool Selector_mediumDeltaM_loose() { return Selector_cutAndCount(-1,   7, 150, 200,150, 0.8, false); } // 5
 bool Selector_mediumDeltaM_tight() { return Selector_cutAndCount(-1,   8, 150, 200,150, 0.8, false); } // 6
-bool Selector_highDeltaM()         { return Selector_cutAndCount(-1,  10, 150, 200,180, 0.8, false); } // 7
+bool Selector_highDeltaM()         { return Selector_cutAndCount(-1,  10, 160, 200,180, 0.8, false); } // 7
 
 bool Selector_MTAnalysis(float METcut, bool useHighDeltaMCuts)
 {
@@ -106,7 +106,7 @@ bool Selector_MTAnalysis_HM150() { return Selector_MTAnalysis(150,true);  }
 bool Selector_MTAnalysis_HM200() { return Selector_MTAnalysis(200,true);  }
 bool Selector_MTAnalysis_HM250() { return Selector_MTAnalysis(250,true);  }
 
-void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText, float lineOffset);
+void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText, float lineOffset, TList* contoursToDraw = NULL);
 // #########################################################################
 //                              Main function
 // #########################################################################
@@ -132,8 +132,8 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
-     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY=true");
-     screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY=true");
+     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY");
+     screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY");
      screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
      screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
      screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),                   "");
@@ -150,7 +150,7 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
 
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
-     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
+     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "noOverflowInLastBin");
      
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
@@ -166,14 +166,18 @@ int main (int argc, char *argv[])
      screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
              screwdriver.AddDataset("others",   "others", 0, 0);
 
-     screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",COLORPLOT_AZURE);
+     screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",COLORPLOT_AZURE,"no1DPlots");
     //      screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
 
-     screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
+     screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3,        "no1DPlots");
           screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
 
-     screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
+     screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN,"no1DPlots");
     //      screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
+ 
+     screwdriver.AddProcessClass("signal_300_50", "T2bw (300/50)",         "signal",COLORPLOT_AZURE);
+     screwdriver.AddProcessClass("signal_450_50", "T2bw (450/50)",         "signal",kCyan-3);
+     screwdriver.AddProcessClass("signal_600_50", "T2bw (600/50)",         "signal",COLORPLOT_GREEN);
   
   // ##########################
   // ##    Create Regions    ##
@@ -301,6 +305,13 @@ int main (int argc, char *argv[])
               currentProcessClass_ = "ttbar_2l";
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+
+          if ((myEvent.mStop == 300) && (myEvent.mNeutralino == 50))
+              screwdriver.AutoFillProcessClass("signal_300_50",weight);
+          if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 50))
+              screwdriver.AutoFillProcessClass("signal_450_50",weight);
+          if ((myEvent.mStop == 600) && (myEvent.mNeutralino == 50))
+              screwdriver.AutoFillProcessClass("signal_600_50",weight);
       } 
 
       printProgressBar(nEntries,nEntries,currentDataset);
@@ -341,11 +352,11 @@ int main (int argc, char *argv[])
       // ##########################
 
       vector<string> cutAndCountRegions;
-      //cutAndCountRegions.push_back("offShellLoose"    );
+      cutAndCountRegions.push_back("offShellLoose"    );
       cutAndCountRegions.push_back("offShellTight"    );
       cutAndCountRegions.push_back("lowMasses"        );
       cutAndCountRegions.push_back("lowDeltaM"        );
-      //cutAndCountRegions.push_back("mediumDeltaMLoose");
+      cutAndCountRegions.push_back("mediumDeltaMLoose");
       cutAndCountRegions.push_back("mediumDeltaMTight");
       cutAndCountRegions.push_back("highDeltaM"       );
 
@@ -596,6 +607,24 @@ int main (int argc, char *argv[])
       }
      */
 
+      // ##################################
+      // ##   Compute nSig = 3 contour   ##
+      // ##################################
+    
+      TH2F* histoForContour = (TH2F*) bestSigYield->Clone();
+      histoForContour->SetContour(3);
+      histoForContour->SetContourLevel(0,1e-6);
+      histoForContour->SetContourLevel(1,2);
+      histoForContour->SetContourLevel(2,1e6);
+      TCanvas* canvasForPaint = new TCanvas("iAmAnUselessCanvasBecauseRootIsDumb","",500,300);
+      histoForContour->Draw("cont z list");
+      canvasForPaint->Update();
+      TList* contour_sigYield;
+      TObjArray* allContours = (TObjArray*) gROOT->GetListOfSpecials()->FindObject("contours");
+      contour_sigYield = (TList*) allContours->At(1);
+
+      contour_sigYield = NULL;
+      
       // #########################
       // ##   Save those maps   ##
       // #########################
@@ -608,7 +637,7 @@ int main (int argc, char *argv[])
 
       TFile fOutput((string("../plots/cutAndCount_T2bw/custom")+signals[s]+".root").c_str(),"RECREATE");
       gStyle->SetPaintTextFormat("4.0f");
-      formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),label+"Best set of cuts",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),label+"Best set of cuts",true,lineOffset,contour_sigYield);
       formatAndWriteMapPlot(&screwdriver,nextBestSetMap,nextBestSetMap->GetName(),label+"Next-to-best;set of cuts",true,lineOffset);
       formatAndWriteMapPlot(&screwdriver,nextNextBestSetMap,nextNextBestSetMap->GetName(),label+"NextNext-Best;set of cuts",true,lineOffset);
       gStyle->SetPaintTextFormat("4.1f");
@@ -623,7 +652,7 @@ int main (int argc, char *argv[])
       ratio_newCC_MTanalysisCC->SetMaximum(2.0);
       ratio_nextBest->SetMaximum(2.0);
       ratio_nextNextBest->SetMaximum(2.0);
-      formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),label+"Best FOM",true,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),label+"Best FOM",true,lineOffset,contour_sigYield);
       formatAndWriteMapPlot(&screwdriver,nextBestFOMMap,nextBestFOMMap->GetName(),label+"Next-to-best FOM",true,lineOffset);
       formatAndWriteMapPlot(&screwdriver,nextNextBestFOMMap,nextNextBestFOMMap->GetName(),label+"NextNext-to-best FOM",true,lineOffset);
       formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),label+"Best signal efficiency",true,lineOffset);
@@ -643,7 +672,7 @@ int main (int argc, char *argv[])
   return (0);
 }
 
-void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText, float lineOffset)
+void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText, float lineOffset, TList* contours)
 {
     Plot thePlot(name,"custom",screwdriver->GetGlobalOptions());
     thePlot.SetParameter("name",name);
@@ -676,6 +705,18 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
         pal->SetX2NDC(0.93);
         pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
     }
+
+    if (contours != NULL)
+    {
+        for (int i = 0 ; i < contours->GetSize() ; i++)
+        {
+            TGraph* contour = (TGraph*) contours->At(i);
+            contour->SetLineWidth(4);
+            contour->SetLineColor(kViolet+1);
+            contour->Draw("same");
+        }
+    }
+
 
     TLine* line1 = new TLine(lineOffset-12.5,-12.5,lineOffset+387.5,387.5);
     line1->SetLineWidth(2);

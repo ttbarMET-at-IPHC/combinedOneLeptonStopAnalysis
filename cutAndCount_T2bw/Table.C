@@ -237,10 +237,6 @@ int main (int argc, char *argv[])
 //     screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
           screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
     
-     screwdriver.AddProcessClass("signal_300_50", "T2bw (300/50)",         "signal",COLORPLOT_GREEN);
-     screwdriver.AddProcessClass("signal_450_50", "T2bw (450/50)",         "signal",COLORPLOT_GREEN);
-     screwdriver.AddProcessClass("signal_600_50", "T2bw (600/50)",         "signal",COLORPLOT_GREEN);
-
   // ##########################
   // ##    Create Regions    ##
   // ##########################

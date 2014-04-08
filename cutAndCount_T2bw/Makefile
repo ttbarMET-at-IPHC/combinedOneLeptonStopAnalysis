@@ -36,9 +36,6 @@ LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #DEFAULT_TARGET = Plotting2
 DEFAULT_TARGET = Plotting3
 #DEFAULT_TARGET = Table
-#DEFAULT_TARGET = Plotting_old
-#DEFAULT_TARGET = Plotting2_old
-#DEFAULT_TARGET = Plotting3_old
 #------------------------------------------------------------------------------
 
 all: compile run browse

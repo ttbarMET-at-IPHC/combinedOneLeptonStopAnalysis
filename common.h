@@ -18,6 +18,7 @@ using namespace std;
 #include <TBranch.h>
 #include <TLorentzVector.h>
 #include <TMVA/Reader.h>
+#include <TROOT.h>
 
 // Sonic Screwdriver headers
 
