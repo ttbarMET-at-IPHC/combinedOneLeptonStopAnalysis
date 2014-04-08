@@ -1,31 +1,3 @@
-
-// C/C++ headers
-
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <time.h>
-#include <set>
-using namespace std;
-
-// ROOT headers
-
-#include <TFile.h>
-#include <TRandom.h>
-#include <TMarker.h>
-#include <TTree.h>
-#include <TBranch.h>
-#include <TLorentzVector.h>
-#include <TMVA/Reader.h>
-
-// Sonic Screwdriver headers
-
-#include "interface/Table.h" 
-#include "interface/SonicScrewdriver.h" 
-using namespace theDoctor;
-
-// Misc
-
 #include "../common.h"
 
 // BabyTuple format and location
@@ -39,6 +11,25 @@ babyEvent* myEventPointer;
 // #########################################################################
 
 bool inclusiveChannelSelector() { return true; }
+
+bool findISRJet()
+{
+    if (myEventPointer->nJets < 5) return false;
+
+    bool foundISRJet = false;
+    for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
+    {
+        // Check jet is high-pt
+        if ((myEventPointer->jets)[i].Pt() < 200) continue;
+        // Check jet isn't b-tagged
+        if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
+
+        foundISRJet = true;
+    }
+
+    return foundISRJet;
+}
+
 
 bool Selector_presel() 
 {
@@ -56,24 +47,12 @@ bool Selector_presel()
     // Apply MET and MT cuts
     if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
 
-   if (myEvent.deltaPhiMETJets < 0.8) return false;
+    if (myEvent.deltaPhiMETJets < 0.8) return false;
+
+    //if (!findISRJet()) return false;
+
     //if (myEvent.hadronicChi2    > 5) return false;
 
-   /*
-    if (myEventPointer->nJets < 5) return false;
-
-    bool foundISRJet = false;
-    for (unsigned int i = 0 ; i < myEventPointer->jets.size() ; i++)
-    {
-       // Check jet is high-pt
-      if ((myEventPointer->jets)[i].Pt() < 200) continue;
-       // Check jet isn't b-tagged
-      if ((myEventPointer->jets_CSV_reshaped)[i] > 0.679) continue;
-
-      foundISRJet = true;
-    }
-    if (foundISRJet == false) return false;
-    */
     return true; 
 }
 
@@ -144,18 +123,16 @@ int main (int argc, char *argv[])
 
      screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
              screwdriver.AddDataset("others",   "others", 0, 0);
-
+/*
      screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",COLORPLOT_AZURE);
           screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
-
+*/
 /*
      screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
           screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
 */
-/*
      screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
           screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
-*/
 
   // ##########################
   // ##    Create Regions    ##
@@ -283,11 +260,11 @@ int main (int argc, char *argv[])
           values.push_back(myEvent.leadingBPt);
           values.push_back(weight);
 
-          float stopMassForTest = 650;
-          float neutralinoMassForTest = 100;
+          float stopMassForTest = 350;
+          float neutralinoMassForTest = 50;
 
-          if ((currentDataset == "T2bw-025") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
-          else if  (currentDataset != "T2bw-025")  listBackground.push_back(values);
+          if ((currentDataset == "T2bw-075") && (myEvent.mStop == stopMassForTest) && (myEvent.mNeutralino == neutralinoMassForTest)) listSignal.push_back(values);
+          else if  (currentDataset != "T2bw-075")  listBackground.push_back(values);
 
           /*
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100))
@@ -325,7 +302,7 @@ int main (int argc, char *argv[])
   // #####################################
   // ##   Other optimization stuff...   ##
   // #####################################
- 
+
    {
       float bestFOM, bestYieldSig, bestYieldBkg;
       bool scenario[8] = {0,1,1,1,1};
@@ -408,7 +385,7 @@ vector<float> optimizeCuts(vector< vector<float> > listBackground, vector< vecto
         }
         
     } } } } } }
-        
+    
     return bestCuts;
 }
 

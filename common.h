@@ -1,10 +1,35 @@
 
+// C/C++ headers
 
-// Useful for debugging
+#include <cmath>
+#include <iomanip>
+#include <time.h>
+#include <set>
+#include <iostream>
+
+using namespace std;
+
+// ROOT headers
+
+#include <TFile.h>
+#include <TRandom.h>
+#include <TMarker.h>
+#include <TTree.h>
+#include <TBranch.h>
+#include <TLorentzVector.h>
+#include <TMVA/Reader.h>
+
+// Sonic Screwdriver headers
+
+#include "interface/Table.h" 
+#include "interface/SonicScrewdriver.h" 
+using namespace theDoctor;
+
+// Debugging macro
 #define DEBUG_MSG cout << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
 
 // Used to print info
-#define INFO1_MSG cout << "     > "
+#define INFO_MSG cout << "     > "
 
 void printProgressBar(int current, int max, string name = "Progress")
 {
