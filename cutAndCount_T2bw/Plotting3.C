@@ -130,8 +130,8 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
-     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY=true");
-     screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY=true");
+     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY");
+     screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY");
      screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
      screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
      screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),                   "");
@@ -148,7 +148,7 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
 
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
-     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "overflow=true");
+     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "noOverflowInLastBin");
      
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
@@ -348,7 +348,7 @@ int main (int argc, char *argv[])
       // ##########################
 
       vector<string> cutAndCountRegions;
-      cutAndCountRegions.push_back("lowDeltaMLoose" );
+      //cutAndCountRegions.push_back("lowDeltaMLoose" );
       cutAndCountRegions.push_back("lowDeltaMTight" );
       cutAndCountRegions.push_back("mediumDeltaM"   );
       cutAndCountRegions.push_back("highDeltaM"     );
@@ -658,6 +658,9 @@ int main (int argc, char *argv[])
       fOutput.Close();
       system((string("rm -r ../plots/cutAndCount_T2bw/pdf/custom_")+signals[s]).c_str());
       system((string("mv ../plots/cutAndCount_T2bw/pdf/custom ../plots/cutAndCount_T2bw/pdf/custom_")+signals[s]).c_str());
+
+      TableBackgroundSignal tableNewCC(&screwdriver,cutAndCountRegions,"inclusiveChannel","MET");
+      tableNewCC.PrintTableLatex();
   }
 
   printBoxedMessage("Program done.");

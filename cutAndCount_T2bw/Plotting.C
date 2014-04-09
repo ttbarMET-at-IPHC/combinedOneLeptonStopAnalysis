@@ -81,7 +81,8 @@ bool Selector_offShell_loose()     { return Selector_cutAndCount(-1,   7,  120, 
 bool Selector_offShell_tight()     { return Selector_cutAndCount(-1,   8,  120, 200, 150, 0.8, false); } // 4
 bool Selector_lowDeltaM_loose()    { return Selector_cutAndCount(-1,   6,  120, 200, 150, 0.2, false); } // 5
 bool Selector_lowDeltaM_tight()    { return Selector_cutAndCount(-1,   6,  120, 200, 180, 0.8, false); } // 6
-bool Selector_highDeltaM()         { return Selector_cutAndCount(-1,  10,  140, 200, 180, 0.8, false); } // 7
+//bool Selector_highDeltaM()         { return Selector_cutAndCount(-1,  10,  140, 200, 180, 0.8, false); } // 7
+bool Selector_highDeltaM()         { return Selector_cutAndCount(-1,  10,  150, 200, 180, 0.8, false); } // 7
 
 bool Selector_MTAnalysis(float METcut, bool useHighDeltaMCuts)
 {
@@ -354,10 +355,10 @@ int main (int argc, char *argv[])
       vector<string> cutAndCountRegions;
 
       cutAndCountRegions.push_back("veryOffShell_loose" );
-      cutAndCountRegions.push_back("veryOffShell_tight" );
+      //cutAndCountRegions.push_back("veryOffShell_tight" );
       cutAndCountRegions.push_back("offShell_loose"     );
-      cutAndCountRegions.push_back("offShell_tight"     );
-      cutAndCountRegions.push_back("lowDeltaM_loose"    );
+      //cutAndCountRegions.push_back("offShell_tight"     );
+      //cutAndCountRegions.push_back("lowDeltaM_loose"    );
       cutAndCountRegions.push_back("lowDeltaM_tight"    );
       cutAndCountRegions.push_back("highDeltaM"         );
 
@@ -667,6 +668,9 @@ int main (int argc, char *argv[])
       fOutput.Close();
       system((string("rm -r ../plots/cutAndCount_T2bw/pdf/custom_")+signals[s]).c_str());
       system((string("mv ../plots/cutAndCount_T2bw/pdf/custom ../plots/cutAndCount_T2bw/pdf/custom_")+signals[s]).c_str());
+
+      TableBackgroundSignal tableNewCC(&screwdriver,cutAndCountRegions,"inclusiveChannel","MET");
+      tableNewCC.PrintTableLatex();
   }
 
   printBoxedMessage("Program done.");
