@@ -1,31 +1,3 @@
-
-// C/C++ headers
-
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-#include <time.h>
-#include <set>
-using namespace std;
-
-// ROOT headers
-
-#include <TFile.h>
-#include <TRandom.h>
-#include <TMarker.h>
-#include <TTree.h>
-#include <TBranch.h>
-#include <TLorentzVector.h>
-#include <TMVA/Reader.h>
-
-// Sonic Screwdriver headers
-
-#include "interface/Table.h" 
-#include "interface/SonicScrewdriver.h" 
-using namespace theDoctor;
-
-// Misc
-
 #include "../common.h"
 
 // BabyTuple format and location
@@ -45,20 +17,20 @@ string* pCurrentDatasetType;
 bool singleElecChannelSelector() 
 { 
     if (myEventPointer->numberOfLepton != 1) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "singleElec")) return false;
+    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "SingleElec")) return false;
     return (abs(myEventPointer->leadingLeptonPDGId) == 11); 
 }
 bool singleMuonChannelSelector() 
 { 
     if (myEventPointer->numberOfLepton != 1) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "singleMuon")) return false;
+    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "SingleMuon")) return false;
     return (abs(myEventPointer->leadingLeptonPDGId) == 13); 
 }
 
 bool doubleElecChannelSelector() 
 { 
     if (myEventPointer->numberOfLepton != 2) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "doubleElec")) return false;
+    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "DoubleElec")) return false;
     return ((abs(myEventPointer->leadingLeptonPDGId) == 11) 
          && (abs(myEventPointer->secondLeptonPDGId)  == 11)); 
 }
@@ -66,7 +38,7 @@ bool doubleElecChannelSelector()
 bool doubleMuonChannelSelector() 
 { 
     if (myEventPointer->numberOfLepton != 2) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "doubleMuon")) return false;
+    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "DoubleMuon")) return false;
     return ((abs(myEventPointer->leadingLeptonPDGId) == 13) 
          && (abs(myEventPointer->secondLeptonPDGId)  == 13)); 
 }
@@ -173,9 +145,9 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY=true");
-     screwdriver.AddVariable("MTpeak",         "M_{T}",                   "GeV",    20,0,100,       &(myEvent.MT),                   "logY=true");
-     screwdriver.AddVariable("MTtail",         "M_{T}",                   "GeV",    30,100,400,     &(myEvent.MT),                   "logY=true");
+     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY");
+     screwdriver.AddVariable("MTpeak",         "M_{T}",                   "GeV",    20,0,100,       &(myEvent.MT),                   "logY,noOverflowInLastBin");
+     screwdriver.AddVariable("MTtail",         "M_{T}",                   "GeV",    30,100,400,     &(myEvent.MT),                   "logY");
      screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
      screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
      screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),              "");
@@ -285,7 +257,7 @@ int main (int argc, char *argv[])
      string currentDataset = datasetsList[d];
      string currentProcessClass = screwdriver.GetProcessClass(currentDataset);
 
-     pCurrentDataset = &currentDataset;
+     pCurrentDataset     = &currentDataset;
      pCurrentDatasetType = &currentProcessClass;
 
      // Open the tree
@@ -304,7 +276,7 @@ int main (int argc, char *argv[])
       {
           if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
-          //if (i > 0.1 * nEntries) break;
+          //if (i > 0.03 * nEntries) break;
 
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
@@ -326,7 +298,7 @@ int main (int argc, char *argv[])
               weight *= myEvent.weightCrossSection * lumi;
 
               // Apply trigger efficiency weights for singleLepton channels
-              if (myEvent.numberOfLepton != 1) weight *= myEvent.weightTriggerEfficiency;
+              if (myEvent.numberOfLepton == 1) weight *= myEvent.weightTriggerEfficiency;
 
               // Apply pile-up weight
               weight *= myEvent.weightPileUp;
@@ -338,11 +310,12 @@ int main (int argc, char *argv[])
           else
           {
               // For data, apply trigger requirements
-              if ((currentDataset == "SingleElec") && (!myEvent.triggerMuon) && (!myEvent.xtriggerMuon))   continue;
-              if ((currentDataset == "SingleMuon") && (!myEvent.triggerElec))                              continue;
+              if ((currentDataset == "SingleMuon") && (!myEvent.triggerMuon) && (!myEvent.xtriggerMuon))   continue;
+              if ((currentDataset == "SingleElec") && (!myEvent.triggerElec))                              continue;
               if ((currentDataset == "MuEl")       && (!myEvent.triggerMuonElec))                          continue;
               if ((currentDataset == "DoubleMuon") && (!myEvent.triggerDoubleMuon))                        continue;
               if ((currentDataset == "DoubleElec") && (!myEvent.triggerDoubleElec))                        continue;
+
           }
 
           screwdriver.AutoFillProcessClass(currentProcessClass,weight);
