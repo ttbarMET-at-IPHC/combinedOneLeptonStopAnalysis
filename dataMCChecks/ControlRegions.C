@@ -59,21 +59,22 @@ bool doubleLeptonChannelSelector() { return (doubleElecChannelSelector()
                                           || muonElecChannelSelector()); }
 
 
-bool Selector_MTpeak() 
+bool Selector_presel() 
 {
     babyEvent myEvent = *myEventPointer;
 
     // Require nLepton == 1
-    if (myEvent.numberOfLepton != 1)                      return false;
+    if (myEvent.numberOfLepton != 1)                        return false;
 
     // Require nJets >= 4, nBTag >= 1
-    if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0))     return false; 
+    if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0) )      return false; 
 
     // Apply vetos
-    if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
+    if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto)) return false;
 
     // Apply MET and MT cuts
-    if ((myEvent.MET < 80) || (myEvent.MT > 100))         return false;
+    if (myEvent.MET < 80) return false;
+    //|| (myEvent.MT > 100))            return false;
 
     return true; 
 }
@@ -97,7 +98,7 @@ bool Selector_2leptons()
     //if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
 
     // Apply MET and MT cuts
-    if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
+    if ((myEvent.MET < 80))         return false;
 
     return true; 
 }
@@ -116,7 +117,7 @@ bool Selector_0bTag()
     if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
 
     // Apply MET and MT cuts
-    if ((myEvent.MET < 80) || (myEvent.MT < 100))         return false;
+    if ((myEvent.MET < 80))       return false;
 
     return true; 
 }
@@ -146,16 +147,17 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY");
-     screwdriver.AddVariable("MTpeak",         "M_{T}",                   "GeV",    20,0,100,       &(myEvent.MT),                   "logY,noOverflowInLastBin");
-     screwdriver.AddVariable("MTtail",         "M_{T}",                   "GeV",    30,100,400,     &(myEvent.MT),                   "logY");
+     screwdriver.AddVariable("MT",             "M_{T}",                   "GeV",    40,0,400,       &(myEvent.MT),                   "logY");
+     screwdriver.AddVariable("MTpeak",         "M_{T}",                   "GeV",    20,0,100,       &(myEvent.MT),                   "noOverflowInLastBin");
+     screwdriver.AddVariable("MTtail",         "M_{T}",                   "GeV",    30,100,400,     &(myEvent.MT),                   "logY,noUnderflowInFirstBin");
      screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
      screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
      screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),              "");
      screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,20,        &(myEvent.hadronicChi2),         "");
      screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),                   "");
-     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    25,0,500,       &(myEvent.leadingBPt),           "");
-     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    25,0,500,       &(myEvent.leadingJetPt),         "");
-     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    25,0,500,       &(myEvent.leadingLeptonPt),      "");
+     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    20,0,200,       &(myEvent.leadingBPt),           "");
+     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    20,0,200,       &(myEvent.leadingJetPt),         "");
+     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    20,5,205,       &(myEvent.leadingLeptonPt),      "");
      screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    25,0,500,       &(myEvent.Mlb),                  "");
      screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    25,0,500,       &(myEvent.Mlb_hemi),             "");
      screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    25,0,500,       &(myEvent.M3b),                  "");
@@ -191,7 +193,7 @@ int main (int argc, char *argv[])
   // ##    Create Regions    ##
   // ##########################
 
-     screwdriver.AddRegion("MTpeak",      "M_{T}-peak region",              &Selector_MTpeak);
+     screwdriver.AddRegion("presel",      "Preselection region",            &Selector_presel);
      screwdriver.AddRegion("2leptons",    "2 leptons region",               &Selector_2leptons);
      screwdriver.AddRegion("0bTag",       "0 b-tag region",                 &Selector_0bTag);
 
@@ -236,7 +238,7 @@ int main (int argc, char *argv[])
      // Config plots
 
      screwdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
-     screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 20 fb^{-1}");
+     screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 19.5 fb^{-1}");
 
      screwdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
      screwdriver.SetGlobalBoolOption("Plot", "exportEps", false);
