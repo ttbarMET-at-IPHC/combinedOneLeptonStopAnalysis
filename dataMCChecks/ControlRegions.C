@@ -289,11 +289,11 @@ int main (int argc, char *argv[])
               // For MC, apply weights
               float lumi;
 
-                   if (singleElecChannelSelector())  lumi = 19250.0;
-              else if (singleMuonChannelSelector())  lumi = 19190.0;
-              else if (muonElecChannelSelector()  )  lumi = 19447.0;
-              else if (doubleMuonChannelSelector())  lumi = 14690.0;
-              else if (doubleElecChannelSelector())  lumi = 19316.0;
+                   if (singleElecChannelSelector())  lumi = 19154.0;
+              else if (singleMuonChannelSelector())  lumi = 19096.0;
+              else if (muonElecChannelSelector()  )  lumi = 19347.0;
+              else if (doubleMuonChannelSelector())  lumi = 14595.0;
+              else if (doubleElecChannelSelector())  lumi = 19216.0;
               else                                   lumi = 0.0;
 
               // Normalize to cross section times lumi
