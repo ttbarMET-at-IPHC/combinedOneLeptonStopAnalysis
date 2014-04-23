@@ -25,6 +25,7 @@ using namespace std;
 #include "interface/Table.h" 
 #include "interface/SonicScrewdriver.h" 
 #include "interface/tables/TableBackgroundSignal.h" 
+#include "interface/tables/TableDataMC.h" 
 using namespace theDoctor;
 
 // Debugging macro
