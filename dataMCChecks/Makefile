@@ -29,7 +29,8 @@ SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
-DEFAULT_TARGET = ControlRegions
+#DEFAULT_TARGET = ControlRegions
+DEFAULT_TARGET = referenceAnalysisLM150
 #------------------------------------------------------------------------------
 
 all: compile run browse
