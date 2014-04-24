@@ -207,7 +207,7 @@ int main (int argc, char *argv[])
           // Apply trigger efficiency weights for singleLepton channels
           if (myEvent.numberOfLepton == 1) weight *= myEvent.weightTriggerEfficiency;
 
-          // Apply pile-up weight
+          // Apply pile-up weight except for signal
           if (currentDataset != "T2tt") weight *= myEvent.weightPileUp;
 
           // For signal, apply ISR reweighting
@@ -224,7 +224,19 @@ int main (int argc, char *argv[])
           if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 50))
               screwdriver.AutoFillProcessClass("signal_450_50",weight);
           if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 50))
+          {
               screwdriver.AutoFillProcessClass("signal_650_50",weight);
+
+              // If event pass the LM150 selection, dump the run/lumi/eventid
+              if (Selector_LM150())
+              { 
+                  DEBUG_MSG << "(run,lumi,event,weight) = (" 
+                            << myEvent.run   << "," 
+                            << myEvent.lumi  << "," 
+                            << myEvent.event << ","
+                            << weight        << ")" << endl;
+              }
+          }
 
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
@@ -251,6 +263,7 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
 
+  // Print yield tables for the signal region LM150 in the different channels
   vector<string> regions;
   regions.push_back("LM150"); 
 
