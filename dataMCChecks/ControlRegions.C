@@ -348,9 +348,7 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
 
-  vector<string> regions1l;
-  regions1l.push_back("presel"); 
-  regions1l.push_back("0bTag");
+  vector<string> regions1l = { "presel", "0bTag" };
 
   TableDataMC tableElec(&screwdriver,regions1l,"singleElec","MET");
   tableElec.PrintTable();
@@ -358,8 +356,7 @@ int main (int argc, char *argv[])
   TableDataMC tableMuon(&screwdriver,regions1l,"singleMuon","MET");
   tableMuon.PrintTable();
 
-  vector<string> regions2l;
-  regions2l.push_back("2leptons"); 
+  vector<string> regions2l = { "2leptons" };
 
   TableDataMC tableEE(&screwdriver,regions2l,"doubleElec","MET");
   tableEE.PrintTable();

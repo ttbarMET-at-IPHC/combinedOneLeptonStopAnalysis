@@ -175,7 +175,7 @@ int main (int argc, char *argv[])
      // Open the tree
      TFile f((string(FOLDER_BABYTUPLES)+currentDataset+".root").c_str());
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
-
+     
      intermediatePointers pointers;
      InitializeBranches(theTree,&myEvent,&pointers);
 
@@ -264,17 +264,10 @@ int main (int argc, char *argv[])
   printBoxedMessage("Now computing misc tests ... ");
 
   // Print yield tables for the signal region LM150 in the different channels
-  vector<string> regions;
-  regions.push_back("LM150"); 
-
-  TableBackgroundSignal tableElec(&screwdriver,regions,"singleElec","MET");
-  tableElec.PrintTable();
-
-  TableBackgroundSignal tableMuon(&screwdriver,regions,"singleMuon","MET");
-  tableMuon.PrintTable();
-
-  TableBackgroundSignal tableMerged(&screwdriver,regions,"singleLepton","MET");
-  tableMerged.PrintTable();
+  
+  TableBackgroundSignal(&screwdriver,{ "LM150" },"singleElec",  "MET").PrintTable();
+  TableBackgroundSignal(&screwdriver,{ "LM150" },"singleMuon",  "MET").PrintTable();
+  TableBackgroundSignal(&screwdriver,{ "LM150" },"singleLepton","MET").PrintTable();
 
   printBoxedMessage("Program done.");
   return (0);
