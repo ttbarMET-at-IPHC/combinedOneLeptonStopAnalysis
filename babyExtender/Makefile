@@ -1,45 +1,54 @@
 ObjSuf        = o
-SrcSuf        = cc
-ExeSuf        = 
-DllSuf        = so
-OutPutOpt     = -o
-HeadSuf       = h
+SrcSuf        = C
+LogSuf        = log
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
 
-# Linux with egcs
 DEFINES       = 
 
 CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
+CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
 CXXFLAGS      += $(ROOTCFLAGS) -I./
+CXXFLAGS      += -I../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
-LDFLAGS       += $(ROOTLIBS)  -lEG -l:`pwd`/vectorDictionnary_C.so
+LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
+LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
 
 SOFLAGS       = -shared
 LIBS          = 
 
+# Uncomment this line if you want to use a script to parse & colorize gcc output
+# (You can also export this variable from your bashrc)
+#GCCPARSER     = 2>&1 | python ~/littleScripts/colorGcc.py
+
 #------------------------------------------------------------------------------
-SOURCES       = $(wildcard src/*.cc)
+SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
+EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
+LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
+#------------------------------------------------------------------------------
+DEFAULT_TARGET = babyExtender
 #------------------------------------------------------------------------------
 
-all: babyExtender
+all: compile run
+	
+compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET)
 
-%.o: %.c
-	$(CXX) $(CXXFLAGS) -c $<
-
-%: %.o
-	$(LD) $(LDFLAGS) -o $@ $< $(LIBS) 
+run:
+	./$(DEFAULT_TARGET) | tee $(DEFAULT_TARGET).$(LogSuf)
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS)
+	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
 
-.SUFFIXES: .$(SrcSuf) .C .o .so
+#------------------------------------------------------------------------------
 
+../.vectorDictionnary_C.so: ../.vectorDictionnary.C
+	cd ..; root -q -l -L .vectorDictionnary.C+
 
+$(DEFAULT_TARGET): $(DEFAULT_TARGET).$(SrcSuf)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 
