@@ -49,8 +49,12 @@
      isData = 1 for data; = 0  for MC
 
 -->
+<!-- 
 <d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root" />
+<d  name="testSync" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/Single*_B/NTuple_*.root" />
+-->
 
 <!-- Signals -->
 <!--
@@ -96,6 +100,7 @@
 <d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar-v*/*.root" />
 -->
+<!--
 <d  name="ttbar_madgraph_1l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="103.5"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_1l/*.root" />
 <d  name="ttbar_madgraph_2l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="25.5"
@@ -112,6 +117,7 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_scaledown/*.root" />
 <d  name="ttbar_madgraph_scaleup"      add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar_madgraph_scaleup/*.root" />
+-->
 
 <!-- W+jets -->
 <!--
@@ -195,8 +201,10 @@
 <!--
 <d  name="DoubleElec" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/DoubleElec_*/*.root" />
+-->
 <d  name="DoubleMuon" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/DoubleMuon_*/*.root" />
+<!--
 <d  name="MuEl" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/MuEl_*/*.root" />
 -->

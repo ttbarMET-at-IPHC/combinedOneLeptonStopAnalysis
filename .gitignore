@@ -21,6 +21,9 @@ plots/
 # Log files
 *.log
 
+# Executables
+*.run
+
 # Non versionned folders and links
 microTupling/
 WTagTMVATraining/weights_*
@@ -30,22 +33,6 @@ oldFiles/
 sonicScrewdriver
 babyTupling/proofBox
 
-# Executables
-babyExtender/babyExtender
-babyReader/babyReader
-babyReader/compile
-babyReader/validation
-babyTupling/ProofLauncher
-babySkimmer/babySkimmer
-stopBabiesToMicroTuples/stopBabiesToMicroTuples
-*/Plotting
-*/Plotting2
-*/Plotting3
-*/Table
-testSelection/testSelection
-babyFilter/babyFilter
-cutAndCount_T2tt/optimizeCuts
-
 # Various crap
 *.d
 .list*
@@ -53,7 +40,4 @@ cutAndCount_T2tt/optimizeCuts
 */list
 stopBabiesToMicroTuples/dump.dat
 synchronization/synchroBabyTuples
-synchronization/synchroDump
-synchronization/tmp
 babyValidation/Validation_signal
-dataMCChecks/referenceAnalysisLM150

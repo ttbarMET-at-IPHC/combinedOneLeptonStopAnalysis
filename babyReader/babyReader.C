@@ -89,6 +89,7 @@ int main (int argc, char *argv[])
               << " ; Pt : "    << myEvent.genParticles[j].Pt() 
               << " ; Eta : "   << myEvent.genParticles[j].Eta() 
               << " ; Mass : "   << myEvent.genParticles[j].M() 
+              << " ; Mother : "   << myEvent.genParticlesMother[j]
               << endl;
       }
 

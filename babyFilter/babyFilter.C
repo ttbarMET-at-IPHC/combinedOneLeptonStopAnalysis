@@ -15,7 +15,7 @@ using namespace std;
 // Define format and input file
 #include "Reader.h"
 
-#define INPUT_FOLDER  "/opt/sbg/data/data1/cms/aaubin/METFilters/babyTuple_toBeFiltered/babyTuple_"
+#define INPUT_FOLDER "./toFilter/babyTuple_"
 //#define OUTPUT_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/babyTuple_filtered/"
 #define OUTPUT_FOLDER "./"
 #define FILTER_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/filters/"
@@ -124,7 +124,7 @@ int main (int argc, char *argv[])
           }
       }
       bool foundInFilter = false;
-      for (unsigned int j = min ; j < max ; j++)
+      for (int j = min ; j < max ; j++)
       {
           EventId check = eventsToFilter[j];
           if (((check.eventId == ((float) myEvent.event)) || (myEvent.event < 0))
