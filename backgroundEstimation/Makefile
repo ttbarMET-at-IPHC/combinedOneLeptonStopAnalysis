@@ -33,9 +33,7 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-#DEFAULT_TARGET = ControlRegions
-#DEFAULT_TARGET = referenceAnalysisLM150
-DEFAULT_TARGET = LM150
+DEFAULT_TARGET = backgroundEstimation
 #------------------------------------------------------------------------------
 
 all: compile run

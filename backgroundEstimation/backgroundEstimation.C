@@ -1,50 +1,41 @@
 #include "../common.h"
 
+#include <TEnv.h>
+#include <TTreePerfStats.h>
+
 // BabyTuple format and location
 
-#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
 #include "Reader.h"
+#include "analysisDefinitions.h"
+
 babyEvent* myEventPointer;
 string* pCurrentDataset;
 string* pCurrentDatasetType;
 
-// #########################################################################
-//                          Region selectors
-// #########################################################################
-
-
-
-bool singleElecChannelSelector() 
-{ 
-    if (myEventPointer->numberOfLepton != 1) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "SingleElec")) return false;
-    return (abs(myEventPointer->leadingLeptonPDGId) == 11); 
-}
-bool singleMuonChannelSelector() 
-{ 
-    if (myEventPointer->numberOfLepton != 1) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "SingleMuon")) return false;
-    return (abs(myEventPointer->leadingLeptonPDGId) == 13); 
-}
-
-bool singleLeptonChannelSelector() { return (singleElecChannelSelector() || singleMuonChannelSelector()); }
+bool goesInSingleElecChannel()   { return goesInSingleElecChannel(  *myEventPointer, *pCurrentDataset, *pCurrentDatasetType); }
+bool goesInSingleMuonChannel()   { return goesInSingleMuonChannel(  *myEventPointer, *pCurrentDataset, *pCurrentDatasetType); }
+bool goesInSingleLeptonChannel() { return goesInSingleLeptonChannel(*myEventPointer, *pCurrentDataset, *pCurrentDatasetType); }
+bool goesInDoubleElecChannel()   { return goesInDoubleElecChannel(  *myEventPointer, *pCurrentDataset, *pCurrentDatasetType); }
+bool goesInDoubleMuonChannel()   { return goesInDoubleMuonChannel(  *myEventPointer, *pCurrentDataset, *pCurrentDatasetType); }
+bool goesInMuonElecChannel()     { return goesInMuonElecChannel(    *myEventPointer, *pCurrentDataset, *pCurrentDatasetType); }
+bool goesInDoubleLeptonChannel() { return goesInDoubleLeptonChannel(*myEventPointer, *pCurrentDataset, *pCurrentDatasetType); } 
 
 bool Selector_LM150() 
 {
     babyEvent myEvent = *myEventPointer;
 
+    // Temporary bug fix for broken eta cut on muons
+    if (myEvent.leadingLepton.Eta() < -2.1) return false;
+    
     // Require nLepton == 1
     if (myEvent.numberOfLepton != 1)                        return false;
 
-    // Don't consider muon with pT < 25 for MT analysis
-    if ((abs(myEventPointer->leadingLeptonPDGId) == 13) 
-         && (myEventPointer->leadingLepton.Pt()   < 25)) return false;
-   
     // Require nJets >= 4, nBTag >= 1
     if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0) )      return false; 
 
-    // Apply vetos
+    // Apply second-lepton vetos
     if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto)) return false;
 
     // Apply MET and MT cuts
@@ -56,6 +47,7 @@ bool Selector_LM150()
 
     return true; 
 }
+
 
 // #########################################################################
 //                              Main function
@@ -88,10 +80,8 @@ int main (int argc, char *argv[])
      // #########################################################
 
      screwdriver.AddProcessClass("ttbar_1l", "t#bar{t} #rightarrow l+jets","background",kRed-7);
-            screwdriver.AddDataset("ttbar_madgraph_1l",    "ttbar_1l",  0, 0);
-     
      screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}",    "background",kCyan-3);
-            screwdriver.AddDataset("ttbar_madgraph_2l",    "ttbar_2l",  0, 0);
+            screwdriver.AddDataset("ttbar",    "ttbar_1l",  0, 0);
      
      screwdriver.AddProcessClass("W+jets",   "W+jets",                     "background",kOrange-2);
              screwdriver.AddDataset("Wjets",    "W+jets", 0, 0);
@@ -99,12 +89,14 @@ int main (int argc, char *argv[])
      screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
              screwdriver.AddDataset("others",   "others", 0, 0);
 
+     /*
      screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
              screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
 
      screwdriver.AddProcessClass("signal_250_50",  "T2tt (250/50)",      "signal",COLORPLOT_AZURE);
      screwdriver.AddProcessClass("signal_450_50",  "T2tt (450/50)",      "signal",kCyan-3);
      screwdriver.AddProcessClass("signal_650_50",  "T2tt (650/50)",      "signal",COLORPLOT_GREEN);
+     */
 
 
   // ##########################
@@ -117,9 +109,9 @@ int main (int argc, char *argv[])
   // ##   Create Channels    ##
   // ##########################
    
-     screwdriver.AddChannel("singleLepton", "e/#mu-channels",         &singleLeptonChannelSelector);
-     screwdriver.AddChannel("singleElec",   "e-channel",              &singleElecChannelSelector  );
-     screwdriver.AddChannel("singleMuon",   "#mu-channel",            &singleMuonChannelSelector  );
+     screwdriver.AddChannel("singleLepton", "e/#mu-channels",         &goesInSingleLeptonChannel);
+     screwdriver.AddChannel("singleElec",   "e-channel",              &goesInSingleElecChannel  );
+     screwdriver.AddChannel("singleMuon",   "#mu-channel",            &goesInSingleMuonChannel  );
      
   // ########################################
   // ##       Create histograms and        ##
@@ -193,50 +185,21 @@ int main (int argc, char *argv[])
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
 
-          float weight = 1.0;
-          // For MC, apply weights
-          float lumi;
+          float weight = getWeight(myEvent,currentDataset,currentProcessClass);
 
-               if (singleElecChannelSelector())  lumi = 19154.0;
-          else if (singleMuonChannelSelector())  lumi = 19096.0;
-          else                                   lumi = 0.0;
+          // Split 1-lepton ttbar and 2-lepton ttbar
+          string currentProcessClass_ = currentProcessClass;
+          if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
+              currentProcessClass_ = "ttbar_2l";
 
-          // Normalize to cross section times lumi
-          weight *= myEvent.weightCrossSection * lumi;
-
-          // Apply trigger efficiency weights for singleLepton channels
-          if (myEvent.numberOfLepton == 1) weight *= myEvent.weightTriggerEfficiency;
-
-          // Apply pile-up weight except for signal
-          if (currentDataset != "T2tt") weight *= myEvent.weightPileUp;
-
-          // For signal, apply ISR reweighting
-          if (currentDataset == "T2tt")  weight *= myEvent.weightISRmodeling;
-
-          // For ttbar, apply topPt reweighting
-          if ((currentProcessClass == "ttbar_1l") 
-           || (currentProcessClass == "ttbar_2l")) weight *= myEvent.weightTopPt;
-
-          screwdriver.AutoFillProcessClass(currentProcessClass,weight);
+          screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 50))
               screwdriver.AutoFillProcessClass("signal_250_50",weight);
           if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 50))
               screwdriver.AutoFillProcessClass("signal_450_50",weight);
           if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 50))
-          {
               screwdriver.AutoFillProcessClass("signal_650_50",weight);
-
-              // If event pass the LM150 selection, dump the run/lumi/eventid
-              if (Selector_LM150())
-              { 
-                  DEBUG_MSG << "(run,lumi,event,weight) = (" 
-                            << myEvent.run   << "," 
-                            << myEvent.lumi  << "," 
-                            << myEvent.event << ","
-                            << weight        << ")" << endl;
-              }
-          }
 
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
@@ -263,11 +226,10 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
 
-  // Print yield tables for the signal region LM150 in the different channels
-  
-  TableBackgroundSignal(&screwdriver,{ "LM150" },"singleElec",  "MET").PrintTable();
-  TableBackgroundSignal(&screwdriver,{ "LM150" },"singleMuon",  "MET").PrintTable();
-  TableBackgroundSignal(&screwdriver,{ "LM150" },"singleLepton","MET").PrintTable();
+
+  // Print yield tables for the signal region LM150
+  vector<string> tableRegions = { "LM150" };
+  TableBackgroundSignal(&screwdriver,tableRegions,"singleLepton").PrintTable();
 
   printBoxedMessage("Program done.");
   return (0);
