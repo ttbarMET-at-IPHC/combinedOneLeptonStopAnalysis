@@ -5,8 +5,8 @@
 
 // BabyTuple format and location
 
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
 #include "Reader.h"
 babyEvent* myEventPointer;
 string* pCurrentDataset;
@@ -20,13 +20,15 @@ string* pCurrentDatasetType;
 
 bool singleElecChannelSelector() 
 { 
-    if (myEventPointer->numberOfLepton != 1) return false;
+    // (Commenting this because Alex. G didn't have any explicit requirement on nLepton == 1)
+    //if (myEventPointer->numberOfLepton != 1) return false;
     if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "SingleElec")) return false;
     return (abs(myEventPointer->leadingLeptonPDGId) == 11); 
 }
 bool singleMuonChannelSelector() 
 { 
-    if (myEventPointer->numberOfLepton != 1) return false;
+    // (Commenting this because Alex. G didn't have any explicit requirement on nLepton == 1)
+    //if (myEventPointer->numberOfLepton != 1) return false;
     if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "SingleMuon")) return false;
     return (abs(myEventPointer->leadingLeptonPDGId) == 13); 
 }
@@ -42,10 +44,13 @@ bool Selector_LM150()
     
     // Temporary removing low pt muon for sync with Alex G.
     if ((abs(myEventPointer->leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() < 25)) return false;
+    // He also put a cut on the Eta of TLorentzVector of electron. 
+    // The same cut is applied at babyTuple production, but using the eta of supercluster
     if ((abs(myEventPointer->leadingLeptonPDGId) == 11) && (abs(myEvent.leadingLepton.Eta()) > 1.4442)) return false;
 
+    // (Commenting this because Alex. G didn't have any explicit requirement on nLepton == 1)
     // Require nLepton == 1
-    if (myEvent.numberOfLepton != 1)                        return false;
+    //if (myEvent.numberOfLepton != 1)                        return false;
 
     // Require nJets >= 4, nBTag >= 1
     if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0) )      return false; 

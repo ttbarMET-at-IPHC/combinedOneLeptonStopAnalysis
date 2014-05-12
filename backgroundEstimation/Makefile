@@ -38,7 +38,7 @@ LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 DEFAULT_TARGET = LM150
 #------------------------------------------------------------------------------
 
-all: compile run browse
+all: compile run
 	
 compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
 
