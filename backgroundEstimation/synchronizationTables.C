@@ -1,13 +1,9 @@
 #include "../common.h"
 
-#include <TEnv.h>
-#include <TTreePerfStats.h>
-
 // BabyTuple format and location
 
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
-#include "Reader_final0210.h"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
 #include "analysisDefinitions.h"
 
 babyEvent* myEventPointer;
@@ -30,42 +26,43 @@ int main (int argc, char *argv[])
 
      // Pointer to the event
      myEventPointer = &myEvent;
+     
+     // ##########################
+     // ##   Create Variables   ##
+     // ##########################
 
-  // ##########################
-  // ##   Create Variables   ##
-  // ##########################
+     screwdriver.AddVariable("MT",             "M_{T}",                   "GeV",    40,0,400,       &(myEvent.MT),                   "logY");
+     screwdriver.AddVariable("MTpeak",         "M_{T}",                   "GeV",    20,0,100,       &(myEvent.MT),                   "noOverflowInLastBin");
+     screwdriver.AddVariable("MTtail",         "M_{T}",                   "GeV",    30,100,400,     &(myEvent.MT),                   "logY,noUnderflowInFirstBin");
 
-     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY");
 
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("ttbar_1l", "t#bar{t} #rightarrow l+jets","background",kRed-7);
-     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}",    "background",kCyan-3);
-            screwdriver.AddDataset("ttbar",    "ttbar_1l",  0, 0);
+     screwdriver.AddProcessClass("ttbar_1l",        "t#bar{t} #rightarrow l+jets",        "background",kRed-7);
+     screwdriver.AddProcessClass("ttbar_2l",        "t#bar{t} #rightarrow l^{+}l^{-}",    "background",kCyan-3);
+            screwdriver.AddDataset("ttbar",         "ttbar_1l",  0, 0);
      
-     screwdriver.AddProcessClass("W+jets",   "W+jets",                     "background",kOrange-2);
-             screwdriver.AddDataset("Wjets",    "W+jets", 0, 0);
+     screwdriver.AddProcessClass("singletop",       "single t (s and t channels)",      "background",kBlue);
+     
+     screwdriver.AddProcessClass("W+jets",          "W+jets",                             "background",kOrange-2);
+             screwdriver.AddDataset("Wjets",        "W+jets", 0, 0);
 
-     screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
-             screwdriver.AddDataset("others",   "others", 0, 0);
-
-     /*
-     screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
-             screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
-
-     screwdriver.AddProcessClass("signal_250_50",  "T2tt (250/50)",      "signal",COLORPLOT_AZURE);
-     screwdriver.AddProcessClass("signal_450_50",  "T2tt (450/50)",      "signal",kCyan-3);
-     screwdriver.AddProcessClass("signal_650_50",  "T2tt (650/50)",      "signal",COLORPLOT_GREEN);
-     */
+     screwdriver.AddProcessClass("others",          "others",                             "background",kMagenta-5);
+             screwdriver.AddDataset("others",       "others", 0, 0);
+     
+     screwdriver.AddProcessClass("data",   "data",                                        "data",COLORPLOT_BLACK);
+             screwdriver.AddDataset("SingleElec",   "data", 0, 0);
+             screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
 
 
   // ##########################
   // ##    Create Regions    ##
   // ##########################
 
-     screwdriver.AddRegion("presel",      "Preselection",            &goesInPreselection);
+     screwdriver.AddRegion("presel_MTtail",          "Preselection, MT tail",                &goesInPreselectionMTtail);
+     screwdriver.AddRegion("presel_MTinverted",      "Preselection, MT inverted",            &goesInPreselectionMTinverted);
 
   // ##########################
   // ##   Create Channels    ##
@@ -98,6 +95,7 @@ int main (int argc, char *argv[])
      // Schedule plots
      screwdriver.SchedulePlots("1DSuperimposed");
      screwdriver.SchedulePlots("1DStack");
+     screwdriver.SchedulePlots("1DDataMCComparison");
 
      // Config plots
 
@@ -123,7 +121,7 @@ int main (int argc, char *argv[])
      string currentDataset = datasetsList[d];
      string currentProcessClass = screwdriver.GetProcessClass(currentDataset);
 
-     sampleName = currentProcessClass;
+     sampleName = currentDataset;
      sampleType = screwdriver.GetProcessClassType(currentProcessClass);
     
      // Open the tree
@@ -154,6 +152,13 @@ int main (int argc, char *argv[])
           if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
 
+          // Split singletop s and t channels from other
+          if ((currentDataset == "others") 
+          && ((myEvent.crossSection == 1.8)
+          ||  (myEvent.crossSection == 30.0)
+          ||  (myEvent.crossSection == 3.9 )
+          ||  (myEvent.crossSection == 55.5))) currentProcessClass_ = "singletop"; 
+
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
           if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 50))
@@ -178,7 +183,7 @@ int main (int argc, char *argv[])
   cout << "   > Making plots..." << endl;
   screwdriver.MakePlots();
   cout << "   > Saving plots..." << endl;
-  screwdriver.WritePlots("../plots/dataMCChecks/");
+  screwdriver.WritePlots("./");
 
   printBoxedMessage("Plot generation completed");
 
@@ -190,8 +195,8 @@ int main (int argc, char *argv[])
 
 
   // Print yield tables for the signal region LM150
-  vector<string> tableRegions = { "presel" };
-  TableBackgroundSignal(&screwdriver,tableRegions,"singleLepton").PrintTable();
+  vector<string> tableRegions = { "presel_MTinverted", "presel_MTtail" };
+  TableDataMC(&screwdriver,tableRegions,"singleLepton").PrintTable();
 
   printBoxedMessage("Program done.");
   return (0);
