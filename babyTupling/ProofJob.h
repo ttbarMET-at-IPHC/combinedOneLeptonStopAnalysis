@@ -29,6 +29,7 @@
 #include "Plots/interface/StopMCCharacterization.h"
 #include "EventReco/interface/StopAnaReco.h"
 #include "EventReco/interface/Resolution.h"
+#include "EventReco/interface/Mt2Com_bisect.h"
 
 // Baby Tuple format definition
 #include "ProofFormat.h"

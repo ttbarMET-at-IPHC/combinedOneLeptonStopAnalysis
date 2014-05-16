@@ -95,9 +95,9 @@
 -->
 <!-- ttbar -->
 
-<!--
 <d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar-v*/*.root" />
+<!--
 -->
 <!--
 <d  name="ttbar_madgraph_1l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="103.5"

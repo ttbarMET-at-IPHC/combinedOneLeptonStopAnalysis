@@ -4,6 +4,11 @@ SrcSuf        = C
 ExeSuf        = run
 LogSuf        = log
 
+# IPHC paths
+
+IPHCDATAFORMAT_NTUPLE = `pwd`/../../../../../IPHCDataFormat/NTFormat/
+IPHCANALYSIS_NTUPLE   = `pwd`/../../../
+
 # Root flags
 
 ROOTCFLAGS    = $(shell root-config --cflags)
@@ -13,51 +18,59 @@ ROOTLIBS      = $(shell root-config --libs)
 CXX           = g++
 
 # Compiler options
-CXXFLAGS      = -std=c++0x
-CXXFLAGS      += -O -Wall -fPIC -Wno-unused-result -Wshadow
+CXXFLAGS      = -std=c++0x -g -O -Wall -fPIC -Wno-unused-result -Wshadow -Wl,--no-undefined
 
 # Include paths
-INCLUDES      += $(ROOTCFLAGS) 
-INCLUDES      += -I./
-INCLUDES      += -I `pwd`/../../../../../IPHCDataFormat/
+INCLUDES       = $(ROOTCFLAGS) 
+INCLUDES      += -I ./
+INCLUDES      += -I ../../../
+INCLUDES      += -I ../../../../../IPHCDataFormat/
 
 # Linker options
-LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
-LDFLAGS       += $(ROOTLIBS) -lEG -lTMVA
-LDFLAGS       += -l:`pwd`/libNTuple.so
-LDFLAGS       += -l:`pwd`/../../../libNTupleAna.so
+LDFLAGS       += $(ROOTLIBS) -lEG -lTMVA -lProof -lProofPlayer -lMinuit -lMinuit2
+LDFLAGS       += -l:$(IPHCDATAFORMAT_NTUPLE)/src/libNTuple.so
+LDFLAGS       += -l:`pwd`/libNTupleAna.so
 
 # Uncomment this line if you want to use a script to parse & colorize gcc output
 # (You can also export this variable from your bashrc)
 #GCCPARSER     = 2>&1 | python ~/littleScripts/colorGcc.py
 
-LIBNTUPLE = `pwd`/../../../libNTupleAna.so
+# Filter the useless PROOF output
+PROOFFILTER = 2>&1 | tr '\r' '\n' | grep -v --line-buffered "Opening connections\|Setting up worker servers\|Info in <\|no dictionary for\|TUnixSystem::DynamicPathName\|TDataSetManager::ScanDataSet\|exact location of files\|Validating files\|Output file:\|set to parallel mode\|Starting PROOF-Lite\|merging output objects\|objects have been merged\|still sending\|0.00 %" | perl -e '$$| = 1 ;' -pe 's|MB/s]\n|MB/s]\x0D|g;' 
 
 #------------------------------------------------------------------------------
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
+ROOTMESS1     = $(wildcard *.d)
+ROOTMESS2     = $(wildcard *.so)
 #------------------------------------------------------------------------------
-DEFAULT_TARGET = ProofLauncher
+PROOF_LAUNCHER = ProofLauncher
+PROOF_JOB = ProofJob
 #------------------------------------------------------------------------------
 
-all: compile run
+help:
+	@echo "Specify a target :"
+	@echo "  - checkJob   : check that the description of what your workers will be doing compiles"
+	@echo "  - prod       : launch PROOF"
+	@echo "  - moveProd   : derp"
 	
-compile: copyLibAna $(DEFAULT_TARGET).$(ExeSuf)
+checkJob: $(PROOF_JOB).$(ExeSuf)
 
-copyLibAna:
-	cp $(LIB_NTUPLEANA) ./libNTuple.so
-
-run:
-	./$(DEFAULT_TARGET).$(ExeSuf) | tee $(DEFAULT_TARGET).$(LogSuf)
+prod: copyLibAna $(PROOF_LAUNCHER).$(ExeSuf)
+	@./$(PROOF_LAUNCHER).$(ExeSuf) $(PROOFFILTER) | tee $(PROOF_LAUNCHER).$(LogSuf)
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
+	@rm -rf $(OBJECTS) $(EXECUTABLES) $(LOGS) $(ROOTMESS1) $(ROOTMESS2) backup_outputProof*
 
 #------------------------------------------------------------------------------
 
-$(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)
+copyLibAna:
+	@cp $(IPHCANALYSIS_NTUPLE)/libNTupleAna.so ./libNTupleAna.so
+
+%.$(ExeSuf): %.$(SrcSuf)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $< $(GCCPARSER)
+
 

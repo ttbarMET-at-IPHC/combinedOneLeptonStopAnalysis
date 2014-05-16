@@ -1,51 +1,41 @@
-//Modifie par Thomas DESCHLER
-
-#include <TApplication.h>
-#include <TGClient.h>
-#include <TProof.h>
-#include <TEnv.h>
-#include <TChain.h>
-#include <TFileCollection.h>
-#include <TDrawFeedback.h>
-
-#include "Tools/interface/Dataset.h"
-#include "Tools/interface/AnalysisEnvironmentLoader.h"
 
 #include "ProofLauncher.h"
-#include "EventReco/interface/Mt2Com_bisect.h"
+
+void printBoxedMessage(string message);
 
 int main(int argc, char* argv[])
 {
   
-  // ##########################
-  // #   Setting parameters   #
-  // ##########################
-  
-  int nwnodes = NUMBER_OF_NODES;
+  printBoxedMessage("Launching PROOF");
 
-  string macroName = MACRO_NAME;
-  string xmlFileName = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/")+XML_CONFIG;
-  string outputBox = string(OUTPUT_BOX);
-
-  gEnv->SetValue("ProofLite.Sandbox",outputBox.c_str());
-  string outputFileName = OUTPUT_NAME;
-  
-  // ###########################
-  // #   Creating the TPROOF   #
-  // ###########################
+  // #######################################
+  // #   Cleaning existing/previous jobs   #
+  // #######################################
  
-  // Cleaning proof stuff
-  system("../../GeneralExamples/./clean_proof.sh ; echo 'Cleaning proof stuff ... ' ; sleep 6");
+  cout << "  > Cleaning existing workers..." << endl << endl;
+  system("pkill -9 proofserv.exe");
+  system("sleep 1");
+  cout << "  > Cleaning proof box ..." << endl << endl;
   system((string("rm -r ")+OUTPUT_BOX).c_str());  
 
+  // ################################################
+  // #   Setting up proofbox and cCreating workers  #
+  // ################################################
+  
+  gEnv->SetValue("ProofLite.Sandbox",OUTPUT_BOX);
+  
+  cout << "  > Starting PROOF with " << NUMBER_OF_NODES << " workers " << endl << endl;
   TProof *proof = TProof::Open("");
-  proof->SetParallel(nwnodes);
+  proof->SetParallel(NUMBER_OF_NODES);
 
-  // ########################
-  // #   Loading packages   #
-  // ########################
+  // Set the feedback period to 5 seconds
+  proof->SetParameter("PROOF_FeedbackPeriod", (Long_t) 5000);
+
+  // #####################
+  // #   Load packages   #
+  // #####################
  
-  cout<<"   > Loading NTuple Analysis package (don't worry about the symlink error)" << endl;
+  cout << "  > Loading NTuple Analysis package (don't worry about the symlink error)" << endl;
   proof->UploadPackage("../../NTAna.par");
   proof->EnablePackage("NTAna");
   
@@ -53,21 +43,16 @@ int main(int argc, char* argv[])
   // #   Load XML configuration   #
   // ##############################
   
-  vector<Dataset> datasets;
+  string xmlFileName = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/")+XML_CONFIG;
   AnalysisEnvironmentLoader anaEL(xmlFileName);
+  
+  vector<Dataset> datasets;
   anaEL.LoadSamples(datasets);
  
-  /*
-      cout<<" #------------------------------------# "<<endl;
-      cout<<" PROOF DATASETS SUMMARY [normaly 0]"<<endl;
-      proof->ShowDataSets();
-      cout<<" #------------------------------------# "<<endl;
-      cout<<" # Registring dataset ... "<<endl;
-      cout<<" Don't be worry with the checksum error message [at least I'm not ;-) ]"<<endl;
-      cout<<" #------------------------------------# "<<endl;
-  */
+  // #######################################
+  // #   Create datasets in proof format   #
+  // #######################################
 
-  //Create datasets in proof format
   TFileCollection** fileCollec = new TFileCollection*[datasets.size()];
   for(unsigned int i=0;i<datasets.size();i++)
   {
@@ -76,70 +61,45 @@ int main(int argc, char* argv[])
     {
       fileCollec[i]->Add(datasets[i].Filenames()[j].c_str());
     }
+
     //register dataset in proof
     proof->RegisterDataSet(datasets[i].Name().c_str(),fileCollec[i]);
     proof->VerifyDataSet(datasets[i].Name().c_str());
   }
-  
-  /*
-      //summarize the list of datasets
-      cout<<" #------------------------------------# "<<endl;
-      cout<<" PROOF DATASETS SUMMARY"<<endl;
-      proof->ShowDataSets();
-      cout<<" #------------------------------------# "<<endl;
-  */ 
 
   // ############################
   // #   Process the datasets   #
   // ############################
   
-  string outputFileNameModif = outputFileName.substr(0,outputFileName.size()-5);
-  string MergingCommand = "hadd "+outputFileNameModif+"_merged.root ";
+  system("mkdir -p proofOutput");
   
-    //cout<<"datasets.size()= "<<datasets.size()<<endl;
+  for(unsigned int i=0;i<datasets.size();i++)
+  {
+      printBoxedMessage("Processing "+datasets[i].Name());
 
-   for(unsigned int i=0;i<datasets.size();i++)
-   {
-    cout<<"#######################################################"<<endl;
-    cout<<"#   Processing the dataset "<<datasets[i].Name()<<"   #"<<endl;
-    cout<<"#######################################################"<<endl;
+      proof->AddInput(new TNamed("PROOF_DATASETNAME", datasets[i].Name()));
+      proof->AddInput(new TNamed("PROOF_XMLFILENAME", xmlFileName));
+      proof->AddInput(new TNamed("PROOF_OUTPUTFILE",  "output.root"));
 
-    proof->AddInput(new TNamed("PROOF_DATASETNAME", datasets[i].Name()));
-    proof->AddInput(new TNamed("PROOF_XMLFILENAME", xmlFileName));
-    proof->AddInput(new TNamed("PROOF_OUTPUTFILE", outputFileName));
-    
-    /*
-        cout<<"#------------------------------------# "<<endl;
-        cout<<"PROOF PARAMETERS SUMMARY"<<endl;
-        proof->ShowParameters();
-        cout<<"#------------------------------------# "<<endl;
-    */
-    
-    proof->Process(datasets[i].Name().c_str(),macroName.c_str(),"",datasets[i].NofEvtsToRunOver());
-    system("sleep 5");
-    
-    string newFileName = outputFileNameModif+"_"+datasets[i].Name()+".root";
-    cout<<"Copying the output file with the name "<<endl;
-    string command = "cp "+outputFileName+" "+newFileName;
-    MergingCommand+=newFileName+" ";
-    system(command.c_str());
-    proof->ClearInput();
+      proof->Process(datasets[i].Name().c_str(),MACRO_NAME,"",datasets[i].NofEvtsToRunOver());
+      system("sleep 5");
+
+      string newFileName = "proofOutput/"+datasets[i].Name()+".root";
+      cout << "  > Moving output to " << newFileName << endl;
+      string command = "mv output.root "+newFileName;
+      system(command.c_str());
+      proof->ClearInput();
   }
  
-  // #########################
-  // #   Merge the outputs   #
-  // #########################
-  
-  system(MergingCommand.c_str());
-  system("mkdir backup_outputProof`date +\"%d-%m-%y_%H-%M-%S\"`; mv proof*.root  backup_outputProof`date +\"%d-%m-%y_%H-%M-%S\"`/.");
-  
-  cout << "#################################################" << endl;
-    proof->Print();
-  cout << "#################################################" << endl;
+  // ##################
+  // #   Show stats   #
+  // ##################
+ 
+  printBoxedMessage("Job done, here are a few stats");
+
+  proof->Print();
     
-  cout << "#################################################" << endl;
-  cout << "#        May your job live long and prosper     #" << endl;
-  cout << "#################################################" << endl;
+  printBoxedMessage("May your job live long and prosper");
   cout << "                                                 " << endl;
   cout << "                   _                             " << endl;
   cout << "                .-T |   _                        " << endl;
@@ -153,7 +113,24 @@ int main(int argc, char* argv[])
   cout << "                  |     |                        " << endl;
   cout << "                                                 " << endl;
   cout << "                                                 " << endl;
-  cout << "#################################################"<<endl;
   
   return (0);
+}
+
+void printBoxedMessage(string message)
+{
+    cout << endl;
+
+    cout << "   ┌──";
+    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
+    cout << "─┐  " << endl;
+
+    cout << "   │  " << message << "  │  " << endl;
+    
+    cout << "   └──";
+    for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
+    cout << "─┘  " << endl; 
+ 
+    cout << endl;
+
 }
