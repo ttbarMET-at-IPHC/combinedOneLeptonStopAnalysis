@@ -1,4 +1,6 @@
 
+#include <TSelector.h>
+
 #include "ProofLauncher.h"
 
 void printBoxedMessage(string message);
@@ -13,7 +15,7 @@ int main(int argc, char* argv[])
   // #######################################
  
   cout << "  > Cleaning existing workers..." << endl << endl;
-  system("pkill -9 proofserv.exe");
+  system("pkill -9 proofserv.exe 2>/dev/null");
   system("sleep 1");
   cout << "  > Cleaning proof box ..." << endl << endl;
   system((string("rm -r ")+OUTPUT_BOX).c_str());  
@@ -81,7 +83,7 @@ int main(int argc, char* argv[])
       proof->AddInput(new TNamed("PROOF_XMLFILENAME", xmlFileName));
       proof->AddInput(new TNamed("PROOF_OUTPUTFILE",  "output.root"));
 
-      proof->Process(datasets[i].Name().c_str(),MACRO_NAME,"",datasets[i].NofEvtsToRunOver());
+      proof->Process(datasets[i].Name().c_str(),JOB_DESCRIPTION,"",datasets[i].NofEvtsToRunOver());
       system("sleep 5");
 
       string newFileName = "proofOutput/"+datasets[i].Name()+".root";

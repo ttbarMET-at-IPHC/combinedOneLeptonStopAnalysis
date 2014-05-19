@@ -6,7 +6,7 @@ LogSuf        = log
 
 # IPHC paths
 
-IPHCDATAFORMAT_NTUPLE = `pwd`/../../../../../IPHCDataFormat/NTFormat/
+IPHCDATAFORMAT_NTUPLE = `pwd`/../../../../../IPHCDataFormat/
 IPHCANALYSIS_NTUPLE   = `pwd`/../../../
 
 # Root flags
@@ -23,12 +23,12 @@ CXXFLAGS      = -std=c++0x -g -O -Wall -fPIC -Wno-unused-result -Wshadow -Wl,--n
 # Include paths
 INCLUDES       = $(ROOTCFLAGS) 
 INCLUDES      += -I ./
-INCLUDES      += -I ../../../
-INCLUDES      += -I ../../../../../IPHCDataFormat/
+INCLUDES      += -I $(IPHCANALYSIS_NTUPLE)
+INCLUDES      += -I $(IPHCDATAFORMAT_NTUPLE)
 
 # Linker options
 LDFLAGS       += $(ROOTLIBS) -lEG -lTMVA -lProof -lProofPlayer -lMinuit -lMinuit2
-LDFLAGS       += -l:$(IPHCDATAFORMAT_NTUPLE)/src/libNTuple.so
+LDFLAGS       += -l:$(IPHCDATAFORMAT_NTUPLE)/NTFormat/src/libNTuple.so
 LDFLAGS       += -l:`pwd`/libNTupleAna.so
 
 # Uncomment this line if you want to use a script to parse & colorize gcc output
@@ -48,27 +48,28 @@ ROOTMESS2     = $(wildcard *.so)
 #------------------------------------------------------------------------------
 PROOF_LAUNCHER = ProofLauncher
 PROOF_JOB = ProofJob
+PROOF_FORMAT = ProofFormat
 #------------------------------------------------------------------------------
 
-help:
-	@echo "Specify a target :"
-	@echo "  - checkJob   : check that the description of what your workers will be doing compiles"
-	@echo "  - prod       : launch PROOF"
-	@echo "  - moveProd   : derp"
-	
-checkJob: $(PROOF_JOB).$(ExeSuf)
 
-prod: copyLibAna $(PROOF_LAUNCHER).$(ExeSuf)
+prod: job copyLibAna $(PROOF_LAUNCHER).$(ExeSuf)
 	@./$(PROOF_LAUNCHER).$(ExeSuf) $(PROOFFILTER) | tee $(PROOF_LAUNCHER).$(LogSuf)
+
+job: $(PROOF_JOB)_C.so
 
 clean:
 	@echo "Cleaning..."
-	@rm -rf $(OBJECTS) $(EXECUTABLES) $(LOGS) $(ROOTMESS1) $(ROOTMESS2) backup_outputProof*
+	@rm -rf $(OBJECTS) $(EXECUTABLES) $(LOGS) $(ROOTMESS1) $(ROOTMESS2) backup_outputProof* NTAna
 
 #------------------------------------------------------------------------------
 
 copyLibAna:
 	@cp $(IPHCANALYSIS_NTUPLE)/libNTupleAna.so ./libNTupleAna.so
+
+$(PROOF_JOB)_C.so: copyLibAna $(PROOF_FORMAT).h
+	@echo "Compiling job description..."
+	@$(CXX) $(CXXFLAGS) -Wno-unused-variable $(INCLUDES) $(LDFLAGS) -o .makeJob.run .makeJob.C
+	@export IPHCDATAFORMAT_NTUPLE=$(IPHCDATAFORMAT_NTUPLE); export IPHCANALYSIS_NTUPLE=$(IPHCANALYSIS_NTUPLE); ./.makeJob.run $(GCCPARSER)
 
 %.$(ExeSuf): %.$(SrcSuf)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $< $(GCCPARSER)
