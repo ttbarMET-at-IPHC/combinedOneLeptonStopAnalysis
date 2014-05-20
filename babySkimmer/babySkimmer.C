@@ -17,8 +17,7 @@ using namespace std;
 #include "Reader.h"
 
 #define FOLDER_INPUT  "../store/babyTuples_0328/"
-//#define FOLDER_OUTPUT "../store/babyTuples_0219_preSelectionSkimmed/"
-#define FOLDER_OUTPUT "./"
+#define FOLDER_OUTPUT "../store/babyTuples_0328_1lepton4jetsMET80Vetos/"
 
 // ###################
 // #  Main function  #
@@ -26,6 +25,12 @@ using namespace std;
 
 int main (int argc, char *argv[])
 {
+  if (argc <= 1)
+  {
+      cout << "No dataset specified in argument" << endl;
+      return -1;
+  }
+  
   string dataset = argv[1]; 
 
   // ################################
@@ -63,9 +68,9 @@ int main (int argc, char *argv[])
       // Apply selection
 
       if (myEvent.numberOfLepton != 1)                        continue;
-      if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0))       continue;
+      if (myEvent.nJets < 4)                                  continue;
       if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto)) continue;
-      if ((myEvent.MET < 80) || (myEvent.MT < 100))           continue;
+      if (myEvent.MET < 80)                                   continue;
 
       // Fill tree
 

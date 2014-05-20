@@ -243,6 +243,8 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       myEvent->nonSelectedJets_CSV_reshaped = *(pointers->pointerToNonSelectedJets_CSV_reshaped); 
       myEvent->nonSelectedJets_partonFlav   = *(pointers->pointerToNonSelectedJets_partonFlav);   
 
+      myEvent->nonSelectedLeptons           = *(pointers->pointerToNonSelectedLeptons); 
+      myEvent->nonSelectedLeptonsPDGId      = *(pointers->pointerToNonSelectedLeptonsPDGId); 
 
 }
 
@@ -258,7 +260,7 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("triggerDoubleElec",                            &(myEvent->triggerDoubleElec));
     theTree->SetBranchAddress("triggerDoubleMuon",                            &(myEvent->triggerDoubleMuon));
     theTree->SetBranchAddress("triggerMuonElec",                              &(myEvent->triggerMuonElec));
-   
+    
     theTree->SetBranchAddress("numberOfLepton",                               &(myEvent->numberOfLepton));
     pointers->pointerToLeadingLepton = 0;
     theTree->SetBranchAddress("leadingLepton",                                &(pointers->pointerToLeadingLepton));
@@ -401,7 +403,6 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("flavor_firstIncomingParton",                   &(myEvent->flavor_firstIncomingParton)); 
     theTree->SetBranchAddress("flavor_secondIncomingParton",                  &(myEvent->flavor_secondIncomingParton));
     theTree->SetBranchAddress("scalePDF",                                     &(myEvent->scalePDF));                   
-
 }
 
 void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
@@ -540,6 +541,7 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("scalePDF",                     &(myEvent->scalePDF));                   
 
 }
+
 
 
 #endif

@@ -21,12 +21,13 @@ using namespace std;
 #include <TROOT.h>
 
 // Sonic Screwdriver headers
-
+/*
 #include "interface/Table.h" 
 #include "interface/SonicScrewdriver.h" 
 #include "interface/tables/TableBackgroundSignal.h" 
 #include "interface/tables/TableDataMC.h" 
 using namespace theDoctor;
+*/
 
 // Debugging macro
 #define DEBUG_MSG cout << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
