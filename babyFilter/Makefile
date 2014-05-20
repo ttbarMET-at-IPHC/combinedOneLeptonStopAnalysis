@@ -1,5 +1,7 @@
 ObjSuf        = o
 SrcSuf        = C
+ExeSuf        = run
+LogSuf        = log
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
@@ -7,7 +9,8 @@ ROOTLIBS      = $(shell root-config --libs)
 DEFINES       = 
 
 CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
+CXXFLAGS      = -std=c++0x
+CXXFLAGS      += -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
 CXXFLAGS      += $(ROOTCFLAGS) -I./
 
 LD            = g++ 
@@ -25,27 +28,25 @@ LIBS          =
 #------------------------------------------------------------------------------
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
-EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
+EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
+LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
 DEFAULT_TARGET = babyFilter
 #------------------------------------------------------------------------------
 
-all: compile run 
+all: compile
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET)
-
-run:
-	./$(DEFAULT_TARGET)
+compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(EXECUTABLES)
+	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
 
 #------------------------------------------------------------------------------
 
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
-$(DEFAULT_TARGET): $(DEFAULT_TARGET).$(SrcSuf)
+$(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 

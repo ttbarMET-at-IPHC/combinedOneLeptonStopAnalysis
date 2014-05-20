@@ -243,6 +243,8 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       myEvent->nonSelectedJets_CSV_reshaped = *(pointers->pointerToNonSelectedJets_CSV_reshaped); 
       myEvent->nonSelectedJets_partonFlav   = *(pointers->pointerToNonSelectedJets_partonFlav);   
 
+      myEvent->nonSelectedLeptons           = *(pointers->pointerToNonSelectedLeptons); 
+      myEvent->nonSelectedLeptonsPDGId      = *(pointers->pointerToNonSelectedLeptonsPDGId); 
 
 }
 
