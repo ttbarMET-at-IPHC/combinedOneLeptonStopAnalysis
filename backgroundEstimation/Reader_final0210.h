@@ -227,10 +227,10 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       
       myEvent->leadingLepton                = *(pointers->pointerToLeadingLepton);
       myEvent->secondLepton                 = *(pointers->pointerToSecondLepton);
+     /* 
       myEvent->jets                         = *(pointers->pointerToJets);
       myEvent->jets_CSV_raw                 = *(pointers->pointerToJets_CSV_raw);
       myEvent->jets_CSV_reshaped            = *(pointers->pointerToJets_CSV_reshaped);
-     /* 
       myEvent->jets_partonFlav              = *(pointers->pointerToJets_partonFlav);
       myEvent->genParticles                 = *(pointers->pointerToGenParticles);
       myEvent->genParticlesPDGId            = *(pointers->pointerToGenParticlesPDGId);
@@ -298,6 +298,7 @@ void InitializeBranches(TTree* theTree, babyEvent* myEvent,intermediatePointers*
     InitializeBranch(theTree,"nJets",                                        &(myEvent->nJets));
     InitializeBranch(theTree,"nBTag",                                        &(myEvent->nBTag));
 
+    /*
     pointers->pointerToJets = 0;
     InitializeBranch(theTree,"jets",                                         (void**) &(pointers->pointerToJets));
     pointers->pointerToJets_CSV_raw = 0;
@@ -306,6 +307,7 @@ void InitializeBranches(TTree* theTree, babyEvent* myEvent,intermediatePointers*
     InitializeBranch(theTree,"jets_CSV_reshaped",                            (void**) &(pointers->pointerToJets_CSV_reshaped));
     pointers->pointerToJets_partonFlav = 0;
     DisableBranch(theTree,"jets_partonFlav",                              (void**) &(pointers->pointerToJets_partonFlav));
+    */
 
     InitializeBranch(theTree,"MET",                                          &(myEvent->MET));
     InitializeBranch(theTree,"MT",                                           &(myEvent->MT));
@@ -324,32 +326,35 @@ void InitializeBranches(TTree* theTree, babyEvent* myEvent,intermediatePointers*
     InitializeBranch(theTree,"METoverSqrtHT",                                &(myEvent->METoverSqrtHT));
     InitializeBranch(theTree,"HTPlusLeptonPtPlusMET",                        &(myEvent->HTPlusLeptonPtPlusMET));
     
-    DisableBranch(theTree,"nWTag",                                        &(myEvent->nWTag));
-    DisableBranch(theTree,"leadingWjetPt",                                &(myEvent->leadingWjetPt));
+    //DisableBranch(theTree,"nWTag",                                        &(myEvent->nWTag));
+    //DisableBranch(theTree,"leadingWjetPt",                                &(myEvent->leadingWjetPt));
     
     InitializeBranch(theTree,"mStop",                                        &(myEvent->mStop));
     InitializeBranch(theTree,"mNeutralino",                                  &(myEvent->mNeutralino));
-    DisableBranch(theTree,"mCharginoParameter",                           &(myEvent->mCharginoParameter));
+    //DisableBranch(theTree,"mCharginoParameter",                           &(myEvent->mCharginoParameter));
     
     InitializeBranch(theTree,"numberOfGenLepton",                            &(myEvent->numberOfGenLepton));
 
+    /*
     pointers->pointerToGenParticles = 0;
     DisableBranch(theTree,"genParticles",                                 (void**) &(pointers->pointerToGenParticles));
     pointers->pointerToGenParticlesPDGId = 0;
     DisableBranch(theTree,"genParticlesPDGId",                            (void**) &(pointers->pointerToGenParticlesPDGId));
     pointers->pointerToGenParticlesMother = 0;
     DisableBranch(theTree,"genParticlesMother",                           (void**) &(pointers->pointerToGenParticlesMother));
+    */
 
-    DisableBranch(theTree,"numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
+    //DisableBranch(theTree,"numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
     InitializeBranch(theTree,"crossSection",                                 &(myEvent->crossSection));
-    DisableBranch(theTree,"numberOfTruePU",                               &(myEvent->numberOfTruePU));
-    DisableBranch(theTree,"numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
+    //DisableBranch(theTree,"numberOfTruePU",                               &(myEvent->numberOfTruePU));
+    //DisableBranch(theTree,"numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
     InitializeBranch(theTree,"weightCrossSection",                           &(myEvent->weightCrossSection));
     InitializeBranch(theTree,"weightPileUp",                                 &(myEvent->weightPileUp));
     InitializeBranch(theTree,"weightISRmodeling",                            &(myEvent->weightISRmodeling));
     InitializeBranch(theTree,"weightTopPt",                                  &(myEvent->weightTopPt));
     InitializeBranch(theTree,"weightTriggerEfficiency",                      &(myEvent->weightTriggerEfficiency));
 
+    /*
     DisableBranch(theTree,"weightT2ttLeftHanded",                         &(myEvent->weightT2ttLeftHanded));
     DisableBranch(theTree,"weightT2ttRightHanded",                        &(myEvent->weightT2ttRightHanded));
     DisableBranch(theTree,"weightT2bwPolarization_ss",                    &(myEvent->weightT2bwPolarization_ss));
@@ -428,7 +433,7 @@ void InitializeBranches(TTree* theTree, babyEvent* myEvent,intermediatePointers*
     DisableBranch(theTree,"flavor_firstIncomingParton",                   &(myEvent->flavor_firstIncomingParton)); 
     DisableBranch(theTree,"flavor_secondIncomingParton",                  &(myEvent->flavor_secondIncomingParton));
     DisableBranch(theTree,"scalePDF",                                     &(myEvent->scalePDF));                   
-
+    */
 }
 
 

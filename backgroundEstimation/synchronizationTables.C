@@ -1,5 +1,13 @@
 #include "../common.h"
 
+// Sonic screwdriver headers
+
+#include "interface/Table.h" 
+#include "interface/SonicScrewdriver.h" 
+#include "interface/tables/TableBackgroundSignal.h" 
+#include "interface/tables/TableDataMC.h" 
+using namespace theDoctor;
+
 // BabyTuple format and location
 
 #define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
@@ -146,6 +154,7 @@ int main (int argc, char *argv[])
           ReadEvent(theTree,i,&pointers,&myEvent);
 
           float weight = getWeight();
+          weight = 1.0;
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
@@ -195,7 +204,9 @@ int main (int argc, char *argv[])
 
 
   // Print yield tables for the signal region LM150
-  vector<string> tableRegions = { "presel_MTinverted", "presel_MTtail" };
+  vector<string> tableRegions = { "presel_MTinverted" };
+  TableDataMC(&screwdriver,tableRegions,"singleElec").PrintTable();
+  TableDataMC(&screwdriver,tableRegions,"singleMuon").PrintTable();
   TableDataMC(&screwdriver,tableRegions,"singleLepton").PrintTable();
 
   printBoxedMessage("Program done.");
