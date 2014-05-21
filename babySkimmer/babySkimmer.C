@@ -17,7 +17,7 @@ using namespace std;
 #include "Reader.h"
 
 #define FOLDER_INPUT  "../store/babyTuples_0328/"
-#define FOLDER_OUTPUT "../store/babyTuples_0328_1lepton4jetsMET80Vetos/"
+#define FOLDER_OUTPUT "../store/babyTuples_0328_1lepton4jetsMET80/"
 
 // ###################
 // #  Main function  #
@@ -69,7 +69,6 @@ int main (int argc, char *argv[])
 
       if (myEvent.numberOfLepton != 1)                        continue;
       if (myEvent.nJets < 4)                                  continue;
-      if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto)) continue;
       if (myEvent.MET < 80)                                   continue;
 
       // Fill tree

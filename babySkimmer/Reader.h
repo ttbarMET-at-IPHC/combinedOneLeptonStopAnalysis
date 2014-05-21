@@ -428,10 +428,10 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     
     theTree->Branch("nJets",                                        &(myEvent->nJets));
     theTree->Branch("nBTag",                                        &(myEvent->nBTag));
-    theTree->Branch("jets","std::vector<TLorentzVector>",           &(myEvent->jets));
-    theTree->Branch("jets_CSV_raw",     "std::vector<Float_t>",     &(myEvent->jets_CSV_raw));
-    theTree->Branch("jets_CSV_reshaped","std::vector<Float_t>",     &(myEvent->jets_CSV_reshaped));
-    theTree->Branch("jets_partonFlav",  "std::vector<Int_t>",       &(myEvent->jets_partonFlav));
+    //theTree->Branch("jets","std::vector<TLorentzVector>",           &(myEvent->jets));
+    //theTree->Branch("jets_CSV_raw",     "std::vector<Float_t>",     &(myEvent->jets_CSV_raw));
+    //theTree->Branch("jets_CSV_reshaped","std::vector<Float_t>",     &(myEvent->jets_CSV_reshaped));
+    //theTree->Branch("jets_partonFlav",  "std::vector<Int_t>",       &(myEvent->jets_partonFlav));
 
     theTree->Branch("MET",                                          &(myEvent->MET));
     theTree->Branch("MT",                                           &(myEvent->MT));
@@ -450,27 +450,28 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("METoverSqrtHT",                                &(myEvent->METoverSqrtHT));
     theTree->Branch("HTPlusLeptonPtPlusMET",                        &(myEvent->HTPlusLeptonPtPlusMET));
     
-    theTree->Branch("nWTag",                                        &(myEvent->nWTag));
-    theTree->Branch("leadingWjetPt",                                &(myEvent->leadingWjetPt));
+    //theTree->Branch("nWTag",                                        &(myEvent->nWTag));
+    //theTree->Branch("leadingWjetPt",                                &(myEvent->leadingWjetPt));
     
     theTree->Branch("mStop",                                        &(myEvent->mStop));
     theTree->Branch("mNeutralino",                                  &(myEvent->mNeutralino));
-    theTree->Branch("mCharginoParameter",                           &(myEvent->mCharginoParameter));
+    //theTree->Branch("mCharginoParameter",                           &(myEvent->mCharginoParameter));
     
     theTree->Branch("numberOfGenLepton",                            &(myEvent->numberOfGenLepton));
-    theTree->Branch("genParticles","std::vector<TLorentzVector>",   &(myEvent->genParticles));
-    theTree->Branch("genParticlesPDGId","std::vector<Int_t>",       &(myEvent->genParticlesPDGId));
-    theTree->Branch("genParticlesMother","std::vector<Int_t>",      &(myEvent->genParticlesMother));
+    //theTree->Branch("genParticles","std::vector<TLorentzVector>",   &(myEvent->genParticles));
+    //theTree->Branch("genParticlesPDGId","std::vector<Int_t>",       &(myEvent->genParticlesPDGId));
+    //theTree->Branch("genParticlesMother","std::vector<Int_t>",      &(myEvent->genParticlesMother));
     
-    theTree->Branch("numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
+    //theTree->Branch("numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
     theTree->Branch("crossSection",                                 &(myEvent->crossSection));
-    theTree->Branch("numberOfTruePU",                               &(myEvent->numberOfTruePU));
+    //theTree->Branch("numberOfTruePU",                               &(myEvent->numberOfTruePU));
     theTree->Branch("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
     theTree->Branch("weightCrossSection",                           &(myEvent->weightCrossSection));
     theTree->Branch("weightPileUp",                                 &(myEvent->weightPileUp));
     theTree->Branch("weightISRmodeling",                            &(myEvent->weightISRmodeling));
     theTree->Branch("weightTopPt",                                  &(myEvent->weightTopPt));
     theTree->Branch("weightTriggerEfficiency",                      &(myEvent->weightTriggerEfficiency));
+    /*
     theTree->Branch("weightT2ttLeftHanded",                         &(myEvent->weightT2ttLeftHanded));
     theTree->Branch("weightT2ttRightHanded",                        &(myEvent->weightT2ttRightHanded));
     theTree->Branch("weightT2bwPolarization_ss",                    &(myEvent->weightT2bwPolarization_ss));
@@ -539,7 +540,7 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("flavor_firstIncomingParton",   &(myEvent->flavor_firstIncomingParton));  
     theTree->Branch("flavor_secondIncomingParton",  &(myEvent->flavor_secondIncomingParton)); 
     theTree->Branch("scalePDF",                     &(myEvent->scalePDF));                   
-
+    */
 }
 
 
