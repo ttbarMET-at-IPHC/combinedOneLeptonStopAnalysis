@@ -25,34 +25,29 @@ class backgroundEstimationBox{
         //regions might be ordered following the convention above mentioned in the enum region
         backgroundEstimationBox(SonicScrewdriver* screwdriver, string label, string channel);
         ~backgroundEstimationBox(){};
-
-        void ResetSystematics();
-        void Compute();
-        void ComputeWithSystematics();
-
-        void ComputeBkgPredictionTable();
-        void ComputeBkgUncertaintyTable();
-        Figure GetBkgPrediction();
-        void ReportNumbers();
-
-        Table GetBkgPredictionTable(){return bkgPredTable;};
-        Table GetUncertaintyTable(){return uncertTable;};
+        void   ResetSystematics();
 
         void ComputeSFpre();
         void ComputeSFpost();
-        /*
-           void ComputeRW_mc();
-           void ComputeRlj_mc();
-           void ComputeSF_CR1_Peak();
-           void ComputeSRw();
-           */
-        void ComputeRsnSF();
+        void ComputeRandSFR();
+        void FillPredictionTable();
+        
+        void PrintReport();
+        
+        Figure ComputePrediction();
+        void   ComputePredictionWithSystematics();
+        
+        Table GetPredictionTable() { return predictionTable; };
+        Table GetUncertaintyTable()   { return systematicsUncertainties;  };
 
     private:
-        SonicScrewdriver* screwdriver;
-        string label; // correspond to the label of the signal regions
-        //vector<string> rawProcessesTags;
-        TableDataMC yieldTable;
+        
+        // correspond to the label of the signal regions
+        string labelSR; 
+
+        vector<string> systematics;
+
+        // Scale factors
 
         Figure SFpre;
         Figure SFpost;
@@ -64,8 +59,13 @@ class backgroundEstimationBox{
         Figure SFR_W;
         Figure SFR_W_mean;
 
-        Table bkgPredTable;
-        Table uncertTable;
+        // Tables 
+
+        TableDataMC yieldTable;
+        Table       predictionTable;
+        Table       systematicsUncertainties;
+
+        // Systematic flags / value
 
         float WjetCrossSectionRescale;
         float rareCrossSectionRescale;

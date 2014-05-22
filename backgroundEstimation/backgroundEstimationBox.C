@@ -1,28 +1,76 @@
 #include "backgroundEstimationBox.h"
 
-backgroundEstimationBox::backgroundEstimationBox(SonicScrewdriver* screwdriver_, string label_, string channel_)
+backgroundEstimationBox::backgroundEstimationBox(SonicScrewdriver* screwdriver, string labelSR_, string channel)
 {
-    screwdriver = screwdriver_;
-    label = label_;
-    vector<string> regions;
-    regions.push_back("preveto_MTpeak_"     +label);
-    regions.push_back("preveto_MTtail_"     +label);
-    regions.push_back("0btag_MTpeak_"       +label);
-    regions.push_back("0btag_MTtail_"       +label);
-  /*  
-    regions.push_back("2leptons_MTpeak_"    +label);
-    regions.push_back("2leptons_MTtail_"    +label);
-    regions.push_back("1lepton+veto_MTpeak_"+label);
-    regions.push_back("1lepton+veto_MTtail_"+label);
-  */
-    regions.push_back("signalRegion_MTpeak_"+label);
-    regions.push_back("signalRegion_MTtail_"+label);
+    labelSR = labelSR_;
 
-    yieldTable = TableDataMC(screwdriver,regions,channel_);
+    // ########################
+    // #  Read raw MC yields  #
+    // ########################
 
-    //screwdriver_->GetProcessClassTagList  (&rawProcessesTags  );
+    // Defines the regions of interesets
+    vector<string> regions = { 
+        "preveto_MTpeak_"     +labelSR,
+        "preveto_MTtail_"     +labelSR,
+        "0btag_MTpeak_"       +labelSR,
+        "0btag_MTtail_"       +labelSR,
+        /*
+          "2leptons_MTpeak_"    +labelSR,
+          "2leptons_MTtail_"    +labelSR,
+          "1lepton+veto_MTpeak_"+labelSR,
+          "1lepton+veto_MTtail_"+labelSR,
+        */
+        "signalRegion_MTpeak_"+labelSR,
+        "signalRegion_MTtail_"+labelSR
+    };
+    
+    // Read the corresponding yields
+    yieldTable = TableDataMC(screwdriver,regions,channel);
 
-    //string type = screwdriver->GetProcessClassType(rawProcessesTags[i]);
+    // ###################################################################
+    // #  Initialize the table containing the raw mc and the prediction  #
+    // ###################################################################
+    
+    vector<string> predictionTableColumns = { "raw_mc", "prediction" };
+    vector<string> processes = {
+        "1ltop",
+        "ttbar_2l",
+        "W+jets",
+        "others",
+        "total SM",
+        "data",
+    };
+    predictionTable = Table(predictionTableColumns, processes);
+
+    // Raw MC
+    Figure N1ltop_mc  = yieldTable.Get("signalRegion_MTtail_"+labelSR,"1ltop"   ); 
+    Figure N2ltop_mc  = yieldTable.Get("signalRegion_MTtail_"+labelSR,"ttbar_2l");
+    Figure Nwjets_mc  = yieldTable.Get("signalRegion_MTtail_"+labelSR,"W+jets"  );
+    Figure Nothers_mc = yieldTable.Get("signalRegion_MTtail_"+labelSR,"others"  );
+    Figure NSumBkg_mc = N1ltop_mc+N2ltop_mc+Nwjets_mc+Nothers_mc;
+    Figure Ndata      = yieldTable.Get("signalRegion_MTtail_"+labelSR,"data"    );
+
+    predictionTable.Set("raw_mc","1ltop",    N1ltop_mc ); 
+    predictionTable.Set("raw_mc","ttbar_2l", N2ltop_mc );
+    predictionTable.Set("raw_mc","W+jets",   Nwjets_mc );
+    predictionTable.Set("raw_mc","others",   Nothers_mc);
+    predictionTable.Set("raw_mc","total SM", NSumBkg_mc);
+    predictionTable.Set("raw_mc","data",     Ndata     );
+
+    // ##################################################################
+    // #  Initialize the table containing the systematic uncertainties  #
+    // ##################################################################
+    
+    systematics = {
+        "W+jets cross section",
+        "Rare cross section"
+    };
+
+    vector<string> uncertainties = { "absoluteUncertainty" }; 
+
+    systematicsUncertainties = Table(uncertainties, systematics);
+    
+    // Reset the systematics flags
     ResetSystematics();
 }
 
@@ -32,112 +80,97 @@ void backgroundEstimationBox::ResetSystematics()
     rareCrossSectionRescale = 1.0;
 }
 
-void backgroundEstimationBox::Compute()
+Figure backgroundEstimationBox::ComputePrediction()
 {
     ComputeSFpre();
     ComputeSFpost();
-    ComputeRsnSF();
-    ReportNumbers();
-    ComputeBkgPredictionTable();
+    ComputeRandSFR();
+    FillPredictionTable();
+    
+    PrintReport();
+
+    return predictionTable.Get("prediction","total SM");
 }
 
-void backgroundEstimationBox::ComputeWithSystematics()
+void backgroundEstimationBox::ComputePredictionWithSystematics()
 {
-    vector<string> systematicNames;
-    vector<float>  systematicUncertainty;
+    // Compute prediction for nominal case
+    ComputePrediction();
 
-    for (unsigned int systematic = NO_SYSTEMATIC ; systematic < END_SYSTEMATICS ; systematic++)
+    // Loop over the uncertainties
+    for (unsigned int s = 0 ; s < systematics.size() ; s++)
     {
         ResetSystematics();
+        string systematic = systematics[s];
+        float uncertainty = 0.0;
 
-        if (systematic == NO_SYSTEMATIC)
-        { 
-            Compute();
-        }
-        else if (systematic == WJETS_CROSS_SECTION) 
+        if (systematic == "W+jets cross section") 
         {
-            WjetCrossSectionRescale = 0.5; Compute(); float yieldDown = bkgPredTable.Get("prediction","total SM").value();
-            WjetCrossSectionRescale = 1.5; Compute(); float yieldUp   = bkgPredTable.Get("prediction","total SM").value();
-            
-            systematicNames.push_back("W+jets cross section");
-            systematicUncertainty.push_back((yieldUp - yieldDown) / 2.0);
-
+            WjetCrossSectionRescale = 0.5; float yieldDown = ComputePrediction().value(); 
+            WjetCrossSectionRescale = 1.5; float yieldUp   = ComputePrediction().value();
+            uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == RARE_CROSS_SECTION) 
+        else if (systematic == "Rare cross section") 
         {
-            rareCrossSectionRescale = 0.5; Compute(); float yieldDown = bkgPredTable.Get("prediction","total SM").value();
-            rareCrossSectionRescale = 1.5; Compute(); float yieldUp   = bkgPredTable.Get("prediction","total SM").value();
-            
-            systematicNames.push_back("rare cross section");
-            systematicUncertainty.push_back((yieldUp - yieldDown) / 2.0);
+            rareCrossSectionRescale = 0.5; float yieldDown = ComputePrediction().value();
+            rareCrossSectionRescale = 1.5; float yieldUp   = ComputePrediction().value();
+            uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-    }
 
-    for (unsigned int i = 0 ; i < systematicNames.size() ; i++)
-    {
-        cout << systematicNames[i] << " : " << systematicUncertainty[i] << endl;
+        systematicsUncertainties.Set("absoluteUncertainty",systematic,Figure(uncertainty,0.0));
     }
 }
-
-/*
-   Figure backgroundEstimationBox::GetBkgPrediction(){
-
-   }
-   */
 
 void backgroundEstimationBox::ComputeSFpre()
 {
-    Figure preveto_1ltop    = yieldTable.Get("preveto_MTpeak_"+label,"1ltop"   );
-    Figure preveto_ttbar_2l = yieldTable.Get("preveto_MTpeak_"+label,"ttbar_2l");
-    Figure preveto_Wjets    = yieldTable.Get("preveto_MTpeak_"+label,"W+jets"  ) * WjetCrossSectionRescale;
-    Figure preveto_others   = yieldTable.Get("preveto_MTpeak_"+label,"others"  ) * rareCrossSectionRescale;
-    Figure preveto_data     = yieldTable.Get("preveto_MTpeak_"+label,"data"    );
+    Figure preveto_1ltop    = yieldTable.Get("preveto_MTpeak_"+labelSR,"1ltop"   );
+    Figure preveto_ttbar_2l = yieldTable.Get("preveto_MTpeak_"+labelSR,"ttbar_2l");
+    Figure preveto_Wjets    = yieldTable.Get("preveto_MTpeak_"+labelSR,"W+jets"  ) * WjetCrossSectionRescale;
+    Figure preveto_others   = yieldTable.Get("preveto_MTpeak_"+labelSR,"others"  ) * rareCrossSectionRescale;
+    Figure preveto_data     = yieldTable.Get("preveto_MTpeak_"+labelSR,"data"    );
 
     SFpre = (preveto_data - preveto_others) / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
 
-    
 }
-
-
 
 void backgroundEstimationBox::ComputeSFpost()
 {
-    Figure postveto_1ltop    = yieldTable.Get("signalRegion_MTpeak_"+label,"1ltop"   );
-    Figure postveto_ttbar_2l = yieldTable.Get("signalRegion_MTpeak_"+label,"ttbar_2l");
-    Figure postveto_Wjets    = yieldTable.Get("signalRegion_MTpeak_"+label,"W+jets"  ) * WjetCrossSectionRescale;
-    Figure postveto_others   = yieldTable.Get("signalRegion_MTpeak_"+label,"others"  ) * rareCrossSectionRescale;
-    Figure postveto_data     = yieldTable.Get("signalRegion_MTpeak_"+label,"data"    );
+    Figure postveto_1ltop    = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"1ltop"   );
+    Figure postveto_ttbar_2l = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"ttbar_2l");
+    Figure postveto_Wjets    = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"W+jets"  ) * WjetCrossSectionRescale;
+    Figure postveto_others   = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"others"  ) * rareCrossSectionRescale;
+    Figure postveto_data     = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"data"    );
     //Figure SFpre = Figure(SFpre.value(),0.0);
     
     SFpost = (postveto_data - postveto_others - SFpre * postveto_ttbar_2l) / (postveto_1ltop + postveto_Wjets);
 }
 
 
-void backgroundEstimationBox::ComputeRsnSF()
+void backgroundEstimationBox::ComputeRandSFR()
 {
-    Figure signalRegionPeak_1ltop    = yieldTable.Get("signalRegion_MTpeak_"+label,"1ltop"   );
-    Figure signalRegionPeak_ttbar_2l = yieldTable.Get("signalRegion_MTpeak_"+label,"ttbar_2l");
-    Figure signalRegionPeak_Wjets    = yieldTable.Get("signalRegion_MTpeak_"+label,"W+jets"  ) * WjetCrossSectionRescale;
-    Figure signalRegionPeak_others   = yieldTable.Get("signalRegion_MTpeak_"+label,"others"  ) * rareCrossSectionRescale;
-    Figure signalRegionPeak_data     = yieldTable.Get("signalRegion_MTpeak_"+label,"data"    );
+    Figure signalRegionPeak_1ltop    = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"1ltop"   );
+    Figure signalRegionPeak_ttbar_2l = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"ttbar_2l");
+    Figure signalRegionPeak_Wjets    = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"W+jets"  ) * WjetCrossSectionRescale;
+    Figure signalRegionPeak_others   = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"others"  ) * rareCrossSectionRescale;
+    Figure signalRegionPeak_data     = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"data"    );
 
-    Figure signalRegionTail_1ltop    = yieldTable.Get("signalRegion_MTtail_"+label,"1ltop"   );
-    Figure signalRegionTail_ttbar_2l = yieldTable.Get("signalRegion_MTtail_"+label,"ttbar_2l");
-    Figure signalRegionTail_Wjets    = yieldTable.Get("signalRegion_MTtail_"+label,"W+jets"  ) * WjetCrossSectionRescale;
-    Figure signalRegionTail_others   = yieldTable.Get("signalRegion_MTtail_"+label,"others"  ) * rareCrossSectionRescale;
-    Figure signalRegionTail_data     = yieldTable.Get("signalRegion_MTtail_"+label,"data"    );
+    Figure signalRegionTail_1ltop    = yieldTable.Get("signalRegion_MTtail_"+labelSR,"1ltop"   );
+    Figure signalRegionTail_ttbar_2l = yieldTable.Get("signalRegion_MTtail_"+labelSR,"ttbar_2l");
+    Figure signalRegionTail_Wjets    = yieldTable.Get("signalRegion_MTtail_"+labelSR,"W+jets"  ) * WjetCrossSectionRescale;
+    Figure signalRegionTail_others   = yieldTable.Get("signalRegion_MTtail_"+labelSR,"others"  ) * rareCrossSectionRescale;
+    Figure signalRegionTail_data     = yieldTable.Get("signalRegion_MTtail_"+labelSR,"data"    );
 
-    Figure noBTagPeak_1ltop    = yieldTable.Get("0btag_MTpeak_"+label,"1ltop"   );
-    Figure noBTagPeak_ttbar_2l = yieldTable.Get("0btag_MTpeak_"+label,"ttbar_2l");
-    Figure noBTagPeak_Wjets    = yieldTable.Get("0btag_MTpeak_"+label,"W+jets"  ) * WjetCrossSectionRescale;
-    Figure noBTagPeak_others   = yieldTable.Get("0btag_MTpeak_"+label,"others"  ) * rareCrossSectionRescale;
-    Figure noBTagPeak_data     = yieldTable.Get("0btag_MTpeak_"+label,"data"    );
+    Figure noBTagPeak_1ltop    = yieldTable.Get("0btag_MTpeak_"+labelSR,"1ltop"   );
+    Figure noBTagPeak_ttbar_2l = yieldTable.Get("0btag_MTpeak_"+labelSR,"ttbar_2l");
+    Figure noBTagPeak_Wjets    = yieldTable.Get("0btag_MTpeak_"+labelSR,"W+jets"  ) * WjetCrossSectionRescale;
+    Figure noBTagPeak_others   = yieldTable.Get("0btag_MTpeak_"+labelSR,"others"  ) * rareCrossSectionRescale;
+    Figure noBTagPeak_data     = yieldTable.Get("0btag_MTpeak_"+labelSR,"data"    );
 
-    Figure noBTagTail_1ltop    = yieldTable.Get("0btag_MTtail_"+label,"1ltop"   );
-    Figure noBTagTail_ttbar_2l = yieldTable.Get("0btag_MTtail_"+label,"ttbar_2l");
-    Figure noBTagTail_Wjets    = yieldTable.Get("0btag_MTtail_"+label,"W+jets"  ) * WjetCrossSectionRescale;
-    Figure noBTagTail_others   = yieldTable.Get("0btag_MTtail_"+label,"others"  ) * rareCrossSectionRescale;
-    Figure noBTagTail_data     = yieldTable.Get("0btag_MTtail_"+label,"data"    );
+    Figure noBTagTail_1ltop    = yieldTable.Get("0btag_MTtail_"+labelSR,"1ltop"   );
+    Figure noBTagTail_ttbar_2l = yieldTable.Get("0btag_MTtail_"+labelSR,"ttbar_2l");
+    Figure noBTagTail_Wjets    = yieldTable.Get("0btag_MTtail_"+labelSR,"W+jets"  ) * WjetCrossSectionRescale;
+    Figure noBTagTail_others   = yieldTable.Get("0btag_MTtail_"+labelSR,"others"  ) * rareCrossSectionRescale;
+    Figure noBTagTail_data     = yieldTable.Get("0btag_MTtail_"+labelSR,"data"    );
 
 
     RW_mc    = (noBTagTail_Wjets + signalRegionTail_Wjets) / (noBTagPeak_Wjets + signalRegionPeak_Wjets);
@@ -151,7 +184,7 @@ void backgroundEstimationBox::ComputeRsnSF()
     SFR_W_mean = Figure((SFR_all.value()+SFR_W.value())/2.0 , (SFR_all.error() + SFR_W.value())/2.0);
 }
 
-void backgroundEstimationBox::ReportNumbers()
+void backgroundEstimationBox::PrintReport()
 {
     cout << "SFpre  = " << SFpre.Print(4)  << endl;
     cout << "SFpost = " << SFpost.Print(4) << endl;
@@ -163,55 +196,25 @@ void backgroundEstimationBox::ReportNumbers()
     cout << "SFR_all    = " << SFR_all.Print(4) << endl;
     cout << "SFR_W      = " << SFR_W.Print(4) << endl;
     cout << "SFR_W_mean = " << SFR_W_mean.Print(4) << endl;
+
+    predictionTable.PrintTable();
 }
 
-void backgroundEstimationBox::ComputeBkgPredictionTable(){
-
-    vector<string> colTags_;
-    //colTags_.push_back("process");
-    colTags_.push_back("raw_mc");
-    colTags_.push_back("prediction");
-
-    vector<string> rowTags_;
-    rowTags_.push_back("1ltop");
-    rowTags_.push_back("ttbar_2l");
-    rowTags_.push_back("W+jets");
-    rowTags_.push_back("others");
-    rowTags_.push_back("total SM");
-    rowTags_.push_back("data");
-    bkgPredTable = Table(colTags_, rowTags_);
-
-    Figure Ndata  = yieldTable.Get("signalRegion_MTtail_"+label,"data" );
-
-    // Raw MC
-    Figure N1ltop_mc = yieldTable.Get("signalRegion_MTtail_"+label,"1ltop"    ); 
-    Figure N2ltop_mc = yieldTable.Get("signalRegion_MTtail_"+label,"ttbar_2l" );
-    Figure Nwjets_mc = yieldTable.Get("signalRegion_MTtail_"+label,"W+jets"   ) * WjetCrossSectionRescale;
-    Figure Nothers_mc= yieldTable.Get("signalRegion_MTtail_"+label,"others"   ) * rareCrossSectionRescale;
-    Figure NSumBkg_mc = N1ltop_mc+N2ltop_mc+Nwjets_mc+Nothers_mc;
-
-    bkgPredTable.Set("raw_mc","1ltop",    N1ltop_mc  ); 
-    bkgPredTable.Set("raw_mc","ttbar_2l", N2ltop_mc  );
-    bkgPredTable.Set("raw_mc","W+jets",   Nwjets_mc  );
-    bkgPredTable.Set("raw_mc","others",   Nothers_mc );
-    bkgPredTable.Set("raw_mc","total SM", NSumBkg_mc );
-    bkgPredTable.Set("raw_mc","data",     Ndata      );
-
+void backgroundEstimationBox::FillPredictionTable()
+{
     // Prediction
-    Figure N1ltop_prediction  = yieldTable.Get("signalRegion_MTpeak_"+label,"1ltop"    ) * Rlj_mean * SFpost; 
-    Figure N2ltop_prediction  = yieldTable.Get("signalRegion_MTtail_"+label,"ttbar_2l" ) * SFpre;
-    Figure Nwjets_prediction  = yieldTable.Get("signalRegion_MTpeak_"+label,"W+jets"   ) * RW_mc * SFR_W_mean * SFpost;
-    Figure Nothers_prediction = yieldTable.Get("signalRegion_MTtail_"+label,"others"   );
+    Figure N1ltop_prediction  = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"1ltop"    ) * Rlj_mean * SFR_W_mean * SFpost; 
+    Figure Nwjets_prediction  = yieldTable.Get("signalRegion_MTpeak_"+labelSR,"W+jets"   ) * RW_mc    * SFR_W_mean * SFpost * WjetCrossSectionRescale;
+    Figure N2ltop_prediction  = yieldTable.Get("signalRegion_MTtail_"+labelSR,"ttbar_2l" ) * SFpre;
+    Figure Nothers_prediction = yieldTable.Get("signalRegion_MTtail_"+labelSR,"others"   ) * rareCrossSectionRescale;
     Figure NSumBkg_prediction = N1ltop_prediction + N2ltop_prediction + Nwjets_prediction + Nothers_prediction;
+    Figure Ndata              = yieldTable.Get("signalRegion_MTtail_"+labelSR,"data" );
 
-    bkgPredTable.Set("prediction","1ltop",    N1ltop_prediction  ); 
-    bkgPredTable.Set("prediction","ttbar_2l", N2ltop_prediction  );
-    bkgPredTable.Set("prediction","W+jets",   Nwjets_prediction  );
-    bkgPredTable.Set("prediction","others",   Nothers_prediction );
-    bkgPredTable.Set("prediction","total SM", NSumBkg_prediction );
-    bkgPredTable.Set("prediction","data",     Ndata              );
-
-    bkgPredTable.PrintTable();
-
+    predictionTable.Set("prediction","1ltop",    N1ltop_prediction  ); 
+    predictionTable.Set("prediction","ttbar_2l", N2ltop_prediction  );
+    predictionTable.Set("prediction","W+jets",   Nwjets_prediction  );
+    predictionTable.Set("prediction","others",   Nothers_prediction );
+    predictionTable.Set("prediction","total SM", NSumBkg_prediction );
+    predictionTable.Set("prediction","data",     Ndata              );
 }
 

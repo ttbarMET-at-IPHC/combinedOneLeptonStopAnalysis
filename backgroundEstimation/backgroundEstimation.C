@@ -20,7 +20,6 @@ babyEvent* myEventPointer;
 
 void computeBackgroundEstimation(TableDataMC yieldTable);
 
-/*
 bool SR()
 {
     // Apply MET and MT cuts
@@ -46,7 +45,6 @@ bool goesIn0BtagControlRegion_tmp()           { return (goesIn0BtagControlRegion
 bool goesIn0BtagControlRegionMTpeak_tmp()     { return (goesIn0BtagControlRegionMTpeak() && SR()); }
 bool goesIn0BtagControlRegionMTtail_tmp()     { return (goesIn0BtagControlRegionMTtail() && SR()); }
 bool goesIn0BtagControlRegionMTinverted_tmp() { return (goesIn0BtagControlRegionMTinverted() && SR()); }
-*/
 
 
 // #########################################################################
@@ -103,20 +101,20 @@ int main (int argc, char *argv[])
      // ##    Create Regions    ##
      // ##########################
 
-     screwdriver.AddRegion("preveto_presel",                 "Preselection (no MT cut)",         &goesInPreVetoSelection);
-     screwdriver.AddRegion("preveto_MTpeak_presel",          "Preselection (MT peak)",           &goesInPreVetoSelectionMTpeak);
-     screwdriver.AddRegion("preveto_MTtail_presel",          "Preselection (MT tail)",           &goesInPreVetoSelectionMTtail);
-     screwdriver.AddRegion("preveto_MTinverted_presel",      "Preselection (MT < 100 GeV)",      &goesInPreVetoSelectionMTinverted);
+     screwdriver.AddRegion("preveto_presel",                 "Preselection (no MT cut)",         &goesInPreVetoSelection_tmp);
+     screwdriver.AddRegion("preveto_MTpeak_presel",          "Preselection (MT peak)",           &goesInPreVetoSelectionMTpeak_tmp);
+     screwdriver.AddRegion("preveto_MTtail_presel",          "Preselection (MT tail)",           &goesInPreVetoSelectionMTtail_tmp);
+     screwdriver.AddRegion("preveto_MTinverted_presel",      "Preselection (MT < 100 GeV)",      &goesInPreVetoSelectionMTinverted_tmp);
 
-     screwdriver.AddRegion("signalRegion_presel",            "Preselection (no MT cut)",         &goesInPreselection);
-     screwdriver.AddRegion("signalRegion_MTpeak_presel",     "Preselection (MT peak)",           &goesInPreselectionMTpeak);
-     screwdriver.AddRegion("signalRegion_MTtail_presel",     "Preselection (MT tail)",           &goesInPreselectionMTtail);
-     screwdriver.AddRegion("signalRegion_MTinverted_presel", "Preselection (MT < 100 GeV)",      &goesInPreselectionMTinverted);
+     screwdriver.AddRegion("signalRegion_presel",            "Preselection (no MT cut)",         &goesInPreselection_tmp);
+     screwdriver.AddRegion("signalRegion_MTpeak_presel",     "Preselection (MT peak)",           &goesInPreselectionMTpeak_tmp);
+     screwdriver.AddRegion("signalRegion_MTtail_presel",     "Preselection (MT tail)",           &goesInPreselectionMTtail_tmp);
+     screwdriver.AddRegion("signalRegion_MTinverted_presel", "Preselection (MT < 100 GeV)",      &goesInPreselectionMTinverted_tmp);
 
-     screwdriver.AddRegion("0btag_presel",                   "0 b-tag (no MT cut)",              &goesIn0BtagControlRegion);
-     screwdriver.AddRegion("0btag_MTpeak_presel",            "0 b-tag (MT peak)",                &goesIn0BtagControlRegionMTpeak);
-     screwdriver.AddRegion("0btag_MTtail_presel",            "0 b-tag (MT tail)",                &goesIn0BtagControlRegionMTtail);
-     screwdriver.AddRegion("0btag_MTinverted_presel",        "0 b-tag (MT < 100 GeV)",           &goesIn0BtagControlRegionMTinverted);
+     screwdriver.AddRegion("0btag_presel",                   "0 b-tag (no MT cut)",              &goesIn0BtagControlRegion_tmp);
+     screwdriver.AddRegion("0btag_MTpeak_presel",            "0 b-tag (MT peak)",                &goesIn0BtagControlRegionMTpeak_tmp);
+     screwdriver.AddRegion("0btag_MTtail_presel",            "0 b-tag (MT tail)",                &goesIn0BtagControlRegionMTtail_tmp);
+     screwdriver.AddRegion("0btag_MTinverted_presel",        "0 b-tag (MT < 100 GeV)",           &goesIn0BtagControlRegionMTinverted_tmp);
 
      // ##########################
      // ##   Create Channels    ##
@@ -240,15 +238,17 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
 
-  vector<string> tablepreveto = { "preveto_presel", "preveto_MTpeak_presel", "preveto_MTtail_presel", "preveto_MTinverted_presel" };
+  vector<string> tablepreveto      = { "preveto_presel",      "preveto_MTpeak_presel",      "preveto_MTtail_presel",      "preveto_MTinverted_presel" };
   vector<string> tableSignalRegion = { "signalRegion_presel", "signalRegion_MTpeak_presel", "signalRegion_MTtail_presel", "signalRegion_MTinverted_presel" };
-  vector<string> table0btag = { "0btag_presel", "0btag_MTpeak_presel", "0btag_MTtail_presel", "0btag_MTinverted_presel" };
+  vector<string> table0btag        = { "0btag_presel",        "0btag_MTpeak_presel",        "0btag_MTtail_presel",        "0btag_MTinverted_presel" };
   
   TableDataMC(&screwdriver,tablepreveto,"singleLepton").PrintTable();
   TableDataMC(&screwdriver,tableSignalRegion,"singleLepton").PrintTable();
   TableDataMC(&screwdriver,table0btag,"singleLepton").PrintTable();
   
-  backgroundEstimationBox(&screwdriver,"presel","singleLepton").ComputeWithSystematics();
+  backgroundEstimationBox box(&screwdriver,"presel","singleLepton");
+  box.ComputePredictionWithSystematics();
+  box.GetUncertaintyTable().PrintTable();
 
   printBoxedMessage("Program done.");
   return (0);
