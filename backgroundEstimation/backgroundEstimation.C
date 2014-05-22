@@ -14,9 +14,40 @@ using namespace theDoctor;
 #define FOLDER_BABYTUPLES "../store/babyTuples_0328_1lepton4jetsMET80/"
 #include "analysisDefinitions.h"
 
+#include "backgroundEstimationBox.C"
+
 babyEvent* myEventPointer;
 
 void computeBackgroundEstimation(TableDataMC yieldTable);
+
+/*
+bool SR()
+{
+    // Apply MET and MT cuts
+    if (myEvent.MET < 150)            return false;
+
+    if (myEvent.deltaPhiMETJets < 0.8) return false;
+    if (myEvent.hadronicChi2    > 5)   return false;
+
+    return true; 
+}
+
+bool goesInPreVetoSelection_tmp()             { return (goesInPreVetoSelection() && SR()); }
+bool goesInPreVetoSelectionMTpeak_tmp()       { return (goesInPreVetoSelectionMTpeak() && SR()); }
+bool goesInPreVetoSelectionMTtail_tmp()       { return (goesInPreVetoSelectionMTtail() && SR()); }
+bool goesInPreVetoSelectionMTinverted_tmp()   { return (goesInPreVetoSelectionMTinverted() && SR()); }
+                                                                          
+bool goesInPreselection_tmp()                 { return (goesInPreselection() && SR()); }
+bool goesInPreselectionMTpeak_tmp()           { return (goesInPreselectionMTpeak() && SR()); }
+bool goesInPreselectionMTtail_tmp()           { return (goesInPreselectionMTtail() && SR()); }
+bool goesInPreselectionMTinverted_tmp()       { return (goesInPreselectionMTinverted() && SR()); }
+                                                                          
+bool goesIn0BtagControlRegion_tmp()           { return (goesIn0BtagControlRegion() && SR()); }
+bool goesIn0BtagControlRegionMTpeak_tmp()     { return (goesIn0BtagControlRegionMTpeak() && SR()); }
+bool goesIn0BtagControlRegionMTtail_tmp()     { return (goesIn0BtagControlRegionMTtail() && SR()); }
+bool goesIn0BtagControlRegionMTinverted_tmp() { return (goesIn0BtagControlRegionMTinverted() && SR()); }
+*/
+
 
 // #########################################################################
 //                              Main function
@@ -72,20 +103,20 @@ int main (int argc, char *argv[])
      // ##    Create Regions    ##
      // ##########################
 
-     screwdriver.AddRegion("preveto",            "Preselection (no MT cut)",         &goesInPreVetoSelection);
-     screwdriver.AddRegion("preveto_MTpeak",     "Preselection (MT peak)",           &goesInPreVetoSelectionMTpeak);
-     screwdriver.AddRegion("preveto_MTtail",     "Preselection (MT tail)",           &goesInPreVetoSelectionMTtail);
-     screwdriver.AddRegion("preveto_MTinverted", "Preselection (MT < 100 GeV)",      &goesInPreVetoSelectionMTinverted);
+     screwdriver.AddRegion("preveto_presel",                 "Preselection (no MT cut)",         &goesInPreVetoSelection);
+     screwdriver.AddRegion("preveto_MTpeak_presel",          "Preselection (MT peak)",           &goesInPreVetoSelectionMTpeak);
+     screwdriver.AddRegion("preveto_MTtail_presel",          "Preselection (MT tail)",           &goesInPreVetoSelectionMTtail);
+     screwdriver.AddRegion("preveto_MTinverted_presel",      "Preselection (MT < 100 GeV)",      &goesInPreVetoSelectionMTinverted);
 
-     screwdriver.AddRegion("presel",             "Preselection (no MT cut)",         &goesInPreselection);
-     screwdriver.AddRegion("presel_MTpeak",      "Preselection (MT peak)",           &goesInPreselectionMTpeak);
-     screwdriver.AddRegion("presel_MTtail",      "Preselection (MT tail)",           &goesInPreselectionMTtail);
-     screwdriver.AddRegion("presel_MTinverted",  "Preselection (MT < 100 GeV)",      &goesInPreselectionMTinverted);
+     screwdriver.AddRegion("signalRegion_presel",            "Preselection (no MT cut)",         &goesInPreselection);
+     screwdriver.AddRegion("signalRegion_MTpeak_presel",     "Preselection (MT peak)",           &goesInPreselectionMTpeak);
+     screwdriver.AddRegion("signalRegion_MTtail_presel",     "Preselection (MT tail)",           &goesInPreselectionMTtail);
+     screwdriver.AddRegion("signalRegion_MTinverted_presel", "Preselection (MT < 100 GeV)",      &goesInPreselectionMTinverted);
 
-     screwdriver.AddRegion("0btag",              "0 b-tag (no MT cut)",    &goesIn0BtagControlRegion);
-     screwdriver.AddRegion("0btag_MTpeak",       "0 b-tag (MT peak)",      &goesIn0BtagControlRegionMTpeak);
-     screwdriver.AddRegion("0btag_MTtail",       "0 b-tag (MT tail)",      &goesIn0BtagControlRegionMTtail);
-     screwdriver.AddRegion("0btag_MTinverted",   "0 b-tag (MT < 100 GeV)", &goesIn0BtagControlRegionMTinverted);
+     screwdriver.AddRegion("0btag_presel",                   "0 b-tag (no MT cut)",              &goesIn0BtagControlRegion);
+     screwdriver.AddRegion("0btag_MTpeak_presel",            "0 b-tag (MT peak)",                &goesIn0BtagControlRegionMTpeak);
+     screwdriver.AddRegion("0btag_MTtail_presel",            "0 b-tag (MT tail)",                &goesIn0BtagControlRegionMTtail);
+     screwdriver.AddRegion("0btag_MTinverted_presel",        "0 b-tag (MT < 100 GeV)",           &goesIn0BtagControlRegionMTinverted);
 
      // ##########################
      // ##   Create Channels    ##
@@ -209,97 +240,17 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
 
-  vector<string> tablepreveto = { "preveto", "preveto_MTpeak", "preveto_MTtail", "preveto_MTinverted" };
+  vector<string> tablepreveto = { "preveto_presel", "preveto_MTpeak_presel", "preveto_MTtail_presel", "preveto_MTinverted_presel" };
+  vector<string> tableSignalRegion = { "signalRegion_presel", "signalRegion_MTpeak_presel", "signalRegion_MTtail_presel", "signalRegion_MTinverted_presel" };
+  vector<string> table0btag = { "0btag_presel", "0btag_MTpeak_presel", "0btag_MTtail_presel", "0btag_MTinverted_presel" };
+  
   TableDataMC(&screwdriver,tablepreveto,"singleLepton").PrintTable();
-  
-  vector<string> tablepresel = { "presel", "presel_MTpeak", "presel_MTtail", "presel_MTinverted" };
-  TableDataMC(&screwdriver,tablepresel,"singleLepton").PrintTable();
-  
-  vector<string> table0btag = { "0btag", "0btag_MTpeak", "0btag_MTtail", "0btag_MTinverted" };
+  TableDataMC(&screwdriver,tableSignalRegion,"singleLepton").PrintTable();
   TableDataMC(&screwdriver,table0btag,"singleLepton").PrintTable();
-
-  vector<string> regionAll =  { "preveto", "preveto_MTpeak", "preveto_MTtail", "preveto_MTinverted", "presel", "presel_MTpeak", "presel_MTtail", "presel_MTinverted", "0btag", "0btag_MTpeak", "0btag_MTtail", "0btag_MTinverted"  };
-  TableDataMC tableAll(&screwdriver,regionAll,"singleLepton");
-
-  computeBackgroundEstimation(tableAll);
+  
+  backgroundEstimationBox(&screwdriver,"presel","singleLepton").ComputeWithSystematics();
 
   printBoxedMessage("Program done.");
   return (0);
 }
-
-
-void computeBackgroundEstimation(TableDataMC yieldTable)
-{
-
-  Figure preveto_1ltop    = yieldTable.Get("preveto_MTpeak", "1ltop"   );
-  Figure preveto_ttbar_2l = yieldTable.Get("preveto_MTpeak", "ttbar_2l");
-  Figure preveto_Wjets    = yieldTable.Get("preveto_MTpeak", "W+jets"  );
-  Figure preveto_others   = yieldTable.Get("preveto_MTpeak", "others"  );
-  Figure preveto_data     = yieldTable.Get("preveto_MTpeak", "data"    );
-
-  Figure SF_pre = (preveto_data - preveto_others) / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
-  cout << "SF_pre = " << SF_pre.Print(3) << endl;
-
-  Figure postveto_1ltop    = yieldTable.Get("presel_MTpeak", "1ltop"   );
-  Figure postveto_ttbar_2l = yieldTable.Get("presel_MTpeak", "ttbar_2l");
-  Figure postveto_Wjets    = yieldTable.Get("presel_MTpeak", "W+jets"  );
-  Figure postveto_others   = yieldTable.Get("presel_MTpeak", "others"  );
-  Figure postveto_data     = yieldTable.Get("presel_MTpeak", "data"    );
-
-  SF_pre = Figure(SF_pre.value(),0.0);
-  Figure SF_post = (postveto_data - postveto_others - SF_pre * postveto_ttbar_2l) / (postveto_1ltop + postveto_Wjets);
-  cout << "SF_post = " << SF_post.Print(3) << endl;
-
-  // #####################################################
-
-  Figure preselPeak_1ltop    = yieldTable.Get("presel_MTpeak", "1ltop"   );
-  Figure preselPeak_ttbar_2l = yieldTable.Get("presel_MTpeak", "ttbar_2l");
-  Figure preselPeak_Wjets    = yieldTable.Get("presel_MTpeak", "W+jets"  );
-  Figure preselPeak_others   = yieldTable.Get("presel_MTpeak", "others"  );
-  Figure preselPeak_data     = yieldTable.Get("presel_MTpeak", "data"    );
-
-  Figure preselTail_1ltop    = yieldTable.Get("presel_MTtail", "1ltop"   );
-  Figure preselTail_ttbar_2l = yieldTable.Get("presel_MTtail", "ttbar_2l");
-  Figure preselTail_Wjets    = yieldTable.Get("presel_MTtail", "W+jets"  );
-  Figure preselTail_others   = yieldTable.Get("presel_MTtail", "others"  );
-  Figure preselTail_data     = yieldTable.Get("presel_MTtail", "data"    );
-  
-  cout << "R_W+jets (for 1 btag) = " << (preselTail_Wjets / preselPeak_Wjets).Print(3) << endl; 
-  cout << "R_1ltop  (for 1 btag) = " << (preselTail_1ltop / preselPeak_1ltop).Print(3) << endl; 
-
-  Figure noBTagPeak_1ltop    = yieldTable.Get("0btag_MTpeak", "1ltop"   );
-  Figure noBTagPeak_ttbar_2l = yieldTable.Get("0btag_MTpeak", "ttbar_2l");
-  Figure noBTagPeak_Wjets    = yieldTable.Get("0btag_MTpeak", "W+jets"  );
-  Figure noBTagPeak_others   = yieldTable.Get("0btag_MTpeak", "others"  );
-  Figure noBTagPeak_data     = yieldTable.Get("0btag_MTpeak", "data"    );
-                                                            
-  Figure noBTagTail_1ltop    = yieldTable.Get("0btag_MTtail", "1ltop"   );
-  Figure noBTagTail_ttbar_2l = yieldTable.Get("0btag_MTtail", "ttbar_2l");
-  Figure noBTagTail_Wjets    = yieldTable.Get("0btag_MTtail", "W+jets"  );
-  Figure noBTagTail_others   = yieldTable.Get("0btag_MTtail", "others"  );
-  Figure noBTagTail_data     = yieldTable.Get("0btag_MTtail", "data"    );
-  
-  cout << "R_W+jets (for 0 btag) = " << (noBTagTail_Wjets / noBTagPeak_Wjets).Print(3) << endl;
-  cout << "R_1ltop  (for 0 btag) = " << (noBTagTail_1ltop / noBTagPeak_1ltop).Print(3) << endl;
-
-  Figure R_Wjets            = (noBTagTail_Wjets+preselTail_Wjets) / (noBTagPeak_Wjets+preselPeak_Wjets);
-  Figure R_1ltop_optimistic = (noBTagTail_1ltop+preselTail_1ltop) / (noBTagPeak_1ltop+preselPeak_1ltop);
-
-  cout << "R_W+jets (pre btag) = " << R_Wjets.Print(3) << endl;
-  cout << "R_1ltop  (pre btag) = " << R_1ltop_optimistic.Print(3) << endl;
- 
-  // #####################################################
-
-  Figure SF_0btag = (noBTagPeak_data - noBTagPeak_ttbar_2l - noBTagPeak_others) / (noBTagPeak_1ltop + noBTagPeak_Wjets);
-
-  cout << "SF_0btag = " << SF_0btag.Print(3) << endl;
-
-  Figure SFR_all = noBTagTail_data / ((noBTagTail_Wjets + noBTagTail_1ltop)*SF_0btag + noBTagTail_ttbar_2l + noBTagTail_others);
-  Figure SFR_Wjets = (noBTagTail_data - noBTagTail_1ltop*SF_0btag - noBTagTail_ttbar_2l - noBTagTail_others) / (noBTagTail_Wjets*SF_0btag);
-
-  cout << "SFR_all   = " << SFR_all.Print(3) << endl;
-  cout << "SFR_Wjets = " << SFR_Wjets.Print(3) << endl;
-
-}
-
 
