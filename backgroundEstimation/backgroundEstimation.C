@@ -16,6 +16,8 @@ using namespace theDoctor;
 
 babyEvent* myEventPointer;
 
+void computeBackgroundEstimation(TableDataMC yieldTable);
+
 // #########################################################################
 //                              Main function
 // #########################################################################
@@ -49,15 +51,13 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("ttbar_1l",          "1l top",                            "background",kRed-7);
+     screwdriver.AddProcessClass("1ltop",           "1l top",                            "background",kRed-7);
      screwdriver.AddProcessClass("ttbar_2l",        "t#bar{t} #rightarrow l^{+}l^{-}",   "background",kCyan-3);
-            screwdriver.AddDataset("ttbar",         "ttbar_1l",  0, 0);
+            screwdriver.AddDataset("ttbar",         "1ltop",  0, 0);
      
      screwdriver.AddProcessClass("W+jets",          "W+jets",                            "background",kOrange-2);
              screwdriver.AddDataset("Wjets",        "W+jets", 0, 0);
      
-     screwdriver.AddProcessClass("singletop",       "singletop",                         "background",kBlue);
-
      screwdriver.AddProcessClass("others",          "others",                            "background",kMagenta-5);
              screwdriver.AddDataset("others",       "others", 0, 0);
     
@@ -180,7 +180,7 @@ int main (int argc, char *argv[])
           && ((myEvent.crossSection == 1.8)
           ||  (myEvent.crossSection == 30.0)
           ||  (myEvent.crossSection == 3.9 )
-          ||  (myEvent.crossSection == 55.5))) currentProcessClass_ = "singletop"; 
+          ||  (myEvent.crossSection == 55.5))) currentProcessClass_ = "1ltop"; 
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
@@ -218,14 +218,88 @@ int main (int argc, char *argv[])
   vector<string> table0btag = { "0btag", "0btag_MTpeak", "0btag_MTtail", "0btag_MTinverted" };
   TableDataMC(&screwdriver,table0btag,"singleLepton").PrintTable();
 
+  vector<string> regionAll =  { "preveto", "preveto_MTpeak", "preveto_MTtail", "preveto_MTinverted", "presel", "presel_MTpeak", "presel_MTtail", "presel_MTinverted", "0btag", "0btag_MTpeak", "0btag_MTtail", "0btag_MTinverted"  };
+  TableDataMC tableAll(&screwdriver,regionAll,"singleLepton");
 
-  // #################################################
-
-  Figure presel_data = screwdriver->GetYieldAndError("data", processesTags[p],
-                                                     regionsTags[r],
-                                                     channel);
+  computeBackgroundEstimation(tableAll);
 
   printBoxedMessage("Program done.");
   return (0);
 }
+
+
+void computeBackgroundEstimation(TableDataMC yieldTable)
+{
+
+  Figure preveto_1ltop    = yieldTable.Get("preveto_MTpeak", "1ltop"   );
+  Figure preveto_ttbar_2l = yieldTable.Get("preveto_MTpeak", "ttbar_2l");
+  Figure preveto_Wjets    = yieldTable.Get("preveto_MTpeak", "W+jets"  );
+  Figure preveto_others   = yieldTable.Get("preveto_MTpeak", "others"  );
+  Figure preveto_data     = yieldTable.Get("preveto_MTpeak", "data"    );
+
+  Figure SF_pre = (preveto_data - preveto_others) / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
+  cout << "SF_pre = " << SF_pre.Print(3) << endl;
+
+  Figure postveto_1ltop    = yieldTable.Get("presel_MTpeak", "1ltop"   );
+  Figure postveto_ttbar_2l = yieldTable.Get("presel_MTpeak", "ttbar_2l");
+  Figure postveto_Wjets    = yieldTable.Get("presel_MTpeak", "W+jets"  );
+  Figure postveto_others   = yieldTable.Get("presel_MTpeak", "others"  );
+  Figure postveto_data     = yieldTable.Get("presel_MTpeak", "data"    );
+
+  SF_pre = Figure(SF_pre.value(),0.0);
+  Figure SF_post = (postveto_data - postveto_others - SF_pre * postveto_ttbar_2l) / (postveto_1ltop + postveto_Wjets);
+  cout << "SF_post = " << SF_post.Print(3) << endl;
+
+  // #####################################################
+
+  Figure preselPeak_1ltop    = yieldTable.Get("presel_MTpeak", "1ltop"   );
+  Figure preselPeak_ttbar_2l = yieldTable.Get("presel_MTpeak", "ttbar_2l");
+  Figure preselPeak_Wjets    = yieldTable.Get("presel_MTpeak", "W+jets"  );
+  Figure preselPeak_others   = yieldTable.Get("presel_MTpeak", "others"  );
+  Figure preselPeak_data     = yieldTable.Get("presel_MTpeak", "data"    );
+
+  Figure preselTail_1ltop    = yieldTable.Get("presel_MTtail", "1ltop"   );
+  Figure preselTail_ttbar_2l = yieldTable.Get("presel_MTtail", "ttbar_2l");
+  Figure preselTail_Wjets    = yieldTable.Get("presel_MTtail", "W+jets"  );
+  Figure preselTail_others   = yieldTable.Get("presel_MTtail", "others"  );
+  Figure preselTail_data     = yieldTable.Get("presel_MTtail", "data"    );
+  
+  cout << "R_W+jets (for 1 btag) = " << (preselTail_Wjets / preselPeak_Wjets).Print(3) << endl; 
+  cout << "R_1ltop  (for 1 btag) = " << (preselTail_1ltop / preselPeak_1ltop).Print(3) << endl; 
+
+  Figure noBTagPeak_1ltop    = yieldTable.Get("0btag_MTpeak", "1ltop"   );
+  Figure noBTagPeak_ttbar_2l = yieldTable.Get("0btag_MTpeak", "ttbar_2l");
+  Figure noBTagPeak_Wjets    = yieldTable.Get("0btag_MTpeak", "W+jets"  );
+  Figure noBTagPeak_others   = yieldTable.Get("0btag_MTpeak", "others"  );
+  Figure noBTagPeak_data     = yieldTable.Get("0btag_MTpeak", "data"    );
+                                                            
+  Figure noBTagTail_1ltop    = yieldTable.Get("0btag_MTtail", "1ltop"   );
+  Figure noBTagTail_ttbar_2l = yieldTable.Get("0btag_MTtail", "ttbar_2l");
+  Figure noBTagTail_Wjets    = yieldTable.Get("0btag_MTtail", "W+jets"  );
+  Figure noBTagTail_others   = yieldTable.Get("0btag_MTtail", "others"  );
+  Figure noBTagTail_data     = yieldTable.Get("0btag_MTtail", "data"    );
+  
+  cout << "R_W+jets (for 0 btag) = " << (noBTagTail_Wjets / noBTagPeak_Wjets).Print(3) << endl;
+  cout << "R_1ltop  (for 0 btag) = " << (noBTagTail_1ltop / noBTagPeak_1ltop).Print(3) << endl;
+
+  Figure R_Wjets            = (noBTagTail_Wjets+preselTail_Wjets) / (noBTagPeak_Wjets+preselPeak_Wjets);
+  Figure R_1ltop_optimistic = (noBTagTail_1ltop+preselTail_1ltop) / (noBTagPeak_1ltop+preselPeak_1ltop);
+
+  cout << "R_W+jets (pre btag) = " << R_Wjets.Print(3) << endl;
+  cout << "R_1ltop  (pre btag) = " << R_1ltop_optimistic.Print(3) << endl;
+ 
+  // #####################################################
+
+  Figure SF_0btag = (noBTagPeak_data - noBTagPeak_ttbar_2l - noBTagPeak_others) / (noBTagPeak_1ltop + noBTagPeak_Wjets);
+
+  cout << "SF_0btag = " << SF_0btag.Print(3) << endl;
+
+  Figure SFR_all = noBTagTail_data / ((noBTagTail_Wjets + noBTagTail_1ltop)*SF_0btag + noBTagTail_ttbar_2l + noBTagTail_others);
+  Figure SFR_Wjets = (noBTagTail_data - noBTagTail_1ltop*SF_0btag - noBTagTail_ttbar_2l - noBTagTail_others) / (noBTagTail_Wjets*SF_0btag);
+
+  cout << "SFR_all   = " << SFR_all.Print(3) << endl;
+  cout << "SFR_Wjets = " << SFR_Wjets.Print(3) << endl;
+
+}
+
 
