@@ -1,3 +1,5 @@
+#ifndef TRIGGER_EFFIFIENCY_REWEIGHTING
+#define TRIGGER_EFFIFIENCY_REWEIGHTING
 
 float singleLeptonTriggerWeight(int flavor, float pt, float eta)
 {
@@ -157,4 +159,4 @@ float crossTriggerWeight(float leptonPt, float leptonEta, float fourthJetPt)
           + 0.638 * PFNoPUJet30.Eval(fourthJetPt));     // trigger was used during 63.8% of data taking
 }
 
- 
+#endif 

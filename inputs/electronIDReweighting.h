@@ -1,8 +1,10 @@
+#ifndef ELECTRONID_REWEIGHTING
+#define ELECTRONID_REWEIGHTING
 
 pair<float,float> muonIDEfficiency(float pT, float eta)
 {
-    if (pT < 20) return 0.0;
-    if (fabs(eta) > 2.1) return 0.0;
+    if (pT < 20) return pair<float,float>(0.0,0.0);
+    if (fabs(eta) > 2.1) return pair<float,float>(0.0,0.0);
 
     if (fabs(eta) < 0.8)
     {
@@ -43,12 +45,13 @@ pair<float,float> muonIDEfficiency(float pT, float eta)
         else if (pT < 300) return pair<float,float>(0.9652,0.0720);
         else               return pair<float,float>(0.4286,0.4676);
     }
+    return pair<float,float>(0.0,0.0);
 }
 
 pair<float,float> muonIsoScaleFactor(float pT, float eta)
 {
-    if (pT < 20) return 0.0;
-    if (fabs(eta) > 2.1) return 0.0;
+    if (pT < 20) return pair<float,float>(0.0,0.0);
+    if (fabs(eta) > 2.1) return pair<float,float>(0.0,0.0);
 
     if (fabs(eta) < 0.8)
     {
@@ -89,12 +92,13 @@ pair<float,float> muonIsoScaleFactor(float pT, float eta)
         else if (pT < 300) return pair<float,float>(1.0261, 0.0398);
         else               return pair<float,float>(1.0000, 0.0000);
     }
+    return pair<float,float>(0.0,0.0);
 }
 
 pair<float,float> elecIDEfficiency(float pT, float eta)
 {
-    if (pT < 20) return 0.0;
-    if (fabs(eta) > 1.4442) return 0.0;
+    if (pT < 20) return pair<float,float>(0.0,0.0);
+    if (fabs(eta) > 1.4442) return pair<float,float>(0.0,0.0);
 
     if (fabs(eta) < 0.8)
     {
@@ -122,12 +126,13 @@ pair<float,float> elecIDEfficiency(float pT, float eta)
         else if (pT < 300) return pair<float,float>(0.8853,0.0408);
         else               return pair<float,float>(1.0286,0.1733);
     }
+    return pair<float,float>(0.0,0.0);
 }
 
 pair<float,float> elecIsoScaleFactor(float pT, float eta)
 {
-    if (pT < 20) return 0.0;
-    if (fabs(eta) > 1.4442) return 0.0;
+    if (pT < 20) return pair<float,float>(0.0,0.0);
+    if (fabs(eta) > 1.4442) return pair<float,float>(0.0,0.0);
 
     if (fabs(eta) < 0.8)
     {
@@ -155,5 +160,23 @@ pair<float,float> elecIsoScaleFactor(float pT, float eta)
         else if (pT < 300) return pair<float,float>(1.0076,0.0344);
         else               return pair<float,float>(1.0084,0.0926);
     }
+    return pair<float,float>(0.0,0.0);
 }
 
+// #################################################################
+
+pair<float,float> leptonIDEfficiency(int pdgId, float pT, float eta)   
+{  
+         if (abs(pdgId) == 11) return elecIDEfficiency(pT,eta);
+    else if (abs(pdgId) == 13) return muonIDEfficiency(pT,eta);
+    else                       return pair<float,float>(-1.0,-1.0);
+}
+pair<float,float> leptonIsoScaleFactor(int pdgId, float pT, float eta)
+{
+         if (abs(pdgId) == 11) return elecIsoScaleFactor(pT,eta);
+    else if (abs(pdgId) == 13) return muonIsoScaleFactor(pT,eta);
+    else                       return pair<float,float>(-1.0,-1.0);
+}
+
+
+#endif

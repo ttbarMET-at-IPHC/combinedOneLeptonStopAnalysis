@@ -32,8 +32,11 @@ WTagTMVATraining/trainMVA_GradBoost
 oldFiles/
 sonicScrewdriver
 babyTupling/proofBox
+AN-14-067/
+analysisNote/
 
-# Various crap
+
+# Various backup/crap
 *.d
 .list*
 */backup*

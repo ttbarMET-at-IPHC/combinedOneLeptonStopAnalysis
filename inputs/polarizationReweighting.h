@@ -100,10 +100,10 @@ double Reweight_T2bW (double thetaChi_eff, double thetaW_eff, std::vector<IPHCTr
         int i_chargino = -1;
         for (unsigned int ig=i_stop+1; ig<ngen; ++ig) 
         {
-            const IPHCTree::NTGenParticle& gen = genParticles[ig];
-            if (abs(gen.motherIndex_)!=i_stop) continue;
-            if (abs(gen.id)==5) i_b = ig;
-            else if (abs(gen.id)==1000024) i_chargino = ig;
+            const IPHCTree::NTGenParticle& gen2 = genParticles[ig];
+            if (abs(gen2.motherIndex_)!=i_stop) continue;
+            if (abs(gen2.id)==5) i_b = ig;
+            else if (abs(gen2.id)==1000024) i_chargino = ig;
             if (i_b>=0 && i_chargino>=0) break;
         }
         if (i_b<0 || i_chargino<0) continue;
@@ -111,10 +111,10 @@ double Reweight_T2bW (double thetaChi_eff, double thetaW_eff, std::vector<IPHCTr
         int i_neutralino = -1;
         int i_W = -1;
         for (unsigned int ig=i_chargino+1; ig<ngen; ++ig) {
-            const IPHCTree::NTGenParticle& gen = genParticles[ig];
-            if (abs(gen.motherIndex_)!=i_chargino) continue;
-            if (abs(gen.id)==24) i_W = ig;
-            else if (abs(gen.id)==1000022) i_neutralino = ig;
+            const IPHCTree::NTGenParticle& gen2 = genParticles[ig];
+            if (abs(gen2.motherIndex_)!=i_chargino) continue;
+            if (abs(gen2.id)==24) i_W = ig;
+            else if (abs(gen2.id)==1000022) i_neutralino = ig;
             if (i_W>=0 && i_neutralino>=0) break;
         }
         if (i_W<0 || i_neutralino<0) continue;
@@ -122,10 +122,10 @@ double Reweight_T2bW (double thetaChi_eff, double thetaW_eff, std::vector<IPHCTr
         int i_up = -1;
         int i_down = -1;
         for (unsigned int ig=i_W+1; ig<ngen; ++ig) {
-            const IPHCTree::NTGenParticle& gen = genParticles[ig];
-            if (abs(gen.motherIndex_)!=i_W) continue;
-            if (abs(gen.id)%2==0) i_up = ig;
-            else if (abs(gen.id)%2==1) i_down = ig;
+            const IPHCTree::NTGenParticle& gen2 = genParticles[ig];
+            if (abs(gen2.motherIndex_)!=i_W) continue;
+            if (abs(gen2.id)%2==0) i_up = ig;
+            else if (abs(gen2.id)%2==1) i_down = ig;
             if (i_up>=0 && i_down>=0) break;
         }
         if (i_up<0 || i_down<0) continue;

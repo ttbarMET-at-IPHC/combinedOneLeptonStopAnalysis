@@ -145,6 +145,7 @@ class combined1LeptonStopSelection: public Selection
         float Dphi_lmet() const      { return theLeadingLepton.DeltaPhi(theMET);}
         float rawMet() const         { return rawMET.p2.Mod(); }
         float Met() const            { return theMET.Pt(); }
+        float MetPhi() const         { return theMET.Phi(); }
 
         // HT
         float HT() const      
@@ -250,30 +251,30 @@ class combined1LeptonStopSelection: public Selection
         
         TLorentzVector leadingBJet()
         {
-            TLorentzVector leadingBJet = 0.0;
+            TLorentzVector theLeadingBJet = 0.0;
             
             for (unsigned int i = 0 ; i < selectedBJets.size() ; i++)
             {
-                if (leadingBJet.Pt() < selectedBJets[i].p4.Pt())
-                    leadingBJet      = selectedBJets[i].p4;
+                if (theLeadingBJet.Pt() < selectedBJets[i].p4.Pt())
+                    theLeadingBJet      = selectedBJets[i].p4;
             }
 
-            if (leadingBJet.Pt() == 0.0) return leadingJet();
+            if (theLeadingBJet.Pt() == 0.0) return leadingJet();
 
-            return leadingBJet;
+            return theLeadingBJet;
         }
 
         TLorentzVector leadingJet()
         {
-            TLorentzVector leadingJet = 0.0;
+            TLorentzVector theLeadingJet = 0.0;
             
             for (unsigned int i = 0 ; i < selectedJets.size() ; i++)
             {
-                if (leadingJet.Pt() < selectedJets[i].p4.Pt())
-                    leadingJet      = selectedJets[i].p4;
+                if (theLeadingJet.Pt() < selectedJets[i].p4.Pt())
+                    theLeadingJet      = selectedJets[i].p4;
             }
 
-            return leadingJet;
+            return theLeadingJet;
         }
 
         TLorentzVector leadingJetByCSV(bool runningOnData)

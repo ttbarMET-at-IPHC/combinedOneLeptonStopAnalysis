@@ -7,23 +7,15 @@
 -->
 
 <Analysis>
-<!--
-	DataType = [ 0: MC ; 1: Data ; 2 : Data & MC ]
-	Luminosity in in pb-1
--->
-<!--a type="General" Verbosity="3" DataType="0" Luminosity="38.35"/>
-<a type="General" Verbosity="3" DataType="0" Luminosity="204.2" LumiError="12." PUWeightFile="/opt/sbg/data/data1/cms/echabert/TopDilep/CMSSW_4_1_4/src/MiniTreeAnalysis/NTupleAnalysis/macros/pudist_200pb.root" />
--->
 <a 						
    type="General" 
    Verbosity="3" 
    DataType="0" 
-   Luminosity="2288.8" 
-   LumiError="2284.1" 
+   Luminosity="-1" 
+   LumiError="-1" 
 />
 
 <!-- WARNING WARNING WARNING - Don't forget to use the good PU file !! S7 for signal (fastim), S10 for background (fullsim) ! -->
-
 <a
     type="Corrections"
     pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/inputs/pileUp/puWeights_S7.root"
@@ -33,8 +25,6 @@
 />
 
 </Analysis>
-
-
 
 <!--
 	#################################################
@@ -162,6 +152,12 @@
 <!-- Others -->
 
 <!--
+<d  name="WGstarToLNu2E" add="1" isData="0" NofEvts="-1" normf="1" xsection="??"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/WGstarToLNu2E/*.root" />
+<d  name="WGstarToLNu2Mu" add="1" isData="0" NofEvts="-1" normf="1" xsection="??"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/WGstarToLNu2Mu/*.root" />
+<d  name="WGstarToLNu2Tau" add="1" isData="0" NofEvts="-1" normf="1" xsection="??"
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/WGstarToLNu2Tau/*.root" />
 <d  name="TBZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.0114"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/TBZ/*.root" />
 <d  name="TTG" add="1" isData="0" NofEvts="-1" normf="1" xsection="2.166"
@@ -216,7 +212,7 @@
 
 <!--
 	#################################################
-	#            Selection configuration            #
+	#           Collections configuration           #
 	#################################################
 -->
 
@@ -231,45 +227,25 @@
 	type="Electron" 
 	Loaded="1" 
 	Algo="selectedPatElectrons" 
-	PtThreshold="30." 
-	EtaThreshold="1.4442" 
-	RelIso="0.15" 
-	D0Cut="0.02" 
-	VertexMatchThr="9999." 
-	DElectronETSCThr="99999." 
-	RemuThr="0.1"
+    PtThreshold="-1" EtaThreshold="-1"  RelIso="-1"  D0Cut="-1" VertexMatchThr="-1" ElectronETSCThr="-1" RemuThr="-1"
 />
 <s 
 	type="Muon"
 	Loaded="1"
 	Algo="selectedPatMuons" 
-	PtThreshold="30." 
-	EtaThreshold="2.1" 
-	RelIso="0.15" 
-	D0Cut="0.02" 
-	VertexMatchThr="1." 
-	NofValidHits="0"  
-	NofValidTkHits="10" 
-	NormChi2="10" 
+    PtThreshold="-1" EtaThreshod="-1" RelIso="-1" D0Cut="-1" VertexMatchThr="-1" NofValidHits="-1"   NofValidTkHits="-1" NormChi2="-1" 
 />
 <s 
 	type="Tau"      
 	Loaded="1" 
 	Algo="selectedPatTaus" 
-	PtThreshold="20." 
-	EtaThreshold="2.5" 
-	RelIso="0.15" 
-	D0Cut="0.04" 
-	VertexMatchThr="1." 
-	TauLeadTrkPtCut="10."
+    PtThreshold="-1" EtaThreshold="-1" RelIso="-1" D0Cut="-1" VertexMatchThr="-1" TauLeadTrkPtCut="-1"
 />
 <s 
 	type="Vertex"   
 	Loaded="1" 
 	Algo="goodVertices" 
-	VertexNdofThr="4" 
-	VertexZThr="24."   
-	VertexRhoThr="2." 
+    VertexNdofThr="-1" VertexZThr="-1" VertexRhoThr="-1" 
 />
 <s 
 	type="PFCandidate"
@@ -280,8 +256,7 @@
 	type="Jet" 
 	Loaded="1" 
 	Algo="pf" 
-	PtThreshold="30." 
-	EtaThreshold="2.5"
+    PtThreshold="-1" EtaThreshold="-1"
 /> 
 <s 
 	type="HeavyTagJet" 
