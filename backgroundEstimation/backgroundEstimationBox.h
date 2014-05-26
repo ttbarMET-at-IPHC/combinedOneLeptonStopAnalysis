@@ -7,14 +7,6 @@
 using namespace std;
 using namespace theDoctor;
 
-enum
-{
-    NO_SYSTEMATIC,
-    WJETS_CROSS_SECTION,
-    RARE_CROSS_SECTION,
-    END_SYSTEMATICS
-};
-
 //The code suppose that it exist the following regions:
 // preveto_i_label, 0b_i_label, 1l_i_label, 2l_i_label, 1l1t_i_label where i = "peak" or "tail"
 

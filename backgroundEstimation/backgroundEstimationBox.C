@@ -48,14 +48,16 @@ backgroundEstimationBox::backgroundEstimationBox(SonicScrewdriver* screwdriver, 
     Figure Nwjets_mc  = yieldTable.Get("signalRegion_MTtail_"+labelSR,"W+jets"  );
     Figure Nothers_mc = yieldTable.Get("signalRegion_MTtail_"+labelSR,"others"  );
     Figure NSumBkg_mc = N1ltop_mc+N2ltop_mc+Nwjets_mc+Nothers_mc;
-    Figure Ndata      = yieldTable.Get("signalRegion_MTtail_"+labelSR,"data"    );
+    
+    // Blinding
+    //Figure Ndata      = yieldTable.Get("signalRegion_MTtail_"+labelSR,"data"    );
 
     predictionTable.Set("raw_mc","1ltop",    N1ltop_mc ); 
     predictionTable.Set("raw_mc","ttbar_2l", N2ltop_mc );
     predictionTable.Set("raw_mc","W+jets",   Nwjets_mc );
     predictionTable.Set("raw_mc","others",   Nothers_mc);
     predictionTable.Set("raw_mc","total SM", NSumBkg_mc);
-    predictionTable.Set("raw_mc","data",     Ndata     );
+    //predictionTable.Set("raw_mc","data",     Ndata     );
 
     // ##################################################################
     // #  Initialize the table containing the systematic uncertainties  #
@@ -181,7 +183,7 @@ void backgroundEstimationBox::ComputeRandSFR()
 
     SFR_all    = noBTagTail_data / ((noBTagTail_Wjets + noBTagTail_1ltop)*SF_0btag + noBTagTail_ttbar_2l + noBTagTail_others);
     SFR_W      = (noBTagTail_data - noBTagTail_1ltop*SF_0btag - noBTagTail_ttbar_2l - noBTagTail_others) / (noBTagTail_Wjets*SF_0btag);
-    SFR_W_mean = Figure((SFR_all.value()+SFR_W.value())/2.0 , (SFR_all.error() + SFR_W.value())/2.0);
+    SFR_W_mean = Figure((SFR_all.value()+SFR_W.value())/2.0 , (SFR_all.error() + SFR_W.error())/2.0);
 }
 
 void backgroundEstimationBox::PrintReport()
@@ -215,6 +217,8 @@ void backgroundEstimationBox::FillPredictionTable()
     predictionTable.Set("prediction","W+jets",   Nwjets_prediction  );
     predictionTable.Set("prediction","others",   Nothers_prediction );
     predictionTable.Set("prediction","total SM", NSumBkg_prediction );
-    predictionTable.Set("prediction","data",     Ndata              );
+
+    // Blind
+    //predictionTable.Set("prediction","data",     Ndata              );
 }
 
