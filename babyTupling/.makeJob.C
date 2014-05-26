@@ -1,5 +1,5 @@
 #include <string>
-#include "ProofLauncher.h"
+#include "ProofConfig.h"
 #include "TSelector.h"
 
 //
@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
   gSystem->AddIncludePath("-I./");
   gSystem->AddIncludePath((string("-I")+getenv("IPHCDATAFORMAT_NTUPLE")).c_str());
   gSystem->AddIncludePath((string("-I")+getenv("IPHCANALYSIS_NTUPLE")).c_str());
-  TSelector* macro = TSelector::GetSelector(JOB_DESCRIPTION);
+  TSelector::GetSelector(JOB_DESCRIPTION);
   return (0);
 }
 

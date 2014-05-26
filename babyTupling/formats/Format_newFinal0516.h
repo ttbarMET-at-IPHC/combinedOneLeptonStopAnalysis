@@ -396,6 +396,7 @@ void ProofJob::InitializeBranches(TTree* theTree_, babyEvent* myEvent_)
     theTree_->Branch("nonSelectedLeptonsPDGId",     "std::vector<Short_t>",          &(myEvent_->nonSelectedLeptonsPDGId));
     
     theTree_->Branch("rawPFMET",                     &(myEvent_->rawPFMET));
+    theTree_->Branch("METPhi",                       &(myEvent_->METPhi));
 
     theTree_->Branch("x_firstIncomingParton",        &(myEvent_->x_firstIncomingParton));       
     theTree_->Branch("x_secondIncomingParton",       &(myEvent_->x_secondIncomingParton));      

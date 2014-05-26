@@ -48,7 +48,7 @@ ROOTMESS2     = $(wildcard *.so)
 #------------------------------------------------------------------------------
 PROOF_LAUNCHER = ProofLauncher
 PROOF_JOB = ProofJob
-PROOF_FORMAT = ProofFormat
+PROOF_CONFIG = ProofConfig
 #------------------------------------------------------------------------------
 
 
@@ -66,9 +66,9 @@ clean:
 copyLibAna:
 	@cp $(IPHCANALYSIS_NTUPLE)/libNTupleAna.so ./libNTupleAna.so
 
-$(PROOF_JOB)_C.so: copyLibAna $(PROOF_FORMAT).h
+$(PROOF_JOB)_C.so: copyLibAna $(PROOF_CONFIG).h
 	@echo "Compiling job description..."
-	@$(CXX) $(CXXFLAGS) -Wno-unused-variable $(INCLUDES) $(LDFLAGS) -o .makeJob.run .makeJob.C
+	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -o .makeJob.run .makeJob.C
 	@export IPHCDATAFORMAT_NTUPLE=$(IPHCDATAFORMAT_NTUPLE); export IPHCANALYSIS_NTUPLE=$(IPHCANALYSIS_NTUPLE); ./.makeJob.run $(GCCPARSER)
 
 %.$(ExeSuf): %.$(SrcSuf)

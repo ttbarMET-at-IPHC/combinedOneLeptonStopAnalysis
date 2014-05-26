@@ -1,7 +1,7 @@
 
 #include <TSelector.h>
 
-#include "ProofLauncher.h"
+#include "ProofConfig.h"
 
 void printBoxedMessage(string message);
 

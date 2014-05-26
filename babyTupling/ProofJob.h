@@ -32,7 +32,8 @@
 #include "EventReco/interface/Mt2Com_bisect.h"
 
 // Baby Tuple format definition
-#include "ProofFormat.h"
+#include "ProofConfig.h"
+#include BABYTUPLE_FORMAT
 
 #define SELECTION_TYPE combined1LeptonStopSelection
 
@@ -64,12 +65,12 @@ class ProofJob : public TSelector
   //------------------------------------
   // Additionnal info for Stop
   //------------------------------------
+
   SELECTION_TYPE sel;
   SELECTION_TYPE Void;
   StopMCinfo* stopMCinfo;
 
   TTree* theTree;
-
   babyEvent  myEvent;
 
   //------------------------------------

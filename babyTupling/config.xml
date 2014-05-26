@@ -47,7 +47,6 @@
 -->
 
 <!-- Signals -->
-<!--
 <d  name="T2bw-025_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_withLSP0/T2bw_x-025_*/*.root" />
 <d  name="T2bw-050_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
@@ -61,7 +60,7 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_noLSP0/T2bw_x-050_*/*.root" />
 <d  name="T2bw-075_noLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_noLSP0/T2bw_x-075_*/*.root" />
-
+<!--
 <d  name="T2bw-025_LSP0to700" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_LSP0to700/T2bw_x-025_*/*.root" />
 <d  name="T2bw-050_LSP0to700" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
@@ -75,7 +74,9 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_mLSP1/T2bw_x-050_*/*.root" />
 <d  name="T2bw-075_mLSP1" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2bw_mLSP1/T2bw_x-075_*/*.root" />
+-->
 
+<!--
 <d  name="T2tt_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/T2tt_withLSP0/*/*.root" />
 <d  name="T2tt_noLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
@@ -85,9 +86,9 @@
 -->
 <!-- ttbar -->
 
+<!--
 <d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="234.0"
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/store/ttbar-v*/*.root" />
-<!--
 -->
 <!--
 <d  name="ttbar_madgraph_1l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="103.5"

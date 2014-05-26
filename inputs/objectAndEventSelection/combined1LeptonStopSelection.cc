@@ -155,26 +155,11 @@ bool combined1LeptonStopSelection::GetSUSYstopIsolatedTrackVeto(TLorentzVector l
         // Check pfcandidate doesnt match the selected lepton
         TLorentzVector vetoTrack_p = vetotracks[i].p4;
 
-        
-        DEBUG_MSG << " track i = " << i
-                  << " ; deltaR = " << lepton_p.DeltaR(vetoTrack_p)
-                  << " ; Id = " << vetotracks[i].others["id"]
-                  << " ; Pt = " << vetotracks[i].p4.Pt()
-                  << " ; dz = " << vetotracks[i].dz_firstGoodVertex
-                  << " ; iso = " << vetotracks[i].trackIso / vetotracks[i].p4.Pt()
-                  << endl;
-
         if (lepton_p.DeltaR(vetoTrack_p) < 0.1) continue;
         
         bool passCuts = false;
 
         float pfCandId = vetotracks[i].others["id"];
-
-        if (abs(pfCandId) == 11)
-            DEBUG_MSG << " ; gsfPt = " << vetotracks[i].others["gsfPt"]
-                      << " ; gsfdz = " << vetotracks[i].others["gsfdz"]
-                      << " ; gsfiso = " << vetotracks[i].trackIso / vetotracks[i].p4.Pt()
-                      << endl;
 
         if (abs(pfCandId) == 11)
         {
@@ -622,7 +607,7 @@ std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::GetSUSYstopSelec
     {
 
         // Pt and Eta
-        if (electrons[i].p4.Pt() < 30) continue;
+        if (electrons[i].p4.Pt() < 20) continue;
         if (fabs(electrons[i].etaSuperCluster) >= 1.4442)     continue;
 
         // Absolute isolation

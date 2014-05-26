@@ -6,28 +6,26 @@
 
 
 #define isCompilingTheBabyTupler
-#include "ProofFormat.h"
 
-
+#include BABYTUPLE_FORMAT
 
 //_____________________________________________________________________________
 ProofJob::ProofJob()
 {
-  // Constructor
-    
-  fChain     = 0;
-  branch     = 0;
-  event      = 0;
-  dataset    = 0;
-  anaEL      = 0;
-  verbosity  = 0;
-  DataType   = 0;
-  Luminosity = 0; 
-  theTree    = 0;
-  //theTree2   = 0;
-  fFile      = 0;
-  fProofFile = 0;
-  stopMCinfo = new StopMCinfo();
+    // Constructor
+
+    fChain     = 0;
+    branch     = 0;
+    event      = 0;
+    dataset    = 0;
+    anaEL      = 0;
+    verbosity  = 0;
+    DataType   = 0;
+    Luminosity = 0; 
+    theTree    = 0;
+    fFile      = 0;
+    fProofFile = 0;
+    stopMCinfo = new StopMCinfo();
 }
 
 //_____________________________________________________________________________
@@ -36,13 +34,13 @@ ProofJob::~ProofJob() {}
 //_____________________________________________________________________________
 void ProofJob::Init(TTree *tree)
 {
-  cout << "Initializing the tree... " << endl;
-  fChain = tree;
+    cout << "Initializing the tree... " << endl;
+    fChain = tree;
 
-  // Find the relevant branch and link the NTEvent to it
-  branch = (TBranch *) tree->GetBranch("NTEvent");
-  event = new IPHCTree::NTEvent();
-  branch->SetAddress(&event);
+    // Find the relevant branch and link the NTEvent to it
+    branch = (TBranch *) tree->GetBranch("NTEvent");
+    event = new IPHCTree::NTEvent();
+    branch->SetAddress(&event);
 
 }
 
@@ -55,22 +53,22 @@ void ProofJob::Begin(TTree * /*tree*/)
 void ProofJob::SlaveBegin(TTree * /*tree*/)
 {
 
-  cout << "      Starting babyTupler job     " << endl;
-  
-  // ############################
-  // #   Get input from PROOF   #
-  // ############################
+    cout << "      Starting babyTupler job     " << endl;
+
+    // ############################
+    // #   Get input from PROOF   #
+    // ############################
 
     // Dataset name
     TNamed *dsname = (TNamed *) fInput->FindObject("PROOF_DATASETNAME"); 
     datasetName = dsname->GetTitle();
-  
+
     cout << "     > Dataset : " << datasetName << endl;
 
     // XML config
     TNamed *xfname = (TNamed *) fInput->FindObject("PROOF_XMLFILENAME");
     string xmlFileName = xfname->GetTitle();
-  
+
     // Output file
     TNamed *out = (TNamed *) fInput->FindObject("PROOF_OUTPUTFILE");
     fProofFile = new TProofOutputFile(out->GetTitle());
@@ -79,9 +77,9 @@ void ProofJob::SlaveBegin(TTree * /*tree*/)
     if (fFile && fFile->IsZombie()) SafeDelete(fFile);
     savedir->cd();
 
-  // #######################
-  // #   Load the config   #
-  // #######################
+    // #######################
+    // #   Load the config   #
+    // #######################
 
     sel = Void;
     anaEL = new AnalysisEnvironmentLoader(xmlFileName.c_str());
@@ -93,45 +91,42 @@ void ProofJob::SlaveBegin(TTree * /*tree*/)
 
     // Retrieve the current dataset according to its name
     for(unsigned int d=0;d<datasets.size();d++)
-      if (datasets[d].Name() == datasetName) dataset = &datasets[d];
+        if (datasets[d].Name() == datasetName) dataset = &datasets[d];
 
-  // #############################
-  // #   Initialise the TTree    #
-  // #############################
+    // #############################
+    // #   Initialise the TTree    #
+    // #############################
 
     theTree=new TTree("babyTuple","babyTuple");
     theTree->SetDirectory(fFile);
 
     InitializeBranches(theTree,&myEvent);
-  
+
 }
 
 //_____________________________________________________________________________
 void ProofJob::SlaveTerminate()
 {
 
-  if (fFile) 
-  {
-    fFile->cd();
+    if (fFile) 
+    {
+        fFile->cd();
 
-    theTree->Print();
-    theTree->Write(0, TObject::kOverwrite); 
+        theTree->Print();
+        theTree->Write(0, TObject::kOverwrite); 
 
-    //theTree2->Print();
-    //theTree2->Write(0, TObject::kOverwrite); 
+        fProofFile->Print();
+        fOutput->Add(fProofFile);
 
-    fProofFile->Print();
-    fOutput->Add(fProofFile);
+        fFile->Close("R");
+    }
 
-    fFile->Close("R");
-  }
+    delete anaEL;
+    delete stopMCinfo;
 
-  delete anaEL;
-  delete stopMCinfo;
-
-  cout << endl;
-  cout << "      Terminating babyTupler job     " << endl;
-  cout << endl;
+    cout << endl;
+    cout << "      Terminating babyTupler job     " << endl;
+    cout << endl;
 
 }
 
@@ -139,13 +134,13 @@ void ProofJob::SlaveTerminate()
 //_____________________________________________________________________________
 void ProofJob::Terminate()
 {
-  sel=Void;
-  datasets.clear();
-  delete fFile;
-  delete event;
-  delete branch;
-  delete fChain;
-  delete dataset;
-  delete gDirectory;
-  delete fProofFile;
+    sel=Void;
+    datasets.clear();
+    delete fFile;
+    delete event;
+    delete branch;
+    delete fChain;
+    delete dataset;
+    delete gDirectory;
+    delete fProofFile;
 }
