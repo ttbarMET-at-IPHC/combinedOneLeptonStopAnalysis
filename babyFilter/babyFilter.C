@@ -15,7 +15,7 @@ using namespace std;
 // Define format and input file
 #include "Reader.h"
 
-#define INPUT_FOLDER "./toFilter/babyTuple_"
+#define INPUT_FOLDER "./toFilter/"
 //#define OUTPUT_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/babyTuple_filtered/"
 #define OUTPUT_FOLDER "./"
 #define FILTER_FOLDER "/opt/sbg/data/data1/cms/aaubin/METFilters/filters/"
