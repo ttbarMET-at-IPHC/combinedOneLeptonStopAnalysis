@@ -39,9 +39,11 @@ void ProofJob::Init(TTree *tree)
 
     // Find the relevant branch and link the NTEvent to it
     branch = (TBranch *) tree->GetBranch("NTEvent");
+
+    if (branch == 0) { DEBUG_MSG << "Failed to retrieve the NTEvent branch" << endl; exit(-1); }
+
     event = new IPHCTree::NTEvent();
     branch->SetAddress(&event);
-
 }
 
 //_____________________________________________________________________________

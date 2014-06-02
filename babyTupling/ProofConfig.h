@@ -31,7 +31,7 @@ using namespace std;
 #define JOB_DESCRIPTION "ProofJob.C+"
 
 // XML configuration to load
-#define XML_CONFIG "macros/TTbarMET/babyTupling/config.xml"
+#define XML_CONFIG "macros/stopAnalysis/babyTupling/config.xml"
 
 // Sandbox for PROOF
 // NB : the content of this folder will be deleted each time you launch proof !

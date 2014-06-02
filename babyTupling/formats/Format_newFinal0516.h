@@ -243,10 +243,10 @@ void ProofJob::LoadCorrectionFiles()
     sel.loadCorrections();
     
 
-    TFile* fileMapT2tt    = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2tt.root");
-    TFile* fileMapT2bw025 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-025.root");
-    TFile* fileMapT2bw050 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-050.root");
-    TFile* fileMapT2bw075 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/TTbarMET/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-075.root");
+    TFile* fileMapT2tt    = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2tt.root");
+    TFile* fileMapT2bw025 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-025.root");
+    TFile* fileMapT2bw050 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-050.root");
+    TFile* fileMapT2bw075 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-075.root");
 
     fileMapT2tt   ->GetObject("mStopVSmNeutralino",mapT2tt   );
     fileMapT2bw025->GetObject("mStopVSmNeutralino",mapT2bw025);
@@ -376,7 +376,7 @@ void ProofJob::InitializeBranches(TTree* theTree_, babyEvent* myEvent_)
     theTree_->Branch("HTPlusLeptonPtPlusMET_JESdown",                &(myEvent_->HTPlusLeptonPtPlusMET_JESdown));
     theTree_->Branch("nJets_JESdown",                                &(myEvent_->nJets_JESdown));
     theTree_->Branch("weightTriggerEfficiency_JESdown",              &(myEvent_->weightTriggerEfficiency_JESdown));
-    
+
     theTree_->Branch("nBTag_JESdown",                                &(myEvent_->nBTag_JESdown));
     theTree_->Branch("jets_JESdown",                                 &(myEvent_->jets_JESdown));
     theTree_->Branch("jets_CSV_raw_JESdown",                         &(myEvent_->jets_CSV_raw_JESdown));
@@ -486,9 +486,17 @@ Bool_t ProofJob::Process(Long64_t entry)
 
     myEvent.secondLepton                = sel.getTheSecondLepton();
     myEvent.secondLeptonPDGId           = sel.getTheSecondLeptonPDGId();
-    myEvent.secondLeptonIdEfficiency    = leptonIDEfficiency(myEvent.secondLeptonPDGId,myEvent.secondLepton.Pt(),myEvent.secondLepton.Eta()).first;
-    myEvent.secondLeptonIsoScaleFactor  = leptonIsoScaleFactor(myEvent.secondLeptonPDGId,myEvent.secondLepton.Pt(),myEvent.secondLepton.Eta()).first;
-   
+    if (myEvent.numberOfLepton >= 2)
+    {
+        myEvent.secondLeptonIdEfficiency    = leptonIDEfficiency(myEvent.secondLeptonPDGId,myEvent.secondLepton.Pt(),myEvent.secondLepton.Eta()).first;
+        myEvent.secondLeptonIsoScaleFactor  = leptonIsoScaleFactor(myEvent.secondLeptonPDGId,myEvent.secondLepton.Pt(),myEvent.secondLepton.Eta()).first;
+    }
+    else
+    {
+        myEvent.secondLeptonIdEfficiency    = 1.0;
+        myEvent.secondLeptonIsoScaleFactor  = 1.0;
+    }
+
     float leptonCharge;
     if (myEvent.leadingLeptonPDGId > 0) leptonCharge = -1.0;
     else                                leptonCharge = +1.0; 
