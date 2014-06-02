@@ -1,5 +1,5 @@
-#ifndef backgroundEstimationBox_h
-#define backgroundEstimationBox_h
+#ifndef backgroundEstimation_h
+#define backgroundEstimation_h
 
 #include "interface/tables/TableDataMC.h"
 #include "interface/Figure.h"
@@ -7,16 +7,13 @@
 using namespace std;
 using namespace theDoctor;
 
-//The code suppose that it exist the following regions:
-// preveto_i_label, 0b_i_label, 1l_i_label, 2l_i_label, 1l1t_i_label where i = "peak" or "tail"
-
-class backgroundEstimationBox{
+class backgroundEstimation{
 
     public:
 
         //regions might be ordered following the convention above mentioned in the enum region
-        backgroundEstimationBox(SonicScrewdriver* screwdriver, string label, string channel);
-        ~backgroundEstimationBox(){};
+        backgroundEstimation(string signalRegion);
+        ~backgroundEstimation(){};
         void   ResetSystematics();
 
         void ComputeSFpre();
@@ -32,11 +29,10 @@ class backgroundEstimationBox{
         Table GetPredictionTable() { return predictionTable; };
         Table GetUncertaintyTable()   { return systematicsUncertainties;  };
 
+        void Run();
+
     private:
         
-        // correspond to the label of the signal regions
-        string labelSR; 
-
         vector<string> systematics;
 
         // Scale factors
@@ -53,9 +49,9 @@ class backgroundEstimationBox{
 
         // Tables 
 
-        TableDataMC yieldTable;
-        Table       predictionTable;
-        Table       systematicsUncertainties;
+        Table  rawYieldTable;
+        Table  predictionTable;
+        Table  systematicsUncertainties;
 
         // Systematic flags / value
 

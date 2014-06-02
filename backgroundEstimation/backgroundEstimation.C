@@ -1,256 +1,243 @@
-#include "../common.h"
-
-// Sonic screwdriver headers
-
-#include "interface/Table.h" 
-#include "interface/SonicScrewdriver.h" 
-#include "interface/tables/TableBackgroundSignal.h" 
-#include "interface/tables/TableDataMC.h" 
-using namespace theDoctor;
-
-// BabyTuple format and location
-
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_0328_1lepton4jetsMET80/"
-#include "analysisDefinitions.h"
-
-#include "backgroundEstimationBox.C"
-
-babyEvent* myEventPointer;
-
-void computeBackgroundEstimation(TableDataMC yieldTable);
-
-bool SR()
-{
-    // Apply MET and MT cuts
-    if (myEvent.MET < 150)            return false;
-
-    if (myEvent.deltaPhiMETJets < 0.8) return false;
-    if (myEvent.hadronicChi2    > 5)   return false;
-
-    return true; 
-}
-
-bool goesInPreVetoSelection_tmp()             { return (goesInPreVetoSelection() && SR()); }
-bool goesInPreVetoSelectionMTpeak_tmp()       { return (goesInPreVetoSelectionMTpeak() && SR()); }
-bool goesInPreVetoSelectionMTtail_tmp()       { return (goesInPreVetoSelectionMTtail() && SR()); }
-bool goesInPreVetoSelectionMTinverted_tmp()   { return (goesInPreVetoSelectionMTinverted() && SR()); }
-                                                                          
-bool goesInPreselection_tmp()                 { return (goesInPreselection() && SR()); }
-bool goesInPreselectionMTpeak_tmp()           { return (goesInPreselectionMTpeak() && SR()); }
-bool goesInPreselectionMTtail_tmp()           { return (goesInPreselectionMTtail() && SR()); }
-bool goesInPreselectionMTinverted_tmp()       { return (goesInPreselectionMTinverted() && SR()); }
-                                                                          
-bool goesIn0BtagControlRegion_tmp()           { return (goesIn0BtagControlRegion() && SR()); }
-bool goesIn0BtagControlRegionMTpeak_tmp()     { return (goesIn0BtagControlRegionMTpeak() && SR()); }
-bool goesIn0BtagControlRegionMTtail_tmp()     { return (goesIn0BtagControlRegionMTtail() && SR()); }
-bool goesIn0BtagControlRegionMTinverted_tmp() { return (goesIn0BtagControlRegionMTinverted() && SR()); }
-
-
-// #########################################################################
-//                              Main function
-// #########################################################################
+#include "backgroundEstimation.h"
 
 int main (int argc, char *argv[])
 {
+    if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
 
-  printBoxedMessage("Starting plot generation");
+    string signalRegion = argv[1]; 
 
-  // ####################
-  // ##   Init tools   ##
-  // ####################
-  
-     // Create a sonic Screwdriver
-      SonicScrewdriver screwdriver;
+    backgroundEstimation(signalRegion).Run();
 
-     // Pointer to the event
-     myEventPointer = &myEvent;
-     
-     // ##########################
-     // ##   Create Variables   ##
-     // ##########################
+    return 0;
+}
 
-     screwdriver.AddVariable("MT",             "M_{T}",        "GeV",    40,0,400,       &(myEvent.MT),      "logY");
-     screwdriver.AddVariable("MTpeak",         "M_{T}",        "GeV",    20,0,100,       &(myEvent.MT),      "noOverflowInLastBin");
-     screwdriver.AddVariable("MTtail",         "M_{T}",        "GeV",    30,100,400,     &(myEvent.MT),      "logY,noUnderflowInFirstBin");
-     screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
-     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
+backgroundEstimation::backgroundEstimation(string signalRegionLabel)
+{
+    // ########################
+    // #  Read raw MC yields  #
+    // ########################
 
-     // #########################################################
-     // ##   Create ProcessClasses (and associated datasets)   ##
-     // #########################################################
-
-     screwdriver.AddProcessClass("1ltop",           "1l top",                            "background",kRed-7);
-     screwdriver.AddProcessClass("ttbar_2l",        "t#bar{t} #rightarrow l^{+}l^{-}",   "background",kCyan-3);
-            screwdriver.AddDataset("ttbar",         "1ltop",  0, 0);
-     
-     screwdriver.AddProcessClass("W+jets",          "W+jets",                            "background",kOrange-2);
-             screwdriver.AddDataset("Wjets",        "W+jets", 0, 0);
-     
-     screwdriver.AddProcessClass("others",          "others",                            "background",kMagenta-5);
-             screwdriver.AddDataset("others",       "others", 0, 0);
+    // Defines the regions of interesets
+    vector<string> regions = 
+    { 
+        "preveto_MTpeak",
+        "preveto_MTtail",
+        "0btag_MTpeak",
+        "0btag_MTtail",
+        /*
+          "2leptons_MTpeak_"    ,
+          "2leptons_MTtail_"    ,
+          "1lepton+veto_MTpeak_",
+          "1lepton+veto_MTtail_",
+        */
+        "signalRegion_MTpeak",
+        "signalRegion_MTtail"
+    };
     
-     //screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
-     //        screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
+    // Import the raw yield table from external file
+    rawYieldTable = Table("rawYieldTables/"+signalRegionLabel+".tab");
+    rawYieldTable.Print();
 
-     screwdriver.AddProcessClass("data",   "data",                                       "data",COLORPLOT_BLACK);
-             screwdriver.AddDataset("SingleElec",   "data", 0, 0);
-             screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
-
-     // ##########################
-     // ##    Create Regions    ##
-     // ##########################
-
-     screwdriver.AddRegion("preveto_presel",                 "Preselection (no MT cut)",         &goesInPreVetoSelection_tmp);
-     screwdriver.AddRegion("preveto_MTpeak_presel",          "Preselection (MT peak)",           &goesInPreVetoSelectionMTpeak_tmp);
-     screwdriver.AddRegion("preveto_MTtail_presel",          "Preselection (MT tail)",           &goesInPreVetoSelectionMTtail_tmp);
-     screwdriver.AddRegion("preveto_MTinverted_presel",      "Preselection (MT < 100 GeV)",      &goesInPreVetoSelectionMTinverted_tmp);
-
-     screwdriver.AddRegion("signalRegion_presel",            "Preselection (no MT cut)",         &goesInPreselection_tmp);
-     screwdriver.AddRegion("signalRegion_MTpeak_presel",     "Preselection (MT peak)",           &goesInPreselectionMTpeak_tmp);
-     screwdriver.AddRegion("signalRegion_MTtail_presel",     "Preselection (MT tail)",           &goesInPreselectionMTtail_tmp);
-     screwdriver.AddRegion("signalRegion_MTinverted_presel", "Preselection (MT < 100 GeV)",      &goesInPreselectionMTinverted_tmp);
-
-     screwdriver.AddRegion("0btag_presel",                   "0 b-tag (no MT cut)",              &goesIn0BtagControlRegion_tmp);
-     screwdriver.AddRegion("0btag_MTpeak_presel",            "0 b-tag (MT peak)",                &goesIn0BtagControlRegionMTpeak_tmp);
-     screwdriver.AddRegion("0btag_MTtail_presel",            "0 b-tag (MT tail)",                &goesIn0BtagControlRegionMTtail_tmp);
-     screwdriver.AddRegion("0btag_MTinverted_presel",        "0 b-tag (MT < 100 GeV)",           &goesIn0BtagControlRegionMTinverted_tmp);
-
-     // ##########################
-     // ##   Create Channels    ##
-     // ##########################
-   
-     screwdriver.AddChannel("singleLepton", "e/#mu-channels",         &goesInSingleLeptonChannel);
-     screwdriver.AddChannel("singleElec",   "e-channel",              &goesInSingleElecChannel  );
-     screwdriver.AddChannel("singleMuon",   "#mu-channel",            &goesInSingleMuonChannel  );
-     
-  // ########################################
-  // ##       Create histograms and        ##
-  // ##  schedule type of plots to produce ##
-  // ########################################
-
-     screwdriver.SetLumi(20000);
-
-     // Create histograms
-     screwdriver.Create1DHistos();
-     screwdriver.Add2DHisto("mStop","mNeutralino");
-
-     screwdriver.SetGlobalBoolOption  ("1DSuperimposed",   "includeSignal",                   true   );
-
-     screwdriver.SetGlobalStringOption("1DStack",          "includeSignal",                   "stack");
-     screwdriver.SetGlobalFloatOption ("1DStack",          "factorSignal",                    1.0    );
-
-     screwdriver.SetGlobalStringOption("DataMCComparison", "includeSignal",                   "stack");
-     screwdriver.SetGlobalFloatOption ("DataMCComparison", "factorSignal",                    1.0    );
-
-     screwdriver.SetGlobalFloatOption ("FigureOfMerit",    "backgroundSystematicUncertainty", 0.15   );
-
-     // Schedule plots
-     screwdriver.SchedulePlots("1DSuperimposed");
-     screwdriver.SchedulePlots("1DStack");
-     screwdriver.SchedulePlots("1DDataMCComparison");
-     screwdriver.SchedulePlots("2D");
-
-     // Config plots
-
-     screwdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
-     screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 19.5 fb^{-1}");
-
-     screwdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
-     screwdriver.SetGlobalBoolOption("Plot", "exportEps", false);
-     screwdriver.SetGlobalBoolOption("Plot", "exportPng", false);
-
-  // ########################################
-  // ##       Run over the datasets        ##
-  // ########################################
-
-  vector<string> datasetsList;
-  screwdriver.GetDatasetList(&datasetsList);
-
-  cout << "   > Reading datasets... " << endl;
-  cout << endl;
-
-  for (unsigned int d = 0 ; d < datasetsList.size() ; d++)
-  {
-     string currentDataset = datasetsList[d];
-     string currentProcessClass = screwdriver.GetProcessClass(currentDataset);
-
-     sampleName = currentDataset;
-     sampleType = screwdriver.GetProcessClassType(currentProcessClass);
+    // ###################################################################
+    // #  Initialize the table containing the raw mc and the prediction  #
+    // ###################################################################
     
-     // Open the tree
-     TFile f((string(FOLDER_BABYTUPLES)+currentDataset+".root").c_str());
-     TTree* theTree = (TTree*) f.Get("babyTuple"); 
-     
-     intermediatePointers pointers;
-     InitializeBranches(theTree,&myEvent,&pointers);
+    vector<string> predictionTableColumns = { "raw_mc", "prediction" };
+    vector<string> processes = 
+    {
+        "1ltop",
+        "ttbar_2l",
+        "W+jets",
+        "others",
+        "total SM",
+        "data",
+    };
+    predictionTable = Table(predictionTableColumns, processes);
 
-  // ########################################
-  // ##        Run over the events         ##
-  // ########################################
+    // Raw MC
+    Figure N1ltop_mc  = rawYieldTable.Get("signalRegion_MTtail","1ltop"   ); 
+    Figure N2ltop_mc  = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l");
+    Figure Nwjets_mc  = rawYieldTable.Get("signalRegion_MTtail","W+jets"  );
+    Figure Nothers_mc = rawYieldTable.Get("signalRegion_MTtail","others"  );
+    Figure NSumBkg_mc = N1ltop_mc+N2ltop_mc+Nwjets_mc+Nothers_mc;
+    
+    // Blinding
+    //Figure Ndata    = rawYieldTable.Get("signalRegion_MTtail","data"    );
 
-      int nEntries = theTree->GetEntries();
-      for (int i = 0 ; i < nEntries ; i++)
-      {
-          if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
+    predictionTable.Set("raw_mc","1ltop",    N1ltop_mc ); 
+    predictionTable.Set("raw_mc","ttbar_2l", N2ltop_mc );
+    predictionTable.Set("raw_mc","W+jets",   Nwjets_mc );
+    predictionTable.Set("raw_mc","others",   Nothers_mc);
+    predictionTable.Set("raw_mc","total SM", NSumBkg_mc);
+    //predictionTable.Set("raw_mc","data",     Ndata     );
 
-          // Get the i-th entry
-          ReadEvent(theTree,i,&pointers,&myEvent);
+    // ##################################################################
+    // #  Initialize the table containing the systematic uncertainties  #
+    // ##################################################################
+    
+    systematics = 
+    {
+        "W+jets cross section",
+        "Rare cross section"
+    };
 
-          float weight = getWeight();
+    vector<string> uncertainties = { "absoluteUncertainty" }; 
 
-          // Split 1-lepton ttbar and 2-lepton ttbar
-          string currentProcessClass_ = currentProcessClass;
-          if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
-              currentProcessClass_ = "ttbar_2l";
+    systematicsUncertainties = Table(uncertainties, systematics);
+    
+    // Reset the systematics flags
+    ResetSystematics();
+}
 
-          // Split singletop s and t channels from other
-          if ((currentDataset == "others") 
-          && ((myEvent.crossSection == 1.8)
-          ||  (myEvent.crossSection == 30.0)
-          ||  (myEvent.crossSection == 3.9 )
-          ||  (myEvent.crossSection == 55.5))) currentProcessClass_ = "1ltop"; 
+void backgroundEstimation::Run()
+{
+    ComputePredictionWithSystematics();
+    GetUncertaintyTable().Print();
+}
 
-          screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+void backgroundEstimation::ResetSystematics()
+{
+    WjetCrossSectionRescale = 1.0;
+    rareCrossSectionRescale = 1.0;
+}
 
-      } 
-      printProgressBar(nEntries,nEntries,currentDataset);
-      cout << endl;
-      f.Close();
+Figure backgroundEstimation::ComputePrediction()
+{
+    ComputeSFpre();
+    ComputeSFpost();
+    ComputeRandSFR();
+    FillPredictionTable();
+    
+    PrintReport();
 
-  }
+    return predictionTable.Get("prediction","total SM");
+}
 
-  // ###################################
-  // ##   Make plots and write them   ##
-  // ###################################
- 
-  cout << endl;
-  cout << "   > Making plots..." << endl;
-  screwdriver.MakePlots();
-  cout << "   > Saving plots..." << endl;
-  screwdriver.WritePlots("../plots/backgroundEstimation/");
+void backgroundEstimation::ComputePredictionWithSystematics()
+{
+    // Compute prediction for nominal case
+    ComputePrediction();
 
-  printBoxedMessage("Plot generation completed");
+    // Loop over the uncertainties
+    for (unsigned int s = 0 ; s < systematics.size() ; s++)
+    {
+        ResetSystematics();
+        string systematic = systematics[s];
+        float uncertainty = 0.0;
 
-  // #############################
-  // ##   Post-plotting tests   ##
-  // #############################
-  
-  printBoxedMessage("Now computing misc tests ... ");
+        if (systematic == "W+jets cross section") 
+        {
+            WjetCrossSectionRescale = 0.5; float yieldDown = ComputePrediction().value(); 
+            WjetCrossSectionRescale = 1.5; float yieldUp   = ComputePrediction().value();
+            uncertainty = fabs((yieldUp - yieldDown) / 2.0);
+        }
+        else if (systematic == "Rare cross section") 
+        {
+            rareCrossSectionRescale = 0.5; float yieldDown = ComputePrediction().value();
+            rareCrossSectionRescale = 1.5; float yieldUp   = ComputePrediction().value();
+            uncertainty = fabs((yieldUp - yieldDown) / 2.0);
+        }
 
-  vector<string> tablepreveto      = { "preveto_presel",      "preveto_MTpeak_presel",      "preveto_MTtail_presel",      "preveto_MTinverted_presel" };
-  vector<string> tableSignalRegion = { "signalRegion_presel", "signalRegion_MTpeak_presel", "signalRegion_MTtail_presel", "signalRegion_MTinverted_presel" };
-  vector<string> table0btag        = { "0btag_presel",        "0btag_MTpeak_presel",        "0btag_MTtail_presel",        "0btag_MTinverted_presel" };
-  
-  TableDataMC(&screwdriver,tablepreveto,"singleLepton").PrintTable();
-  TableDataMC(&screwdriver,tableSignalRegion,"singleLepton").PrintTable();
-  TableDataMC(&screwdriver,table0btag,"singleLepton").PrintTable();
-  
-  backgroundEstimationBox box(&screwdriver,"presel","singleLepton");
-  box.ComputePredictionWithSystematics();
-  box.GetUncertaintyTable().PrintTable();
+        systematicsUncertainties.Set("absoluteUncertainty",systematic,Figure(uncertainty,0.0));
+    }
+}
 
-  printBoxedMessage("Program done.");
-  return (0);
+void backgroundEstimation::ComputeSFpre()
+{
+    Figure preveto_1ltop    = rawYieldTable.Get("preveto_MTpeak","1ltop"   );
+    Figure preveto_ttbar_2l = rawYieldTable.Get("preveto_MTpeak","ttbar_2l");
+    Figure preveto_Wjets    = rawYieldTable.Get("preveto_MTpeak","W+jets"  ) * WjetCrossSectionRescale;
+    Figure preveto_others   = rawYieldTable.Get("preveto_MTpeak","others"  ) * rareCrossSectionRescale;
+    Figure preveto_data     = rawYieldTable.Get("preveto_MTpeak","data"    );
+
+    SFpre = (preveto_data - preveto_others) / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
+
+}
+
+void backgroundEstimation::ComputeSFpost()
+{
+    Figure postveto_1ltop    = rawYieldTable.Get("signalRegion_MTpeak","1ltop"   );
+    Figure postveto_ttbar_2l = rawYieldTable.Get("signalRegion_MTpeak","ttbar_2l");
+    Figure postveto_Wjets    = rawYieldTable.Get("signalRegion_MTpeak","W+jets"  ) * WjetCrossSectionRescale;
+    Figure postveto_others   = rawYieldTable.Get("signalRegion_MTpeak","others"  ) * rareCrossSectionRescale;
+    Figure postveto_data     = rawYieldTable.Get("signalRegion_MTpeak","data"    );
+    //Figure SFpre = Figure(SFpre.value(),0.0);
+    
+    SFpost = (postveto_data - postveto_others - SFpre * postveto_ttbar_2l) / (postveto_1ltop + postveto_Wjets);
+}
+
+
+void backgroundEstimation::ComputeRandSFR()
+{
+    Figure signalRegionPeak_1ltop    = rawYieldTable.Get("signalRegion_MTpeak","1ltop"   );
+    Figure signalRegionPeak_ttbar_2l = rawYieldTable.Get("signalRegion_MTpeak","ttbar_2l");
+    Figure signalRegionPeak_Wjets    = rawYieldTable.Get("signalRegion_MTpeak","W+jets"  ) * WjetCrossSectionRescale;
+    Figure signalRegionPeak_others   = rawYieldTable.Get("signalRegion_MTpeak","others"  ) * rareCrossSectionRescale;
+    Figure signalRegionPeak_data     = rawYieldTable.Get("signalRegion_MTpeak","data"    );
+
+    Figure signalRegionTail_1ltop    = rawYieldTable.Get("signalRegion_MTtail","1ltop"   );
+    Figure signalRegionTail_ttbar_2l = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l");
+    Figure signalRegionTail_Wjets    = rawYieldTable.Get("signalRegion_MTtail","W+jets"  ) * WjetCrossSectionRescale;
+    Figure signalRegionTail_others   = rawYieldTable.Get("signalRegion_MTtail","others"  ) * rareCrossSectionRescale;
+    Figure signalRegionTail_data     = rawYieldTable.Get("signalRegion_MTtail","data"    );
+
+    Figure noBTagPeak_1ltop    = rawYieldTable.Get("0btag_MTpeak","1ltop"   );
+    Figure noBTagPeak_ttbar_2l = rawYieldTable.Get("0btag_MTpeak","ttbar_2l");
+    Figure noBTagPeak_Wjets    = rawYieldTable.Get("0btag_MTpeak","W+jets"  ) * WjetCrossSectionRescale;
+    Figure noBTagPeak_others   = rawYieldTable.Get("0btag_MTpeak","others"  ) * rareCrossSectionRescale;
+    Figure noBTagPeak_data     = rawYieldTable.Get("0btag_MTpeak","data"    );
+
+    Figure noBTagTail_1ltop    = rawYieldTable.Get("0btag_MTtail","1ltop"   );
+    Figure noBTagTail_ttbar_2l = rawYieldTable.Get("0btag_MTtail","ttbar_2l");
+    Figure noBTagTail_Wjets    = rawYieldTable.Get("0btag_MTtail","W+jets"  ) * WjetCrossSectionRescale;
+    Figure noBTagTail_others   = rawYieldTable.Get("0btag_MTtail","others"  ) * rareCrossSectionRescale;
+    Figure noBTagTail_data     = rawYieldTable.Get("0btag_MTtail","data"    );
+
+
+    RW_mc    = (noBTagTail_Wjets + signalRegionTail_Wjets) / (noBTagPeak_Wjets + signalRegionPeak_Wjets);
+    Rlj_mc   = (noBTagTail_1ltop + signalRegionTail_1ltop) / (noBTagPeak_1ltop + signalRegionPeak_1ltop);
+    Rlj_mean = (RW_mc + Rlj_mc) / 2.0;
+
+    SF_0btag = (noBTagPeak_data - noBTagPeak_ttbar_2l - noBTagPeak_others) / (noBTagPeak_1ltop + noBTagPeak_Wjets);
+
+    SFR_all    = noBTagTail_data / ((noBTagTail_Wjets + noBTagTail_1ltop)*SF_0btag + noBTagTail_ttbar_2l + noBTagTail_others);
+    SFR_W      = (noBTagTail_data - noBTagTail_1ltop*SF_0btag - noBTagTail_ttbar_2l - noBTagTail_others) / (noBTagTail_Wjets*SF_0btag);
+    SFR_W_mean = Figure((SFR_all.value()+SFR_W.value())/2.0 , (SFR_all.error() + SFR_W.error())/2.0);
+}
+
+void backgroundEstimation::PrintReport()
+{
+    cout << "SFpre  = " << SFpre.Print(4)  << endl;
+    cout << "SFpost = " << SFpost.Print(4) << endl;
+    
+    cout << "RW_mc    = " << RW_mc.Print(4)    << endl;
+    cout << "Rlj_mc   = " << Rlj_mc.Print(4)   << endl;
+    cout << "Rlj_mean = " << Rlj_mean.Print(4) << endl;
+    
+    cout << "SFR_all    = " << SFR_all.Print(4) << endl;
+    cout << "SFR_W      = " << SFR_W.Print(4) << endl;
+    cout << "SFR_W_mean = " << SFR_W_mean.Print(4) << endl;
+
+    predictionTable.Print();
+}
+
+void backgroundEstimation::FillPredictionTable()
+{
+    // Prediction
+    Figure N1ltop_prediction  = rawYieldTable.Get("signalRegion_MTpeak","1ltop"    ) * Rlj_mean * SFR_W_mean * SFpost; 
+    Figure Nwjets_prediction  = rawYieldTable.Get("signalRegion_MTpeak","W+jets"   ) * RW_mc    * SFR_W_mean * SFpost * WjetCrossSectionRescale;
+    Figure N2ltop_prediction  = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l" ) * SFpre;
+    Figure Nothers_prediction = rawYieldTable.Get("signalRegion_MTtail","others"   ) * rareCrossSectionRescale;
+    Figure NSumBkg_prediction = N1ltop_prediction + N2ltop_prediction + Nwjets_prediction + Nothers_prediction;
+    Figure Ndata              = rawYieldTable.Get("signalRegion_MTtail","data" );
+
+    predictionTable.Set("prediction","1ltop",    N1ltop_prediction  ); 
+    predictionTable.Set("prediction","ttbar_2l", N2ltop_prediction  );
+    predictionTable.Set("prediction","W+jets",   Nwjets_prediction  );
+    predictionTable.Set("prediction","others",   Nothers_prediction );
+    predictionTable.Set("prediction","total SM", NSumBkg_prediction );
+
+    // Blind
+    //predictionTable.Set("prediction","data",     Ndata              );
 }
 
