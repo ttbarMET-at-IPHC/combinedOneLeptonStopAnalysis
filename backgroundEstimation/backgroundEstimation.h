@@ -32,8 +32,11 @@ class backgroundEstimation{
         void Run();
 
     private:
-        
+       
+        string signalRegionLabel;
+
         vector<string> systematics;
+        vector<string> scaleFactors;
 
         // Scale factors
 
@@ -52,20 +55,23 @@ class backgroundEstimation{
         // Tables 
 
         Table  rawYieldTable;
+        Table  scaleFactorTable;
         Table  predictionTable;
         Table  systematicsUncertainties;
 
         // Systematic flags / value
-
+        float ttll_CR4and5_rescale;   
+        float ttll_nJets_rescale;     
+        float ttll_2ndlepVeto_rescale;
         float WjetCrossSection_rescale;
         float rareCrossSection_rescale;
         int   tailToPeakRatio_1lTop_variation;
         int   SFR_Wjets_variation;
-        int   WjetsStat_variation;
-        int   top1l_variation;
-        int   ttbar2lStat_variation;
         int   MTpeakStat_variation;
-
+        int   WjetsStat_variation;
+        int   top1lStat_variation;
+        int   ttbar2lStat_variation;
+        int   rareStat_variation;
 
 };
 

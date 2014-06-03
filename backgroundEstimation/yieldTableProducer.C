@@ -66,11 +66,7 @@ int main (int argc, char *argv[])
      // ##   Create Variables   ##
      // ##########################
 
-     screwdriver.AddVariable("MT",             "M_{T}",        "GeV",    40,0,400,       &(myEvent.MT),      "logY");
-     screwdriver.AddVariable("MTpeak",         "M_{T}",        "GeV",    20,0,100,       &(myEvent.MT),      "noOverflowInLastBin");
-     screwdriver.AddVariable("MTtail",         "M_{T}",        "GeV",    30,100,400,     &(myEvent.MT),      "logY,noUnderflowInFirstBin");
-     screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
-     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
+     //screwdriver.AddVariable("MT",             "M_{T}",        "GeV",    40,0,400,       &(myEvent.MT),      "logY");
 
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
@@ -124,36 +120,8 @@ int main (int argc, char *argv[])
   // ##  schedule type of plots to produce ##
   // ########################################
 
-     screwdriver.SetLumi(20000);
-
      // Create histograms
      screwdriver.Create1DHistos();
-     screwdriver.Add2DHisto("mStop","mNeutralino");
-
-     screwdriver.SetGlobalBoolOption  ("1DSuperimposed",   "includeSignal",                   true   );
-
-     screwdriver.SetGlobalStringOption("1DStack",          "includeSignal",                   "stack");
-     screwdriver.SetGlobalFloatOption ("1DStack",          "factorSignal",                    1.0    );
-
-     screwdriver.SetGlobalStringOption("DataMCComparison", "includeSignal",                   "stack");
-     screwdriver.SetGlobalFloatOption ("DataMCComparison", "factorSignal",                    1.0    );
-
-     screwdriver.SetGlobalFloatOption ("FigureOfMerit",    "backgroundSystematicUncertainty", 0.15   );
-
-     // Schedule plots
-     screwdriver.SchedulePlots("1DSuperimposed");
-     screwdriver.SchedulePlots("1DStack");
-     screwdriver.SchedulePlots("1DDataMCComparison");
-     screwdriver.SchedulePlots("2D");
-
-     // Config plots
-
-     screwdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
-     screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 19.5 fb^{-1}");
-
-     screwdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
-     screwdriver.SetGlobalBoolOption("Plot", "exportEps", false);
-     screwdriver.SetGlobalBoolOption("Plot", "exportPng", false);
 
   // ########################################
   // ##       Run over the datasets        ##
@@ -215,22 +183,6 @@ int main (int argc, char *argv[])
 
   }
 
-  // ###################################
-  // ##   Make plots and write them   ##
-  // ###################################
- 
-  cout << endl;
-  cout << "   > Making plots..." << endl;
-  screwdriver.MakePlots();
-  cout << "   > Saving plots..." << endl;
-  screwdriver.WritePlots("../plots/backgroundEstimation/");
-
-  printBoxedMessage("Plot generation completed");
-
-  // #############################
-  // ##   Post-plotting tests   ##
-  // #############################
-  
   printBoxedMessage("Now computing misc tests ... ");
 
   vector<string> regions = { "preveto_MTpeak",      "preveto_MTtail",      
@@ -239,7 +191,8 @@ int main (int argc, char *argv[])
   
   TableDataMC(&screwdriver,regions,"singleLepton").Print("rawYieldTables/test.tab",4);
   
-  printBoxedMessage("Program done.");
+  printBoxedMessage("Table generation completed");
+  
   return (0);
 }
 
