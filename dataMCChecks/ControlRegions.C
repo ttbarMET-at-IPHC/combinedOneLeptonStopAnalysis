@@ -1,10 +1,21 @@
 #include "../common.h"
 
+
+// Sonic screwdriver headers
+
+#include "interface/Table.h" 
+#include "interface/SonicScrewdriver.h" 
+#include "interface/tables/TableBackgroundSignal.h" 
+#include "interface/tables/TableDataMC.h" 
+using namespace theDoctor;
+
 // BabyTuple format and location
 
-#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0603/"
 //#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
 #include "Reader.h"
+
+
 babyEvent* myEventPointer;
 string* pCurrentDataset;
 string* pCurrentDatasetType;
@@ -170,19 +181,20 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("ttbar_1l", "t#bar{t} #rightarrow l+jets","background",kRed-7);
-            screwdriver.AddDataset("ttbar_madgraph_1l",    "ttbar_1l",  0, 0);
+     screwdriver.AddProcessClass("1ltop", "1l top",                          "background",kRed-7);
+            screwdriver.AddDataset("ttbar_madgraph_1l",    "1ltop",  0, 0);
+            screwdriver.AddDataset("singleTop_st",         "1ltop",  0, 0);
      
-     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}",    "background",kCyan-3);
+     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
             screwdriver.AddDataset("ttbar_madgraph_2l",    "ttbar_2l",  0, 0);
      
-     screwdriver.AddProcessClass("W+jets",   "W+jets",                     "background",kOrange-2);
-             screwdriver.AddDataset("Wjets",    "W+jets", 0, 0);
+     screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
+             screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
 
-     screwdriver.AddProcessClass("others",   "others",                     "background",kMagenta-5);
-             screwdriver.AddDataset("others",   "others", 0, 0);
+     screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
+             screwdriver.AddDataset("rare",   "rare", 0, 0);
      
-     screwdriver.AddProcessClass("data",   "data",                     "data",COLORPLOT_BLACK);
+     screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
              screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
@@ -268,7 +280,7 @@ int main (int argc, char *argv[])
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
 
      intermediatePointers pointers;
-     InitializeBranches(theTree,&myEvent,&pointers);
+     InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
   // ########################################
   // ##        Run over the events         ##
@@ -307,7 +319,7 @@ int main (int argc, char *argv[])
               weight *= myEvent.weightPileUp;
 
               // For ttbar, apply topPt reweighting
-              if ((currentProcessClass == "ttbar_1l") 
+              if ((currentDataset == "ttbar_madgraph_1l") 
                || (currentProcessClass == "ttbar_2l")) weight *= myEvent.weightTopPt;
           }
           else
@@ -350,16 +362,12 @@ int main (int argc, char *argv[])
 
   vector<string> regions1l = { "presel", "0bTag" };
 
-  TableDataMC tableElec(&screwdriver,regions1l,"singleElec","MET");
-  tableElec.PrintTable();
-
-  TableDataMC tableMuon(&screwdriver,regions1l,"singleMuon","MET");
-  tableMuon.PrintTable();
+  TableDataMC(&screwdriver,regions1l,"singleElec").Print();
+  TableDataMC(&screwdriver,regions1l,"singleMuon").Print();
 
   vector<string> regions2l = { "2leptons" };
 
-  TableDataMC tableEE(&screwdriver,regions2l,"doubleElec","MET");
-  tableEE.PrintTable();
+  TableDataMC(&screwdriver,regions2l,"doubleElec").Print();
 
   printBoxedMessage("Program done.");
   return (0);
