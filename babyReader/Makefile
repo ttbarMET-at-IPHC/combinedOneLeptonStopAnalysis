@@ -1,57 +1,55 @@
 ObjSuf        = o
 SrcSuf        = C
-ExeSuf        = 
-DllSuf        = so
-OutPutOpt     = -o
-HeadSuf       = h
+ExeSuf        = run
+LogSuf        = log
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
 
-# Linux with egcs
 DEFINES       = 
 
 CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
+CXXFLAGS      = -std=c++0x
+CXXFLAGS      += -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
 CXXFLAGS      += $(ROOTCFLAGS) -I./
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
-LDFLAGS       += $(ROOTLIBS)  -lEG -l:`pwd`/.vectorDictionnary_C.so
+LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
+LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
 
 SOFLAGS       = -shared
 LIBS          = 
 
-#------------------------------------------------------------------------------
-SOURCES       = $(wildcard *.C)
-OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
-EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
-#------------------------------------------------------------------------------
+# Uncomment this line if you want to use a script to parse & colorize gcc output
+# (You can also export this variable from your bashrc)
+#GCCPARSER     = 2>&1 | python ~/littleScripts/colorGcc.py
 
-DEFAULT_FILE  = babyReader
+#------------------------------------------------------------------------------
+SOURCES       = $(wildcard *.$(SrcSuf))
+OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
+EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
+LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
+#------------------------------------------------------------------------------
+DEFAULT_TARGET = babyReader
+#------------------------------------------------------------------------------
 
 all: compile run
-
-compile: .vectorDictionnary_C.so $(DEFAULT_FILE)
+	
+compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
 
 run:
-	./$(DEFAULT_FILE)
-
-
-.vectorDictionnary_C.so: .vectorDictionnary.C
-	root -q -l -L .vectorDictionnary.C+
-
-%.o: %.c
-	$(CXX) $(CXXFLAGS) -c $<
-
-%: %.o
-	$(LD) $(LDFLAGS) -o $@ $< $(LIBS) 
+	./$(DEFAULT_TARGET).$(ExeSuf)
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(EXECUTABLES)
+	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
 
-.SUFFIXES: .$(SrcSuf) .C .o .so
+#------------------------------------------------------------------------------
 
+../.vectorDictionnary_C.so: ../.vectorDictionnary.C
+	cd ..; root -q -l -L .vectorDictionnary.C+
 
+$(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 

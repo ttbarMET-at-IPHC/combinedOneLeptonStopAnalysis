@@ -12,8 +12,8 @@ using namespace std;
 #include <TLorentzVector.h>
 
 // Define format and input file
-#include "Reader_final0210.h"
-#define INPUT "synchronizationBaby0210.root"
+#include "Reader_newFinal0603.h"
+#define INPUT "synchronizationBaby0603.root"
 
 // ###################
 // #  Main function  #
@@ -32,7 +32,7 @@ int main (int argc, char *argv[])
 
   babyEvent myEvent;
   intermediatePointers pointers;
-  InitializeBranches(theInputTree,&myEvent,&pointers);
+  InitializeBranchesForReading(theInputTree,&myEvent,&pointers);
 
   // ########################################
   // ##        Run over the events         ##
@@ -46,7 +46,7 @@ int main (int argc, char *argv[])
       
       cout << endl;
       cout << " index = " << i << endl;
-      cout << " event n°" << myEvent.event << endl;
+      cout << " event nÂ°" << myEvent.event << endl;
       
       cout << " +---------+ " << endl;
       cout << " | Leptons | " << endl;
@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
       cout << " number of selected b-tagged jets : " << myEvent.nBTag << endl;
       for (unsigned int j = 0 ; j < myEvent.jets.size() ; j++)
       {
-          cout << " jet n°"   << j 
+          cout << " jet nÂ°"   << j 
                << " ; pT = "  << myEvent.jets[j].Pt() 
                << " ; eta = " << myEvent.jets[j].Eta() 
                << endl;
@@ -80,11 +80,11 @@ int main (int argc, char *argv[])
       cout << " | Generator-level information | " << endl;
       cout << " +-----------------------------+ " << endl;
 
-      cout << " number of generated leptons (tau and e/µ not coming from a tau) : " << myEvent.numberOfGenLepton << endl;
+      cout << " number of generated leptons (tau and e/mu not coming from a tau) : " << myEvent.numberOfGenLepton << endl;
       
       for (unsigned int j = 0 ; j < myEvent.genParticles.size() ; j++)
       {
-          cout << " genParticles n° " << j 
+          cout << " genParticles nÂ°" << j 
               << " ; PDGId : " << myEvent.genParticlesPDGId[j]
               << " ; Pt : "    << myEvent.genParticles[j].Pt() 
               << " ; Eta : "   << myEvent.genParticles[j].Eta() 
@@ -94,8 +94,6 @@ int main (int argc, char *argv[])
       }
 
       cout << endl;
-      
-      cout << " scalePDF = " << myEvent.scalePDF << endl;
       
   } 
 
