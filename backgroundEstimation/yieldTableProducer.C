@@ -83,8 +83,8 @@ int main (int argc, char *argv[])
      screwdriver.AddProcessClass("W+jets",          "W+jets",                            "background",kOrange-2);
              screwdriver.AddDataset("Wjets",        "W+jets", 0, 0);
      
-     screwdriver.AddProcessClass("others",          "others",                            "background",kMagenta-5);
-             screwdriver.AddDataset("others",       "others", 0, 0);
+     screwdriver.AddProcessClass("rare",          "rare",                            "background",kMagenta-5);
+             screwdriver.AddDataset("others",       "rare", 0, 0);
     
      //screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
      //        screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
@@ -200,7 +200,7 @@ int main (int argc, char *argv[])
               currentProcessClass_ = "ttbar_2l";
 
           // Split singletop s and t channels from other
-          if ((currentDataset == "others") 
+          if ((currentDataset == "rare") 
           && ((myEvent.crossSection == 1.8)
           ||  (myEvent.crossSection == 30.0)
           ||  (myEvent.crossSection == 3.9 )

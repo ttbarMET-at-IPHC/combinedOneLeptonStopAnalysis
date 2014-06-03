@@ -41,11 +41,13 @@ class backgroundEstimation{
         Figure SFpost;
         Figure RW_mc;
         Figure Rlj_mc;
-        Figure Rlj_mean;
         Figure SF_0btag;
         Figure SFR_all;
         Figure SFR_W;
         Figure SFR_W_mean;
+        Figure RW_corrected;
+        Figure Rlj_corrected;
+        Figure Rlj_mean;
 
         // Tables 
 
@@ -55,8 +57,16 @@ class backgroundEstimation{
 
         // Systematic flags / value
 
-        float WjetCrossSectionRescale;
-        float rareCrossSectionRescale;
+        float WjetCrossSection_rescale;
+        float rareCrossSection_rescale;
+        int   tailToPeakRatio_1lTop_variation;
+        int   SFR_Wjets_variation;
+        int   WjetsStat_variation;
+        int   top1l_variation;
+        int   ttbar2lStat_variation;
+        int   MTpeakStat_variation;
+
+
 };
 
 #endif
