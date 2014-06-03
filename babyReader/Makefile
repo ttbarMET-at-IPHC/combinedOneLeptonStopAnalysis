@@ -36,7 +36,7 @@ DEFAULT_TARGET = babyReader
 
 all: compile run
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
+compile: .vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
 
 run:
 	./$(DEFAULT_TARGET).$(ExeSuf)
@@ -47,8 +47,8 @@ clean:
 
 #------------------------------------------------------------------------------
 
-../.vectorDictionnary_C.so: ../.vectorDictionnary.C
-	cd ..; root -q -l -L .vectorDictionnary.C+
+.vectorDictionnary_C.so: .vectorDictionnary.C
+	root -q -l -L .vectorDictionnary.C+
 
 $(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
