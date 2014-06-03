@@ -102,9 +102,8 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("preveto_MTtail",          "Preselection (MT tail)",           &goesInPreVetoSelectionMTtail_tmp);
      screwdriver.AddRegion("preveto_MTinverted",      "Preselection (MT < 100 GeV)",      &goesInPreVetoSelectionMTinverted_tmp);
 
-     screwdriver.AddRegion("signalRegion",            "Preselection (no MT cut)",         &goesInPreselection_tmp);
      screwdriver.AddRegion("signalRegion_MTpeak",     "Preselection (MT peak)",           &goesInPreselectionMTpeak_tmp);
-     screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",           &goesInPreselectionMTtail_tmp);
+     screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",           &goesInPreselectionMTtail_tmp, "blinded");
      screwdriver.AddRegion("signalRegion_MTinverted", "Preselection (MT < 100 GeV)",      &goesInPreselectionMTinverted_tmp);
 
      screwdriver.AddRegion("0btag",                   "0 b-tag (no MT cut)",              &goesIn0BtagControlRegion_tmp);
@@ -234,11 +233,11 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
 
-  vector<string> regions = { "preveto",      "preveto_MTpeak",      "preveto_MTtail",      "preveto_MTinverted",
-                             "signalRegion", "signalRegion_MTpeak", "signalRegion_MTtail", "signalRegion_MTinverted",
-                             "0btag",        "0btag_MTpeak",        "0btag_MTtail",        "0btag_MTinverted" };
+  vector<string> regions = { "preveto_MTpeak",      "preveto_MTtail",      
+                             "signalRegion_MTpeak", "signalRegion_MTtail", 
+                             "0btag_MTpeak",        "0btag_MTtail",        };
   
-  TableDataMC(&screwdriver,regions,"singleLepton").Print("rawYieldTables/test.tab");
+  TableDataMC(&screwdriver,regions,"singleLepton").Print("rawYieldTables/test.tab",4);
   
   printBoxedMessage("Program done.");
   return (0);

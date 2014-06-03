@@ -60,9 +60,7 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel)
     Figure Nwjets_mc  = rawYieldTable.Get("signalRegion_MTtail","W+jets"  );
     Figure Nothers_mc = rawYieldTable.Get("signalRegion_MTtail","others"  );
     Figure NSumBkg_mc = N1ltop_mc+N2ltop_mc+Nwjets_mc+Nothers_mc;
-    
-    // Blinding
-    //Figure Ndata    = rawYieldTable.Get("signalRegion_MTtail","data"    );
+    Figure Ndata      = rawYieldTable.Get("signalRegion_MTtail","data"    );
 
     predictionTable.Set("raw_mc","1ltop",    N1ltop_mc ); 
     predictionTable.Set("raw_mc","ttbar_2l", N2ltop_mc );
@@ -236,8 +234,6 @@ void backgroundEstimation::FillPredictionTable()
     predictionTable.Set("prediction","W+jets",   Nwjets_prediction  );
     predictionTable.Set("prediction","others",   Nothers_prediction );
     predictionTable.Set("prediction","total SM", NSumBkg_prediction );
-
-    // Blind
-    //predictionTable.Set("prediction","data",     Ndata              );
+    predictionTable.Set("prediction","data",     Ndata              );
 }
 

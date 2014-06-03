@@ -269,7 +269,6 @@ void DisableBranch(TTree* theTree, const char* branch, void** target)
     theTree->SetBranchStatus(branch,0);
 }
 
-
 void InitializeBranches(TTree* theTree, babyEvent* myEvent,intermediatePointers* pointers)
 {
     //theTree->SetBranchStatus("*",kFALSE);
