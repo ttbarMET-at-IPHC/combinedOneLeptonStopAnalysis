@@ -6,22 +6,26 @@ LogSuf        = log
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
 
-DEFINES       = 
+#SIGNAL_REGION_CUTS = cutAndCount_T2tt_offShellLoose
+#SIGNAL_REGION_TAG = \"T2tt_offShellLoose\"
+
+DEFINES       = -DSIGNAL_REGION_CUTS=$(SIGNAL_REGION_CUTS)
+DEFINES      += -DSIGNAL_REGION_TAG=$(SIGNAL_REGION_TAG)
 
 CXX           = g++
 CXXFLAGS      = -std=c++0x
-CXXFLAGS      += -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
-CXXFLAGS      += $(ROOTCFLAGS) -I./
-CXXFLAGS      += -I../sonicScrewdriver/
+CXXFLAGS     += -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
+CXXFLAGS     += $(ROOTCFLAGS) -I./
+CXXFLAGS     += -I../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
-LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
-LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
-LDFLAGS       += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
+LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA
+LDFLAGS      += -l:`pwd`/../.vectorDictionnary_C.so 
+LDFLAGS      += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 
 SOFLAGS       = -shared
-LIBS          = 
+LIBS          =  
 
 # Uncomment this line if you want to use a script to parse & colorize gcc output
 # (You can also export this variable from your bashrc)
@@ -33,17 +37,17 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-#DEFAULT_TARGET = backgroundEstimation
-DEFAULT_TARGET = yieldTableProducer
-#DEFAULT_TARGET = controlPlots
+TARGET = backgroundEstimation
+#TARGET = yieldTableProducer
+#TARGET = controlPlots
 #------------------------------------------------------------------------------
 
 all: compile run
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
+compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
 run:
-	./$(DEFAULT_TARGET).$(ExeSuf) | tee $(DEFAULT_TARGET).$(LogSuf)
+	./$(TARGET).$(ExeSuf) | tee $(TARGET).$(LogSuf)
 
 browse:
 	export PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse
@@ -57,6 +61,6 @@ clean:
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
-$(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)
+%.$(ExeSuf): %.$(SrcSuf) 
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 

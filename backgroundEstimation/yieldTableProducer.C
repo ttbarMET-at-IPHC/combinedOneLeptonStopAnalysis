@@ -13,10 +13,18 @@ using namespace theDoctor;
 //#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
 #define FOLDER_BABYTUPLES "../store/babyTuples_0328_1lepton4jetsMET80/"
 #include "analysisDefinitions.h"
-
 babyEvent* myEventPointer;
+#include "cutAndCountDefinitions.h"
 
-bool SR()
+
+#ifndef SIGNAL_REGION_CUTS
+    #error SIGNAL_REGION_CUTS need to be defined.
+#endif
+#ifndef SIGNAL_REGION_TAG
+    #error SIGNAL_REGION_TAG need to be defined.
+#endif
+
+bool LM150(bool applyMTCut)
 {
     // Apply MET and MT cuts
     if (myEvent.MET < 150)            return false;
@@ -27,21 +35,17 @@ bool SR()
     return true; 
 }
 
-bool goesInPreVetoSelection_tmp()             { return (goesInPreVetoSelection() && SR()); }
-bool goesInPreVetoSelectionMTpeak_tmp()       { return (goesInPreVetoSelectionMTpeak() && SR()); }
-bool goesInPreVetoSelectionMTtail_tmp()       { return (goesInPreVetoSelectionMTtail() && SR()); }
-bool goesInPreVetoSelectionMTinverted_tmp()   { return (goesInPreVetoSelectionMTinverted() && SR()); }
-                                                                          
-bool goesInPreselection_tmp()                 { return (goesInPreselection() && SR()); }
-bool goesInPreselectionMTpeak_tmp()           { return (goesInPreselectionMTpeak() && SR()); }
-bool goesInPreselectionMTtail_tmp()           { return (goesInPreselectionMTtail() && SR()); }
-bool goesInPreselectionMTinverted_tmp()       { return (goesInPreselectionMTinverted() && SR()); }
-                                                                          
-bool goesIn0BtagControlRegion_tmp()           { return (goesIn0BtagControlRegion() && SR()); }
-bool goesIn0BtagControlRegionMTpeak_tmp()     { return (goesIn0BtagControlRegionMTpeak() && SR()); }
-bool goesIn0BtagControlRegionMTtail_tmp()     { return (goesIn0BtagControlRegionMTtail() && SR()); }
-bool goesIn0BtagControlRegionMTinverted_tmp() { return (goesIn0BtagControlRegionMTinverted() && SR()); }
+bool enableMTCut = true;
+bool disableMTCut = false;
 
+bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
+bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
+                                                                      
+bool goesInPreselectionMTpeak_withSRCuts()       { return (goesInPreselectionMTpeak()       && SIGNAL_REGION_CUTS(disableMTCut)); }
+bool goesInPreselectionMTtail_withSRCuts()       { return (goesInPreselectionMTtail()       && SIGNAL_REGION_CUTS(enableMTCut) ); }
+                                                                      
+bool goesIn0BtagControlRegionMTpeak_withSRCuts() { return (goesIn0BtagControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
+bool goesIn0BtagControlRegionMTtail_withSRCuts() { return (goesIn0BtagControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
 // #########################################################################
 //                              Main function
@@ -93,19 +97,14 @@ int main (int argc, char *argv[])
      // ##    Create Regions    ##
      // ##########################
 
-     screwdriver.AddRegion("preveto",                 "Preselection (no MT cut)",         &goesInPreVetoSelection_tmp);
-     screwdriver.AddRegion("preveto_MTpeak",          "Preselection (MT peak)",           &goesInPreVetoSelectionMTpeak_tmp);
-     screwdriver.AddRegion("preveto_MTtail",          "Preselection (MT tail)",           &goesInPreVetoSelectionMTtail_tmp);
-     screwdriver.AddRegion("preveto_MTinverted",      "Preselection (MT < 100 GeV)",      &goesInPreVetoSelectionMTinverted_tmp);
+     screwdriver.AddRegion("preveto_MTpeak",          "Preselection (MT peak)",           &goesInPreVetoSelectionMTpeak_withSRCuts);
+     screwdriver.AddRegion("preveto_MTtail",          "Preselection (MT tail)",           &goesInPreVetoSelectionMTtail_withSRCuts);
 
-     screwdriver.AddRegion("signalRegion_MTpeak",     "Preselection (MT peak)",           &goesInPreselectionMTpeak_tmp);
-     screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",           &goesInPreselectionMTtail_tmp, "blinded");
-     screwdriver.AddRegion("signalRegion_MTinverted", "Preselection (MT < 100 GeV)",      &goesInPreselectionMTinverted_tmp);
+     screwdriver.AddRegion("signalRegion_MTpeak",     "Preselection (MT peak)",           &goesInPreselectionMTpeak_withSRCuts);
+     screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",           &goesInPreselectionMTtail_withSRCuts, "blinded");
 
-     screwdriver.AddRegion("0btag",                   "0 b-tag (no MT cut)",              &goesIn0BtagControlRegion_tmp);
-     screwdriver.AddRegion("0btag_MTpeak",            "0 b-tag (MT peak)",                &goesIn0BtagControlRegionMTpeak_tmp);
-     screwdriver.AddRegion("0btag_MTtail",            "0 b-tag (MT tail)",                &goesIn0BtagControlRegionMTtail_tmp);
-     screwdriver.AddRegion("0btag_MTinverted",        "0 b-tag (MT < 100 GeV)",           &goesIn0BtagControlRegionMTinverted_tmp);
+     screwdriver.AddRegion("0btag_MTpeak",            "0 b-tag (MT peak)",                &goesIn0BtagControlRegionMTpeak_withSRCuts);
+     screwdriver.AddRegion("0btag_MTtail",            "0 b-tag (MT tail)",                &goesIn0BtagControlRegionMTtail_withSRCuts);
 
      // ##########################
      // ##   Create Channels    ##
@@ -189,7 +188,8 @@ int main (int argc, char *argv[])
                              "signalRegion_MTpeak", "signalRegion_MTtail", 
                              "0btag_MTpeak",        "0btag_MTtail",        };
   
-  TableDataMC(&screwdriver,regions,"singleLepton").Print("rawYieldTables/test.tab",4);
+  string exportFile = "rawYieldTables/"+string(SIGNAL_REGION_TAG)+".tab";
+  TableDataMC(&screwdriver,regions,"singleLepton").Print(exportFile,4);
   
   printBoxedMessage("Table generation completed");
   

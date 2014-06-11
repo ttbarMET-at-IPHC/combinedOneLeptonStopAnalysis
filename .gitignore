@@ -20,6 +20,7 @@ plots/
 
 # Log files
 *.log
+*.tab
 
 # Executables
 *.run

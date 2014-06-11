@@ -227,10 +227,10 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       
       myEvent->leadingLepton                = *(pointers->pointerToLeadingLepton);
       myEvent->secondLepton                 = *(pointers->pointerToSecondLepton);
-     /* 
       myEvent->jets                         = *(pointers->pointerToJets);
       myEvent->jets_CSV_raw                 = *(pointers->pointerToJets_CSV_raw);
       myEvent->jets_CSV_reshaped            = *(pointers->pointerToJets_CSV_reshaped);
+     /* 
       myEvent->jets_partonFlav              = *(pointers->pointerToJets_partonFlav);
       myEvent->genParticles                 = *(pointers->pointerToGenParticles);
       myEvent->genParticlesPDGId            = *(pointers->pointerToGenParticlesPDGId);
@@ -297,13 +297,13 @@ void InitializeBranches(TTree* theTree, babyEvent* myEvent,intermediatePointers*
     InitializeBranch(theTree,"nJets",                                        &(myEvent->nJets));
     InitializeBranch(theTree,"nBTag",                                        &(myEvent->nBTag));
 
-    /*
     pointers->pointerToJets = 0;
     InitializeBranch(theTree,"jets",                                         (void**) &(pointers->pointerToJets));
     pointers->pointerToJets_CSV_raw = 0;
     InitializeBranch(theTree,"jets_CSV_raw",                                 (void**) &(pointers->pointerToJets_CSV_raw));
     pointers->pointerToJets_CSV_reshaped = 0;
     InitializeBranch(theTree,"jets_CSV_reshaped",                            (void**) &(pointers->pointerToJets_CSV_reshaped));
+    /*
     pointers->pointerToJets_partonFlav = 0;
     DisableBranch(theTree,"jets_partonFlav",                              (void**) &(pointers->pointerToJets_partonFlav));
     */
