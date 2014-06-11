@@ -117,9 +117,9 @@ void backgroundEstimation::Run()
 {
     ComputePredictionWithSystematics();
 
-    scaleFactorTable.Print(3);
-    systematicsUncertainties.Print(1,"noError");
-    predictionTable.Print(1);
+    scaleFactorTable.PrintLatex(3);
+    systematicsUncertainties.PrintLatex(1,"noError");
+    predictionTable.PrintLatex(1);
 
     scaleFactorTable.Print("scaleFactors/"+signalRegionLabel+".tab",3);
     systematicsUncertainties.Print("systematics/"+signalRegionLabel+".tab",1,"noError");

@@ -66,22 +66,22 @@ int main (int argc, char *argv[])
      // ##   Create Variables   ##
      // ##########################
 
-     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY");
+     screwdriver.AddVariable("MET",            "MET",                     "GeV",    16,50,530,      &(myEvent.MET),                  "logY");
      screwdriver.AddVariable("MT",             "M_{T}",                   "GeV",    40,0,400,       &(myEvent.MT),                   "logY");
      screwdriver.AddVariable("MTpeak",         "M_{T}",                   "GeV",    20,0,100,       &(myEvent.MT),                   "noOverflowInLastBin");
      screwdriver.AddVariable("MTtail",         "M_{T}",                   "GeV",    30,100,400,     &(myEvent.MT),                   "logY,noUnderflowInFirstBin");
      screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
      screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
      screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),              "");
-     screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,20,        &(myEvent.hadronicChi2),         "");
-     screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),                   "");
-     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    20,0,200,       &(myEvent.leadingBPt),           "");
-     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    20,0,200,       &(myEvent.leadingJetPt),         "");
-     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    20,5,205,       &(myEvent.leadingLeptonPt),      "");
-     screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    25,0,500,       &(myEvent.Mlb),                  "");
-     screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    25,0,500,       &(myEvent.Mlb_hemi),             "");
-     screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    25,0,500,       &(myEvent.M3b),                  "");
-     screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
+     screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,10,        &(myEvent.hadronicChi2),         "");
+     screwdriver.AddVariable("HT",             "H_{T}",                   "",       46,120,1500,    &(myEvent.HT),                   "");
+     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    20,0,400,       &(myEvent.leadingBPt),           "");
+     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    20,0,600,       &(myEvent.leadingJetPt),         "");
+     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    28,20,300,      &(myEvent.leadingLeptonPt),     "");
+     screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    26,0,520,       &(myEvent.Mlb),                  "");
+     screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    26,0,520,       &(myEvent.Mlb_hemi),             "");
+     screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    20,50,750,      &(myEvent.M3b),                 "");
+     screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       20,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
 
@@ -107,16 +107,19 @@ int main (int argc, char *argv[])
      // ##    Create Regions    ##
      // ##########################
 
-     screwdriver.AddRegion("signalRegion_MTpeak",     "Preselection (MT peak)",           &goesInPreselectionMTpeak_tmp);
-     screwdriver.AddRegion("0btag_MTtail",            "0 b-tag (MT tail, > 120)",         &goesIn0BtagControlRegionMTtail_tmp);
+     screwdriver.AddRegion("presel_MTpeak",           "Pre-selection;MT peak",                                     &goesInPreselectionMTpeak);
+     screwdriver.AddRegion("presel_0btag",            "Pre-selection;0 b-tag;MT tail (> 120)",                     &goesIn0BtagControlRegionMTtail);
+
+     screwdriver.AddRegion("signalRegion_MTpeak",     "LM150 selection;MT peak Control Region",                    &goesInPreselectionMTpeak_tmp);
+     screwdriver.AddRegion("signalRegion_0btag",      "LM150 selection;0 b-tag Control Region;MT tail (> 120)",    &goesIn0BtagControlRegionMTtail_tmp, "rebin=2");
 
      // ##########################
      // ##   Create Channels    ##
      // ##########################
    
      screwdriver.AddChannel("singleLepton", "e/#mu-channels",         &goesInSingleLeptonChannel);
-     screwdriver.AddChannel("singleElec",   "e-channel",              &goesInSingleElecChannel  );
-     screwdriver.AddChannel("singleMuon",   "#mu-channel",            &goesInSingleMuonChannel  );
+     //screwdriver.AddChannel("singleElec",   "e-channel",              &goesInSingleElecChannel  );
+     //screwdriver.AddChannel("singleMuon",   "#mu-channel",            &goesInSingleMuonChannel  );
      
   // ########################################
   // ##       Create histograms and        ##
@@ -217,9 +220,9 @@ int main (int argc, char *argv[])
   screwdriver.ApplyScaleFactor("1ltop",   "signalRegion_MTpeak","singleLepton",SF_post);
   screwdriver.ApplyScaleFactor("W+jets",  "signalRegion_MTpeak","singleLepton",SF_post);
 
-  screwdriver.ApplyScaleFactor("W+jets","0btag_MTtail","singleLepton",SF_0btag);
-  screwdriver.ApplyScaleFactor("1ltop", "0btag_MTtail","singleLepton",SF_0btag);
-  screwdriver.ApplyScaleFactor("W+jets","0btag_MTtail","singleLepton",SFR_Wjets);
+  screwdriver.ApplyScaleFactor("W+jets","signalRegion_0btag","singleLepton",SF_0btag);
+  screwdriver.ApplyScaleFactor("1ltop", "signalRegion_0btag","singleLepton",SF_0btag);
+  screwdriver.ApplyScaleFactor("W+jets","signalRegion_0btag","singleLepton",SFR_Wjets);
   
   TableDataMC(&screwdriver,{"signalRegion_MTpeak" },"singleLepton").Print();
 

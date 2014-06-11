@@ -33,10 +33,9 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-DEFAULT_TARGET = backgroundEstimation
-#DEFAULT_TARGET = yieldTableProducer
-#DEFAULT_TARGET = synchronizationTables
-#DEFAULT_TARGET = syncWithAlexG
+#DEFAULT_TARGET = backgroundEstimation
+DEFAULT_TARGET = yieldTableProducer
+#DEFAULT_TARGET = controlPlots
 #------------------------------------------------------------------------------
 
 all: compile run
