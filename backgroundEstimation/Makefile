@@ -40,9 +40,10 @@ LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 TARGET = backgroundEstimation
 #TARGET = yieldTableProducer
 #TARGET = controlPlots
+
 #------------------------------------------------------------------------------
 
-all: compile run
+default: compile run
 	
 compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
@@ -55,6 +56,18 @@ browse:
 clean:
 	@echo "Cleaning..."
 	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
+
+#------------------------------------------------------------------------------
+
+# Running the background estimation on every signal regions
+
+SIGNAL_REGIONS = cutAndCount_T2tt_offShellLoose cutAndCount_T2tt_offShellTight cutAndCount_T2tt_lowDeltaM   cutAndCount_T2tt_mediumDeltaM  cutAndCount_T2tt_highDeltaM
+
+tables:
+	@$(foreach region,$(SIGNAL_REGIONS), echo "[Running on $(region)]" && make --no-print-directory clean && make --quiet --no-print-directory compile run TARGET=yieldTableProducer SIGNAL_REGION_CUTS=$(region) SIGNAL_REGION_TAG=\\\"$(region)\\\";)
+
+predictions: backgroundEstimation.$(ExeSuf)
+	@$(foreach region,$(SIGNAL_REGIONS), echo "[Running on $(region)]" && ./backgroundEstimation.$(ExeSuf) $(region);)
 
 #------------------------------------------------------------------------------
 
