@@ -1,6 +1,5 @@
 #include "../common.h"
 
-
 // Sonic screwdriver headers
 
 #include "interface/Table.h" 
@@ -12,127 +11,7 @@ using namespace theDoctor;
 // BabyTuple format and location
 
 #define FOLDER_BABYTUPLES "../store/babyTuples_0603/"
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
-#include "Reader.h"
-
-
-babyEvent* myEventPointer;
-string* pCurrentDataset;
-string* pCurrentDatasetType;
-
-// #########################################################################
-//                          Region selectors
-// #########################################################################
-
-
-
-bool singleElecChannelSelector() 
-{ 
-    if (myEventPointer->numberOfLepton != 1) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "SingleElec")) return false;
-    return (abs(myEventPointer->leadingLeptonPDGId) == 11); 
-}
-bool singleMuonChannelSelector() 
-{ 
-    if (myEventPointer->numberOfLepton != 1) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "SingleMuon")) return false;
-    return (abs(myEventPointer->leadingLeptonPDGId) == 13); 
-}
-
-bool doubleElecChannelSelector() 
-{ 
-    if (myEventPointer->numberOfLepton != 2) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "DoubleElec")) return false;
-    return ((abs(myEventPointer->leadingLeptonPDGId) == 11) 
-         && (abs(myEventPointer->secondLeptonPDGId)  == 11)); 
-}
-
-bool doubleMuonChannelSelector() 
-{ 
-    if (myEventPointer->numberOfLepton != 2) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "DoubleMuon")) return false;
-    return ((abs(myEventPointer->leadingLeptonPDGId) == 13) 
-         && (abs(myEventPointer->secondLeptonPDGId)  == 13)); 
-}
-
-bool muonElecChannelSelector() 
-{ 
-    if (myEventPointer->numberOfLepton != 2) return false;
-    if ((*pCurrentDatasetType == "data") && (*pCurrentDataset != "MuEl")) return false;
-    return   (((abs(myEventPointer->leadingLeptonPDGId) == 13) 
-            && (abs(myEventPointer->secondLeptonPDGId)  == 11))
-       ||     ((abs(myEventPointer->leadingLeptonPDGId) == 11) 
-            && (abs(myEventPointer->secondLeptonPDGId)  == 13)));
-}
-
-bool singleLeptonChannelSelector() { return (singleElecChannelSelector() || singleMuonChannelSelector()); }
-bool doubleLeptonChannelSelector() { return (doubleElecChannelSelector() 
-                                          || doubleMuonChannelSelector()
-                                          || muonElecChannelSelector()); }
-
-
-bool Selector_presel() 
-{
-    babyEvent myEvent = *myEventPointer;
-
-    // Require nLepton == 1
-    if (myEvent.numberOfLepton != 1)                        return false;
-
-    // Require nJets >= 4, nBTag >= 1
-    if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0) )      return false; 
-
-    // Apply vetos
-    if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto)) return false;
-
-    // Apply MET and MT cuts
-    if (myEvent.MET < 80) return false;
-    //|| (myEvent.MT > 100))            return false;
-
-    return true; 
-}
-
-bool Selector_2leptons() 
-{
-    babyEvent myEvent = *myEventPointer;
-
-    // Apply double-lepton trigger requirement (for both MC and data)
-    if ((!myEvent.triggerMuonElec) 
-     && (!myEvent.triggerDoubleMuon)
-     && (!myEvent.triggerDoubleElec)) return false;
-    
-    // Require nLepton == 2
-    if (myEvent.numberOfLepton != 2)                      return false;
-
-    // Require nJets >= 4, nBTag >= 1
-    if ((myEvent.nJets <= 3) || (myEvent.nBTag == 0))     return false; 
-
-    // Apply vetos
-    //if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
-
-    // Apply MET and MT cuts
-    if ((myEvent.MET < 80))         return false;
-
-    return true; 
-}
-
-bool Selector_0bTag() 
-{
-    babyEvent myEvent = *myEventPointer;
-
-    // Require nLepton == 1
-    if (myEvent.numberOfLepton != 1)                      return false;
-
-    // Require nJets >= 4, nBTag >= 1
-    if ((myEvent.nJets <= 3) || (myEvent.nBTag != 0))     return false; 
-
-    // Apply vetos
-    if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto))return false;
-
-    // Apply MET and MT cuts
-    if ((myEvent.MET < 80))       return false;
-
-    return true; 
-}
+#include "analysisDefinitions.h"
 
 // #########################################################################
 //                              Main function
@@ -149,10 +28,6 @@ int main (int argc, char *argv[])
   
      // Create a sonic Screwdriver
       SonicScrewdriver screwdriver;
-
-       // Create a container for the event
-     babyEvent myEvent;
-     myEventPointer = &myEvent;
 
   // ##########################
   // ##   Create Variables   ##
@@ -181,12 +56,11 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("1ltop", "1l top",                          "background",kRed-7);
-            screwdriver.AddDataset("ttbar_madgraph_1l",    "1ltop",  0, 0);
-            screwdriver.AddDataset("singleTop_st",         "1ltop",  0, 0);
+     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
+            screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
+            screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
      
      screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
-            screwdriver.AddDataset("ttbar_madgraph_2l",    "ttbar_2l",  0, 0);
      
      screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
              screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
@@ -206,22 +80,23 @@ int main (int argc, char *argv[])
   // ##    Create Regions    ##
   // ##########################
 
-     screwdriver.AddRegion("presel",      "Preselection region",            &Selector_presel);
-     screwdriver.AddRegion("2leptons",    "2 leptons region",               &Selector_2leptons);
-     screwdriver.AddRegion("0bTag",       "0 b-tag region",                 &Selector_0bTag);
+     screwdriver.AddRegion("MTpeak",      "Pre-selection;MT peak control region",    &goesInPreselectionMTpeak      );
+     screwdriver.AddRegion("0btag",       "Pre-selection;0 b-tag control region",    &goesIn0BtagControlRegionMTtail);
+     screwdriver.AddRegion("2leptons",    "Pre-selection;2l control region",         &goesInDileptonControlRegion   );
+     screwdriver.AddRegion("lepton+veto", "Pre-selection;1l+veto control region",    &goesInVetosControlRegion      );
 
   // ##########################
   // ##   Create Channels    ##
   // ##########################
-   
-     screwdriver.AddChannel("singleLepton", "e/#mu-channels",         &singleLeptonChannelSelector);
-     screwdriver.AddChannel("singleElec",   "e-channel",              &singleElecChannelSelector  );
-     screwdriver.AddChannel("singleMuon",   "#mu-channel",            &singleMuonChannelSelector  );
+  
+     screwdriver.AddChannel("singleLepton", "e/#mu-channels",         &goesInSingleLeptonChannel);
+     screwdriver.AddChannel("singleElec",   "e-channel",              &goesInSingleElecChannel  );
+     screwdriver.AddChannel("singleMuon",   "#mu-channel",            &goesInSingleMuonChannel  );
      
-     screwdriver.AddChannel("doubleLepton", "ee/#mu#mu/e#mu-channels",&doubleLeptonChannelSelector);
-     screwdriver.AddChannel("doubleElec",   "ee-channel",             &doubleElecChannelSelector  );
-     screwdriver.AddChannel("doubleMuon",   "#mu#mu-channel",         &doubleMuonChannelSelector  );
-     screwdriver.AddChannel("elecMuon",     "e#mu-channel",           &muonElecChannelSelector    );
+     screwdriver.AddChannel("doubleLepton", "ee/#mu#mu/e#mu-channels",&goesInDoubleLeptonChannel);
+     screwdriver.AddChannel("doubleElec",   "ee-channel",             &goesInDoubleElecChannel  );
+     screwdriver.AddChannel("doubleMuon",   "#mu#mu-channel",         &goesInDoubleMuonChannel  );
+     screwdriver.AddChannel("elecMuon",     "e#mu-channel",           &goesInMuonElecChannel    );
 
   // ########################################
   // ##       Create histograms and        ##
@@ -272,13 +147,13 @@ int main (int argc, char *argv[])
      string currentDataset = datasetsList[d];
      string currentProcessClass = screwdriver.GetProcessClass(currentDataset);
 
-     pCurrentDataset     = &currentDataset;
-     pCurrentDatasetType = &currentProcessClass;
-
+     sampleName = currentDataset;
+     sampleType = screwdriver.GetProcessClassType(currentProcessClass);
+    
      // Open the tree
      TFile f((string(FOLDER_BABYTUPLES)+currentDataset+".root").c_str());
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
-
+     
      intermediatePointers pointers;
      InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
@@ -291,49 +166,16 @@ int main (int argc, char *argv[])
       {
           if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
-          //if (i > 0.03 * nEntries) break;
-
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
+          float weight = getWeight();
 
-          float weight = 1.0;
-          if (currentProcessClass != "data")
-          {
-              // For MC, apply weights
-              float lumi;
+          // Split 1-lepton ttbar and 2-lepton ttbar
+          string currentProcessClass_ = currentProcessClass;
+          if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2)) 
+              currentProcessClass_ = "ttbar_2l";
 
-                   if (singleElecChannelSelector())  lumi = 19154.0;
-              else if (singleMuonChannelSelector())  lumi = 19096.0;
-              else if (muonElecChannelSelector()  )  lumi = 19347.0;
-              else if (doubleMuonChannelSelector())  lumi = 14595.0;
-              else if (doubleElecChannelSelector())  lumi = 19216.0;
-              else                                   lumi = 0.0;
-
-              // Normalize to cross section times lumi
-              weight *= myEvent.weightCrossSection * lumi;
-
-              // Apply trigger efficiency weights for singleLepton channels
-              if (myEvent.numberOfLepton == 1) weight *= myEvent.weightTriggerEfficiency;
-
-              // Apply pile-up weight
-              weight *= myEvent.weightPileUp;
-
-              // For ttbar, apply topPt reweighting
-              if ((currentDataset == "ttbar_madgraph_1l") 
-               || (currentProcessClass == "ttbar_2l")) weight *= myEvent.weightTopPt;
-          }
-          else
-          {
-              // For data, apply trigger requirements
-              if ((currentDataset == "SingleMuon") && (!myEvent.triggerMuon) && (!myEvent.xtriggerMuon))   continue;
-              if ((currentDataset == "SingleElec") && (!myEvent.triggerElec))                              continue;
-              if ((currentDataset == "MuEl")       && (!myEvent.triggerMuonElec))                          continue;
-              if ((currentDataset == "DoubleMuon") && (!myEvent.triggerDoubleMuon))                        continue;
-              if ((currentDataset == "DoubleElec") && (!myEvent.triggerDoubleElec))                        continue;
-
-          }
-
-          screwdriver.AutoFillProcessClass(currentProcessClass,weight);
+          screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
@@ -358,18 +200,9 @@ int main (int argc, char *argv[])
   // ##   Post-plotting tests   ##
   // #############################
   
-  printBoxedMessage("Now computing misc tests ... ");
+  //printBoxedMessage("Now computing misc tests ... ");
 
-  vector<string> regions1l = { "presel", "0bTag" };
-
-  TableDataMC(&screwdriver,regions1l,"singleElec").Print();
-  TableDataMC(&screwdriver,regions1l,"singleMuon").Print();
-
-  vector<string> regions2l = { "2leptons" };
-
-  TableDataMC(&screwdriver,regions2l,"doubleElec").Print();
-
-  printBoxedMessage("Program done.");
+  //printBoxedMessage("Program done.");
   return (0);
 }
 
