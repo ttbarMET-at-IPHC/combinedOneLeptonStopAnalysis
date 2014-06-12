@@ -11,12 +11,32 @@ using namespace theDoctor;
 // BabyTuple format and location
 
 //#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_0328_1lepton4jetsMET80/"
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0328_1lepton4jetsMET80/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0603/"
 #include "analysisDefinitions.h"
-
 babyEvent* myEventPointer;
+#include "cutAndCountDefinitions.h"
 
-bool SR()
+
+#ifndef SIGNAL_REGION_CUTS
+    #error SIGNAL_REGION_CUTS need to be defined.
+#endif
+#ifndef SIGNAL_REGION_TAG
+    #error SIGNAL_REGION_TAG need to be defined.
+#endif
+
+
+string signalRegionLabel(string signalRegionTag)
+{
+         if (signalRegionTag == "cutAndCount_T2tt_offShellLoose") return "Cut&count T2tt, Off-shell loose";
+    else if (signalRegionTag == "cutAndCount_T2tt_offShellTight") return "Cut&count T2tt, Off-shell tight";
+    else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"    ) return "Cut&count T2tt, Off-shell low #Delta m";
+    else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM" ) return "Cut&count T2tt, Off-shell medium #Delta m";
+    else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM"   ) return "Cut&count T2tt, Off-shell high #Delta m";
+    else return "";
+}
+
+bool LM150(bool applyMTCut)
 {
     // Apply MET and MT cuts
     if (myEvent.MET < 150)            return false;
@@ -27,21 +47,17 @@ bool SR()
     return true; 
 }
 
-bool goesInPreVetoSelection_tmp()             { return (goesInPreVetoSelection() && SR()); }
-bool goesInPreVetoSelectionMTpeak_tmp()       { return (goesInPreVetoSelectionMTpeak() && SR()); }
-bool goesInPreVetoSelectionMTtail_tmp()       { return (goesInPreVetoSelectionMTtail() && SR()); }
-bool goesInPreVetoSelectionMTinverted_tmp()   { return (goesInPreVetoSelectionMTinverted() && SR()); }
-                                                                          
-bool goesInPreselection_tmp()                 { return (goesInPreselection() && SR()); }
-bool goesInPreselectionMTpeak_tmp()           { return (goesInPreselectionMTpeak() && SR()); }
-bool goesInPreselectionMTtail_tmp()           { return (goesInPreselectionMTtail() && SR()); }
-bool goesInPreselectionMTinverted_tmp()       { return (goesInPreselectionMTinverted() && SR()); }
-                                                                          
-bool goesIn0BtagControlRegion_tmp()           { return (goesIn0BtagControlRegion() && SR()); }
-bool goesIn0BtagControlRegionMTpeak_tmp()     { return (goesIn0BtagControlRegionMTpeak() && SR()); }
-bool goesIn0BtagControlRegionMTtail_tmp()     { return (goesIn0BtagControlRegionMTtail() && SR()); }
-bool goesIn0BtagControlRegionMTinverted_tmp() { return (goesIn0BtagControlRegionMTinverted() && SR()); }
+bool enableMTCut = true;
+bool disableMTCut = false;
 
+bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
+bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
+                                                                      
+bool goesInPreselectionMTpeak_withSRCuts()       { return (goesInPreselectionMTpeak()       && SIGNAL_REGION_CUTS(disableMTCut)); }
+bool goesInPreselectionMTtail_withSRCuts()       { return (goesInPreselectionMTtail()       && SIGNAL_REGION_CUTS(enableMTCut) ); }
+                                                                      
+bool goesIn0BtagControlRegionMTpeak_withSRCuts() { return (goesIn0BtagControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
+bool goesIn0BtagControlRegionMTtail_withSRCuts() { return (goesIn0BtagControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
 // #########################################################################
 //                              Main function
@@ -49,6 +65,8 @@ bool goesIn0BtagControlRegionMTinverted_tmp() { return (goesIn0BtagControlRegion
 
 int main (int argc, char *argv[])
 {
+
+  if (signalRegionLabel(SIGNAL_REGION_TAG) == "") { DEBUG_MSG << "Please define the signal region label associated to tag '" << SIGNAL_REGION_TAG << "'" << endl; return -1; }
 
   printBoxedMessage("Starting plot generation");
 
@@ -77,10 +95,10 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("HT",             "H_{T}",                   "",       46,120,1500,    &(myEvent.HT),                   "");
      screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    20,0,400,       &(myEvent.leadingBPt),           "");
      screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    20,0,600,       &(myEvent.leadingJetPt),         "");
-     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    28,20,300,      &(myEvent.leadingLeptonPt),     "");
+     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    28,20,300,      &(myEvent.leadingLeptonPt),      "");
      screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    26,0,520,       &(myEvent.Mlb),                  "");
      screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    26,0,520,       &(myEvent.Mlb_hemi),             "");
-     screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    20,50,750,      &(myEvent.M3b),                 "");
+     screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    20,50,750,      &(myEvent.M3b),                  "");
      screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       20,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
@@ -89,37 +107,41 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("1ltop",           "1l top",                            "background",kRed-7);
-     screwdriver.AddProcessClass("ttbar_2l",        "t#bar{t} #rightarrow l^{+}l^{-}",   "background",kCyan-3);
-            screwdriver.AddDataset("ttbar",         "1ltop",  0, 0);
+     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
+            screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
+            screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
      
-     screwdriver.AddProcessClass("W+jets",          "W+jets",                            "background",kOrange-2);
-             screwdriver.AddDataset("Wjets",        "W+jets", 0, 0);
+     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
      
-     screwdriver.AddProcessClass("rare",          "rare",                            "background",kMagenta-5);
-             screwdriver.AddDataset("others",       "rare", 0, 0);
-    
-     screwdriver.AddProcessClass("data",   "data",                                       "data",COLORPLOT_BLACK);
+     screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
+             screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
+
+     screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
+             screwdriver.AddDataset("rare",   "rare", 0, 0);
+     
+     screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
+
+     // TODO : add signal here and check contamination in control regions
 
      // ##########################
      // ##    Create Regions    ##
      // ##########################
 
-     screwdriver.AddRegion("presel_MTpeak",           "Pre-selection;MT peak",                                     &goesInPreselectionMTpeak);
-     screwdriver.AddRegion("presel_0btag",            "Pre-selection;0 b-tag;MT tail (> 120)",                     &goesIn0BtagControlRegionMTtail);
+     screwdriver.AddRegion("presel_MTpeak",           "Pre-selection;MT peak Control Region", &goesInPreselectionMTpeak);
+     screwdriver.AddRegion("presel_0btag",            "Pre-selection;0 b-tag Control Region", &goesIn0BtagControlRegionMTtail);
 
-     screwdriver.AddRegion("signalRegion_MTpeak",     "LM150 selection;MT peak Control Region",                    &goesInPreselectionMTpeak_tmp);
-     screwdriver.AddRegion("signalRegion_0btag",      "LM150 selection;0 b-tag Control Region;MT tail (> 120)",    &goesIn0BtagControlRegionMTtail_tmp, "rebin=2");
+     screwdriver.AddRegion("signalRegion_MTpeak",     signalRegionLabel(SIGNAL_REGION_TAG)+";MT peak Control Region", &goesInPreselectionMTpeak_withSRCuts);
+     screwdriver.AddRegion("signalRegion_0btag",      signalRegionLabel(SIGNAL_REGION_TAG)+";0 b-tag Control Region", &goesIn0BtagControlRegionMTtail_withSRCuts, "rebin=2");
 
      // ##########################
      // ##   Create Channels    ##
      // ##########################
    
      screwdriver.AddChannel("singleLepton", "e/#mu-channels",         &goesInSingleLeptonChannel);
-     //screwdriver.AddChannel("singleElec",   "e-channel",              &goesInSingleElecChannel  );
-     //screwdriver.AddChannel("singleMuon",   "#mu-channel",            &goesInSingleMuonChannel  );
+     screwdriver.AddChannel("singleElec",   "e-channel",              &goesInSingleElecChannel  );
+     screwdriver.AddChannel("singleMuon",   "#mu-channel",            &goesInSingleMuonChannel  );
      
   // ########################################
   // ##       Create histograms and        ##
@@ -164,7 +186,7 @@ int main (int argc, char *argv[])
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
      
      intermediatePointers pointers;
-     InitializeBranches(theTree,&myEvent,&pointers);
+     InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
   // ########################################
   // ##        Run over the events         ##
@@ -182,15 +204,8 @@ int main (int argc, char *argv[])
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
-          if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
+          if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
-
-          // Split singletop s and t channels from other
-          if ((currentDataset == "rare") 
-          && ((myEvent.crossSection == 1.8)
-          ||  (myEvent.crossSection == 30.0)
-          ||  (myEvent.crossSection == 3.9 )
-          ||  (myEvent.crossSection == 55.5))) currentProcessClass_ = "1ltop"; 
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
@@ -205,7 +220,7 @@ int main (int argc, char *argv[])
   // ##   Apply scale factors   ##
   // #############################
 
-  string signalRegionLabel = "test";
+  string signalRegionLabel(SIGNAL_REGION_TAG);
 
   Table scaleFactors = Table("scaleFactors/"+signalRegionLabel+".tab");
 
@@ -214,7 +229,7 @@ int main (int argc, char *argv[])
   Figure SF_0btag   = scaleFactors.Get("value","SF_0btag");
   Figure SFR_Wjets  = scaleFactors.Get("value","SFR_W+jets");
 
-  TableDataMC(&screwdriver,{"signalRegion_MTpeak" },"singleLepton").Print();
+  //TableDataMC(&screwdriver,{"signalRegion_MTpeak" },"singleLepton").Print();
 
   screwdriver.ApplyScaleFactor("ttbar_2l","signalRegion_MTpeak","singleLepton",SF_pre);
   screwdriver.ApplyScaleFactor("1ltop",   "signalRegion_MTpeak","singleLepton",SF_post);
@@ -224,7 +239,7 @@ int main (int argc, char *argv[])
   screwdriver.ApplyScaleFactor("1ltop", "signalRegion_0btag","singleLepton",SF_0btag);
   screwdriver.ApplyScaleFactor("W+jets","signalRegion_0btag","singleLepton",SFR_Wjets);
   
-  TableDataMC(&screwdriver,{"signalRegion_MTpeak" },"singleLepton").Print();
+  //TableDataMC(&screwdriver,{"signalRegion_MTpeak" },"singleLepton").Print();
 
   // ###################################
   // ##   Make plots and write them   ##
