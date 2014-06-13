@@ -45,7 +45,7 @@ int main (int argc, char *argv[])
   // #############################
 
   cout << endl;
-  INFO1_MSG << "Loading configuration..." << endl;
+  DEBUG_MSG << "Loading configuration..." << endl;
   cout << "        (config : " << xmlFileName << ")" << endl;
   
   AnalysisEnvironmentLoader anaEL (xmlFileName);
@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
     // #   Load the dataset   #
     // ########################
    
-    INFO1_MSG << "Loading next dataset..." << endl;
+    DEBUG_MSG << "Loading next dataset..." << endl;
 
     datasets[datasetId].eventTree()->SetBranchAddress ("NTEvent", &event);
 
@@ -86,8 +86,8 @@ int main (int argc, char *argv[])
         cout << "         [ Dataset n°" << datasetId+1 << " ]" << endl;
         cout << "         " << datasets[datasetId].Name() << endl;
         cout << endl;
-        INFO1_MSG << "   NEvents total    : " << static_cast<unsigned int>(datasets[datasetId].eventTree()->GetEntries ()) << endl;
-        INFO1_MSG << "NEvents to run over : " << datasets[datasetId].NofEvtsToRunOver() << endl;
+        DEBUG_MSG << "   NEvents total    : " << static_cast<unsigned int>(datasets[datasetId].eventTree()->GetEntries ()) << endl;
+        DEBUG_MSG << "NEvents to run over : " << datasets[datasetId].NofEvtsToRunOver() << endl;
         cout << endl;
     }
     
@@ -127,6 +127,17 @@ int main (int argc, char *argv[])
 
         bool isolatedTrackVeto = sel.GetSUSYstopIsolatedTrackVeto(leadingLepton,leptonCharge);
         bool tauVeto           = sel.GetSUSYstopTauVeto(leadingLepton,leptonCharge);        
+
+        const std::vector<IPHCTree::NTJet>& goodJets = sel.GetGoodJets();
+
+        for(unsigned int i=0 ; i < goodJets.size() ; i++)
+        {
+
+            cout << "i = " << i << " ; " << goodJets[i].p4.Pt() << goodJets[i].p4.Eta() << endl;
+            cout << "i = " << i << " ; " << goodJets[i].p4Gen.Pt() << goodJets[i].p4Gen.Eta() << endl;
+
+        }
+
 
     }   // End event loop
   }     // End dataset loop

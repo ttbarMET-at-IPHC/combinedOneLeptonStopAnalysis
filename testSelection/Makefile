@@ -15,7 +15,7 @@ CXXFLAGS      += -I `pwd`/../../../
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
-LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
+LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA -lMinuit -lMinuit2
 LDFLAGS       += -l:`pwd`/../../../../../IPHCDataFormat/NTFormat/src/libNTuple.so
 LDFLAGS       += -l:`pwd`/../../../libNTupleAna.so
 
