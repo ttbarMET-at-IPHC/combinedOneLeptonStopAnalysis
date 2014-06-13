@@ -31,15 +31,15 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-DEFAULT_TARGET = babySkimmer
+TARGET = babySkimmer
 #------------------------------------------------------------------------------
 
 all: compile run
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
+compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
 run:
-	./$(DEFAULT_TARGET).$(ExeSuf) | tee $(DEFAULT_TARGET).$(LogSuf)
+	./$(TARGET).$(ExeSuf) | tee $(TARGET).$(LogSuf)
 
 clean:
 	@echo "Cleaning..."
@@ -50,6 +50,6 @@ clean:
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
-$(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)
+%.$(ExeSuf): %.$(SrcSuf)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 

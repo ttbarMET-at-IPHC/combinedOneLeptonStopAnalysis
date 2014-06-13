@@ -16,8 +16,8 @@ using namespace std;
 // Define format and input file
 #include "Reader.h"
 
-#define FOLDER_INPUT  "../store/babyTuples_0328/"
-#define FOLDER_OUTPUT "../store/babyTuples_0328_1lepton4jetsMET80/"
+#define FOLDER_INPUT  "../store/babyTuples_0603/"
+#define FOLDER_OUTPUT "../store/babyTuples_0603_1lepton4jetsMET80/"
 
 // ###################
 // #  Main function  #
@@ -42,12 +42,12 @@ int main (int argc, char *argv[])
   intermediatePointers pointers;
 
   // Input tree   
-  TFile fInput((FOLDER_INPUT+dataset).c_str(),"READ");
+  TFile fInput((FOLDER_INPUT+dataset+".root").c_str(),"READ");
   TTree* theInputTree = (TTree*) fInput.Get("babyTuple"); 
   InitializeBranchesForReading(theInputTree,&myEvent,&pointers);
  
   // Output tree
-  TFile fOutput((FOLDER_OUTPUT+dataset).c_str(),"RECREATE");
+  TFile fOutput((FOLDER_OUTPUT+dataset+".root").c_str(),"RECREATE");
   TTree* theOutputTree = new TTree("babyTuple","");
   InitializeBranchesForWriting(theOutputTree,&myEvent);
 

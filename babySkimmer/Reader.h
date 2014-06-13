@@ -28,10 +28,16 @@ typedef struct
     // ------------
 
     Short_t        numberOfLepton;              // Number of selected leptons
+
     TLorentzVector leadingLepton;               // p4 of the leading selected lepton
     Short_t        leadingLeptonPDGId;          // pdgid of the leading selected lepton
+    float          leadingLeptonIdEfficiency;   // lepton ID efficiency weight
+    float          leadingLeptonIsoScaleFactor; // lepton isolation scale factor
+
     TLorentzVector secondLepton;                // p4 of the second lepton
     Short_t        secondLeptonPDGId;           // pdgid of the second lepton
+    float          secondLeptonIdEfficiency;    // lepton ID efficiency weight
+    float          secondLeptonIsoScaleFactor;  // lepton isolation scale factor
 
     Bool_t         isolatedTrackVeto;           // Event pass/fail the isolated track veto
     Bool_t         tauVeto;                     // Event pass/fail the tau veto
@@ -144,6 +150,12 @@ typedef struct
     Short_t nJets_JESup;                        // Jet multiplicity with                                      (+1sigma JES applied)
     Float_t weightTriggerEfficiency_JESup;      // Weight for singleLepton trigger efficiency                 (+1sigma JES applied)
 
+    Short_t                nBTag_JESup;               // Number of selected jets b-tagged                     (+1sigma JES applied)
+    vector<TLorentzVector> jets_JESup;                // p4 of the selected jets                              (+1sigma JES applied)
+    vector<Float_t>        jets_CSV_raw_JESup;        // CSV value of the selected jets, before reshaping     (+1sigma JES applied)
+    vector<Float_t>        jets_CSV_reshaped_JESup;   // CSV value of the selected jets, after reshaping      (+1sigma JES applied)
+
+
     Float_t MET_JESdown;                        // Type-1 - phi-corrected PF MET                              (-1sigma JES applied)
     Float_t MT_JESdown;                         // transverse mass of leading lepton - MET                    (-1sigma JES applied)
     Float_t deltaPhiMETJets_JESdown;            // DeltaPhi(MET,first two leading jets)                       (-1sigma JES applied)
@@ -162,7 +174,12 @@ typedef struct
     Short_t nJets_JESdown;                      // Jet multiplicity with                                      (-1sigma JES applied)
     Float_t weightTriggerEfficiency_JESdown;    // Weight for singleLepton trigger efficiency                 (-1sigma JES applied)
 
-        // CSV reshaping
+    Short_t                nBTag_JESdown;               // Number of selected jets b-tagged                   (-1sigma JES applied)
+    vector<TLorentzVector> jets_JESdown;                // p4 of the selected jets                            (-1sigma JES applied)
+    vector<Float_t>        jets_CSV_raw_JESdown;        // CSV value of the selected jets, before reshaping   (-1sigma JES applied)
+    vector<Float_t>        jets_CSV_reshaped_JESdown;   // CSV value of the selected jets, after reshaping    (-1sigma JES applied)
+
+        // CSV reshaping variations
         
     vector<Float_t> jets_CSV_reshapedUpBC;
     vector<Float_t> jets_CSV_reshapedDownBC;
@@ -184,6 +201,10 @@ typedef struct
         // Raw MET (used as a cross check for when applying MET filters after production)
 
     Float_t rawPFMET;                           // Raw MET from PF-based algorithm 
+    
+        // Phi of the (corrected) MET
+
+    Float_t METPhi;                             // Type-1 + phi-corrected PF MET
 
         // Infos for PDF uncertainties
    
@@ -217,6 +238,13 @@ typedef struct
     vector<Int_t>*          pointerToNonSelectedJets_partonFlav;   
     vector<TLorentzVector>* pointerToNonSelectedLeptons;              
     vector<Short_t>*        pointerToNonSelectedLeptonsPDGId;   
+    vector<TLorentzVector>* pointerToJets_JESdown;
+    vector<float>*          pointerToJets_CSV_raw_JESdown;
+    vector<float>*          pointerToJets_CSV_reshaped_JESdown;
+    vector<TLorentzVector>* pointerToJets_JESup;
+    vector<float>*          pointerToJets_CSV_raw_JESup;
+    vector<float>*          pointerToJets_CSV_reshaped_JESup;
+
 
 } intermediatePointers;
 
@@ -246,6 +274,13 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       myEvent->nonSelectedLeptons           = *(pointers->pointerToNonSelectedLeptons); 
       myEvent->nonSelectedLeptonsPDGId      = *(pointers->pointerToNonSelectedLeptonsPDGId); 
 
+      myEvent->jets_JESdown                 = *(pointers->pointerToJets_JESdown); 
+      myEvent->jets_CSV_raw_JESdown         = *(pointers->pointerToJets_CSV_raw_JESdown);
+      myEvent->jets_CSV_reshaped_JESdown    = *(pointers->pointerToJets_CSV_reshaped_JESdown);
+      myEvent->jets_JESup                   = *(pointers->pointerToJets_JESup);
+      myEvent->jets_CSV_raw_JESup           = *(pointers->pointerToJets_CSV_raw_JESup);
+      myEvent->jets_CSV_reshaped_JESup      = *(pointers->pointerToJets_CSV_reshaped_JESup);
+
 }
 
 void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediatePointers* pointers)
@@ -265,15 +300,19 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     pointers->pointerToLeadingLepton = 0;
     theTree->SetBranchAddress("leadingLepton",                                &(pointers->pointerToLeadingLepton));
     theTree->SetBranchAddress("leadingLeptonPDGId",                           &(myEvent->leadingLeptonPDGId));
+    theTree->SetBranchAddress("leadingLeptonIdEfficiency",                    &(myEvent->leadingLeptonIdEfficiency));
+    theTree->SetBranchAddress("leadingLeptonIsoScaleFactor",                  &(myEvent->leadingLeptonIsoScaleFactor));
     pointers->pointerToSecondLepton = 0;
     theTree->SetBranchAddress("secondLepton",                                 &(pointers->pointerToSecondLepton));
     theTree->SetBranchAddress("secondLeptonPDGId",                            &(myEvent->secondLeptonPDGId));
+    theTree->SetBranchAddress("secondLeptonIdEfficiency",                     &(myEvent->secondLeptonIdEfficiency));
+    theTree->SetBranchAddress("secondLeptonIsoScaleFactor",                   &(myEvent->secondLeptonIsoScaleFactor));
     theTree->SetBranchAddress("isolatedTrackVeto",                            &(myEvent->isolatedTrackVeto));
     theTree->SetBranchAddress("tauVeto",                                      &(myEvent->tauVeto));
     
     theTree->SetBranchAddress("nJets",                                        &(myEvent->nJets));
     theTree->SetBranchAddress("nBTag",                                        &(myEvent->nBTag));
-
+    
     pointers->pointerToJets = 0;
     theTree->SetBranchAddress("jets",                                         &(pointers->pointerToJets));
     pointers->pointerToJets_CSV_raw = 0;
@@ -354,7 +393,14 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("HTPlusLeptonPtPlusMET_JESup",                  &(myEvent->HTPlusLeptonPtPlusMET_JESup));
     theTree->SetBranchAddress("nJets_JESup",                                  &(myEvent->nJets_JESup));
     theTree->SetBranchAddress("weightTriggerEfficiency_JESup",                &(myEvent->weightTriggerEfficiency_JESup));
- 
+    theTree->SetBranchAddress("nBTag_JESup",                                  &(myEvent->nBTag_JESup));
+    pointers->pointerToJets_JESup = 0;
+    theTree->SetBranchAddress("jets_JESup",                                   &(pointers->pointerToJets_JESup));
+    pointers->pointerToJets_CSV_raw_JESup = 0;
+    theTree->SetBranchAddress("jets_CSV_raw_JESup",                           &(pointers->pointerToJets_CSV_raw_JESup));
+    pointers->pointerToJets_CSV_reshaped_JESup = 0;
+    theTree->SetBranchAddress("jets_CSV_reshaped_JESup",                      &(pointers->pointerToJets_CSV_reshaped_JESup));
+
     theTree->SetBranchAddress("MET_JESdown",                                  &(myEvent->MET_JESdown));
     theTree->SetBranchAddress("MT_JESdown",                                   &(myEvent->MT_JESdown));
     theTree->SetBranchAddress("deltaPhiMETJets_JESdown",                      &(myEvent->deltaPhiMETJets_JESdown));
@@ -372,6 +418,13 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("HTPlusLeptonPtPlusMET_JESdown",                &(myEvent->HTPlusLeptonPtPlusMET_JESdown));
     theTree->SetBranchAddress("nJets_JESdown",                                &(myEvent->nJets_JESdown));
     theTree->SetBranchAddress("weightTriggerEfficiency_JESdown",              &(myEvent->weightTriggerEfficiency_JESdown));
+    theTree->SetBranchAddress("nBTag_JESdown",                                &(myEvent->nBTag_JESdown));
+    pointers->pointerToJets_JESdown = 0;
+    theTree->SetBranchAddress("jets_JESdown",                                 &(pointers->pointerToJets_JESdown));
+    pointers->pointerToJets_CSV_raw_JESdown = 0;
+    theTree->SetBranchAddress("jets_CSV_raw_JESdown",                         &(pointers->pointerToJets_CSV_raw_JESdown));
+    pointers->pointerToJets_CSV_reshaped_JESdown = 0;
+    theTree->SetBranchAddress("jets_CSV_reshaped_JESdown",                    &(pointers->pointerToJets_CSV_reshaped_JESdown));
 
     pointers->pointerToJets_CSV_reshapedUpBC        = 0;
     theTree->SetBranchAddress("jets_CSV_reshapedUpBC",                        &(pointers->pointerToJets_CSV_reshapedUpBC));
@@ -397,6 +450,7 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("nonSelectedLeptonsPDGId",                      &(pointers->pointerToNonSelectedLeptonsPDGId));
     
     theTree->SetBranchAddress("rawPFMET",                                     &(myEvent->rawPFMET));
+    theTree->SetBranchAddress("METPhi",                                       &(myEvent->METPhi));
 
     theTree->SetBranchAddress("x_firstIncomingParton",                        &(myEvent->x_firstIncomingParton));                       
     theTree->SetBranchAddress("x_secondIncomingParton",                       &(myEvent->x_secondIncomingParton));     
@@ -421,16 +475,20 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("numberOfLepton",                               &(myEvent->numberOfLepton));
     theTree->Branch("leadingLepton","TLorentzVector",               &(myEvent->leadingLepton));
     theTree->Branch("leadingLeptonPDGId",                           &(myEvent->leadingLeptonPDGId));
+    theTree->Branch("leadingLeptonIdEfficiency",                    &(myEvent->leadingLeptonIdEfficiency));
+    theTree->Branch("leadingLeptonIsoScaleFactor",                  &(myEvent->leadingLeptonIsoScaleFactor));
     theTree->Branch("secondLepton","TLorentzVector",                &(myEvent->secondLepton));
     theTree->Branch("secondLeptonPDGId",                            &(myEvent->secondLeptonPDGId));
+    theTree->Branch("secondLeptonIdEfficiency",                     &(myEvent->secondLeptonIdEfficiency));
+    theTree->Branch("secondLeptonIsoScaleFactor",                   &(myEvent->secondLeptonIsoScaleFactor));
     theTree->Branch("isolatedTrackVeto",                            &(myEvent->isolatedTrackVeto));
     theTree->Branch("tauVeto",                                      &(myEvent->tauVeto));
     
     theTree->Branch("nJets",                                        &(myEvent->nJets));
     theTree->Branch("nBTag",                                        &(myEvent->nBTag));
-    //theTree->Branch("jets","std::vector<TLorentzVector>",           &(myEvent->jets));
-    //theTree->Branch("jets_CSV_raw",     "std::vector<Float_t>",     &(myEvent->jets_CSV_raw));
-    //theTree->Branch("jets_CSV_reshaped","std::vector<Float_t>",     &(myEvent->jets_CSV_reshaped));
+    theTree->Branch("jets","std::vector<TLorentzVector>",           &(myEvent->jets));
+    theTree->Branch("jets_CSV_raw",     "std::vector<Float_t>",     &(myEvent->jets_CSV_raw));
+    theTree->Branch("jets_CSV_reshaped","std::vector<Float_t>",     &(myEvent->jets_CSV_reshaped));
     //theTree->Branch("jets_partonFlav",  "std::vector<Int_t>",       &(myEvent->jets_partonFlav));
 
     theTree->Branch("MET",                                          &(myEvent->MET));
@@ -458,14 +516,14 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     //theTree->Branch("mCharginoParameter",                           &(myEvent->mCharginoParameter));
     
     theTree->Branch("numberOfGenLepton",                            &(myEvent->numberOfGenLepton));
-    //theTree->Branch("genParticles","std::vector<TLorentzVector>",   &(myEvent->genParticles));
-    //theTree->Branch("genParticlesPDGId","std::vector<Int_t>",       &(myEvent->genParticlesPDGId));
-    //theTree->Branch("genParticlesMother","std::vector<Int_t>",      &(myEvent->genParticlesMother));
+    theTree->Branch("genParticles","std::vector<TLorentzVector>",   &(myEvent->genParticles));
+    theTree->Branch("genParticlesPDGId","std::vector<Int_t>",       &(myEvent->genParticlesPDGId));
+    theTree->Branch("genParticlesMother","std::vector<Int_t>",      &(myEvent->genParticlesMother));
     
-    //theTree->Branch("numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
-    theTree->Branch("crossSection",                                 &(myEvent->crossSection));
+    theTree->Branch("numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
+    //theTree->Branch("crossSection",                                 &(myEvent->crossSection));
     //theTree->Branch("numberOfTruePU",                               &(myEvent->numberOfTruePU));
-    theTree->Branch("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
+    //theTree->Branch("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
     theTree->Branch("weightCrossSection",                           &(myEvent->weightCrossSection));
     theTree->Branch("weightPileUp",                                 &(myEvent->weightPileUp));
     theTree->Branch("weightISRmodeling",                            &(myEvent->weightISRmodeling));
@@ -502,6 +560,11 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("nJets_JESup",                                  &(myEvent->nJets_JESup));
     theTree->Branch("weightTriggerEfficiency_JESup",                &(myEvent->weightTriggerEfficiency_JESup));
     
+    theTree->Branch("nBTag_JESup",                                    &(myEvent->nBTag_JESup));
+    theTree->Branch("jets_JESup",      "std::vector<TLorentzVector>", &(myEvent->jets_JESup));
+    theTree->Branch("jets_CSV_raw_JESup",     "std::vector<Float_t>", &(myEvent->jets_CSV_raw_JESup));
+    theTree->Branch("jets_CSV_reshaped_JESup","std::vector<Float_t>", &(myEvent->jets_CSV_reshaped_JESup));
+
     theTree->Branch("MET_JESdown",                                  &(myEvent->MET_JESdown));
     theTree->Branch("MT_JESdown",                                   &(myEvent->MT_JESdown));
     theTree->Branch("deltaPhiMETJets_JESdown",                      &(myEvent->deltaPhiMETJets_JESdown));
@@ -519,6 +582,10 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("HTPlusLeptonPtPlusMET_JESdown",                &(myEvent->HTPlusLeptonPtPlusMET_JESdown));
     theTree->Branch("nJets_JESdown",                                &(myEvent->nJets_JESdown));
     theTree->Branch("weightTriggerEfficiency_JESdown",              &(myEvent->weightTriggerEfficiency_JESdown));
+    theTree->Branch("nBTag_JESdown",                                    &(myEvent->nBTag_JESdown));
+    theTree->Branch("jets_JESdown",      "std::vector<TLorentzVector>", &(myEvent->jets_JESdown));
+    theTree->Branch("jets_CSV_raw_JESdown",     "std::vector<Float_t>", &(myEvent->jets_CSV_raw_JESdown));
+    theTree->Branch("jets_CSV_reshaped_JESdown","std::vector<Float_t>", &(myEvent->jets_CSV_reshaped_JESdown));
 
     theTree->Branch("jets_CSV_reshapedUpBC",       "std::vector<Float_t>",          &(myEvent->jets_CSV_reshapedUpBC));
     theTree->Branch("jets_CSV_reshapedDownBC",     "std::vector<Float_t>",          &(myEvent->jets_CSV_reshapedDownBC));
@@ -534,6 +601,7 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("nonSelectedLeptonsPDGId",     "std::vector<Short_t>",          &(myEvent->nonSelectedLeptonsPDGId));
     
     theTree->Branch("rawPFMET",                     &(myEvent->rawPFMET));
+    theTree->Branch("METPhi",                       &(myEvent->METPhi));
 
     theTree->Branch("x_firstIncomingParton",        &(myEvent->x_firstIncomingParton));       
     theTree->Branch("x_secondIncomingParton",       &(myEvent->x_secondIncomingParton));      
