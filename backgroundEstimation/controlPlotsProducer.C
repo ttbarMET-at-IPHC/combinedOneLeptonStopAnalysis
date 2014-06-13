@@ -10,11 +10,10 @@ using namespace theDoctor;
 
 // BabyTuple format and location
 
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328_1lepton4jetsMET80/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_0603/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0603_1lepton4jetsMET80/"
+#include "Reader_newFinal0603_skimmed.h"
+
 #include "analysisDefinitions.h"
-babyEvent* myEventPointer;
 #include "cutAndCountDefinitions.h"
 
 
@@ -25,16 +24,6 @@ babyEvent* myEventPointer;
     #error SIGNAL_REGION_TAG need to be defined.
 #endif
 
-
-string signalRegionLabel(string signalRegionTag)
-{
-         if (signalRegionTag == "cutAndCount_T2tt_offShellLoose") return "Cut&count T2tt, Off-shell loose";
-    else if (signalRegionTag == "cutAndCount_T2tt_offShellTight") return "Cut&count T2tt, Off-shell tight";
-    else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"    ) return "Cut&count T2tt, Off-shell low #Delta m";
-    else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM" ) return "Cut&count T2tt, Off-shell medium #Delta m";
-    else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM"   ) return "Cut&count T2tt, Off-shell high #Delta m";
-    else return "";
-}
 
 bool LM150(bool applyMTCut)
 {
@@ -77,9 +66,6 @@ int main (int argc, char *argv[])
      // Create a sonic Screwdriver
       SonicScrewdriver screwdriver;
 
-     // Pointer to the event
-     myEventPointer = &myEvent;
-     
      // ##########################
      // ##   Create Variables   ##
      // ##########################

@@ -44,15 +44,7 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     // ###################################################################
     
     vector<string> predictionTableColumns = { "raw_mc", "prediction" };
-    vector<string> processes = 
-    {
-        "1ltop",
-        "ttbar_2l",
-        "W+jets",
-        "rare",
-        "total SM",
-    };
-    predictionTable = Table(predictionTableColumns, processes);
+    predictionTable = Table(predictionTableColumns, processesTagList);
 
     // Raw MC
     Figure N1ltop_mc  = rawYieldTable.Get("signalRegion_MTtail","1ltop"   ); 
@@ -65,49 +57,21 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     predictionTable.Set("raw_mc","ttbar_2l", N2ltop_mc );
     predictionTable.Set("raw_mc","W+jets",   Nwjets_mc );
     predictionTable.Set("raw_mc","rare",     Nrare_mc  );
-    predictionTable.Set("raw_mc","total SM", NSumBkg_mc);
+    predictionTable.Set("raw_mc","totalSM",  NSumBkg_mc);
 
     // ######################################################
     // #  Initialize the table containing the scale factors #
     // ######################################################
     
-    scaleFactors = 
-    {
-        "SF_pre",
-        "SF_post",
-        "SF_0btag",
-        "SFR_W+jets",
-        "R_W+jets",
-        "R_1ltop"
-    };
     vector<string> dummy = { "value" };
-
-    scaleFactorTable = Table(dummy,scaleFactors);
+    scaleFactorTable = Table(dummy,scaleFactorsTagList);
 
     // ##################################################################
     // #  Initialize the table containing the systematic uncertainties  #
     // ##################################################################
     
-    systematics = 
-    {
-        "tt->ll (CR4 & CR5 tests)",
-        "tt->ll (# jets modeling)",
-        "tt->ll (2nd lep veto)",
-        "SFR Wjets uncertainty",
-        "1-l Top tail-to-peak ratio",
-        "MT peak (data and MC stat)" ,
-        "W+jets (cross section)",
-        "Rare (cross section)",
-        "tt->ll (MC stat)",
-        "1l top (MC stat)",
-        "W+jets (MC stat)",
-        "rare (MC stat)",
-        "total"
-    };
-
-    vector<string> uncertainties = { "absolute", "relative (in %)" }; 
-
-    systematicsUncertainties = Table(uncertainties, systematics);
+    vector<string> uncertainties = { "absolute", "relative" }; 
+    systematicsUncertainties = Table(uncertainties, systematicsTagList);
     
     // Reset the systematics flags
     ResetSystematics();
@@ -117,13 +81,13 @@ void backgroundEstimation::Run()
 {
     ComputePredictionWithSystematics();
 
-    scaleFactorTable.PrintLatex(3);
-    systematicsUncertainties.PrintLatex(1,"noError");
-    predictionTable.PrintLatex(1);
+    //scaleFactorTable.PrintLatex(3);
+    //systematicsUncertainties.PrintLatex(1,"noError");
+    //predictionTable.PrintLatex(1);
 
-    scaleFactorTable.Print("scaleFactors/"+signalRegionLabel+".tab",3);
-    systematicsUncertainties.Print("systematics/"+signalRegionLabel+".tab",1,"noError");
-    predictionTable.Print("prediction/"+signalRegionLabel+".tab",1);
+    scaleFactorTable.Print("scaleFactors/"+signalRegionLabel+".tab",4);
+    systematicsUncertainties.Print("systematics/"+signalRegionLabel+".tab",4);
+    predictionTable.Print("prediction/"+signalRegionLabel+".tab",4);
 
 }
 
@@ -149,88 +113,88 @@ Figure backgroundEstimation::ComputePrediction()
     ComputeSFpost();
     ComputeRandSFR();
     FillPredictionTable();
-    return predictionTable.Get("prediction","total SM");
+    return predictionTable.Get("prediction","totalSM");
 }
 
 void backgroundEstimation::ComputePredictionWithSystematics()
 {
 
     // Loop over the uncertainties
-    for (unsigned int s = 0 ; s < systematics.size() ; s++)
+    for (unsigned int s = 0 ; s < systematicsTagList.size() ; s++)
     {
         ResetSystematics();
-        string systematic = systematics[s];
+        string systematic = systematicsTagList[s];
         float uncertainty = 0.0;
         
         if (systematic == "total") continue;
 
-        else if (systematic ==  "tt->ll (CR4 & CR5 tests)")
+        else if (systematic ==  "tt->ll_(CR4,CR5)")
         {
             ttll_CR4and5_rescale = 1-0.1; float yieldDown = ComputePrediction().value(); 
             ttll_CR4and5_rescale = 1+0.1; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic ==  "tt->ll (# jets modeling)")
+        else if (systematic ==  "tt->ll_(nJets)")
         {
             ttll_nJets_rescale = 1-0.17; float yieldDown = ComputePrediction().value(); 
             ttll_nJets_rescale = 1+0.17; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic ==  "tt->ll (2nd lep veto)")
+        else if (systematic ==  "tt->ll_(veto)")
         {
             ttll_2ndlepVeto_rescale = 1-0.024; float yieldDown = ComputePrediction().value(); 
             ttll_2ndlepVeto_rescale = 1+0.024; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "W+jets (cross section)") 
+        else if (systematic == "W+jets_(cross_section)") 
         {
             WjetCrossSection_rescale = 0.5; float yieldDown = ComputePrediction().value(); 
             WjetCrossSection_rescale = 1.5; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "Rare (cross section)") 
+        else if (systematic == "Rare_(cross_section)") 
         {
             rareCrossSection_rescale = 0.5; float yieldDown = ComputePrediction().value();
             rareCrossSection_rescale = 1.5; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "1-l Top tail-to-peak ratio") 
+        else if (systematic == "1ltop_tailToPeak") 
         {
             tailToPeakRatio_1lTop_variation = -1.0; float yieldDown = ComputePrediction().value();
             tailToPeakRatio_1lTop_variation =  1.0; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "SFR Wjets uncertainty") 
+        else if (systematic == "SFR_Wjets")
         {
             SFR_Wjets_variation = -1.0; float yieldDown = ComputePrediction().value();
             SFR_Wjets_variation =  1.0; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "MT peak (data and MC stat)") 
+        else if (systematic == "MTpeak")
         {
             MTpeakStat_variation = -1.0; float yieldDown = ComputePrediction().value();
             MTpeakStat_variation =  1.0; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "tt->ll (MC stat)")
+        else if (systematic == "tt->ll_(MCstat)")
         {
             ttbar2lStat_variation = -1.0; float yieldDown = ComputePrediction().value();
             ttbar2lStat_variation =  1.0; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "1l top (MC stat)")
+        else if (systematic == "1l_top_(MCstat)")
         {
             top1lStat_variation = -1.0; float yieldDown = ComputePrediction().value();
             top1lStat_variation =  1.0; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "W+jets (MC stat)")
+        else if (systematic == "W+jets_(MCstat)")
         {
             WjetsStat_variation = -1.0; float yieldDown = ComputePrediction().value();
             WjetsStat_variation =  1.0; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "rare (MC stat)")
+        else if (systematic == "rare_(MCstat)")
         {
             rareStat_variation = -1.0; float yieldDown = ComputePrediction().value();
             rareStat_variation =  1.0; float yieldUp   = ComputePrediction().value();
@@ -247,24 +211,24 @@ void backgroundEstimation::ComputePredictionWithSystematics()
     // Fill total uncertainty
 
     float totalUncertainty = 0.0;
-    for (unsigned int s = 0 ; s < systematics.size() ; s++)
+    for (unsigned int s = 0 ; s < systematicsTagList.size() ; s++)
     {
-        string systematic = systematics[s];
+        string systematic = systematicsTagList[s];
         float u = systematicsUncertainties.Get("absolute",systematic).value();
         totalUncertainty += u*u; 
     }
     totalUncertainty = sqrt(totalUncertainty);
     systematicsUncertainties.Set("absolute","total",Figure(totalUncertainty,0.0));
 
-    predictionTable.Set("prediction", "total SM", Figure(yieldNominal, totalUncertainty)); 
+    predictionTable.Set("prediction", "totalSM", Figure(yieldNominal, totalUncertainty)); 
 
     // Fill relative uncertainty from absolute
 
-    for (unsigned int s = 0 ; s < systematics.size() ; s++)
+    for (unsigned int s = 0 ; s < systematicsTagList.size() ; s++)
     {
-        string systematic = systematics[s];
+        string systematic = systematicsTagList[s];
         float absUncertainty = systematicsUncertainties.Get("absolute",systematic).value();
-        systematicsUncertainties.Set("relative (in %)",systematic,Figure(100 * absUncertainty / yieldNominal,0.0));
+        systematicsUncertainties.Set("relative",systematic,Figure( absUncertainty / yieldNominal,0.0));
     }
 
     // Fill scale factor table
@@ -387,6 +351,6 @@ void backgroundEstimation::FillPredictionTable()
     predictionTable.Set("prediction","ttbar_2l", N2ltop_prediction  );
     predictionTable.Set("prediction","W+jets",   Nwjets_prediction  );
     predictionTable.Set("prediction","rare",     Nrare_prediction );
-    predictionTable.Set("prediction","total SM", NSumBkg_prediction );
+    predictionTable.Set("prediction","totalSM",  NSumBkg_prediction );
 }
 

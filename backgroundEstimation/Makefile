@@ -37,10 +37,10 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-#TARGET = backgroundEstimation
 #TARGET = yieldTableProducer
-TARGET = controlPlotsProducer
-
+TARGET = backgroundEstimation
+#TARGET = controlPlotsProducer
+#TARGET = reportProducer
 #------------------------------------------------------------------------------
 
 default: compile run
@@ -71,6 +71,9 @@ predictions: backgroundEstimation.$(ExeSuf)
 
 controlPlots:
 	@$(foreach region,$(SIGNAL_REGIONS), echo "[Running on $(region)]" && make --no-print-directory clean && make --quiet --no-print-directory compile run TARGET=controlPlotsProducer SIGNAL_REGION_CUTS=$(region) SIGNAL_REGION_TAG=\\\"$(region)\\\" && mv ../plots/backgroundEstimation/pdf/1DDataMCComparison ./controlPlotsDataMC/$(region) && mv ../plots/backgroundEstimation/1DDataMCComparison.root ./controlPlotsDataMC/$(region).root ;)
+
+report: reportProducer.$(ExeSuf)
+	./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf)
 
 #------------------------------------------------------------------------------
 

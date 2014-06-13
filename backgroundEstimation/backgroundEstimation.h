@@ -3,6 +3,7 @@
 
 #include "interface/tables/TableDataMC.h"
 #include "interface/Figure.h"
+#include "common.h"
 
 using namespace std;
 using namespace theDoctor;
@@ -34,9 +35,6 @@ class backgroundEstimation{
     private:
        
         string signalRegionLabel;
-
-        vector<string> systematics;
-        vector<string> scaleFactors;
 
         // Scale factors
 

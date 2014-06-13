@@ -10,12 +10,11 @@ using namespace theDoctor;
 
 // BabyTuple format and location
 
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
-#define FOLDER_BABYTUPLES "../store/babyTuples_0328_1lepton4jetsMET80/"
-#include "analysisDefinitions.h"
-babyEvent* myEventPointer;
-#include "cutAndCountDefinitions.h"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0603_1lepton4jetsMET80/"
+#include "Reader_newFinal0603_skimmed.h"
 
+#include "analysisDefinitions.h"
+#include "cutAndCountDefinitions.h"
 
 #ifndef SIGNAL_REGION_CUTS
     #error SIGNAL_REGION_CUTS need to be defined.
@@ -63,9 +62,6 @@ int main (int argc, char *argv[])
      // Create a sonic Screwdriver
       SonicScrewdriver screwdriver;
 
-     // Pointer to the event
-     myEventPointer = &myEvent;
-     
      // ##########################
      // ##   Create Variables   ##
      // ##########################
@@ -76,20 +72,19 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("1ltop",           "1l top",                            "background",kRed-7);
-     screwdriver.AddProcessClass("ttbar_2l",        "t#bar{t} #rightarrow l^{+}l^{-}",   "background",kCyan-3);
-            screwdriver.AddDataset("ttbar",         "1ltop",  0, 0);
+     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
+            screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
+            screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
      
-     screwdriver.AddProcessClass("W+jets",          "W+jets",                            "background",kOrange-2);
-             screwdriver.AddDataset("Wjets",        "W+jets", 0, 0);
+     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
      
-     screwdriver.AddProcessClass("rare",          "rare",                            "background",kMagenta-5);
-             screwdriver.AddDataset("others",       "rare", 0, 0);
-    
-     //screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1);
-     //        screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
+     screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
+             screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
 
-     screwdriver.AddProcessClass("data",   "data",                                       "data",COLORPLOT_BLACK);
+     screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
+             screwdriver.AddDataset("rare",   "rare", 0, 0);
+     
+     screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
 
@@ -145,7 +140,7 @@ int main (int argc, char *argv[])
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
      
      intermediatePointers pointers;
-     InitializeBranches(theTree,&myEvent,&pointers);
+     InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
   // ########################################
   // ##        Run over the events         ##
@@ -163,18 +158,10 @@ int main (int argc, char *argv[])
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
-          if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
+          if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
 
-          // Split singletop s and t channels from other
-          if ((currentDataset == "rare") 
-          && ((myEvent.crossSection == 1.8)
-          ||  (myEvent.crossSection == 30.0)
-          ||  (myEvent.crossSection == 3.9 )
-          ||  (myEvent.crossSection == 55.5))) currentProcessClass_ = "1ltop"; 
-
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
-
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
