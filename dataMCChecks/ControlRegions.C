@@ -11,7 +11,19 @@ using namespace theDoctor;
 // BabyTuple format and location
 
 #define FOLDER_BABYTUPLES "../store/babyTuples_0603/"
+#include "Reader_newFinal0603.h"
 #include "analysisDefinitions.h"
+
+bool goesInLooseDileptonRegion() 
+{
+    if (myEvent.numberOfLepton != 2) return false;
+
+    // Remove same-sign events
+    if ((myEvent.leadingLeptonPDGId < 0) && (myEvent.secondLeptonPDGId < 0)) return false;
+    if ((myEvent.leadingLeptonPDGId > 0) && (myEvent.secondLeptonPDGId > 0)) return false;
+    
+    return true; 
+}
 
 // #########################################################################
 //                              Main function
@@ -51,23 +63,27 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
+    
+     float invariantMass;
+     screwdriver.AddVariable("m_ll",           "m_{ll}",                  "GeV",    50,50,150,      &(invariantMass),        "");
+
 
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
+     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",COLORPLOT_RED);
             screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
             screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
-     
-     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
-     
-     screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
+   
+     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",COLORPLOT_CYAN);
+   
+     screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",COLORPLOT_ORANGE);
              screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
 
-     screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
+     screwdriver.AddProcessClass("rare",   "rare",                              "background",COLORPLOT_MAGENTA);
              screwdriver.AddDataset("rare",   "rare", 0, 0);
-     
+   
      screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
@@ -84,6 +100,8 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("0btag",       "Pre-selection;0 b-tag control region",    &goesIn0BtagControlRegionMTtail);
      screwdriver.AddRegion("2leptons",    "Pre-selection;2l control region",         &goesInDileptonControlRegion   );
      screwdriver.AddRegion("lepton+veto", "Pre-selection;1l+veto control region",    &goesInVetosControlRegion      );
+     
+     screwdriver.AddRegion("looseDilepton", "Loose dilepton check",         &goesInLooseDileptonRegion   );
 
   // ##########################
   // ##   Create Channels    ##
@@ -169,6 +187,8 @@ int main (int argc, char *argv[])
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
           float weight = getWeight();
+     
+          invariantMass = (myEvent.leadingLepton + myEvent.secondLepton).M();
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
@@ -176,7 +196,6 @@ int main (int argc, char *argv[])
               currentProcessClass_ = "ttbar_2l";
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
-
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
