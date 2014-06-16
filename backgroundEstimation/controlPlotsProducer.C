@@ -1,4 +1,5 @@
 #include "../common.h"
+#include "common.h"
 
 // Sonic screwdriver headers
 

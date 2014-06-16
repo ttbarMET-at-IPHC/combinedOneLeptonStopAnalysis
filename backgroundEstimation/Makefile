@@ -6,9 +6,6 @@ LogSuf        = log
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
 
-#SIGNAL_REGION_CUTS = cutAndCount_T2tt_offShellLoose
-#SIGNAL_REGION_TAG = \"T2tt_offShellLoose\"
-
 DEFINES       = -DSIGNAL_REGION_CUTS=$(SIGNAL_REGION_CUTS)
 DEFINES      += -DSIGNAL_REGION_TAG=$(SIGNAL_REGION_TAG)
 
@@ -73,7 +70,7 @@ controlPlots:
 	@$(foreach region,$(SIGNAL_REGIONS), echo "[Running on $(region)]" && make --no-print-directory clean && make --quiet --no-print-directory compile run TARGET=controlPlotsProducer SIGNAL_REGION_CUTS=$(region) SIGNAL_REGION_TAG=\\\"$(region)\\\" && mv ../plots/backgroundEstimation/pdf/1DDataMCComparison ./controlPlotsDataMC/$(region) && mv ../plots/backgroundEstimation/1DDataMCComparison.root ./controlPlotsDataMC/$(region).root ;)
 
 report: reportProducer.$(ExeSuf)
-	./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf)
+	./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf) > reports/report.tex && cd reports && pdflatex report.tex
 
 #------------------------------------------------------------------------------
 

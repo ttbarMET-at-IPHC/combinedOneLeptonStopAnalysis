@@ -67,24 +67,42 @@ int main (int argc, char *argv[])
             absoluteSystematicsSummary.Set(signalRegionsTagList[i],systematicsTagList[j],
                                                                                          systematics[i].Get("absolute",systematicsTagList[j])); 
             relativeSystematicsSummary.Set(signalRegionsTagList[i],systematicsTagList[j],
-                                                                                         systematics[i].Get("relative",systematicsTagList[j])); 
+                                                                                         systematics[i].Get("relative",systematicsTagList[j]) * 100); 
         }
     }
-  
-    cout << "Raw yields\\\\" << endl;
+
+   
+    cout << "\\documentclass[a4paper, 12pt]{article}" << endl;
+    cout << "\\usepackage{amsmath}" << endl;
+    cout << "\\usepackage[landscape]{geometry}" << endl;
+    //cout << "\\usepackage{geometry}" << endl;
+    cout << "\\geometry{a4paper, top=0.5cm, bottom=0.5cm, left=0.3cm, right=0.3cm}" << endl;
+
+    cout << "\\begin{document}" << endl;
+    cout << "\\begin{center}" << endl;
+
+    cout << "{\\Large Raw yields}\\\\" << endl;
     rawYieldSummary.PrintLatex(2);
+    cout << "\\\\ \\bigskip" << endl;
 
-    cout << "Scale factors\\\\" << endl;
+    cout << "{\\Large Scale factors}\\\\" << endl;
     scaleFactorsSummary.PrintLatex(2);
+    cout << "\\\\ \\bigskip" << endl;
 
-    cout << "Absolute uncertainties\\\\" << endl;
+    cout << "{\\Large Absolute uncertainties}\\\\" << endl;
     absoluteSystematicsSummary.PrintLatex(1,"noError");
+    cout << "\\\\ \\bigskip" << endl;
 
-    cout << "Relative uncertainties\\\\" << endl;
+    cout << "{\\Large Relative uncertainties (in percents)}\\\\" << endl;
     relativeSystematicsSummary.PrintLatex(1,"noError");
+    cout << "\\\\ \\bigskip" << endl;
     
-    cout << "Prediction\\\\" << endl;
+    cout << "{\\Large Prediction}\\\\" << endl;
     predictionSummary.PrintLatex(2);
+    cout << "\\\\ \\bigskip" << endl;
+    
+    cout << "\\end{center}" << endl;
+    cout << "\\end{document}" << endl;
 
     return (0);
 }

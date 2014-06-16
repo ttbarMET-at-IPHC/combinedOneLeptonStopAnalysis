@@ -20,16 +20,16 @@ vector<string> systematicsTagList =
 
 vector<string> systematicsLabelList =
 {
-    "$t\\bar{t} \\rightarrow \ell \\ell$ (CR4 \\& CR5 tests)",
-    "$t\\bar{t} \\rightarrow \ell \\ell$ (jets modeling)",
-    "$t\\bar{t} \\rightarrow \ell \\ell$ (2nd lepton veto)",
+    "$t\\bar{t} \\rightarrow \\ell \\ell$ (CR4 \\& CR5 tests)",
+    "$t\\bar{t} \\rightarrow \\ell \\ell$ (jets modeling)",
+    "$t\\bar{t} \\rightarrow \\ell \\ell$ (2nd lepton veto)",
     "$SFR_{\\text{W+jets}}$ uncertainty",
-    "$1\\ell t$ tail-to-peak ratio",
+    "1$\\ell$ top tail-to-peak ratio",
     "$M_T$ peak (data and MC stat)" ,
-    "$W$+jets (cross_section)",
-    "rare (cross_section)",
-    "$t\\bar{t} \\rightarrow \\ell \\ell$ (MC_stat)",
-    "$1\\ell t$ (MC stat)",
+    "$W$+jets (cross section)",
+    "rare (cross section)",
+    "$t\\bar{t} \\rightarrow \\ell \\ell$ (MC stat)",
+    "1$\\ell$ top (MC stat)",
     "$W$+jets (MC stat)",
     "rare (MC stat)",
     "total"
@@ -67,31 +67,68 @@ vector<string> scaleFactorsLabelList =
 {
     "$SF_{pre}$",
     "$SF_{post}$",
-    "$SF_{\text{0 $b$-tag}}$",
-    "$SFR_{\text{$W$+jets}}$",
-    "$R_{\text{$W$+jets}}$",
-    "$R_{\text{1$\ell$top}}$"
+    "$SF_{\\text{0 $b$-tag}}$",
+    "$SFR_{\\text{$W$+jets}}$",
+    "$R_{\\text{$W$+jets}}$",
+    "$R_{\\text{1$\\ell$top}}$"
 };
 
 string signalRegionLabel(string signalRegionTag, string format = "root")
 {
     if (format == "root")
     {
-             if (signalRegionTag == "cutAndCount_T2tt_offShellLoose") return "C&C T2tt, Off-shell loose";
-        else if (signalRegionTag == "cutAndCount_T2tt_offShellTight") return "C&C T2tt, Off-shell tight";
-        else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"    ) return "C&C T2tt, Low #Delta m";
-        else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM" ) return "C&C T2tt, Medium #Delta m";
-        else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM"   ) return "C&C T2tt, High #Delta m";
-        else return "";
-    }
+             if (signalRegionTag == "cutAndCount_T2tt_offShellLoose"        ) return "C&C T2tt, Off-shell loose";
+        else if (signalRegionTag == "cutAndCount_T2tt_offShellTight"        ) return "C&C T2tt, Off-shell tight";
+        else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"            ) return "C&C T2tt, Low #Delta m";
+        else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM"         ) return "C&C T2tt, Medium #Delta m";
+        else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM"           ) return "C&C T2tt, High #Delta m";
+        else if (signalRegionTag == "cutAndCount_T2bw025_veryOffShell_loose") return "C&C T2bw x=0.25, Very off-shell loose";
+        else if (signalRegionTag == "cutAndCount_T2bw025_veryOffShell_tight") return "C&C T2bw x=0.25, Very off-shell tight";
+        else if (signalRegionTag == "cutAndCount_T2bw025_offShell_loose"    ) return "C&C T2bw x=0.25, Off-shell loose";
+        else if (signalRegionTag == "cutAndCount_T2bw025_offShell_tight"    ) return "C&C T2bw x=0.25, Off-shell tight";
+        else if (signalRegionTag == "cutAndCount_T2bw025_lowDeltaM_loose"   ) return "C&C T2bw x=0.25, Low #Delta m loose"; 
+        else if (signalRegionTag == "cutAndCount_T2bw025_lowDeltaM_tight"   ) return "C&C T2bw x=0.25, Low #Delta m tight";
+        else if (signalRegionTag == "cutAndCount_T2bw025_highDeltaM"        ) return "C&C T2bw x=0.25, High #Delta m";
+        else if (signalRegionTag == "cutAndCount_T2bw050_offShell_loose"    ) return "C&C T2bw x=0.50, Off-shell loose";
+        else if (signalRegionTag == "cutAndCount_T2bw050_offShell_tight"    ) return "C&C T2bw x=0.50, Off-shell tight";
+        else if (signalRegionTag == "cutAndCount_T2bw050_lowMass"           ) return "C&C T2bw x=0.50, Low mass";
+        else if (signalRegionTag == "cutAndCount_T2bw050_lowDeltaM"         ) return "C&C T2bw x=0.50, Low #Delta m";
+        else if (signalRegionTag == "cutAndCount_T2bw050_mediumDeltaM_loose") return "C&C T2bw x=0.50, Medium #Delta m loose"; 
+        else if (signalRegionTag == "cutAndCount_T2bw050_mediumDeltaM_tight") return "C&C T2bw x=0.50, Medium #Delta m tight"; 
+        else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM"        ) return "C&C T2bw x=0.50, High #Delta m";
+        else if (signalRegionTag == "cutAndCount_T2bw075_lowDeltaM_loose"   ) return "C&C T2bw x=0.75, Low #Delta m loose"; 
+        else if (signalRegionTag == "cutAndCount_T2bw075_lowDeltaM_tight"   ) return "C&C T2bw x=0.75, Low #Delta m tight";
+        else if (signalRegionTag == "cutAndCount_T2bw075_mediumDeltaM"      ) return "C&C T2bw x=0.75, Medium #Delta m"; 
+        else if (signalRegionTag == "cutAndCount_T2bw075_highDeltaM"        ) return "C&C T2bw x=0.75, High #Delta m";
+        else return "";                                                                           
+    }                                                                                             
     else
     {
-             if (signalRegionTag == "cutAndCount_T2tt_offShellLoose") return "C\\&C T2tt, Off-shell loose";
-        else if (signalRegionTag == "cutAndCount_T2tt_offShellTight") return "C\\&C T2tt, Off-shell tight";
-        else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"    ) return "C\\&C T2tt, Low \\Delta m";
-        else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM" ) return "C\\&C T2tt, Medium \\Delta m";
-        else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM"   ) return "C\\&C T2tt, High \\Delta m";
-        else return "";
+             if (signalRegionTag == "cutAndCount_T2tt_offShellLoose"        ) return /*"C\\&C T2tt, "+*/       "Off-shell loose";
+        else if (signalRegionTag == "cutAndCount_T2tt_offShellTight"        ) return /*"C\\&C T2tt, "+*/       "Off-shell tight";
+        else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"            ) return /*"C\\&C T2tt, "+*/       "Low $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM"         ) return /*"C\\&C T2tt, "+*/       "Medium $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM"           ) return /*"C\\&C T2tt, "+*/       "High $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2bw025_veryOffShell_loose") return /*"C\\&C T2bw x=0.25, "+*/"Very off-shell loose";
+        else if (signalRegionTag == "cutAndCount_T2bw025_veryOffShell_tight") return /*"C\\&C T2bw x=0.25, "+*/"Very off-shell tight";
+        else if (signalRegionTag == "cutAndCount_T2bw025_offShell_loose"    ) return /*"C\\&C T2bw x=0.25, "+*/"Off-shell loose";
+        else if (signalRegionTag == "cutAndCount_T2bw025_offShell_tight"    ) return /*"C\\&C T2bw x=0.25, "+*/"Off-shell tight";
+        else if (signalRegionTag == "cutAndCount_T2bw025_lowDeltaM_loose"   ) return /*"C\\&C T2bw x=0.25, "+*/"Low $\\Delta m$ loose"; 
+        else if (signalRegionTag == "cutAndCount_T2bw025_lowDeltaM_tight"   ) return /*"C\\&C T2bw x=0.25, "+*/"Low $\\Delta m$ tight";
+        else if (signalRegionTag == "cutAndCount_T2bw025_highDeltaM"        ) return /*"C\\&C T2bw x=0.25, "+*/"High $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2bw050_offShell_loose"    ) return /*"C\\&C T2bw x=0.50, "+*/"Off-shell loose";
+        else if (signalRegionTag == "cutAndCount_T2bw050_offShell_tight"    ) return /*"C\\&C T2bw x=0.50, "+*/"Off-shell tight";
+        else if (signalRegionTag == "cutAndCount_T2bw050_lowMass"           ) return /*"C\\&C T2bw x=0.50, "+*/"Low mass";
+        else if (signalRegionTag == "cutAndCount_T2bw050_lowDeltaM"         ) return /*"C\\&C T2bw x=0.50, "+*/"Low $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2bw050_mediumDeltaM_loose") return /*"C\\&C T2bw x=0.50, "+*/"Medium $\\Delta m$ loose"; 
+        else if (signalRegionTag == "cutAndCount_T2bw050_mediumDeltaM_tight") return /*"C\\&C T2bw x=0.50, "+*/"Medium $\\Delta m$ tight"; 
+        else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM"        ) return /*"C\\&C T2bw x=0.50, "+*/"High $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2bw075_lowDeltaM_loose"   ) return /*"C\\&C T2bw x=0.75, "+*/"Low $\\Delta m$ loose"; 
+        else if (signalRegionTag == "cutAndCount_T2bw075_lowDeltaM_tight"   ) return /*"C\\&C T2bw x=0.75, "+*/"Low $\\Delta m$ tight";
+        else if (signalRegionTag == "cutAndCount_T2bw075_mediumDeltaM"      ) return /*"C\\&C T2bw x=0.75, "+*/"Medium $\\Delta m$"; 
+        else if (signalRegionTag == "cutAndCount_T2bw075_highDeltaM"        ) return /*"C\\&C T2bw x=0.75, "+*/"High $\\Delta m$";
+        else return "";                                                                               
+        
     }
 }
 
