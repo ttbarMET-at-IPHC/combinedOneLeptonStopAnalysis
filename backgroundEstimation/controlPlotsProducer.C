@@ -116,11 +116,8 @@ int main (int argc, char *argv[])
      // ##    Create Regions    ##
      // ##########################
 
-     screwdriver.AddRegion("presel_MTpeak",           "Pre-selection;MT peak Control Region", &goesInPreselectionMTpeak);
-     screwdriver.AddRegion("presel_0btag",            "Pre-selection;0 b-tag Control Region", &goesIn0BtagControlRegionMTtail);
-
-     screwdriver.AddRegion("signalRegion_MTpeak",     signalRegionLabel(SIGNAL_REGION_TAG)+";MT peak Control Region", &goesInPreselectionMTpeak_withSRCuts);
-     screwdriver.AddRegion("signalRegion_0btag",      signalRegionLabel(SIGNAL_REGION_TAG)+";0 b-tag Control Region", &goesIn0BtagControlRegionMTtail_withSRCuts, "rebin=2");
+     screwdriver.AddRegion("MTpeak",     signalRegionLabel(SIGNAL_REGION_TAG)+";MT peak Control Region", &goesInPreselectionMTpeak_withSRCuts);
+     screwdriver.AddRegion("0btag",      signalRegionLabel(SIGNAL_REGION_TAG)+";0 b-tag Control Region", &goesIn0BtagControlRegionMTtail_withSRCuts, "rebin=2");
 
      // ##########################
      // ##   Create Channels    ##
@@ -216,17 +213,17 @@ int main (int argc, char *argv[])
   Figure SF_0btag   = scaleFactors.Get("value","SF_0btag");
   Figure SFR_Wjets  = scaleFactors.Get("value","SFR_W+jets");
 
-  //TableDataMC(&screwdriver,{"signalRegion_MTpeak" },"singleLepton").Print();
+  //TableDataMC(&screwdriver,{"MTpeak" },"singleLepton").Print();
 
-  screwdriver.ApplyScaleFactor("ttbar_2l","signalRegion_MTpeak","singleLepton",SF_pre);
-  screwdriver.ApplyScaleFactor("1ltop",   "signalRegion_MTpeak","singleLepton",SF_post);
-  screwdriver.ApplyScaleFactor("W+jets",  "signalRegion_MTpeak","singleLepton",SF_post);
+  screwdriver.ApplyScaleFactor("ttbar_2l","MTpeak","singleLepton",SF_pre);
+  screwdriver.ApplyScaleFactor("1ltop",   "MTpeak","singleLepton",SF_post);
+  screwdriver.ApplyScaleFactor("W+jets",  "MTpeak","singleLepton",SF_post);
 
-  screwdriver.ApplyScaleFactor("W+jets","signalRegion_0btag","singleLepton",SF_0btag);
-  screwdriver.ApplyScaleFactor("1ltop", "signalRegion_0btag","singleLepton",SF_0btag);
-  screwdriver.ApplyScaleFactor("W+jets","signalRegion_0btag","singleLepton",SFR_Wjets);
+  screwdriver.ApplyScaleFactor("W+jets","0btag","singleLepton",SF_0btag);
+  screwdriver.ApplyScaleFactor("1ltop", "0btag","singleLepton",SF_0btag);
+  screwdriver.ApplyScaleFactor("W+jets","0btag","singleLepton",SFR_Wjets);
   
-  //TableDataMC(&screwdriver,{"signalRegion_MTpeak" },"singleLepton").Print();
+  //TableDataMC(&screwdriver,{"MTpeak" },"singleLepton").Print();
 
   // ###################################
   // ##   Make plots and write them   ##
@@ -236,7 +233,7 @@ int main (int argc, char *argv[])
   cout << "   > Making plots..." << endl;
   screwdriver.MakePlots();
   cout << "   > Saving plots..." << endl;
-  screwdriver.WritePlots("../plots/backgroundEstimation/");
+  screwdriver.WritePlots(string("./controlPlotsDataMC/")+SIGNAL_REGION_TAG);
 
   printBoxedMessage("Plot generation completed");
 
