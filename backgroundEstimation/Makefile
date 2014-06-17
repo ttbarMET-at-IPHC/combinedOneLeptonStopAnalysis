@@ -34,8 +34,8 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-#TARGET = yieldTableProducer
-TARGET = backgroundEstimation
+TARGET = yieldTableProducer
+#TARGET = backgroundEstimation
 #TARGET = controlPlotsProducer
 #TARGET = reportProducer
 #------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ browse:
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
+	@rm -f *.$(ObjSuf) *.$(ExeSuf) *.$(LogSuf)
 
 #------------------------------------------------------------------------------
 
@@ -61,13 +61,54 @@ clean:
 SIGNAL_REGIONS = cutAndCount_T2tt_offShellLoose cutAndCount_T2tt_offShellTight cutAndCount_T2tt_lowDeltaM   cutAndCount_T2tt_mediumDeltaM  cutAndCount_T2tt_highDeltaM
 
 tables:
-	@$(foreach region,$(SIGNAL_REGIONS), echo "[Running on $(region)]" && make --no-print-directory clean && make --quiet --no-print-directory compile run TARGET=yieldTableProducer SIGNAL_REGION_CUTS=$(region) SIGNAL_REGION_TAG=\\\"$(region)\\\";)
+	@make --no-print-directory clean 
+	@for REGION in $(SIGNAL_REGIONS); 		  \
+	 do									      \
+	        echo "[Lauching signal region $$REGION]";     \
+	        make --quiet --no-print-directory compile TARGET=yieldTableProducer SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; 	\
+			mv yieldTableProducer.$(ExeSuf) yieldTableProducer_$$REGION.$(ExeSuf); \
+			./yieldTableProducer_$$REGION.$(ExeSuf) > yieldTableProducer_$$REGION.$(LogSuf) & \
+	done;
+	@for REGION in $(SIGNAL_REGIONS); 	\
+	do									\
+		echo "Waiting for $$REGION";	\
+		CHECK="nonEmpty";				\
+		while [ "$$CHECK" != "" ];		\
+		do								\
+			sleep 1;					\
+			CHECK=`ps kstart_time | grep yieldTableProducer_$$REGION.$(ExeSuf) | grep -v grep`;	\
+		done;							\
+	done;								\
+	echo "Done";
 
 predictions: backgroundEstimation.$(ExeSuf)
-	@$(foreach region,$(SIGNAL_REGIONS), echo "[Running on $(region)]" && ./backgroundEstimation.$(ExeSuf) $(region);)
+	@for REGION in $(SIGNAL_REGIONS);					\
+	 do													\
+	 	   echo "[Running on $$REGION]";			    \
+		   ./backgroundEstimation.$(ExeSuf) $$REGION;	\
+	 done;
 
 controlPlots:
-	@$(foreach region,$(SIGNAL_REGIONS), echo "[Running on $(region)]" && make --no-print-directory clean && make --quiet --no-print-directory compile run TARGET=controlPlotsProducer SIGNAL_REGION_CUTS=$(region) SIGNAL_REGION_TAG=\\\"$(region)\\\" && mv ../plots/backgroundEstimation/pdf/1DDataMCComparison ./controlPlotsDataMC/$(region) && mv ../plots/backgroundEstimation/1DDataMCComparison.root ./controlPlotsDataMC/$(region).root ;)
+	@make --no-print-directory clean;
+	@for REGION in $(SIGNAL_REGIONS);        \
+	 do                                      \
+		   echo "[Launching signal region $$REGION]";     \
+	 	   make --quiet --no-print-directory compile TARGET=controlPlotsProducer SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; \
+		   mv controlPlotsProducer.$(ExeSuf) controlPlotsProducer_$$REGION.$(ExeSuf);			\
+		   ./controlPlotsProducer_$$REGION.$(ExeSuf) > controlPlotsProducer_$$REGION.$(LogSuf) & \
+	done;
+	@for REGION in $(SIGNAL_REGIONS); 	\
+	do									\
+		echo "Waiting for $$REGION";	\
+		CHECK="nonEmpty";				\
+		while [ "$$CHECK" != "" ];		\
+		do								\
+			sleep 1;					\
+			CHECK=`ps kstart_time | grep controlPlotsProducer_$$REGION.$(ExeSuf) | grep -v grep`;	\
+		done;							\
+	done;								\
+	echo "Done";
+
 
 report: reportProducer.$(ExeSuf)
 	./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf) > reports/report.tex && cd reports && pdflatex report.tex
