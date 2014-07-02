@@ -214,6 +214,30 @@ typedef struct
     Int_t   flavor_secondIncomingParton;        // PDGId of the second incoming parton
     Float_t scalePDF;                           // The PDF scale
 
+    // BDT related quantities
+
+    Int_t isUsedInBDT;
+    Double_t BDT_output_t2bw025_R1;
+    Double_t BDT_output_t2bw025_R3;
+    Double_t BDT_output_t2bw025_R4;
+    Double_t BDT_output_t2bw025_R6;
+    Double_t BDT_output_t2bw050_R1;
+    Double_t BDT_output_t2bw050_R3;
+    Double_t BDT_output_t2bw050_R4;
+    Double_t BDT_output_t2bw050_R5;
+    Double_t BDT_output_t2bw050_R6;
+    Double_t BDT_output_t2bw075_R1;
+    Double_t BDT_output_t2bw075_R2;
+    Double_t BDT_output_t2bw075_R3;
+    Double_t BDT_output_t2bw075_R5;
+    Double_t BDT_output_t2tt_R1;
+    Double_t BDT_output_t2tt_R2;
+    Double_t BDT_output_t2tt_R5;
+
+    //Store information about the presence of a second lepton in acceptance
+    Bool_t secondLeptonInAcceptance;
+    //Store information about the ISR jets
+    Bool_t ISRJet;
 } babyEvent;
 
 typedef struct
@@ -272,7 +296,7 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       myEvent->nonSelectedJets_partonFlav   = *(pointers->pointerToNonSelectedJets_partonFlav);   
 
       myEvent->nonSelectedLeptons           = *(pointers->pointerToNonSelectedLeptons); 
-      myEvent->nonSelectedLeptonsPDGId      = *(pointers->pointerToNonSelectedLeptonsPDGId); 
+      //myEvent->nonSelectedLeptonsPDGId      = *(pointers->pointerToNonSelectedLeptonsPDGId); 
 
       myEvent->jets_JESdown                 = *(pointers->pointerToJets_JESdown); 
       myEvent->jets_CSV_raw_JESdown         = *(pointers->pointerToJets_CSV_raw_JESdown);
@@ -446,8 +470,8 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
 
     pointers->pointerToNonSelectedLeptons           = 0;                                
     theTree->SetBranchAddress("nonSelectedLeptons",                           &(pointers->pointerToNonSelectedLeptons)); 
-    pointers->pointerToNonSelectedLeptonsPDGId      = 0;                                
-    theTree->SetBranchAddress("nonSelectedLeptonsPDGId",                      &(pointers->pointerToNonSelectedLeptonsPDGId));
+    //pointers->pointerToNonSelectedLeptonsPDGId      = 0;                                
+    //theTree->SetBranchAddress("nonSelectedLeptonsPDGId",                      &(pointers->pointerToNonSelectedLeptonsPDGId));
     
     theTree->SetBranchAddress("rawPFMET",                                     &(myEvent->rawPFMET));
     theTree->SetBranchAddress("METPhi",                                       &(myEvent->METPhi));
@@ -457,6 +481,25 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("flavor_firstIncomingParton",                   &(myEvent->flavor_firstIncomingParton)); 
     theTree->SetBranchAddress("flavor_secondIncomingParton",                  &(myEvent->flavor_secondIncomingParton));
     theTree->SetBranchAddress("scalePDF",                                     &(myEvent->scalePDF));                   
+    
+    //--- BDT variables
+    theTree->SetBranchAddress("isUsedInBDT",		&(myEvent->isUsedInBDT));
+    theTree->SetBranchAddress("BDT_output_t2bw025_R1",	&(myEvent->BDT_output_t2bw025_R1));
+    theTree->SetBranchAddress("BDT_output_t2bw025_R3",	&(myEvent->BDT_output_t2bw025_R3));
+    theTree->SetBranchAddress("BDT_output_t2bw025_R4",	&(myEvent->BDT_output_t2bw025_R4));
+    theTree->SetBranchAddress("BDT_output_t2bw025_R6",	&(myEvent->BDT_output_t2bw025_R6));
+    theTree->SetBranchAddress("BDT_output_t2bw050_R1",	&(myEvent->BDT_output_t2bw050_R1));
+    theTree->SetBranchAddress("BDT_output_t2bw050_R3",	&(myEvent->BDT_output_t2bw050_R3));
+    theTree->SetBranchAddress("BDT_output_t2bw050_R4",	&(myEvent->BDT_output_t2bw050_R4));
+    theTree->SetBranchAddress("BDT_output_t2bw050_R5",	&(myEvent->BDT_output_t2bw050_R5));
+    theTree->SetBranchAddress("BDT_output_t2bw050_R6",	&(myEvent->BDT_output_t2bw050_R6));
+    theTree->SetBranchAddress("BDT_output_t2bw075_R1",	&(myEvent->BDT_output_t2bw075_R1));
+    theTree->SetBranchAddress("BDT_output_t2bw075_R2",	&(myEvent->BDT_output_t2bw075_R2));
+    theTree->SetBranchAddress("BDT_output_t2bw075_R3",	&(myEvent->BDT_output_t2bw075_R3));
+    theTree->SetBranchAddress("BDT_output_t2bw075_R5",	&(myEvent->BDT_output_t2bw075_R5));
+    theTree->SetBranchAddress("BDT_output_t2tt_R1",	&(myEvent->BDT_output_t2tt_R1   ));
+    theTree->SetBranchAddress("BDT_output_t2tt_R2",	&(myEvent->BDT_output_t2tt_R2   ));
+    theTree->SetBranchAddress("BDT_output_t2tt_R5",	&(myEvent->BDT_output_t2tt_R5   ));
 }
 
 void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
@@ -486,9 +529,11 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     
     theTree->Branch("nJets",                                        &(myEvent->nJets));
     theTree->Branch("nBTag",                                        &(myEvent->nBTag));
+    /*
     theTree->Branch("jets","std::vector<TLorentzVector>",           &(myEvent->jets));
     theTree->Branch("jets_CSV_raw",     "std::vector<Float_t>",     &(myEvent->jets_CSV_raw));
     theTree->Branch("jets_CSV_reshaped","std::vector<Float_t>",     &(myEvent->jets_CSV_reshaped));
+    */
     //theTree->Branch("jets_partonFlav",  "std::vector<Int_t>",       &(myEvent->jets_partonFlav));
 
     theTree->Branch("MET",                                          &(myEvent->MET));
@@ -511,14 +556,18 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     //theTree->Branch("nWTag",                                        &(myEvent->nWTag));
     //theTree->Branch("leadingWjetPt",                                &(myEvent->leadingWjetPt));
     
+    /*
     theTree->Branch("mStop",                                        &(myEvent->mStop));
     theTree->Branch("mNeutralino",                                  &(myEvent->mNeutralino));
+    */
     //theTree->Branch("mCharginoParameter",                           &(myEvent->mCharginoParameter));
     
     theTree->Branch("numberOfGenLepton",                            &(myEvent->numberOfGenLepton));
+    /*
     theTree->Branch("genParticles","std::vector<TLorentzVector>",   &(myEvent->genParticles));
     theTree->Branch("genParticlesPDGId","std::vector<Int_t>",       &(myEvent->genParticlesPDGId));
     theTree->Branch("genParticlesMother","std::vector<Int_t>",      &(myEvent->genParticlesMother));
+    */
     
     theTree->Branch("numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
     //theTree->Branch("crossSection",                                 &(myEvent->crossSection));
@@ -609,6 +658,29 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("flavor_secondIncomingParton",  &(myEvent->flavor_secondIncomingParton)); 
     theTree->Branch("scalePDF",                     &(myEvent->scalePDF));                   
     */
+    
+    //-- BDT info
+    theTree->Branch("isUsedInBDT",		&(myEvent->isUsedInBDT));
+    theTree->Branch("BDT_output_t2bw025_R1",	&(myEvent->BDT_output_t2bw025_R1));
+    theTree->Branch("BDT_output_t2bw025_R3",	&(myEvent->BDT_output_t2bw025_R3));
+    theTree->Branch("BDT_output_t2bw025_R4",	&(myEvent->BDT_output_t2bw025_R4));
+    theTree->Branch("BDT_output_t2bw025_R6",	&(myEvent->BDT_output_t2bw025_R6));
+    theTree->Branch("BDT_output_t2bw050_R1",	&(myEvent->BDT_output_t2bw050_R1));
+    theTree->Branch("BDT_output_t2bw050_R3",	&(myEvent->BDT_output_t2bw050_R3));
+    theTree->Branch("BDT_output_t2bw050_R4",	&(myEvent->BDT_output_t2bw050_R4));
+    theTree->Branch("BDT_output_t2bw050_R5",	&(myEvent->BDT_output_t2bw050_R5));
+    theTree->Branch("BDT_output_t2bw050_R6",	&(myEvent->BDT_output_t2bw050_R6));
+    theTree->Branch("BDT_output_t2bw075_R1",	&(myEvent->BDT_output_t2bw075_R1));
+    theTree->Branch("BDT_output_t2bw075_R2",	&(myEvent->BDT_output_t2bw075_R2));
+    theTree->Branch("BDT_output_t2bw075_R3",	&(myEvent->BDT_output_t2bw075_R3));
+    theTree->Branch("BDT_output_t2bw075_R5",	&(myEvent->BDT_output_t2bw075_R5));
+    theTree->Branch("BDT_output_t2tt_R1",	&(myEvent->BDT_output_t2tt_R1   ));
+    theTree->Branch("BDT_output_t2tt_R2",	&(myEvent->BDT_output_t2tt_R2   ));
+    theTree->Branch("BDT_output_t2tt_R5",	&(myEvent->BDT_output_t2tt_R5   ));
+    
+    //-- Additionnal info computed in the skimming
+    theTree->Branch("secondLeptonInAcceptance",	&(myEvent->secondLeptonInAcceptance   ));
+    theTree->Branch("ISRJet",	&(myEvent->ISRJet   ));
 }
 
 

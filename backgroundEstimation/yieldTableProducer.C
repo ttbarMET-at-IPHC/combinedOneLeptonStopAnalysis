@@ -14,6 +14,14 @@ using namespace theDoctor;
 #define FOLDER_BABYTUPLES2 "/opt/sbg/data/safe1/cms/echabert/StopAlex/combinedOneLeptonStopAnalysis/babySkimmer/babyTuple_BDT_CR45_merged/"
 #include "Reader_newFinal0603_BDT_skimmed_caro.h"
 
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0603_1lepton4jetsMET80/"
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0603_withBDT/"
+//#include "Reader_newFinal0603_skimmed.h"
+
+// WAS USED BEFORE CARO's MODIFICATION
+//#define FOLDER_BABYTUPLES "../babySkimmer/babyTuple_BDT_0618_skimmed/"
+//#include "Reader_newFinal0603_BDT_skimmed.h"
+
 #include "common.h" // to get CR45 defined
 #include "analysisDefinitions.h"
 #include "cutAndCountDefinitions.h"
@@ -50,6 +58,7 @@ bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectio
                                                                       
 bool goesInPreselectionMTpeak_withSRCuts()       { return (goesInPreselectionMTpeak()       && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreselectionMTtail_withSRCuts()       { return (goesInPreselectionMTtail()       && SIGNAL_REGION_CUTS(enableMTCut) ); }
+bool goesInPreselectionMTtail_withSRCuts_2ndLep()       { return (goesInPreselectionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) && myEvent.secondLeptonInAcceptance ); }
                                                                       
 bool goesIn0BtagControlRegionMTpeak_withSRCuts() { return (goesIn0BtagControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesIn0BtagControlRegionMTtail_withSRCuts() { return (goesIn0BtagControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
@@ -94,19 +103,19 @@ int main (int argc, char *argv[])
      // #########################################################
 
      screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
-            if (madgraph) {
-            screwdriver.AddDataset("ttbar_madgraph_1l",   "1ltop",  0, 0);
-            }
-            else {
-            screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
-            }
+            //screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_scaledown",   "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_scaleup",   "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_matchingdown",   "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_matchingup",   "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_mass166-5",   "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_mass178-5",   "1ltop",  0, 0);
+	    screwdriver.AddDataset("ttbar_madgraph_1l",   "1ltop",  0, 0);
             screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
 
      
      screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
-            if (madgraph) {
             screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
-            }
      
      screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
              screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
@@ -118,8 +127,6 @@ int main (int argc, char *argv[])
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
 
-     if (CR45) {
-             screwdriver.AddDataset("DoubleElec",   "data", 0, 0);
              screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
              screwdriver.AddDataset("MuEl",   "data", 0, 0);
      }
@@ -135,6 +142,7 @@ int main (int argc, char *argv[])
 
      screwdriver.AddRegion("signalRegion_MTpeak",     "Preselection (MT peak)",           &goesInPreselectionMTpeak_withSRCuts);
      screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",           &goesInPreselectionMTtail_withSRCuts, "blinded");
+     screwdriver.AddRegion("signalRegion_MTtail_secondLeptonInAcceptance",     "Preselection (MT tail) + 2nd lept",           &goesInPreselectionMTtail_withSRCuts_2ndLep, "blinded");
 
      screwdriver.AddRegion("0btag_MTpeak",            "0 b-tag (MT peak)",                &goesIn0BtagControlRegionMTpeak_withSRCuts);
      screwdriver.AddRegion("0btag_MTtail",            "0 b-tag (MT tail)",                &goesIn0BtagControlRegionMTtail_withSRCuts);
@@ -214,10 +222,9 @@ int main (int argc, char *argv[])
   // ##        Run over the events         ##
   // ########################################
 
-
      bool ttbarDatasetToBeSplitted = false;
      if (currentDataset.find("ttbar")!=std::string::npos && currentDataset.find("ttbar_madgraph_1l")==std::string::npos && currentDataset.find("ttbar_madgraph_2l")==std::string::npos)
-        ttbarDatasetToBeSplitted = true;
+     	ttbarDatasetToBeSplitted = true;
 
       int nEntries = theTree->GetEntries();
       for (int i = 0 ; i < nEntries ; i++)
@@ -240,8 +247,12 @@ int main (int argc, char *argv[])
           if (ttbarDatasetToBeSplitted && (myEvent.numberOfGenLepton == 2))
               currentProcessClass_ = "ttbar_2l";
 
-
-          screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+          //store info about the presence of a second lepton in the event 
+	  // already available in new prod ...
+	  //myEvent.secondLeptonInAcceptance = IsMultilepEvtWithTrueTrkFromTau();
+          
+	  screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+	  
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
@@ -253,7 +264,8 @@ int main (int argc, char *argv[])
 
   vector<string> regions1 = { "preveto_MTpeak",      "preveto_MTtail",      
                              "signalRegion_MTpeak", "signalRegion_MTtail", 
-                             "0btag_MTpeak",        "0btag_MTtail",        };
+                             "0btag_MTpeak",        "0btag_MTtail",  "signalRegion_MTtail_secondLeptonInAcceptance"      };
+  
   vector<string> regions2 = { "preveto_MTpeak",      "preveto_MTtail",      
                              "signalRegion_MTpeak", "signalRegion_MTtail", 
                              "0btag_MTpeak",        "0btag_MTtail",        
