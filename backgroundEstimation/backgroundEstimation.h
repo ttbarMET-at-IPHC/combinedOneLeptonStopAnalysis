@@ -17,7 +17,8 @@ class backgroundEstimation{
         ~backgroundEstimation(){};
         void   ResetSystematics();
 
-        void ComputeSFpre();
+        float Compute2ndLeptonVetoUncert();
+	void ComputeSFpre();
         void ComputeSFpost();
         void ComputeRandSFR();
         void FillPredictionTable();

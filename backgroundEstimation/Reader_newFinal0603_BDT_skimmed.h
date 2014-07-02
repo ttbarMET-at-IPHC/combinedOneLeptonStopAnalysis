@@ -213,6 +213,7 @@ typedef struct
     Int_t   flavor_firstIncomingParton;         // PDGId of the first incoming parton
     Int_t   flavor_secondIncomingParton;        // PDGId of the second incoming parton
     Float_t scalePDF;                           // The PDF scale
+   
 
     // BDT related quantities
 
@@ -238,6 +239,7 @@ typedef struct
     Bool_t secondLeptonInAcceptance;
     //Store information about the ISR jets
     Bool_t ISRJet;
+
 } babyEvent;
 
 typedef struct
@@ -278,14 +280,16 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
 
       myEvent->leadingLepton                = *(pointers->pointerToLeadingLepton);
       myEvent->secondLepton                 = *(pointers->pointerToSecondLepton);
+      /*
       myEvent->jets                         = *(pointers->pointerToJets);
       myEvent->jets_CSV_raw                 = *(pointers->pointerToJets_CSV_raw);
       myEvent->jets_CSV_reshaped            = *(pointers->pointerToJets_CSV_reshaped);
-      myEvent->jets_partonFlav              = *(pointers->pointerToJets_partonFlav);
+      //myEvent->jets_partonFlav              = *(pointers->pointerToJets_partonFlav);
       myEvent->genParticles                 = *(pointers->pointerToGenParticles);
       myEvent->genParticlesPDGId            = *(pointers->pointerToGenParticlesPDGId);
       myEvent->genParticlesMother           = *(pointers->pointerToGenParticlesMother);
-      
+      */
+      /*
       myEvent->jets_CSV_reshapedUpBC        = *(pointers->pointerToJets_CSV_reshapedUpBC);
       myEvent->jets_CSV_reshapedDownBC      = *(pointers->pointerToJets_CSV_reshapedDownBC);
       myEvent->jets_CSV_reshapedUpLight     = *(pointers->pointerToJets_CSV_reshapedUpLight);
@@ -296,7 +300,7 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       myEvent->nonSelectedJets_partonFlav   = *(pointers->pointerToNonSelectedJets_partonFlav);   
 
       myEvent->nonSelectedLeptons           = *(pointers->pointerToNonSelectedLeptons); 
-      //myEvent->nonSelectedLeptonsPDGId      = *(pointers->pointerToNonSelectedLeptonsPDGId); 
+      myEvent->nonSelectedLeptonsPDGId      = *(pointers->pointerToNonSelectedLeptonsPDGId); 
 
       myEvent->jets_JESdown                 = *(pointers->pointerToJets_JESdown); 
       myEvent->jets_CSV_raw_JESdown         = *(pointers->pointerToJets_CSV_raw_JESdown);
@@ -304,7 +308,7 @@ void ReadEvent(TTree* theTree, long int i, intermediatePointers* pointers, babyE
       myEvent->jets_JESup                   = *(pointers->pointerToJets_JESup);
       myEvent->jets_CSV_raw_JESup           = *(pointers->pointerToJets_CSV_raw_JESup);
       myEvent->jets_CSV_reshaped_JESup      = *(pointers->pointerToJets_CSV_reshaped_JESup);
-
+      */
 }
 
 void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediatePointers* pointers)
@@ -336,16 +340,17 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     
     theTree->SetBranchAddress("nJets",                                        &(myEvent->nJets));
     theTree->SetBranchAddress("nBTag",                                        &(myEvent->nBTag));
-    
+    /* 
     pointers->pointerToJets = 0;
     theTree->SetBranchAddress("jets",                                         &(pointers->pointerToJets));
     pointers->pointerToJets_CSV_raw = 0;
     theTree->SetBranchAddress("jets_CSV_raw",                                 &(pointers->pointerToJets_CSV_raw));
     pointers->pointerToJets_CSV_reshaped = 0;
     theTree->SetBranchAddress("jets_CSV_reshaped",                            &(pointers->pointerToJets_CSV_reshaped));
-    pointers->pointerToJets_partonFlav = 0;
-    theTree->SetBranchAddress("jets_partonFlav",                              &(pointers->pointerToJets_partonFlav));
-
+    */
+    //pointers->pointerToJets_partonFlav = 0;
+    //theTree->SetBranchAddress("jets_partonFlav",                              &(pointers->pointerToJets_partonFlav));
+    
     theTree->SetBranchAddress("MET",                                          &(myEvent->MET));
     theTree->SetBranchAddress("MT",                                           &(myEvent->MT));
     theTree->SetBranchAddress("deltaPhiMETJets",                              &(myEvent->deltaPhiMETJets));
@@ -363,31 +368,34 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("METoverSqrtHT",                                &(myEvent->METoverSqrtHT));
     theTree->SetBranchAddress("HTPlusLeptonPtPlusMET",                        &(myEvent->HTPlusLeptonPtPlusMET));
     
-    theTree->SetBranchAddress("nWTag",                                        &(myEvent->nWTag));
-    theTree->SetBranchAddress("leadingWjetPt",                                &(myEvent->leadingWjetPt));
+    //theTree->SetBranchAddress("nWTag",                                        &(myEvent->nWTag));
+    //theTree->SetBranchAddress("leadingWjetPt",                                &(myEvent->leadingWjetPt));
     
-    theTree->SetBranchAddress("mStop",                                        &(myEvent->mStop));
-    theTree->SetBranchAddress("mNeutralino",                                  &(myEvent->mNeutralino));
-    theTree->SetBranchAddress("mCharginoParameter",                           &(myEvent->mCharginoParameter));
+    //theTree->SetBranchAddress("mStop",                                        &(myEvent->mStop));
+    //theTree->SetBranchAddress("mNeutralino",                                  &(myEvent->mNeutralino));
+    //theTree->SetBranchAddress("mCharginoParameter",                           &(myEvent->mCharginoParameter));
     
     theTree->SetBranchAddress("numberOfGenLepton",                            &(myEvent->numberOfGenLepton));
-
+    /*
     pointers->pointerToGenParticles = 0;
     theTree->SetBranchAddress("genParticles",                                 &(pointers->pointerToGenParticles));
     pointers->pointerToGenParticlesPDGId = 0;
     theTree->SetBranchAddress("genParticlesPDGId",                            &(pointers->pointerToGenParticlesPDGId));
     pointers->pointerToGenParticlesMother = 0;
     theTree->SetBranchAddress("genParticlesMother",                           &(pointers->pointerToGenParticlesMother));
-
+    */
+    /*
     theTree->SetBranchAddress("numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
     theTree->SetBranchAddress("crossSection",                                 &(myEvent->crossSection));
     theTree->SetBranchAddress("numberOfTruePU",                               &(myEvent->numberOfTruePU));
     theTree->SetBranchAddress("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
+    */
     theTree->SetBranchAddress("weightCrossSection",                           &(myEvent->weightCrossSection));
     theTree->SetBranchAddress("weightPileUp",                                 &(myEvent->weightPileUp));
     theTree->SetBranchAddress("weightISRmodeling",                            &(myEvent->weightISRmodeling));
     theTree->SetBranchAddress("weightTopPt",                                  &(myEvent->weightTopPt));
     theTree->SetBranchAddress("weightTriggerEfficiency",                      &(myEvent->weightTriggerEfficiency));
+    /*
     theTree->SetBranchAddress("weightT2ttLeftHanded",                         &(myEvent->weightT2ttLeftHanded));
     theTree->SetBranchAddress("weightT2ttRightHanded",                        &(myEvent->weightT2ttRightHanded));
     theTree->SetBranchAddress("weightT2bwPolarization_ss",                    &(myEvent->weightT2bwPolarization_ss));
@@ -470,8 +478,8 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
 
     pointers->pointerToNonSelectedLeptons           = 0;                                
     theTree->SetBranchAddress("nonSelectedLeptons",                           &(pointers->pointerToNonSelectedLeptons)); 
-    //pointers->pointerToNonSelectedLeptonsPDGId      = 0;                                
-    //theTree->SetBranchAddress("nonSelectedLeptonsPDGId",                      &(pointers->pointerToNonSelectedLeptonsPDGId));
+    pointers->pointerToNonSelectedLeptonsPDGId      = 0;                                
+    theTree->SetBranchAddress("nonSelectedLeptonsPDGId",                      &(pointers->pointerToNonSelectedLeptonsPDGId));
     
     theTree->SetBranchAddress("rawPFMET",                                     &(myEvent->rawPFMET));
     theTree->SetBranchAddress("METPhi",                                       &(myEvent->METPhi));
@@ -481,8 +489,8 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("flavor_firstIncomingParton",                   &(myEvent->flavor_firstIncomingParton)); 
     theTree->SetBranchAddress("flavor_secondIncomingParton",                  &(myEvent->flavor_secondIncomingParton));
     theTree->SetBranchAddress("scalePDF",                                     &(myEvent->scalePDF));                   
+    */
     
-    //--- BDT variables
     theTree->SetBranchAddress("isUsedInBDT",		&(myEvent->isUsedInBDT));
     theTree->SetBranchAddress("BDT_output_t2bw025_R1",	&(myEvent->BDT_output_t2bw025_R1));
     theTree->SetBranchAddress("BDT_output_t2bw025_R3",	&(myEvent->BDT_output_t2bw025_R3));
@@ -500,6 +508,10 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     theTree->SetBranchAddress("BDT_output_t2tt_R1",	&(myEvent->BDT_output_t2tt_R1   ));
     theTree->SetBranchAddress("BDT_output_t2tt_R2",	&(myEvent->BDT_output_t2tt_R2   ));
     theTree->SetBranchAddress("BDT_output_t2tt_R5",	&(myEvent->BDT_output_t2tt_R5   ));
+    
+    
+    theTree->SetBranchAddress("secondLeptonInAcceptance",	&(myEvent->secondLeptonInAcceptance   ));
+    theTree->SetBranchAddress("ISRJet",	&(myEvent->ISRJet   ));
 }
 
 void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
@@ -529,12 +541,10 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     
     theTree->Branch("nJets",                                        &(myEvent->nJets));
     theTree->Branch("nBTag",                                        &(myEvent->nBTag));
-    /*
     theTree->Branch("jets","std::vector<TLorentzVector>",           &(myEvent->jets));
     theTree->Branch("jets_CSV_raw",     "std::vector<Float_t>",     &(myEvent->jets_CSV_raw));
     theTree->Branch("jets_CSV_reshaped","std::vector<Float_t>",     &(myEvent->jets_CSV_reshaped));
-    */
-    //theTree->Branch("jets_partonFlav",  "std::vector<Int_t>",       &(myEvent->jets_partonFlav));
+    theTree->Branch("jets_partonFlav",  "std::vector<Int_t>",       &(myEvent->jets_partonFlav));
 
     theTree->Branch("MET",                                          &(myEvent->MET));
     theTree->Branch("MT",                                           &(myEvent->MT));
@@ -553,32 +563,27 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("METoverSqrtHT",                                &(myEvent->METoverSqrtHT));
     theTree->Branch("HTPlusLeptonPtPlusMET",                        &(myEvent->HTPlusLeptonPtPlusMET));
     
-    //theTree->Branch("nWTag",                                        &(myEvent->nWTag));
-    //theTree->Branch("leadingWjetPt",                                &(myEvent->leadingWjetPt));
+    theTree->Branch("nWTag",                                        &(myEvent->nWTag));
+    theTree->Branch("leadingWjetPt",                                &(myEvent->leadingWjetPt));
     
-    /*
     theTree->Branch("mStop",                                        &(myEvent->mStop));
     theTree->Branch("mNeutralino",                                  &(myEvent->mNeutralino));
-    */
-    //theTree->Branch("mCharginoParameter",                           &(myEvent->mCharginoParameter));
+    theTree->Branch("mCharginoParameter",                           &(myEvent->mCharginoParameter));
     
     theTree->Branch("numberOfGenLepton",                            &(myEvent->numberOfGenLepton));
-    /*
     theTree->Branch("genParticles","std::vector<TLorentzVector>",   &(myEvent->genParticles));
     theTree->Branch("genParticlesPDGId","std::vector<Int_t>",       &(myEvent->genParticlesPDGId));
     theTree->Branch("genParticlesMother","std::vector<Int_t>",      &(myEvent->genParticlesMother));
-    */
     
     theTree->Branch("numberOfInitialEvents",                        &(myEvent->numberOfInitialEvents));
-    //theTree->Branch("crossSection",                                 &(myEvent->crossSection));
-    //theTree->Branch("numberOfTruePU",                               &(myEvent->numberOfTruePU));
-    //theTree->Branch("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
+    theTree->Branch("crossSection",                                 &(myEvent->crossSection));
+    theTree->Branch("numberOfTruePU",                               &(myEvent->numberOfTruePU));
+    theTree->Branch("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
     theTree->Branch("weightCrossSection",                           &(myEvent->weightCrossSection));
     theTree->Branch("weightPileUp",                                 &(myEvent->weightPileUp));
     theTree->Branch("weightISRmodeling",                            &(myEvent->weightISRmodeling));
     theTree->Branch("weightTopPt",                                  &(myEvent->weightTopPt));
     theTree->Branch("weightTriggerEfficiency",                      &(myEvent->weightTriggerEfficiency));
-    /*
     theTree->Branch("weightT2ttLeftHanded",                         &(myEvent->weightT2ttLeftHanded));
     theTree->Branch("weightT2ttRightHanded",                        &(myEvent->weightT2ttRightHanded));
     theTree->Branch("weightT2bwPolarization_ss",                    &(myEvent->weightT2bwPolarization_ss));
@@ -657,30 +662,7 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("flavor_firstIncomingParton",   &(myEvent->flavor_firstIncomingParton));  
     theTree->Branch("flavor_secondIncomingParton",  &(myEvent->flavor_secondIncomingParton)); 
     theTree->Branch("scalePDF",                     &(myEvent->scalePDF));                   
-    */
-    
-    //-- BDT info
-    theTree->Branch("isUsedInBDT",		&(myEvent->isUsedInBDT));
-    theTree->Branch("BDT_output_t2bw025_R1",	&(myEvent->BDT_output_t2bw025_R1));
-    theTree->Branch("BDT_output_t2bw025_R3",	&(myEvent->BDT_output_t2bw025_R3));
-    theTree->Branch("BDT_output_t2bw025_R4",	&(myEvent->BDT_output_t2bw025_R4));
-    theTree->Branch("BDT_output_t2bw025_R6",	&(myEvent->BDT_output_t2bw025_R6));
-    theTree->Branch("BDT_output_t2bw050_R1",	&(myEvent->BDT_output_t2bw050_R1));
-    theTree->Branch("BDT_output_t2bw050_R3",	&(myEvent->BDT_output_t2bw050_R3));
-    theTree->Branch("BDT_output_t2bw050_R4",	&(myEvent->BDT_output_t2bw050_R4));
-    theTree->Branch("BDT_output_t2bw050_R5",	&(myEvent->BDT_output_t2bw050_R5));
-    theTree->Branch("BDT_output_t2bw050_R6",	&(myEvent->BDT_output_t2bw050_R6));
-    theTree->Branch("BDT_output_t2bw075_R1",	&(myEvent->BDT_output_t2bw075_R1));
-    theTree->Branch("BDT_output_t2bw075_R2",	&(myEvent->BDT_output_t2bw075_R2));
-    theTree->Branch("BDT_output_t2bw075_R3",	&(myEvent->BDT_output_t2bw075_R3));
-    theTree->Branch("BDT_output_t2bw075_R5",	&(myEvent->BDT_output_t2bw075_R5));
-    theTree->Branch("BDT_output_t2tt_R1",	&(myEvent->BDT_output_t2tt_R1   ));
-    theTree->Branch("BDT_output_t2tt_R2",	&(myEvent->BDT_output_t2tt_R2   ));
-    theTree->Branch("BDT_output_t2tt_R5",	&(myEvent->BDT_output_t2tt_R5   ));
-    
-    //-- Additionnal info computed in the skimming
-    theTree->Branch("secondLeptonInAcceptance",	&(myEvent->secondLeptonInAcceptance   ));
-    theTree->Branch("ISRJet",	&(myEvent->ISRJet   ));
+
 }
 
 

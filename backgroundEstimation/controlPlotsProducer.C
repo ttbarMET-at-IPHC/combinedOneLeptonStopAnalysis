@@ -11,11 +11,16 @@ using namespace theDoctor;
 
 // BabyTuple format and location
 
-#define FOLDER_BABYTUPLES "../store/babyTuples_0603_1lepton4jetsMET80/"
-#include "Reader_newFinal0603_skimmed.h"
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0603_1lepton4jetsMET80/"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0603_withBDT/"
+//#include "Reader_newFinal0603_skimmed.h"
+#include "Reader_newFinal0603_BDT_skimmed.h"
 
 #include "analysisDefinitions.h"
 #include "cutAndCountDefinitions.h"
+//required for BDT signal region def
+#include "../AN-14-067/signalRegionDefinitions.h"
+
 
 
 #ifndef SIGNAL_REGION_CUTS
@@ -72,6 +77,7 @@ int main (int argc, char *argv[])
      // ##########################
 
      screwdriver.AddVariable("MET",            "MET",                     "GeV",    16,50,530,      &(myEvent.MET),                  "logY");
+     screwdriver.AddVariable("METPhi",            "METPhi",                     "GeV",    16,50,530,      &(myEvent.METPhi),         "");
      screwdriver.AddVariable("MT",             "M_{T}",                   "GeV",    40,0,400,       &(myEvent.MT),                   "logY");
      screwdriver.AddVariable("MTpeak",         "M_{T}",                   "GeV",    20,0,100,       &(myEvent.MT),                   "noOverflowInLastBin");
      screwdriver.AddVariable("MTtail",         "M_{T}",                   "GeV",    30,100,400,     &(myEvent.MT),                   "logY,noUnderflowInFirstBin");

@@ -1,5 +1,8 @@
 #include "backgroundEstimation.h"
 
+#define NJetUncer_tt2l 0.05
+#define CR4CR5Uncert_tt2l 0.1
+
 int main (int argc, char *argv[])
 {
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
@@ -33,7 +36,8 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
           "1lepton+veto_MTtail_",
         */
         "signalRegion_MTpeak",
-        "signalRegion_MTtail"
+        "signalRegion_MTtail",
+        "signalRegion_MTtail_secondLeptonInAcceptance"
     };
     
     // Import the raw yield table from external file
@@ -130,20 +134,20 @@ void backgroundEstimation::ComputePredictionWithSystematics()
 
         else if (systematic ==  "tt->ll_(CR4,CR5)")
         {
-            ttll_CR4and5_rescale = 1-0.1; float yieldDown = ComputePrediction().value(); 
-            ttll_CR4and5_rescale = 1+0.1; float yieldUp   = ComputePrediction().value();
+            ttll_CR4and5_rescale = 1-CR4CR5Uncert_tt2l; float yieldDown = ComputePrediction().value(); 
+            ttll_CR4and5_rescale = 1+CR4CR5Uncert_tt2l; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         else if (systematic ==  "tt->ll_(nJets)")
         {
-            ttll_nJets_rescale = 1-0.17; float yieldDown = ComputePrediction().value(); 
-            ttll_nJets_rescale = 1+0.17; float yieldUp   = ComputePrediction().value();
+            ttll_nJets_rescale = 1-NJetUncer_tt2l; float yieldDown = ComputePrediction().value(); 
+            ttll_nJets_rescale = 1+NJetUncer_tt2l; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         else if (systematic ==  "tt->ll_(veto)")
         {
-            ttll_2ndlepVeto_rescale = 1-0.024; float yieldDown = ComputePrediction().value(); 
-            ttll_2ndlepVeto_rescale = 1+0.024; float yieldUp   = ComputePrediction().value();
+            ttll_2ndlepVeto_rescale = 1-Compute2ndLeptonVetoUncert(); float yieldDown = ComputePrediction().value(); 
+            ttll_2ndlepVeto_rescale = 1+Compute2ndLeptonVetoUncert(); float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         else if (systematic == "W+jets_(cross_section)") 
@@ -243,6 +247,17 @@ void backgroundEstimation::ComputePredictionWithSystematics()
 
 }
 
+float backgroundEstimation::Compute2ndLeptonVetoUncert(){
+	Figure SR_ttbar_2l = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l");
+	Figure SR_2ndLept_ttbar_2l = rawYieldTable.Get("signalRegion_MTtail_secondLeptonInAcceptance","ttbar_2l");
+	float fraction = 0;
+	if(SR_ttbar_2l.value()!=0) fraction = SR_2ndLept_ttbar_2l.value()/SR_ttbar_2l.value();
+	// suppose that we have an uncertainty of 7% on the 2nd lepton veto
+	//cout<<"fraction = "<<fraction<<endl;
+	if(fraction<0.02) fraction==0.02;
+	return fraction*0.07;
+}
+
 void backgroundEstimation::ComputeSFpre()
 {
     Figure preveto_1ltop    = rawYieldTable.Get("preveto_MTpeak","1ltop"   );
@@ -333,9 +348,9 @@ void backgroundEstimation::FillPredictionTable()
 
     // To have the (temporary and arbitrary) numbers for tt->ll systematics in the per-process prediction table
     // TODO update with the actual numbers
-    N2ltop_tail *= Figure(1.0,0.10);  
-    N2ltop_tail *= Figure(1.0,0.17);  
-    N2ltop_tail *= Figure(1.0,0.024); 
+    N2ltop_tail *= Figure(1.0,NJetUncer_tt2l);  
+    N2ltop_tail *= Figure(1.0,CR4CR5Uncert_tt2l);  
+    N2ltop_tail *= Figure(1.0,Compute2ndLeptonVetoUncert()); 
 
     // Prediction
     Figure N1ltop_prediction  = N1ltop_peak  * SFpost * Rlj_mean; 
