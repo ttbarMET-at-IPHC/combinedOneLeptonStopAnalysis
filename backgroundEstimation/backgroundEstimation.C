@@ -1,5 +1,7 @@
 #include "backgroundEstimation.h"
 
+
+
 int main (int argc, char *argv[])
 {
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
@@ -20,24 +22,42 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     // ########################
 
     // Defines the regions of interesets
+    //
+    //
+    vector<string> regions1 = { "preveto_MTpeak",      "preveto_MTtail",
+                             "signalRegion_MTpeak", "signalRegion_MTtail",
+                             "0btag_MTpeak",        "0btag_MTtail",        };
+    vector<string> regions2 = { "preveto_MTpeak",      "preveto_MTtail",
+                             "signalRegion_MTpeak", "signalRegion_MTtail",
+                             "0btag_MTpeak",        "0btag_MTtail",
+                             "antiveto_MTpeak",     "antiveto_MTtail"};
+    vector<string> regions3 = { "2leptons_MTpeak",     "2leptons_MTtail"};
+
+    vector<string> regions;
+    if (CR45) {
+      regions=regions2;
+    }
+    else {
+      regions=regions1;
+    }
+
+/* ---> was before!! strange not to have the same order --> a problem or not?
     vector<string> regions = 
     { 
         "preveto_MTpeak",
         "preveto_MTtail",
         "0btag_MTpeak",
         "0btag_MTtail",
-        /*
-          "2leptons_MTpeak_"    ,
-          "2leptons_MTtail_"    ,
-          "1lepton+veto_MTpeak_",
-          "1lepton+veto_MTtail_",
-        */
         "signalRegion_MTpeak",
         "signalRegion_MTtail"
     };
+*/
     
     // Import the raw yield table from external file
     rawYieldTable = Table("rawYieldTables/"+signalRegionLabel+".tab");
+    if (CR45) {
+    rawYieldTable_2leptons = Table("rawYieldTables/"+signalRegionLabel+"_2leptons.tab");
+    }
 
     // ###################################################################
     // #  Initialize the table containing the raw mc and the prediction  #
@@ -65,6 +85,9 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     
     vector<string> dummy = { "value" };
     scaleFactorTable = Table(dummy,scaleFactorsTagList);
+    if (CR45) {
+    scaleFactorTable_2leptons = Table(dummy,scaleFactorsTagList_2leptons);
+    }
 
     // ##################################################################
     // #  Initialize the table containing the systematic uncertainties  #
@@ -89,6 +112,29 @@ void backgroundEstimation::Run()
     systematicsUncertainties.Print("systematics/"+signalRegionLabel+".tab",4);
     predictionTable.Print("prediction/"+signalRegionLabel+".tab",4);
 
+    if (CR45) {
+     ResetSystematics();
+
+     ComputeSF2lpeak();
+     ComputeSFvetopeak();
+     ComputeK3K4();
+
+     ComputeSFpre();
+     ComputeSFpost();
+     ComputeRandSFR();
+     ComputeSF2ltail();
+     ComputeSFvetotail();
+
+     scaleFactorTable_2leptons.Set("value","SF2lpeak",SF2lpeak);
+     scaleFactorTable_2leptons.Set("value","SF2ltail",SF2ltail);
+     scaleFactorTable_2leptons.Set("value","K3",K3);
+     scaleFactorTable_2leptons.Set("value","K4",K4);
+     scaleFactorTable_2leptons.Set("value","SF_pre",SFpre);
+     scaleFactorTable_2leptons.Set("value","SFR_W+jets",SFR_W_mean);
+     scaleFactorTable_2leptons.Set("value","SFvetopeak",SFvetopeak);
+     scaleFactorTable_2leptons.Set("value","SFvetotail",SFvetotail);
+     scaleFactorTable_2leptons.Print("scaleFactors/"+signalRegionLabel+"_2leptons.tab",4);
+    }
 }
 
 void backgroundEstimation::ResetSystematics()
@@ -268,6 +314,114 @@ void backgroundEstimation::ComputeSFpost()
     if (MTpeakStat_variation) SFpost.keepVariation(MTpeakStat_variation);
 }
 
+void backgroundEstimation::ComputeSF2lpeak()
+{
+/*
+    Figure peak2l_1ltop    = rawYieldTable_2leptons.Get("2leptons_MTpeak","1ltop"   );
+    Figure peak2l_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_MTpeak","ttbar_2l");
+    Figure peak2l_Wjets    = rawYieldTable_2leptons.Get("2leptons_MTpeak","W+jets"  ); 
+    Figure peak2l_rare     = rawYieldTable_2leptons.Get("2leptons_MTpeak","rare"    );
+    Figure peak2l_data     = rawYieldTable_2leptons.Get("2leptons_MTpeak","data"    );
+*/
+/*
+    Figure peak2l_1ltop    = rawYieldTable_2leptons.Get("2leptons_MTinv","1ltop"   );
+    Figure peak2l_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_MTinv","ttbar_2l");
+    Figure peak2l_Wjets    = rawYieldTable_2leptons.Get("2leptons_MTinv","W+jets"  ); 
+    Figure peak2l_rare     = rawYieldTable_2leptons.Get("2leptons_MTinv","rare"    );
+    Figure peak2l_data     = rawYieldTable_2leptons.Get("2leptons_MTinv","data"    );
+*/
+
+    Figure peak2l_1ltop    = rawYieldTable_2leptons.Get("2leptons_MTinv","1ltop"    )
+			+    rawYieldTable_2leptons.Get("2leptons_MTtail","1ltop"   );
+    Figure peak2l_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_MTinv","ttbar_2l" )
+			+    rawYieldTable_2leptons.Get("2leptons_MTtail","ttbar_2l");
+    Figure peak2l_Wjets    = rawYieldTable_2leptons.Get("2leptons_MTinv","W+jets"   )
+			+    rawYieldTable_2leptons.Get("2leptons_MTtail","W+jets"  ); 
+    Figure peak2l_rare     = rawYieldTable_2leptons.Get("2leptons_MTinv","rare"     )
+			+    rawYieldTable_2leptons.Get("2leptons_MTtail","rare"    );
+    Figure peak2l_data     = rawYieldTable_2leptons.Get("2leptons_MTinv","data"     )
+			+    rawYieldTable_2leptons.Get("2leptons_MTtail","data"    );
+
+    if (peak2l_data.value()>0) SF2lpeak = (peak2l_data - peak2l_rare) / (peak2l_1ltop + peak2l_Wjets + peak2l_ttbar_2l);
+
+}
+void backgroundEstimation::ComputeSF2ltail()
+{
+    Figure tail2l_1ltop    = rawYieldTable_2leptons.Get("2leptons_MTtail","1ltop"   );
+    Figure tail2l_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_MTtail","ttbar_2l");
+    Figure tail2l_Wjets    = rawYieldTable_2leptons.Get("2leptons_MTtail","W+jets"  ); 
+    Figure tail2l_rare     = rawYieldTable_2leptons.Get("2leptons_MTtail","rare"    );
+    Figure tail2l_data     = rawYieldTable_2leptons.Get("2leptons_MTtail","data"    );
+
+    if (tail2l_data.value()>0) SF2ltail = (tail2l_data - tail2l_rare - SF2lpeak* tail2l_1ltop - SF2lpeak* tail2l_Wjets) / (SF2lpeak* tail2l_ttbar_2l);
+
+}
+void backgroundEstimation::ComputeSFvetopeak()
+{
+
+    Figure peakveto_1ltop    = rawYieldTable.Get("antiveto_MTpeak","1ltop"   );
+    Figure peakveto_ttbar_2l = rawYieldTable.Get("antiveto_MTpeak","ttbar_2l");
+    Figure peakveto_Wjets    = rawYieldTable.Get("antiveto_MTpeak","W+jets"  ); 
+    Figure peakveto_rare     = rawYieldTable.Get("antiveto_MTpeak","rare"    );
+    Figure peakveto_data     = rawYieldTable.Get("antiveto_MTpeak","data"    );
+
+    if (peakveto_data.value()>0) SFvetopeak =(peakveto_data - peakveto_rare - SFpre * peakveto_ttbar_2l) / (peakveto_1ltop + peakveto_Wjets);
+/*
+    Figure peakveto_1ltop    = rawYieldTable.Get("antiveto_MTinv","1ltop"   );
+    Figure peakveto_ttbar_2l = rawYieldTable.Get("antiveto_MTinv","ttbar_2l");
+    Figure peakveto_Wjets    = rawYieldTable.Get("antiveto_MTinv","W+jets"  ); 
+    Figure peakveto_rare     = rawYieldTable.Get("antiveto_MTinv","rare"    );
+    Figure peakveto_data     = rawYieldTable.Get("antiveto_MTinv","data"    );
+    
+    if (peakveto_data.value()>0) SFvetopeak = (peakveto_data - peakveto_rare) / (peakveto_1ltop + peakveto_Wjets + peakveto_ttbar_2l);
+    // if (peakveto_data.value()>0) SFvetopeak = (peakveto_data) / (peakveto_1ltop + peakveto_Wjets + peakveto_ttbar_2l + peakveto_rare);
+*/
+
+}
+void backgroundEstimation::ComputeSFvetotail()
+{
+    Figure tailveto_1ltop    = rawYieldTable.Get("antiveto_MTtail","1ltop"   );
+    Figure tailveto_ttbar_2l = rawYieldTable.Get("antiveto_MTtail","ttbar_2l");
+    Figure tailveto_Wjets    = rawYieldTable.Get("antiveto_MTtail","W+jets"  ); 
+    Figure tailveto_rare     = rawYieldTable.Get("antiveto_MTtail","rare"    );
+    Figure tailveto_data     = rawYieldTable.Get("antiveto_MTtail","data"    );
+    
+    if (tailveto_data.value()>0) SFvetotail = (tailveto_data - tailveto_rare - SFvetopeak*SFR_W_mean* tailveto_1ltop - SFvetopeak*SFR_W_mean* tailveto_Wjets) / (SFpre* tailveto_ttbar_2l);
+
+    //if (tailveto_data.value()>0) SFvetotail = (tailveto_data - tailveto_rare - SFvetopeak* tailveto_1ltop - SFvetopeak* tailveto_Wjets) / (SFvetopeak* tailveto_ttbar_2l);
+    //if (tailveto_data.value()>0) SFvetotail = (tailveto_data - SFvetopeak* tailveto_rare - SFvetopeak* tailveto_1ltop - SFvetopeak* tailveto_Wjets) / (SFvetopeak* tailveto_ttbar_2l) ;
+
+}
+void backgroundEstimation::ComputeK3K4()
+{
+    Figure N2_1ltop    = rawYieldTable_2leptons.Get("2leptons_N2","1ltop"   );
+    Figure N2_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_N2","ttbar_2l");
+    Figure N2_Wjets    = rawYieldTable_2leptons.Get("2leptons_N2","W+jets"  ); 
+    Figure N2_rare     = rawYieldTable_2leptons.Get("2leptons_N2","rare"    );
+    Figure N2_data     = rawYieldTable_2leptons.Get("2leptons_N2","data"    );
+    Figure N3_1ltop    = rawYieldTable_2leptons.Get("2leptons_N3","1ltop"   );
+    Figure N3_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_N3","ttbar_2l");
+    Figure N3_Wjets    = rawYieldTable_2leptons.Get("2leptons_N3","W+jets"  ); 
+    Figure N3_rare     = rawYieldTable_2leptons.Get("2leptons_N3","rare"    );
+    Figure N3_data     = rawYieldTable_2leptons.Get("2leptons_N3","data"    );
+    Figure N4_1ltop    = rawYieldTable_2leptons.Get("2leptons_N4","1ltop"   );
+    Figure N4_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_N4","ttbar_2l");
+    Figure N4_Wjets    = rawYieldTable_2leptons.Get("2leptons_N4","W+jets"  ); 
+    Figure N4_rare     = rawYieldTable_2leptons.Get("2leptons_N4","rare"    );
+    Figure N4_data     = rawYieldTable_2leptons.Get("2leptons_N4","data"    );
+
+    Figure N2 = N2_data - SF2lpeak*N2_1ltop - SF2lpeak*N2_Wjets - N2_rare;  // data yield minus non-dilepton tt MC yield for Njets =1 or 2.
+    Figure N3 = N3_data - SF2lpeak*N3_1ltop - SF2lpeak*N3_Wjets - N3_rare;  // data yield minus non-dilepton tt MC yield for Njets =3.
+    Figure N4 = N4_data - SF2lpeak*N4_1ltop - SF2lpeak*N4_Wjets - N4_rare;  // data yield minus non-dilepton tt MC yield for Njets >=4.
+
+    Figure SF2 = N2/N2_ttbar_2l;
+    Figure SF3 = N3/N3_ttbar_2l;
+    Figure SF4 = N4/N4_ttbar_2l;
+    
+    K3 = SF3/SF2;
+    K4 = SF4/SF3;
+
+}
 
 void backgroundEstimation::ComputeRandSFR()
 {
@@ -313,6 +467,8 @@ void backgroundEstimation::ComputeRandSFR()
     Rlj_mean = Figure((RW_corrected.value() + Rlj_corrected.value()) / 2.0, fabs(RW_corrected.value() - Rlj_corrected.value()) / 2.0);
     if (tailToPeakRatio_1lTop_variation) Rlj_mean.keepVariation(tailToPeakRatio_1lTop_variation);
 }
+
+
 
 void backgroundEstimation::FillPredictionTable()
 {

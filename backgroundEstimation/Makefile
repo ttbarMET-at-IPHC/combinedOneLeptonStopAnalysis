@@ -58,7 +58,34 @@ clean:
 
 # Running the background estimation on every signal regions
 
-SIGNAL_REGIONS = cutAndCount_T2tt_offShellLoose cutAndCount_T2tt_offShellTight cutAndCount_T2tt_lowDeltaM   cutAndCount_T2tt_mediumDeltaM  cutAndCount_T2tt_highDeltaM
+#SIGNAL_REGIONS = cut_nocut
+#SIGNAL_REGIONS = cutAndCount_T2bw025_lowDeltaM_tight
+#SIGNAL_REGIONS = cutAndCount_T2tt_offShellLoose cutAndCount_T2tt_offShellTight cutAndCount_T2tt_lowDeltaM   cutAndCount_T2tt_mediumDeltaM  cutAndCount_T2tt_highDeltaM
+#SIGNAL_REGIONS =  cutAndCount_T2bw025_veryOffShell_loose cutAndCount_T2bw025_offShell_loose cutAndCount_T2bw025_lowDeltaM_tight cutAndCount_T2bw025_highDeltaM
+#SIGNAL_REGIONS = cutAndCount_T2bw050_offShell_loose cutAndCount_T2bw050_lowMass cutAndCount_T2bw050_mediumDeltaM_loose cutAndCount_T2bw050_highDeltaM
+#SIGNAL_REGIONS = cutAndCount_T2bw075_lowDeltaM_tight cutAndCount_T2bw075_mediumDeltaM cutAndCount_T2bw075_highDeltaM
+
+#SIGNAL_REGIONS = cut_nocut cutAndCount_T2tt_offShellLoose cutAndCount_T2tt_offShellTight cutAndCount_T2tt_lowDeltaM   cutAndCount_T2tt_mediumDeltaM  cutAndCount_T2tt_highDeltaM cutAndCount_T2bw025_veryOffShell_loose cutAndCount_T2bw025_offShell_loose cutAndCount_T2bw025_lowDeltaM_tight cutAndCount_T2bw025_highDeltaM cutAndCount_T2bw050_offShell_loose cutAndCount_T2bw050_lowMass cutAndCount_T2bw050_mediumDeltaM_loose cutAndCount_T2bw050_highDeltaM cutAndCount_T2bw075_lowDeltaM_tight cutAndCount_T2bw075_mediumDeltaM cutAndCount_T2bw075_highDeltaM 
+
+
+#SIGNAL_REGIONS =  cut_nocut BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6 
+
+#SIGNAL_REGIONS = BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
+#SIGNAL_REGIONS = BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6       
+#SIGNAL_REGIONS = BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6  
+#SIGNAL_REGIONS = BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5
+
+
+#SIGNAL_REGIONS = cut_nocut cutAndCount_T2tt_offShellLoose cutAndCount_T2tt_offShellTight cutAndCount_T2tt_lowDeltaM  cutAndCount_T2tt_mediumDeltaM  cutAndCount_T2tt_highDeltaM cutAndCount_T2bw025_veryOffShell_loose cutAndCount_T2bw025_offShell_loose cutAndCount_T2bw025_lowDeltaM_tight cutAndCount_T2bw025_highDeltaM cutAndCount_T2bw050_offShell_loose cutAndCount_T2bw050_lowMass cutAndCount_T2bw050_mediumDeltaM_loose cutAndCount_T2bw050_highDeltaM cutAndCount_T2bw075_lowDeltaM_tight cutAndCount_T2bw075_mediumDeltaM  cutAndCount_T2bw075_highDeltaM BDT_T2tt_1 BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5 BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6  BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6
+
+
+#SIGNAL_REGIONS = cut_nocut BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6 BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6 BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5
+
+#SIGNAL_REGIONS = BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6 BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6 BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5
+
+#SIGNAL_REGIONS = cut_nocut
+
+SIGNAL_REGIONS = BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose   BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6 BDT_T2bw050_1_loose BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6 BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5
 
 tables:
 	@make --no-print-directory clean 
@@ -109,6 +136,8 @@ controlPlots:
 	done;								\
 	echo "Done";
 
+SF: SF_ttbar2l.$(ExeSuf)
+	./SF_ttbar2l.$(ExeSuf) $(SIGNAL_REGIONS) | tee SF_ttbar2l.$(LogSuf) > SF_ttbar2l.log
 
 report: reportProducer.$(ExeSuf)
 	./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf) > reports/report.tex && cd reports && pdflatex report.tex
