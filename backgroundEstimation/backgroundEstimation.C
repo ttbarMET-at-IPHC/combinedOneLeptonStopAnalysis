@@ -23,43 +23,27 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     // ########################
 
     // Defines the regions of interesets
-    //
-    //
-    vector<string> regions1 = { "preveto_MTpeak",      "preveto_MTtail",
-                             "signalRegion_MTpeak", "signalRegion_MTtail",
-                             "0btag_MTpeak",        "0btag_MTtail",        };
-    vector<string> regions2 = { "preveto_MTpeak",      "preveto_MTtail",
-                             "signalRegion_MTpeak", "signalRegion_MTtail",
-                             "0btag_MTpeak",        "0btag_MTtail",
-                             "antiveto_MTpeak",     "antiveto_MTtail"};
-    vector<string> regions3 = { "2leptons_MTpeak",     "2leptons_MTtail"};
-
-    vector<string> regions;
-    if (CR45) {
-      regions=regions2;
-    }
-    else {
-      regions=regions1;
-    }
-
-/* ---> was before!! strange not to have the same order --> a problem or not?
-    vector<string> regions = 
+    vector<string> regions  = 
     { 
-        "preveto_MTpeak",
-        "preveto_MTtail",
-        "0btag_MTpeak",
-        "0btag_MTtail",
-        "signalRegion_MTpeak",
-        "signalRegion_MTtail",
-        "signalRegion_MTtail_secondLeptonInAcceptance"
+       "preveto_MTpeak",      
+       "preveto_MTtail",      
+       "signalRegion_MTpeak", 
+       "signalRegion_MTtail", 
+       "0btag_MTpeak",        
+       "0btag_MTtail",  
+       "reversedVeto_MTpeak", 
+       "reversedVeto_MTtail",
+       "2leptons",
+       "2leptons_MTtail",
+       "2leptons_MTpeak",
+       "2leptons_1or2jets",   
+       "2leptons_3jets",      
+       "2leptons_atLeast4jets",
+       "signalRegion_MTtail_secondLeptonInAcceptance"      
     };
-*/
-    
+
     // Import the raw yield table from external file
     rawYieldTable = Table("rawYieldTables/"+signalRegionLabel+".tab");
-    if (CR45) {
-    rawYieldTable_2leptons = Table("rawYieldTables/"+signalRegionLabel+"_2leptons.tab");
-    }
 
     // ###################################################################
     // #  Initialize the table containing the raw mc and the prediction  #
@@ -87,9 +71,6 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     
     vector<string> dummy = { "value" };
     scaleFactorTable = Table(dummy,scaleFactorsTagList);
-    if (CR45) {
-    scaleFactorTable_2leptons = Table(dummy,scaleFactorsTagList_2leptons);
-    }
 
     // ##################################################################
     // #  Initialize the table containing the systematic uncertainties  #
@@ -106,37 +87,10 @@ void backgroundEstimation::Run()
 {
     ComputePredictionWithSystematics();
 
-    //scaleFactorTable.PrintLatex(3);
-    //systematicsUncertainties.PrintLatex(1,"noError");
-    //predictionTable.PrintLatex(1);
+    scaleFactorTable.        Print("scaleFactors/"+signalRegionLabel+".tab",4);
+    systematicsUncertainties.Print("systematics/" +signalRegionLabel+".tab",4);
+    predictionTable.         Print("prediction/"  +signalRegionLabel+".tab",4);
 
-    scaleFactorTable.Print("scaleFactors/"+signalRegionLabel+".tab",4);
-    systematicsUncertainties.Print("systematics/"+signalRegionLabel+".tab",4);
-    predictionTable.Print("prediction/"+signalRegionLabel+".tab",4);
-
-    if (CR45) {
-     ResetSystematics();
-
-     ComputeSF2lpeak();
-     ComputeSFvetopeak();
-     ComputeK3K4();
-
-     ComputeSFpre();
-     ComputeSFpost();
-     ComputeRandSFR();
-     ComputeSF2ltail();
-     ComputeSFvetotail();
-
-     scaleFactorTable_2leptons.Set("value","SF2lpeak",SF2lpeak);
-     scaleFactorTable_2leptons.Set("value","SF2ltail",SF2ltail);
-     scaleFactorTable_2leptons.Set("value","K3",K3);
-     scaleFactorTable_2leptons.Set("value","K4",K4);
-     scaleFactorTable_2leptons.Set("value","SF_pre",SFpre);
-     scaleFactorTable_2leptons.Set("value","SFR_W+jets",SFR_W_mean);
-     scaleFactorTable_2leptons.Set("value","SFvetopeak",SFvetopeak);
-     scaleFactorTable_2leptons.Set("value","SFvetotail",SFvetotail);
-     scaleFactorTable_2leptons.Print("scaleFactors/"+signalRegionLabel+"_2leptons.tab",4);
-    }
 }
 
 void backgroundEstimation::ResetSystematics()
@@ -157,9 +111,16 @@ void backgroundEstimation::ResetSystematics()
 
 Figure backgroundEstimation::ComputePrediction()
 {
+    ComputeSF2l();
+    ComputeSFvetopeak();
+    ComputeSF2ltail();
+    ComputeSFvetotail();
+
+    ComputeK3K4();
     ComputeSFpre();
     ComputeSFpost();
     ComputeRandSFR();
+
     FillPredictionTable();
     return predictionTable.Get("prediction","totalSM");
 }
@@ -190,8 +151,8 @@ void backgroundEstimation::ComputePredictionWithSystematics()
         }
         else if (systematic ==  "tt->ll_(veto)")
         {
-            ttll_2ndlepVeto_rescale = 1-Compute2ndLeptonVetoUncert(); float yieldDown = ComputePrediction().value(); 
-            ttll_2ndlepVeto_rescale = 1+Compute2ndLeptonVetoUncert(); float yieldUp   = ComputePrediction().value();
+            ttll_2ndlepVeto_rescale = 1-ComputeSecondLeptonVetoUncertainty(); float yieldDown = ComputePrediction().value(); 
+            ttll_2ndlepVeto_rescale = 1+ComputeSecondLeptonVetoUncertainty(); float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         else if (systematic == "W+jets_(cross_section)") 
@@ -275,31 +236,38 @@ void backgroundEstimation::ComputePredictionWithSystematics()
     for (unsigned int s = 0 ; s < systematicsTagList.size() ; s++)
     {
         string systematic = systematicsTagList[s];
-        float absUncertainty = systematicsUncertainties.Get("absolute",systematic).value();
-        systematicsUncertainties.Set("relative",systematic,Figure( absUncertainty / yieldNominal,0.0));
+        float relUncertainty = systematicsUncertainties.Get("absolute",systematic).value() / yieldNominal;
+        if (yieldNominal == 0.0) relUncertainty = 0;
+        systematicsUncertainties.Set("relative",systematic,Figure(relUncertainty,0.0));
     }
 
     // Fill scale factor table
    
-    scaleFactorTable.Set("value","SF_pre",SFpre);
-    scaleFactorTable.Set("value","SF_post",SFpost);
-    scaleFactorTable.Set("value","SF_0btag",SF_0btag);
-    scaleFactorTable.Set("value","SFR_W+jets",SFR_W_mean);
-    scaleFactorTable.Set("value","R_W+jets",RW_corrected);
-    scaleFactorTable.Set("value","R_1ltop",Rlj_mean);
-
+    scaleFactorTable.Set("value","SF_pre",      SFpre);
+    scaleFactorTable.Set("value","SF_post",     SFpost);
+    scaleFactorTable.Set("value","SF_0btag",    SF_0btag);
+    scaleFactorTable.Set("value","SF_2l",       SF2l);
+    scaleFactorTable.Set("value","SF_2ltail",   SF2ltail);
+    scaleFactorTable.Set("value","SF_vetopeak", SFvetopeak);
+    scaleFactorTable.Set("value","SF_vetotail", SFvetotail);
+    scaleFactorTable.Set("value","K3",          K3);
+    scaleFactorTable.Set("value","K4",          K4);
+    scaleFactorTable.Set("value","SFR_W+jets",  SFR_W_mean);
+    scaleFactorTable.Set("value","R_W+jets",    RW_corrected);
+    scaleFactorTable.Set("value","R_1ltop",     Rlj_mean);
+    scaleFactorTable.Print("scaleFactors/"+signalRegionLabel+".tab",4);
 
 }
 
-float backgroundEstimation::Compute2ndLeptonVetoUncert(){
-	Figure SR_ttbar_2l = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l");
-	Figure SR_2ndLept_ttbar_2l = rawYieldTable.Get("signalRegion_MTtail_secondLeptonInAcceptance","ttbar_2l");
-	float fraction = 0;
-	if(SR_ttbar_2l.value()!=0) fraction = SR_2ndLept_ttbar_2l.value()/SR_ttbar_2l.value();
-	// suppose that we have an uncertainty of 7% on the 2nd lepton veto
-	//cout<<"fraction = "<<fraction<<endl;
-	if(fraction<0.02) fraction==0.02;
-	return fraction*0.07;
+float backgroundEstimation::ComputeSecondLeptonVetoUncertainty()
+{
+    Figure SR_ttbar_2l         = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l");
+    Figure SR_2ndLept_ttbar_2l = rawYieldTable.Get("signalRegion_MTtail_secondLeptonInAcceptance","ttbar_2l");
+
+    float fraction = 0;
+    if (SR_ttbar_2l.value() != 0) fraction = SR_2ndLept_ttbar_2l.value()/SR_ttbar_2l.value();
+    if (fraction < 0.02) fraction = 0.02;
+    return fraction*0.07;
 }
 
 void backgroundEstimation::ComputeSFpre()
@@ -310,7 +278,8 @@ void backgroundEstimation::ComputeSFpre()
     Figure preveto_rare     = rawYieldTable.Get("preveto_MTpeak","rare"    ) * rareCrossSection_rescale;
     Figure preveto_data     = rawYieldTable.Get("preveto_MTpeak","data"    );
 
-    SFpre = (preveto_data - preveto_rare) / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
+    SFpre = (preveto_data - preveto_rare) 
+          / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
     if (MTpeakStat_variation) SFpre.keepVariation(MTpeakStat_variation);
 
 }
@@ -323,68 +292,55 @@ void backgroundEstimation::ComputeSFpost()
     Figure postveto_rare     = rawYieldTable.Get("signalRegion_MTpeak","rare"    ) * rareCrossSection_rescale;
     Figure postveto_data     = rawYieldTable.Get("signalRegion_MTpeak","data"    );
     
-    SFpost = (postveto_data - postveto_rare - SFpre * postveto_ttbar_2l) / (postveto_1ltop + postveto_Wjets);
+    SFpost = (postveto_data - postveto_rare - SFpre * postveto_ttbar_2l) 
+           / (postveto_1ltop + postveto_Wjets);
     if (MTpeakStat_variation) SFpost.keepVariation(MTpeakStat_variation);
 }
 
-void backgroundEstimation::ComputeSF2lpeak()
+void backgroundEstimation::ComputeSF2l()
 {
-/*
-    Figure peak2l_1ltop    = rawYieldTable_2leptons.Get("2leptons_MTpeak","1ltop"   );
-    Figure peak2l_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_MTpeak","ttbar_2l");
-    Figure peak2l_Wjets    = rawYieldTable_2leptons.Get("2leptons_MTpeak","W+jets"  ); 
-    Figure peak2l_rare     = rawYieldTable_2leptons.Get("2leptons_MTpeak","rare"    );
-    Figure peak2l_data     = rawYieldTable_2leptons.Get("2leptons_MTpeak","data"    );
-*/
-/*
-    Figure peak2l_1ltop    = rawYieldTable_2leptons.Get("2leptons_MTinv","1ltop"   );
-    Figure peak2l_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_MTinv","ttbar_2l");
-    Figure peak2l_Wjets    = rawYieldTable_2leptons.Get("2leptons_MTinv","W+jets"  ); 
-    Figure peak2l_rare     = rawYieldTable_2leptons.Get("2leptons_MTinv","rare"    );
-    Figure peak2l_data     = rawYieldTable_2leptons.Get("2leptons_MTinv","data"    );
-*/
+    Figure peak2l_1ltop    = rawYieldTable.Get("2leptons","1ltop"    );
+    Figure peak2l_ttbar_2l = rawYieldTable.Get("2leptons","ttbar_2l" );
+    Figure peak2l_Wjets    = rawYieldTable.Get("2leptons","W+jets"   );
+    Figure peak2l_rare     = rawYieldTable.Get("2leptons","rare"     );
+    Figure peak2l_data     = rawYieldTable.Get("2leptons","data"     );
 
-    Figure peak2l_1ltop    = rawYieldTable_2leptons.Get("2leptons_MTinv","1ltop"    )
-			+    rawYieldTable_2leptons.Get("2leptons_MTtail","1ltop"   );
-    Figure peak2l_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_MTinv","ttbar_2l" )
-			+    rawYieldTable_2leptons.Get("2leptons_MTtail","ttbar_2l");
-    Figure peak2l_Wjets    = rawYieldTable_2leptons.Get("2leptons_MTinv","W+jets"   )
-			+    rawYieldTable_2leptons.Get("2leptons_MTtail","W+jets"  ); 
-    Figure peak2l_rare     = rawYieldTable_2leptons.Get("2leptons_MTinv","rare"     )
-			+    rawYieldTable_2leptons.Get("2leptons_MTtail","rare"    );
-    Figure peak2l_data     = rawYieldTable_2leptons.Get("2leptons_MTinv","data"     )
-			+    rawYieldTable_2leptons.Get("2leptons_MTtail","data"    );
-
-    if (peak2l_data.value()>0) SF2lpeak = (peak2l_data - peak2l_rare) / (peak2l_1ltop + peak2l_Wjets + peak2l_ttbar_2l);
+    if (peak2l_data.value() > 0) 
+        SF2l = (peak2l_data - peak2l_rare) 
+                 / (peak2l_1ltop + peak2l_Wjets + peak2l_ttbar_2l);
 
 }
 void backgroundEstimation::ComputeSF2ltail()
 {
-    Figure tail2l_1ltop    = rawYieldTable_2leptons.Get("2leptons_MTtail","1ltop"   );
-    Figure tail2l_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_MTtail","ttbar_2l");
-    Figure tail2l_Wjets    = rawYieldTable_2leptons.Get("2leptons_MTtail","W+jets"  ); 
-    Figure tail2l_rare     = rawYieldTable_2leptons.Get("2leptons_MTtail","rare"    );
-    Figure tail2l_data     = rawYieldTable_2leptons.Get("2leptons_MTtail","data"    );
+    Figure tail2l_1ltop    = rawYieldTable.Get("2leptons_MTtail","1ltop"   );
+    Figure tail2l_ttbar_2l = rawYieldTable.Get("2leptons_MTtail","ttbar_2l");
+    Figure tail2l_Wjets    = rawYieldTable.Get("2leptons_MTtail","W+jets"  ); 
+    Figure tail2l_rare     = rawYieldTable.Get("2leptons_MTtail","rare"    );
+    Figure tail2l_data     = rawYieldTable.Get("2leptons_MTtail","data"    );
 
-    if (tail2l_data.value()>0) SF2ltail = (tail2l_data - tail2l_rare - SF2lpeak* tail2l_1ltop - SF2lpeak* tail2l_Wjets) / (SF2lpeak* tail2l_ttbar_2l);
+    if (tail2l_data.value() > 0)
+        SF2ltail = (tail2l_data - tail2l_rare - SF2l* tail2l_1ltop - SF2l* tail2l_Wjets) 
+                 / (SF2l* tail2l_ttbar_2l);
 
 }
 void backgroundEstimation::ComputeSFvetopeak()
 {
 
-    Figure peakveto_1ltop    = rawYieldTable.Get("antiveto_MTpeak","1ltop"   );
-    Figure peakveto_ttbar_2l = rawYieldTable.Get("antiveto_MTpeak","ttbar_2l");
-    Figure peakveto_Wjets    = rawYieldTable.Get("antiveto_MTpeak","W+jets"  ); 
-    Figure peakveto_rare     = rawYieldTable.Get("antiveto_MTpeak","rare"    );
-    Figure peakveto_data     = rawYieldTable.Get("antiveto_MTpeak","data"    );
+    Figure peakveto_1ltop    = rawYieldTable.Get("reversedVeto_MTpeak","1ltop"   );
+    Figure peakveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTpeak","ttbar_2l");
+    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTpeak","W+jets"  ); 
+    Figure peakveto_rare     = rawYieldTable.Get("reversedVeto_MTpeak","rare"    );
+    Figure peakveto_data     = rawYieldTable.Get("reversedVeto_MTpeak","data"    );
 
-    if (peakveto_data.value()>0) SFvetopeak =(peakveto_data - peakveto_rare - SFpre * peakveto_ttbar_2l) / (peakveto_1ltop + peakveto_Wjets);
+    if (peakveto_data.value() > 0) 
+        SFvetopeak = (peakveto_data - peakveto_rare - SFpre * peakveto_ttbar_2l) 
+                   / (peakveto_1ltop + peakveto_Wjets);
 /*
-    Figure peakveto_1ltop    = rawYieldTable.Get("antiveto_MTinv","1ltop"   );
-    Figure peakveto_ttbar_2l = rawYieldTable.Get("antiveto_MTinv","ttbar_2l");
-    Figure peakveto_Wjets    = rawYieldTable.Get("antiveto_MTinv","W+jets"  ); 
-    Figure peakveto_rare     = rawYieldTable.Get("antiveto_MTinv","rare"    );
-    Figure peakveto_data     = rawYieldTable.Get("antiveto_MTinv","data"    );
+    Figure peakveto_1ltop    = rawYieldTable.Get("reversedVeto_MTinv","1ltop"   );
+    Figure peakveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTinv","ttbar_2l");
+    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTinv","W+jets"  ); 
+    Figure peakveto_rare     = rawYieldTable.Get("reversedVeto_MTinv","rare"    );
+    Figure peakveto_data     = rawYieldTable.Get("reversedVeto_MTinv","data"    );
     
     if (peakveto_data.value()>0) SFvetopeak = (peakveto_data - peakveto_rare) / (peakveto_1ltop + peakveto_Wjets + peakveto_ttbar_2l);
     // if (peakveto_data.value()>0) SFvetopeak = (peakveto_data) / (peakveto_1ltop + peakveto_Wjets + peakveto_ttbar_2l + peakveto_rare);
@@ -393,13 +349,15 @@ void backgroundEstimation::ComputeSFvetopeak()
 }
 void backgroundEstimation::ComputeSFvetotail()
 {
-    Figure tailveto_1ltop    = rawYieldTable.Get("antiveto_MTtail","1ltop"   );
-    Figure tailveto_ttbar_2l = rawYieldTable.Get("antiveto_MTtail","ttbar_2l");
-    Figure tailveto_Wjets    = rawYieldTable.Get("antiveto_MTtail","W+jets"  ); 
-    Figure tailveto_rare     = rawYieldTable.Get("antiveto_MTtail","rare"    );
-    Figure tailveto_data     = rawYieldTable.Get("antiveto_MTtail","data"    );
+    Figure tailveto_1ltop    = rawYieldTable.Get("reversedVeto_MTtail","1ltop"   );
+    Figure tailveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTtail","ttbar_2l");
+    Figure tailveto_Wjets    = rawYieldTable.Get("reversedVeto_MTtail","W+jets"  ); 
+    Figure tailveto_rare     = rawYieldTable.Get("reversedVeto_MTtail","rare"    );
+    Figure tailveto_data     = rawYieldTable.Get("reversedVeto_MTtail","data"    );
     
-    if (tailveto_data.value()>0) SFvetotail = (tailveto_data - tailveto_rare - SFvetopeak*SFR_W_mean* tailveto_1ltop - SFvetopeak*SFR_W_mean* tailveto_Wjets) / (SFpre* tailveto_ttbar_2l);
+    if (tailveto_data.value() > 0)
+        SFvetotail = (tailveto_data - tailveto_rare - SFvetopeak*SFR_W_mean* tailveto_1ltop - SFvetopeak*SFR_W_mean* tailveto_Wjets) 
+                   / (SFpre* tailveto_ttbar_2l);
 
     //if (tailveto_data.value()>0) SFvetotail = (tailveto_data - tailveto_rare - SFvetopeak* tailveto_1ltop - SFvetopeak* tailveto_Wjets) / (SFvetopeak* tailveto_ttbar_2l);
     //if (tailveto_data.value()>0) SFvetotail = (tailveto_data - SFvetopeak* tailveto_rare - SFvetopeak* tailveto_1ltop - SFvetopeak* tailveto_Wjets) / (SFvetopeak* tailveto_ttbar_2l) ;
@@ -407,25 +365,25 @@ void backgroundEstimation::ComputeSFvetotail()
 }
 void backgroundEstimation::ComputeK3K4()
 {
-    Figure N2_1ltop    = rawYieldTable_2leptons.Get("2leptons_N2","1ltop"   );
-    Figure N2_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_N2","ttbar_2l");
-    Figure N2_Wjets    = rawYieldTable_2leptons.Get("2leptons_N2","W+jets"  ); 
-    Figure N2_rare     = rawYieldTable_2leptons.Get("2leptons_N2","rare"    );
-    Figure N2_data     = rawYieldTable_2leptons.Get("2leptons_N2","data"    );
-    Figure N3_1ltop    = rawYieldTable_2leptons.Get("2leptons_N3","1ltop"   );
-    Figure N3_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_N3","ttbar_2l");
-    Figure N3_Wjets    = rawYieldTable_2leptons.Get("2leptons_N3","W+jets"  ); 
-    Figure N3_rare     = rawYieldTable_2leptons.Get("2leptons_N3","rare"    );
-    Figure N3_data     = rawYieldTable_2leptons.Get("2leptons_N3","data"    );
-    Figure N4_1ltop    = rawYieldTable_2leptons.Get("2leptons_N4","1ltop"   );
-    Figure N4_ttbar_2l = rawYieldTable_2leptons.Get("2leptons_N4","ttbar_2l");
-    Figure N4_Wjets    = rawYieldTable_2leptons.Get("2leptons_N4","W+jets"  ); 
-    Figure N4_rare     = rawYieldTable_2leptons.Get("2leptons_N4","rare"    );
-    Figure N4_data     = rawYieldTable_2leptons.Get("2leptons_N4","data"    );
+    Figure N2_1ltop    = rawYieldTable.Get("2leptons_1or2jets","1ltop"   );
+    Figure N2_ttbar_2l = rawYieldTable.Get("2leptons_1or2jets","ttbar_2l");
+    Figure N2_Wjets    = rawYieldTable.Get("2leptons_1or2jets","W+jets"  ); 
+    Figure N2_rare     = rawYieldTable.Get("2leptons_1or2jets","rare"    );
+    Figure N2_data     = rawYieldTable.Get("2leptons_1or2jets","data"    );
+    Figure N3_1ltop    = rawYieldTable.Get("2leptons_3jets","1ltop"   );
+    Figure N3_ttbar_2l = rawYieldTable.Get("2leptons_3jets","ttbar_2l");
+    Figure N3_Wjets    = rawYieldTable.Get("2leptons_3jets","W+jets"  ); 
+    Figure N3_rare     = rawYieldTable.Get("2leptons_3jets","rare"    );
+    Figure N3_data     = rawYieldTable.Get("2leptons_3jets","data"    );
+    Figure N4_1ltop    = rawYieldTable.Get("2leptons_atLeast4jets","1ltop"   );
+    Figure N4_ttbar_2l = rawYieldTable.Get("2leptons_atLeast4jets","ttbar_2l");
+    Figure N4_Wjets    = rawYieldTable.Get("2leptons_atLeast4jets","W+jets"  ); 
+    Figure N4_rare     = rawYieldTable.Get("2leptons_atLeast4jets","rare"    );
+    Figure N4_data     = rawYieldTable.Get("2leptons_atLeast4jets","data"    );
 
-    Figure N2 = N2_data - SF2lpeak*N2_1ltop - SF2lpeak*N2_Wjets - N2_rare;  // data yield minus non-dilepton tt MC yield for Njets =1 or 2.
-    Figure N3 = N3_data - SF2lpeak*N3_1ltop - SF2lpeak*N3_Wjets - N3_rare;  // data yield minus non-dilepton tt MC yield for Njets =3.
-    Figure N4 = N4_data - SF2lpeak*N4_1ltop - SF2lpeak*N4_Wjets - N4_rare;  // data yield minus non-dilepton tt MC yield for Njets >=4.
+    Figure N2 = N2_data - SF2l*N2_1ltop - SF2l*N2_Wjets - N2_rare;  // substract all MC except ttbar -> ll for Njets =1 or 2.
+    Figure N3 = N3_data - SF2l*N3_1ltop - SF2l*N3_Wjets - N3_rare;  // substract all MC except ttbar -> ll for Njets =3.
+    Figure N4 = N4_data - SF2l*N4_1ltop - SF2l*N4_Wjets - N4_rare;  // substract all MC except ttbar -> ll for Njets >=4.
 
     Figure SF2 = N2/N2_ttbar_2l;
     Figure SF3 = N3/N3_ttbar_2l;
@@ -501,10 +459,9 @@ void backgroundEstimation::FillPredictionTable()
     Nrare_tail  *= Figure(1.0, 0.5);
 
     // To have the (temporary and arbitrary) numbers for tt->ll systematics in the per-process prediction table
-    // TODO update with the actual numbers
     N2ltop_tail *= Figure(1.0,NJetUncer_tt2l);  
     N2ltop_tail *= Figure(1.0,CR4CR5Uncert_tt2l);  
-    N2ltop_tail *= Figure(1.0,Compute2ndLeptonVetoUncert()); 
+    N2ltop_tail *= Figure(1.0,ComputeSecondLeptonVetoUncertainty()); 
 
     // Prediction
     Figure N1ltop_prediction  = N1ltop_peak  * SFpost * Rlj_mean; 

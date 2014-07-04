@@ -1,18 +1,4 @@
-#include "../common.h"
-
-// Sonic screwdriver headers
-
-#include "interface/Table.h" 
-#include "interface/SonicScrewdriver.h" 
-using namespace theDoctor;
-
 #include "common.h"
-
-#include <string>
-
-//-- Root dependancies
-#include <TCanvas.h>
-#include <TH1F.h>
 
 int main (int argc, char *argv[])
 {
@@ -20,7 +6,7 @@ int main (int argc, char *argv[])
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
 
     // Read list of signal regions to consider
-    
+   
     vector<string> signalRegionsTagList;
     for (int i = 1 ; i < argc ; i++) 
         signalRegionsTagList.push_back(argv[i]);
@@ -46,82 +32,135 @@ int main (int argc, char *argv[])
         systematics .push_back(Table("systematics/" +signalRegionsTagList[i]+".tab"));
     }
 
-
-
     // Read tables for ttbar dilepton SF
-    Table SF_tt2l("/opt/sbg/data/safe1/cms/echabert/StopCaro/combinedOneLeptonStopAnalysis/backgroundEstimationBDT/SF_tt2l.tab");
-    
+    //Table SF_tt2l("/opt/sbg/data/safe1/cms/echabert/StopCaro/combinedOneLeptonStopAnalysis/backgroundEstimationBDT/SF_tt2l.tab");
 
     // Fill summary tables
 
-    Table rawYieldSummary(signalRegionsTagList,processesTagList,signalRegionsLabelList,processesLabelList);
-    Table predictionSummary(signalRegionsTagList,processesTagList,signalRegionsLabelList,processesLabelList);
-    Table scaleFactorsSummary(signalRegionsTagList,scaleFactorsTagList,signalRegionsLabelList,scaleFactorsLabelList);
-    Table absoluteSystematicsSummary(signalRegionsTagList,systematicsTagList,signalRegionsLabelList,systematicsLabelList);
-    Table relativeSystematicsSummary(signalRegionsTagList,systematicsTagList,signalRegionsLabelList,systematicsLabelList);
+    Table rawYieldSummary           (signalRegionsTagList,  processesTagList,     signalRegionsLabelList,   processesLabelList   );
+    Table predictionSummary         (signalRegionsTagList,  processesTagList,     signalRegionsLabelList,   processesLabelList   );
+    Table scaleFactorsSummary       (signalRegionsTagList,  scaleFactorsTagList,  signalRegionsLabelList,   scaleFactorsLabelList);
+    Table absoluteSystematicsSummary(signalRegionsTagList,  systematicsTagList,   signalRegionsLabelList,   systematicsLabelList );
+    Table relativeSystematicsSummary(signalRegionsTagList,  systematicsTagList,   signalRegionsLabelList,   systematicsLabelList );
 
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
+        string signalRegion = signalRegionsTagList[i];
+
+        // Fill the raw vs prediction table
         for (unsigned int j = 0 ; j < processesTagList.size() ; j++)
         {
-            rawYieldSummary  .Set(signalRegionsTagList[i],processesTagList[j],
-                                                                              predictions[i].Get("raw_mc",processesTagList[j])); 
-            
-	    //extract additionnal info for ttbar dilepton
-	    if(processesTagList[j]=="ttbar_2l"){
-	    	string SR = signalRegionsTagList[i];
-		if(SR.find("tight")!=std::string::npos) SR=SR.substr(0,SR.find("tight"))+"loose";
-	    	float SF = SF_tt2l.Get(SR,"value").value();
-		Figure pred (predictions[i].Get("prediction",processesTagList[j]).value(),sqrt(pow(predictions[i].Get("prediction",processesTagList[j]).error(),2)+pow(predictions[i].Get("prediction",processesTagList[j]).value()*SF,2)));
+            string processTag = processesTagList[j];
 
-	    	predictionSummary.Set(signalRegionsTagList[i],processesTagList[j],pred);
-	    }
-	    else predictionSummary.Set(signalRegionsTagList[i],processesTagList[j],
-                                                                              predictions[i].Get("prediction",processesTagList[j])); 
+            rawYieldSummary.Set(signalRegion,processTag,predictions[i].Get("raw_mc",processTag)); 
+
+            Figure pred = predictions[i].Get("prediction",processTag);
+
+            // extract additionnal info for ttbar dilepton
+            /*
+            if (processTag == "ttbar_2l")
+            {
+                string SR = signalRegion;
+
+                // ?????????? WTF ?????????????
+                if (SR.find("tight") != string::npos) SR=SR.substr(0,SR.find("tight"))+"loose";
+
+                float SF = SF_tt2l.Get(SR,"value").value();
+
+                // Add an uncertainty equal to prediction * SF             (not sure about the justificiation behind this)
+                pred = pred * Figure(1.0,pred.value()*SF);
+            }
+            */
+            predictionSummary.Set(signalRegion,processTag,pred); 
         }
+
+        // Fill the scale factors table
         for (unsigned int j = 0 ; j < scaleFactorsTagList.size() ; j++)
         {
-            scaleFactorsSummary.Set(signalRegionsTagList[i],scaleFactorsTagList[j],
-                                                                                   scaleFactors[i].Get("value",scaleFactorsTagList[j])); 
+            string scaleFactorTag = scaleFactorsTagList[j];
+            scaleFactorsSummary.Set(signalRegion,scaleFactorTag,scaleFactors[i].Get("value",scaleFactorTag));
         }
+
+        // Fill the systematics table
         for (unsigned int j = 0 ; j < systematicsTagList.size() ; j++)
         {
-            absoluteSystematicsSummary.Set(signalRegionsTagList[i],systematicsTagList[j],
-                                                                                         systematics[i].Get("absolute",systematicsTagList[j])); 
-            relativeSystematicsSummary.Set(signalRegionsTagList[i],systematicsTagList[j],
-                                                                                         systematics[i].Get("relative",systematicsTagList[j]) * 100); 
+            string systematicTag = systematicsTagList[j];
+            absoluteSystematicsSummary.Set(signalRegion,systematicTag,systematics[i].Get("absolute",systematicTag));
+            relativeSystematicsSummary.Set(signalRegion,systematicTag,systematics[i].Get("relative",systematicTag) * 100);
         }
     }
+
+    cout << "\\documentclass[a4paper, 12pt]{article}" << endl;
+    cout << "\\usepackage{amsmath}" << endl;
+    cout << "\\usepackage[landscape]{geometry}" << endl;
+    //cout << "\\usepackage{geometry}" << endl;
+    cout << "\\geometry{a4paper, top=0.5cm, bottom=0.5cm, left=0.3cm, right=0.3cm}" << endl;
+
+    cout << "\\begin{document}" << endl;
+    cout << "\\begin{center}" << endl;
+
+    cout << "{\\Large Raw yields}\\\\" << endl;
+    rawYieldSummary.PrintLatex(2);
+    cout << "\\\\ \\bigskip" << endl;
+
+    cout << "{\\Large Scale factors}\\\\" << endl;
+    scaleFactorsSummary.PrintLatex(2);
+    cout << "\\\\ \\bigskip" << endl;
+
+    cout << "{\\Large Absolute uncertainties}\\\\" << endl;
+    absoluteSystematicsSummary.PrintLatex(1,"noError");
+    cout << "\\\\ \\bigskip" << endl;
+
+    cout << "{\\Large Relative uncertainties (in percents)}\\\\" << endl;
+    relativeSystematicsSummary.PrintLatex(1,"noError");
+    cout << "\\\\ \\bigskip" << endl;
     
+    cout << "{\\Large Prediction}\\\\" << endl;
+    predictionSummary.PrintLatex(2);
+    cout << "\\\\ \\bigskip" << endl;
+    
+    cout << "\\end{center}" << endl;
+    cout << "\\end{document}" << endl;
+
+
+    /*
     string dir="reports/";
     
     //-------------------------------------------//
     // Saving plots in ROOT
     //-------------------------------------------//
 
-     //establish the vector of label
-     vector<string> labels(signalRegionsTagList.size());
-     for(unsigned int i=0;i<labels.size();i++){
-     	string label = signalRegionsTagList[i];
-	size_t pos = label.find("cutAndCount_");
-	if(pos!=std::string::npos) label = label.substr(pos+12);
-	pos = label.find("BDT_");
-	if(pos!=std::string::npos) label = label.substr(pos+4);
-	pos = label.find("T2tt_");
-	if(pos!=std::string::npos) label = label.substr(pos+5);
-	pos = label.find("T2bw025_");
-	if(pos!=std::string::npos) label = label.substr(pos+8);
-	pos = label.find("T2bw050_");
-	if(pos!=std::string::npos) label = label.substr(pos+8);
-	pos = label.find("T2bw075_");
-	if(pos!=std::string::npos) label = label.substr(pos+8);
-     	labels[i] = label;
-     }
+    //establish the vector of label
+    vector<string> labels(signalRegionsTagList.size());
+    for(unsigned int i=0;i<labels.size();i++)
+    {
+        string label = signalRegionsTagList[i];
+        size_t pos;
+
+        pos = label.find("cutAndCount_");
+        if(pos!=string::npos) label = label.substr(pos+12);
+
+        pos = label.find("BDT_");
+        if(pos!=string::npos) label = label.substr(pos+4);
+
+        pos = label.find("T2tt_");
+        if(pos!=string::npos) label = label.substr(pos+5);
+
+        pos = label.find("T2bw025_");
+        if(pos!=string::npos) label = label.substr(pos+8);
+
+        pos = label.find("T2bw050_");
+        if(pos!=string::npos) label = label.substr(pos+8);
+
+        pos = label.find("T2bw075_");
+        if(pos!=string::npos) label = label.substr(pos+8);
+
+        labels[i] = label;
+    }
 
      TFile* froot = new TFile("reports/report.root","RECREATE");
      froot->cd();
 
-    //-------------------------------------------//
     //-------------------------------------------//
     // Plot SFs in graph
     //-------------------------------------------//
@@ -156,7 +195,6 @@ int main (int argc, char *argv[])
     }
     hR_RelDiff.Draw();
     c.Print("reports/R_RelDiff.png");
-    //-------------------------------------------//
     
     //-------------------------------------------//
     // Compute SF for the bkg
@@ -182,7 +220,6 @@ int main (int argc, char *argv[])
 	hSF.Draw();
 	c.Print(fname.c_str());
     }
-    //-------------------------------------------//
 
     //-------------------------------------------//
     // Compute the fraction of each bkg 
@@ -346,40 +383,9 @@ int main (int argc, char *argv[])
 
     froot->Write();
     froot->Close();
+    */
 
-   
-    cout << "\\documentclass[a4paper, 12pt]{article}" << endl;
-    cout << "\\usepackage{amsmath}" << endl;
-    cout << "\\usepackage[landscape]{geometry}" << endl;
-    //cout << "\\usepackage{geometry}" << endl;
-    cout << "\\geometry{a4paper, top=0.5cm, bottom=0.5cm, left=0.3cm, right=0.3cm}" << endl;
-
-    cout << "\\begin{document}" << endl;
-    cout << "\\begin{center}" << endl;
-
-    cout << "{\\Large Raw yields}\\\\" << endl;
-    rawYieldSummary.PrintLatex(2);
-    cout << "\\\\ \\bigskip" << endl;
-
-    cout << "{\\Large Scale factors}\\\\" << endl;
-    scaleFactorsSummary.PrintLatex(2);
-    cout << "\\\\ \\bigskip" << endl;
-
-    cout << "{\\Large Absolute uncertainties}\\\\" << endl;
-    absoluteSystematicsSummary.PrintLatex(1,"noError");
-    cout << "\\\\ \\bigskip" << endl;
-
-    cout << "{\\Large Relative uncertainties (in percents)}\\\\" << endl;
-    relativeSystematicsSummary.PrintLatex(1,"noError");
-    cout << "\\\\ \\bigskip" << endl;
-    
-    cout << "{\\Large Prediction}\\\\" << endl;
-    predictionSummary.PrintLatex(2);
-    cout << "\\\\ \\bigskip" << endl;
-    
-    cout << "\\end{center}" << endl;
-    cout << "\\end{document}" << endl;
-
+  
     return (0);
 }
 

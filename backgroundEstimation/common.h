@@ -1,9 +1,73 @@
 #ifndef BACKGROUNDESTIMATION_COMMON
 #define BACKGROUNDESTIMATION_COMMON
 
-//bool CR45 = false ; 
-bool CR45 = true ; // make also plots for 2-leptons and anti-veto on 2nd lepton CR
-bool madgraph = true;
+#include "../common.h"
+bool enableMTCut = true;
+bool disableMTCut = false;
+
+// ###############################
+// #  Sonic screwdriver headers  #
+// ###############################
+
+#include "interface/Table.h" 
+#include "interface/SonicScrewdriver.h" 
+#include "interface/tables/TableBackgroundSignal.h" 
+#include "interface/tables/TableDataMC.h" 
+using namespace theDoctor;
+
+
+#include <TCanvas.h>
+#include <TH1F.h>
+
+// ###################################
+// #  BabyTuple format and location  #
+// ###################################
+
+#define FOLDER_BABYTUPLES "/opt/sbg/data/safe1/cms/echabert/StopAlex/combinedOneLeptonStopAnalysis/babySkimmer/babyTuple_BDT_0618_skimmed/"
+#include "Reader_newFinal0603_BDT_skimmed.h"
+
+//#define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
+#define BDT_OUTPUT_AVAILABLE
+#define ISR_JET_ALREADY_COMPUTED
+
+
+#ifdef SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
+    #define EventHasSecondGeneratedLeptonInAcceptance() myEvent.secondLeptonInAcceptance
+#endif
+
+// #################################################
+// #  Analysis, cut-and-count and BDT definitions  #
+// #################################################
+
+#include "../AN-14-067/selectionDefinitions.h"
+#include "../AN-14-067/cutAndCountDefinitions.h"
+#include "../AN-14-067/signalRegionDefinitions.h"
+
+// ####################
+// #  Processes list  #
+// ####################
+
+vector<string> processesTagList = 
+{
+    "1ltop",
+    "ttbar_2l",
+    "W+jets",
+    "rare",
+    "totalSM"
+};
+
+vector<string> processesLabelList = 
+{
+    "1$\\ell$ top",
+    "$t\\bar{t} \\rightarrow \\ell \\ell$",
+    "$W$+jets",
+    "rare",
+    "total SM"
+};
+
+// ######################
+// #  Systematics list  #
+// ######################
 
 vector<string> systematicsTagList = 
 {
@@ -39,23 +103,9 @@ vector<string> systematicsLabelList =
     "total"
 };
 
-vector<string> processesTagList = 
-{
-    "1ltop",
-    "ttbar_2l",
-    "W+jets",
-    "rare",
-    "totalSM"
-};
-
-vector<string> processesLabelList = 
-{
-    "1$\\ell$ top",
-    "$t\\bar{t} \\rightarrow \\ell \\ell$",
-    "$W$+jets",
-    "rare",
-    "total SM"
-};
+// ########################
+// #  Scale factors list  #
+// ########################
 
 vector<string> scaleFactorsTagList = 
 {
@@ -64,19 +114,13 @@ vector<string> scaleFactorsTagList =
     "SF_0btag",
     "SFR_W+jets",
     "R_W+jets",
-    "R_1ltop"
-};
-
-vector<string> scaleFactorsTagList_2leptons = 
-{
-    "SF2lpeak",
-    "SF2ltail",
+    "R_1ltop",
+    "SF_2l",
+    "SF_2ltail",
     "K3",
     "K4",
-    "SF_pre",
-    "SFR_W+jets",
-    "SFvetopeak",
-    "SFvetotail",
+    "SF_vetopeak",
+    "SF_vetotail"
 };
 
 vector<string> scaleFactorsLabelList = 
@@ -86,20 +130,18 @@ vector<string> scaleFactorsLabelList =
     "$SF_{\\text{0 $b$-tag}}$",
     "$SFR_{\\text{$W$+jets}}$",
     "$R_{\\text{$W$+jets}}$",
-    "$R_{\\text{1$\\ell$top}}$"
+    "$R_{\\text{1$\\ell$top}}$",
+    "$SF_{2l}$",
+    "$SF_{2ltail}$",
+    "$K_3$",
+    "$K_4$",
+    "$SF_{vetopeak}$",
+    "$SF_{vetotail}$"
 };
 
-vector<string> scaleFactorsLabelList_2leptons =
-{
-    "$SF_{2lpeak}$",
-    "$SF_{2ltail}$",
-    "K3",
-    "K4",
-    "$SF_{pre}$",
-    "$SFR_{\\text{$W$+jets}}$",
-    "$SF_{vetopeak}$",
-    "$SF_{vetotail}$",
-};
+// ########################
+// #  Signal region list  #
+// ########################
 
 string signalRegionLabel(string signalRegionTag, string format = "root")
 {
@@ -107,7 +149,6 @@ string signalRegionLabel(string signalRegionTag, string format = "root")
     {
              if (signalRegionTag == "preselection"                          ) return "Preselection";
         else if (signalRegionTag == "crossCheck_LM150"                      ) return "Previous AN, LM150";
-        else if (signalRegionTag == "cut_nocut"                             ) return "Preselection";
         else if (signalRegionTag == "cutAndCount_T2tt_offShellLoose"        ) return "C&C T2tt, Off-shell loose";
         else if (signalRegionTag == "cutAndCount_T2tt_offShellTight"        ) return "C&C T2tt, Off-shell tight";
         else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"            ) return "C&C T2tt, Low #Delta m";
@@ -148,7 +189,6 @@ string signalRegionLabel(string signalRegionTag, string format = "root")
     {
              if (signalRegionTag == "preselection"                          ) return                           "Preselection";
         else if (signalRegionTag == "crossCheck_LM150"                      ) return                           "LM150";
-        else if (signalRegionTag == "cut_nocut"                             ) return                           "Preselection";
         else if (signalRegionTag == "cutAndCount_T2tt_offShellLoose"        ) return /*"C\\&C T2tt, "+*/       "Off-shell loose";
         else if (signalRegionTag == "cutAndCount_T2tt_offShellTight"        ) return /*"C\\&C T2tt, "+*/       "Off-shell tight";
         else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"            ) return /*"C\\&C T2tt, "+*/       "Low $\\Delta m$";

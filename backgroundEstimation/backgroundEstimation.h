@@ -17,13 +17,13 @@ class backgroundEstimation{
         ~backgroundEstimation(){};
         void   ResetSystematics();
 
-        float Compute2ndLeptonVetoUncert();
-	void ComputeSFpre();
+        float ComputeSecondLeptonVetoUncertainty();
+        void ComputeSFpre();
         void ComputeSFpost();
         void ComputeRandSFR();
-        void ComputeSF2lpeak();
-        void ComputeSFvetopeak();
+        void ComputeSF2l();
         void ComputeSF2ltail();
+        void ComputeSFvetopeak();
         void ComputeSFvetotail();
         void ComputeK3K4();
         void FillPredictionTable();
@@ -56,21 +56,19 @@ class backgroundEstimation{
         Figure Rlj_corrected;
         Figure Rlj_mean;
 
-        Figure SF2lpeak;
+        Figure SF2l;
         Figure SFvetopeak;
         Figure SF2ltail;
         Figure SFvetotail;
         Figure K3;
         Figure K4;
+
         // Tables 
 
         Table  rawYieldTable;
         Table  scaleFactorTable;
         Table  predictionTable;
         Table  systematicsUncertainties;
-
-        Table  rawYieldTable_2leptons;
-        Table  scaleFactorTable_2leptons;
 
         // Systematic flags / value
         float ttll_CR4and5_rescale;   
