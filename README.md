@@ -20,44 +20,44 @@ Directories
 
 Common definitions
 
-    * AN-14-067 - Common analysis definitions (from Michaels repo)
-    * inputs - Object and correction definitions/inputs 
-    * common.h - Misc tools for code operation
+ * AN-14-067 - Common analysis definitions (from Michaels repo)
+ * inputs - Object and correction definitions/inputs 
+ * common.h - Misc tools for code operation
     
 BabyTuples operations
 
-    * babyTupling - To read the Strasbourg nTuples and create the babyTuples
-    * babyFilter - To apply the MET filters after babyTuple production
-    * babyReader - Example on how to read the babyTuple
-    * babySkimmer - Template to skim the babyTuples
-    * babyExtender - Template to add information to the babyTuples
-    * babyValidation - Code attempting to validate the babyTuples
+ * babyTupling - To read the Strasbourg nTuples and create the babyTuples
+ * babyFilter - To apply the MET filters after babyTuple production
+ * babyReader - Example on how to read the babyTuple
+ * babySkimmer - Template to skim the babyTuples
+ * babyExtender - Template to add information to the babyTuples
+ * babyValidation - Code attempting to validate the babyTuples
 
 Background estimation 
 
-    * backgroundEstimation
+ * backgroundEstimation
 
 Cut and count optimization and studies
 
-    * cutAndCount_T2bw
-    * cutAndCount_T2tt
-    * cutAndCount_testCorrelations
-    * cutAndCount_variableRanking
+ * cutAndCount_T2bw
+ * cutAndCount_T2tt
+ * cutAndCount_testCorrelations
+ * cutAndCount_variableRanking
 
 W-tagging studies
 
-    * WTagPerformances
-    * WTagTMVAPlotting
-    * WTagTMVATraining
+ * WTagPerformances
+ * WTagTMVAPlotting
+ * WTagTMVATraining
 
 Plotting tool 
 
-    * sonicScrewdriver - from Alexs repo
+ * sonicScrewdriver - from Alexs repo
 
 Misc checks
 
-    * checkPileUpFastSim
-    * dataMCChecks
-    * synchronization
-    * testSelection
+ * checkPileUpFastSim
+ * dataMCChecks
+ * synchronization
+ * testSelection
     
