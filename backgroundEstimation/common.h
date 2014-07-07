@@ -23,22 +23,20 @@ using namespace theDoctor;
 // #  BabyTuple format and location  #
 // ###################################
 
-#define FOLDER_BABYTUPLES "/opt/sbg/data/safe1/cms/echabert/StopAlex/combinedOneLeptonStopAnalysis/babySkimmer/babyTuple_BDT_0618_skimmed/"
-#include "Reader_newFinal0603_BDT_skimmed.h"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0603_withBDT_skim/merged_1lepton4jetsMET80_or_2leptons1jetMET50/"
+#include "Reader.h"
 
-//#define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
+#define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
 #define BDT_OUTPUT_AVAILABLE
 #define ISR_JET_ALREADY_COMPUTED
-
-
-#ifdef SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
-    #define EventHasSecondGeneratedLeptonInAcceptance() myEvent.secondLeptonInAcceptance
-#endif
 
 // #################################################
 // #  Analysis, cut-and-count and BDT definitions  #
 // #################################################
 
+#ifndef SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
+    #include "../AN-14-067/SecondLeptonInAcceptance.h"
+#endif
 #include "../AN-14-067/selectionDefinitions.h"
 #include "../AN-14-067/cutAndCountDefinitions.h"
 #include "../AN-14-067/signalRegionDefinitions.h"

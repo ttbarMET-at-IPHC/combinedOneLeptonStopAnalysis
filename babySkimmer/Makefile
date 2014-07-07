@@ -34,12 +34,15 @@ LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 TARGET = babySkimmer
 #------------------------------------------------------------------------------
 
-all: compile run
+default: compile
 	
 compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
-run:
-	./$(TARGET).$(ExeSuf) | tee $(TARGET).$(LogSuf)
+skim:
+	@for DATASET in `cat list`;							\
+	 do													\
+		   ./$(TARGET).$(ExeSuf) $$DATASET;				\
+	 done;
 
 clean:
 	@echo "Cleaning..."

@@ -95,7 +95,7 @@ float MinNofEvtsVariabelCut(SonicScrewdriver& sonic, int nof, string var, vector
 
 int main (int argc, char *argv[])
 {
-  string signalRegionLabel_ =signalRegionLabel(SIGNAL_REGION_TAG);
+  string signalRegionLabel_ = signalRegionLabel(SIGNAL_REGION_TAG);
   if (signalRegionLabel_ == "") 
   { 
       DEBUG_MSG << "Please define the signal region label associated to tag '" << SIGNAL_REGION_TAG << "'" << endl; 
@@ -147,22 +147,22 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("nBtag",          "Number of selected b-tagged jets",  "",       5, 0,4,         &(nBtag),                "");
 
      #ifdef BDT_OUTPUT_AVAILABLE
-         screwdriver.AddVariable("BDT1",    "BDT output T2tt-1",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R1   ), "");
-         screwdriver.AddVariable("BDT2",    "BDT output T2tt-2",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R2   ), "");
-         screwdriver.AddVariable("BDT3",    "BDT output T2tt-5",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R5   ), "");
-         screwdriver.AddVariable("BDT4",    "BDT output T2bw075-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R1), "");
-         screwdriver.AddVariable("BDT5",    "BDT output T2bw075-2",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R2), "");
-         screwdriver.AddVariable("BDT6",    "BDT output T2bw075-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R3), "");
-         screwdriver.AddVariable("BDT7",    "BDT output T2bw075-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R5), "");
-         screwdriver.AddVariable("BDT8",    "BDT output T2bw050-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R1), "");
-         screwdriver.AddVariable("BDT9",    "BDT output T2bw050-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R3), "");
-         screwdriver.AddVariable("BDT10",   "BDT output T2bw050-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R4), "");
-         screwdriver.AddVariable("BDT11",   "BDT output T2bw050-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R5), "");
-         screwdriver.AddVariable("BDT12",   "BDT output T2bw050-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R6), "");
-         screwdriver.AddVariable("BDT13",   "BDT output T2bw025-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R1), "");
-         screwdriver.AddVariable("BDT14",   "BDT output T2bw025-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R3), "");
-         screwdriver.AddVariable("BDT15",   "BDT output T2bw025-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R4), "");
-         screwdriver.AddVariable("BDT16",   "BDT output T2bw025-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R6), "");
+         screwdriver.AddVariable("BDT_T2tt-1",      "BDT output T2tt-1",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R1   ), "");
+         screwdriver.AddVariable("BDT_T2tt-2",      "BDT output T2tt-2",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R2   ), "");
+         screwdriver.AddVariable("BDT_T2tt-5",      "BDT output T2tt-5",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R5   ), "");
+         screwdriver.AddVariable("BDT_T2bw075-1",   "BDT output T2bw075-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R1), "");
+         screwdriver.AddVariable("BDT_T2bw075-2",   "BDT output T2bw075-2",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R2), "");
+         screwdriver.AddVariable("BDT_T2bw075-3",   "BDT output T2bw075-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R3), "");
+         screwdriver.AddVariable("BDT_T2bw075-5",   "BDT output T2bw075-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R5), "");
+         screwdriver.AddVariable("BDT_T2bw050-1",   "BDT output T2bw050-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R1), "");
+         screwdriver.AddVariable("BDT_T2bw050-3",   "BDT output T2bw050-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R3), "");
+         screwdriver.AddVariable("BDT_T2bw050-4",   "BDT output T2bw050-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R4), "");
+         screwdriver.AddVariable("BDT_T2bw050-5",   "BDT output T2bw050-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R5), "");
+         screwdriver.AddVariable("BDT_T2bw050-6",   "BDT output T2bw050-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R6), "");
+         screwdriver.AddVariable("BDT_T2bw025-1",   "BDT output T2bw025-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R1), "");
+         screwdriver.AddVariable("BDT_T2bw025-3",   "BDT output T2bw025-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R3), "");
+         screwdriver.AddVariable("BDT_T2bw025-4",   "BDT output T2bw025-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R4), "");
+         screwdriver.AddVariable("BDT_T2bw025-6",   "BDT output T2bw025-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R6), "");
      #endif
 
      // #########################################################
