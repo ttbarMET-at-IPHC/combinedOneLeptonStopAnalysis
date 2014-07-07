@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+
+<!--
+	#################################################
+	#            Analysis configuration             #
+	#################################################
+-->
+
+<Analysis>
+<a 						
+   type="General" 
+   Verbosity="3" 
+   DataType="0" 
+   Luminosity="-1" 
+   LumiError="-1" 
+/>
+
+<!-- WARNING WARNING WARNING - Don't forget to use the good PU file !! S7 for signal (fastim), S10 for background (fullsim) ! -->
+<a
+    type="Corrections"
+    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/pileUp/puWeights_S7.root"
+    bTagReshaping="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/bTagReshaping/bTagReshaping.root"
+    jetEnergyCorrectionMC="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/JEC/Fall12_Uncertainty_MC_AK5PF.txt"
+    jetEnergyCorrectionData="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/JEC/Fall12_Uncertainty_Data_AK5PF.txt"
+/>
+
+</Analysis>
+
+<!--
+	#################################################
+	#            Datasets configuration             #
+	#################################################
+-->
+
+<Datasets>
+<!-- 
+     add = 1 : run on the sample
+     add = 0 : do not run on the sample
+     isData = 1 for data; = 0  for MC
+
+-->
+<d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root" />
+
+<!-- Signals -->
+<d  name="T2tt_noLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/T2tt_noLSP0_newStatOnly/*/*.root" />
+<d  name="T2tt_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/T2tt_withLSP0_oldStatOnly/*/*.root" />
+<!--
+-->
+</Datasets>
+
+<!--
+	#################################################
+	#           Collections configuration           #
+	#################################################
+-->
+
+<!--
+    Note : the pT/treshold and others cuts listed are actually not used in the selection
+           see the TTbarMETSelection / combined1LeptonStopSelecton.cc
+-->
+
+<Selection>
+	
+<s 
+	type="Electron" 
+	Loaded="1" 
+	Algo="selectedPatElectrons" 
+    PtThreshold="-1" EtaThreshold="-1"  RelIso="-1"  D0Cut="-1" VertexMatchThr="-1" ElectronETSCThr="-1" RemuThr="-1"
+/>
+<s 
+	type="Muon"
+	Loaded="1"
+	Algo="selectedPatMuons" 
+    PtThreshold="-1" EtaThreshod="-1" RelIso="-1" D0Cut="-1" VertexMatchThr="-1" NofValidHits="-1"   NofValidTkHits="-1" NormChi2="-1" 
+/>
+<s 
+	type="Tau"      
+	Loaded="1" 
+	Algo="selectedPatTaus" 
+    PtThreshold="-1" EtaThreshold="-1" RelIso="-1" D0Cut="-1" VertexMatchThr="-1" TauLeadTrkPtCut="-1"
+/>
+<s 
+	type="Vertex"   
+	Loaded="1" 
+	Algo="goodVertices" 
+    VertexNdofThr="-1" VertexZThr="-1" VertexRhoThr="-1" 
+/>
+<s 
+	type="PFCandidate"
+	Loaded="1"
+	Algo="particleFlow"
+/>
+<s 
+	type="Jet" 
+	Loaded="1" 
+	Algo="pf" 
+    PtThreshold="-1" EtaThreshold="-1"
+/> 
+<s 
+	type="HeavyTagJet" 
+	Loaded="1" 
+	Algo="CA8Pruned"
+/>
+
+</Selection>
+
+
+

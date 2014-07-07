@@ -41,7 +41,7 @@ using namespace std;
 #define OUTPUT_NAME "babyTuple.root"
 
 // Format definition of the babytuples
-//#define BABYTUPLE_FORMAT "formats/Format_newFinal0516.h"
-#define BABYTUPLE_FORMAT "formats/Format_genJetsEric0613.h"
+#define BABYTUPLE_FORMAT "formats/Format_newFinal0516.h"
+//#define BABYTUPLE_FORMAT "formats/Format_genJetsEric0613.h"
 
 #endif

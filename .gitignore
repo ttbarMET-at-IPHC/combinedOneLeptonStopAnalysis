@@ -37,6 +37,9 @@ analysisNote/
 
 # Various backup/crap
 *.d
+*.tex
+*.pdf
+*.aux
 .list*
 */backup*
 */list

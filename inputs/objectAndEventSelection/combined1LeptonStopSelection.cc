@@ -116,6 +116,7 @@ bool combined1LeptonStopSelection::passEventSelection(bool runningOnData)
         // ####################
 
         if ((selectedElectrons.size() >= 1 || selectedMuons.size() >= 1))
+        //if ((selectedElectrons.size() + selectedMuons.size() >= 2))
         {
             numberOfSelectedLeptons = selectedElectrons.size() + selectedMuons.size();
 
@@ -124,6 +125,7 @@ bool combined1LeptonStopSelection::passEventSelection(bool runningOnData)
             // ##########################
 
             if (selectedJets.size() >= 3) 
+            //if (selectedJets.size() >= 1) 
             {
                 FillKinematicP4();
                 return true;

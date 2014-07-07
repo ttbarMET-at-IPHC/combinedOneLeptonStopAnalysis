@@ -18,7 +18,7 @@
 <!-- WARNING WARNING WARNING - Don't forget to use the good PU file !! S7 for signal (fastim), S10 for background (fullsim) ! -->
 <a
     type="Corrections"
-    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/pileUp/puWeights_S7.root"
+    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/pileUp/puWeights_S10.root"
     bTagReshaping="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/bTagReshaping/bTagReshaping.root"
     jetEnergyCorrectionMC="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/JEC/Fall12_Uncertainty_MC_AK5PF.txt"
     jetEnergyCorrectionData="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/JEC/Fall12_Uncertainty_Data_AK5PF.txt"
@@ -41,10 +41,6 @@
 -->
 <d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root" />
-<!-- 
-<d  name="testSync" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
-    filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/Single*_B/NTuple_*.root" />
--->
 
 <!-- Signals -->
 <!--

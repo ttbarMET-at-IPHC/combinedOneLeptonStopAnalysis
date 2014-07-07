@@ -10,9 +10,13 @@ using namespace theDoctor;
 
 // BabyTuple format and location
 
-#define FOLDER_BABYTUPLES "../store/babyTuples_0328/"
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0328_preSelectionSkimmed/"
+//#define FOLDER_BABYTUPLES "../store/babyTuples_0603_1lepton4jetsMET80/"
+//#include "Reader_newFinal0603_skimmed.h"
+#define FOLDER_BABYTUPLES "../store/babyTuples_old/"
+#include "Reader_newFinal0603_skimmed_dirty.h"
+
 #include "analysisDefinitions.h"
+
 
 babyEvent* myEventPointer;
 
@@ -32,9 +36,6 @@ int main (int argc, char *argv[])
      // Create a sonic Screwdriver
       SonicScrewdriver screwdriver;
 
-     // Pointer to the event
-     myEventPointer = &myEvent;
-     
      // ##########################
      // ##   Create Variables   ##
      // ##########################
@@ -47,23 +48,30 @@ int main (int argc, char *argv[])
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
+/*
+     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
+     screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
+     screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
 
-     screwdriver.AddProcessClass("ttbar_1l",        "t#bar{t} #rightarrow l+jets",        "background",kRed-7);
-     screwdriver.AddProcessClass("ttbar_2l",        "t#bar{t} #rightarrow l^{+}l^{-}",    "background",kCyan-3);
-            screwdriver.AddDataset("ttbar",         "ttbar_1l",  0, 0);
-     
-     screwdriver.AddProcessClass("singletop",       "single t (s and t channels)",      "background",kBlue);
-     
-     screwdriver.AddProcessClass("W+jets",          "W+jets",                             "background",kOrange-2);
-             screwdriver.AddDataset("Wjets",        "W+jets", 0, 0);
+     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
 
-     screwdriver.AddProcessClass("others",          "others",                             "background",kMagenta-5);
-             screwdriver.AddDataset("others",       "others", 0, 0);
-     
-     screwdriver.AddProcessClass("data",   "data",                                        "data",COLORPLOT_BLACK);
-             screwdriver.AddDataset("SingleElec",   "data", 0, 0);
-             screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
+*/
+     screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
+     screwdriver.AddDataset("Wjets",    "W+jets", 0, 0);
 
+/*
+     screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
+     screwdriver.AddDataset("rare",   "rare", 0, 0);
+
+     screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
+     screwdriver.AddDataset("SingleElec",   "data", 0, 0);
+     screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
+*/
+     screwdriver.AddProcessClass("T2tt",     "T2tt",                   "signal",kViolet-1);
+          screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
+
+     screwdriver.AddProcessClass("T2tt_175_25",  "T2tt (175/25)",      "signal",COLORPLOT_BLUE);
+ 
 
   // ##########################
   // ##    Create Regions    ##
@@ -137,7 +145,8 @@ int main (int argc, char *argv[])
      TTree* theTree = (TTree*) f.Get("babyTuple"); 
      
      intermediatePointers pointers;
-     InitializeBranches(theTree,&myEvent,&pointers);
+     InitializeBranchesForReading(theTree,&myEvent,&pointers);
+     //InitializeBranches(theTree,&myEvent,&pointers);
 
   // ########################################
   // ##        Run over the events         ##
@@ -153,30 +162,18 @@ int main (int argc, char *argv[])
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
 
-          float weight = getWeight();
-          weight = 1.0;
+          //float weight = getWeight();
+          float weight = 1.0;
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
-          if ((currentDataset == "ttbar") && (myEvent.numberOfGenLepton == 2)) 
+          if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
-
-          // Split singletop s and t channels from other
-          if ((currentDataset == "others") 
-          && ((myEvent.crossSection == 1.8)
-          ||  (myEvent.crossSection == 30.0)
-          ||  (myEvent.crossSection == 3.9 )
-          ||  (myEvent.crossSection == 55.5))) currentProcessClass_ = "singletop"; 
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
-          if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 50))
-              screwdriver.AutoFillProcessClass("signal_250_50",weight);
-          if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 50))
-              screwdriver.AutoFillProcessClass("signal_450_50",weight);
-          if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 50))
-              screwdriver.AutoFillProcessClass("signal_650_50",weight);
-
+          if ((myEvent.mStop == 175) && (myEvent.mNeutralino == 25))
+            screwdriver.AutoFillProcessClass("T2tt_175_25",weight);
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
@@ -205,9 +202,14 @@ int main (int argc, char *argv[])
 
   // Print yield tables for the signal region LM150
   vector<string> tableRegions = { "presel_MTinverted" };
-  TableDataMC(&screwdriver,tableRegions,"singleElec").PrintTable();
-  TableDataMC(&screwdriver,tableRegions,"singleMuon").PrintTable();
-  TableDataMC(&screwdriver,tableRegions,"singleLepton").PrintTable();
+  TableDataMC(&screwdriver,tableRegions,"singleElec").Print();
+  TableDataMC(&screwdriver,tableRegions,"singleMuon").Print();
+  TableDataMC(&screwdriver,tableRegions,"singleLepton").Print();
+
+  TableBackgroundSignal(&screwdriver,tableRegions,"singleElec").Print();
+  TableBackgroundSignal(&screwdriver,tableRegions,"singleMuon").Print();
+  TableBackgroundSignal(&screwdriver,tableRegions,"singleLepton").Print();
+
 
   printBoxedMessage("Program done.");
   return (0);

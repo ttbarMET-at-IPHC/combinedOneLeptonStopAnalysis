@@ -1,5 +1,7 @@
 ObjSuf        = o
 SrcSuf        = C
+ExeSuf        = run
+LogSuf        = log
 
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
@@ -7,8 +9,10 @@ ROOTLIBS      = $(shell root-config --libs)
 DEFINES       = 
 
 CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
-CXXFLAGS      += $(ROOTCFLAGS) -I./ -I../sonicScrewdriver/
+CXXFLAGS      = -std=c++0x
+CXXFLAGS      += -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
+CXXFLAGS      += $(ROOTCFLAGS) -I./
+CXXFLAGS      += -I../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
@@ -19,28 +23,35 @@ LDFLAGS       += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 SOFLAGS       = -shared
 LIBS          = 
 
+# Uncomment this line if you want to use a script to parse & colorize gcc output
+# (You can also export this variable from your bashrc)
+#GCCPARSER     = 2>&1 | python ~/littleScripts/colorGcc.py
+
 #------------------------------------------------------------------------------
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
-EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
+EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
+LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
+#------------------------------------------------------------------------------
+TARGET = synchronizationTables
 #------------------------------------------------------------------------------
 
-all: ../.vectorDictionnary_C.so synchroBabyTuples
+all: compile run
+	
+compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
+
+run:
+	./$(TARGET).$(ExeSuf) | tee $(TARGET).$(LogSuf)
+
+clean:
+	@echo "Cleaning..."
+	@rm -f $(OBJECTS) $(EXECUTABLES) $(LOGS)
+
+#------------------------------------------------------------------------------
 
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
-%.o: %.c
-	$(CXX) $(CXXFLAGS) -c $<
-
-%: %.o
-	$(LD) $(LDFLAGS) -o $@ $< $(LIBS) 
-
-clean:
-	@echo "Cleaning..."
-	@rm -f $(OBJECTS) $(EXECUTABLES)
-
-#.SUFFIXES: .$(SrcSuf) .C .o .so
-
-
+%.$(ExeSuf): %.$(SrcSuf)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 

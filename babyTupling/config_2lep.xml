@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+
+<!--
+	#################################################
+	#            Analysis configuration             #
+	#################################################
+-->
+
+<Analysis>
+<a 						
+   type="General" 
+   Verbosity="3" 
+   DataType="0" 
+   Luminosity="-1" 
+   LumiError="-1" 
+/>
+
+<!-- WARNING WARNING WARNING - Don't forget to use the good PU file !! S7 for signal (fastim), S10 for background (fullsim) ! -->
+<a
+    type="Corrections"
+    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/pileUp/puWeights_S10.root"
+    bTagReshaping="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/bTagReshaping/bTagReshaping.root"
+    jetEnergyCorrectionMC="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/JEC/Fall12_Uncertainty_MC_AK5PF.txt"
+    jetEnergyCorrectionData="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/JEC/Fall12_Uncertainty_Data_AK5PF.txt"
+/>
+
+</Analysis>
+
+<!--
+	#################################################
+	#            Datasets configuration             #
+	#################################################
+-->
+
+<Datasets>
+<!-- 
+     add = 1 : run on the sample
+     add = 0 : do not run on the sample
+     isData = 1 for data; = 0  for MC
+
+-->
+<d  name="relvalSynchro" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
+    filenames="/opt/sbg/data/data4/cms/aaubin/analysisProd_August13-v1/CMSSW_5_3_2_patch4/src/ProdConfig/prod-syncSample/NTuple.root" />
+
+<!-- ttbar -->
+
+<!--
+<d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="245.8"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/ttbar-v*/*.root" />
+<d  name="ttbar_madgraph_1l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="108.69"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/ttbar_madgraph_1l/*.root" />
+<d  name="ttbar_madgraph_2l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="26.76"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/ttbar_madgraph_2l/*.root" />
+-->
+
+<!-- DY+jets -->
+
+<!--
+<d  name="DY1jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="671.83"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DY1jets/*.root" />
+<d  name="DY2jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="216.76"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DY2jets/*.root" />
+<d  name="DY3jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="61.2"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DY3jets/*.root" />
+<d  name="DY4jets" add="1" isData="0" NofEvts="-1" normf="1" xsection="27.6"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DY4jets/*.root" />
+-->
+
+<!-- SingleTop -->
+
+<!--
+<d  name="SingleTbar-s" add="1" isData="0" NofEvts="-1" normf="1" xsection="1.76"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/SingleTbar-s/*.root" />
+<d  name="SingleTbar-t" add="1" isData="0" NofEvts="-1" normf="1" xsection="30.7"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/SingleTbar-t/*.root" />
+<d  name="SingleTbar-tW" add="1" isData="0" NofEvts="-1" normf="1" xsection="11.1"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/SingleTbar-tW/*.root" />
+<d  name="SingleT-s" add="1" isData="0" NofEvts="-1" normf="1" xsection="3.79"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/SingleT-s/*.root" />
+<d  name="SingleT-t" add="1" isData="0" NofEvts="-1" normf="1" xsection="56.4"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/SingleT-t/*.root" />
+<d  name="SingleT-tW" add="1" isData="0" NofEvts="-1" normf="1" xsection="11.1"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/SingleT-tW/*.root" />
+-->
+
+<!-- Others -->
+
+<!--
+<d  name="WGstarToLNu2E" add="1" isData="0" NofEvts="-1" normf="1" xsection="5.873"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WGstarToLNu2E/*.root" />
+<d  name="WGstarToLNu2Mu" add="1" isData="0" NofEvts="-1" normf="1" xsection="1.914"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WGstarToLNu2Mu/*.root" />
+<d  name="WGstarToLNu2Tau" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.336"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WGstarToLNu2Tau/*.root" />
+<d  name="TBZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.0114"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/TBZ/*.root" />
+<d  name="TTG" add="1" isData="0" NofEvts="-1" normf="1" xsection="2.166"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/TTG/*.root" />
+<d  name="TTW" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.232"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/TTW/*.root" />
+<d  name="TTWW" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.002037"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/TTWW/*.root" />
+<d  name="TTZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.2057"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/TTZ/*.root" />
+<d  name="WWG" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.528"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WWG/*.root" />
+<d  name="WWTo2L2Nu" add="1" isData="0" NofEvts="-1" normf="1" xsection="5.8123"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WWTo2L2Nu/*.root" />
+<d  name="WWW" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.08058"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WWW/*.root" />
+<d  name="WWZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.05795"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WWZ/*.root" />
+<d  name="WZTo2L2Q" add="1" isData="0" NofEvts="-1" normf="1" xsection="2.206"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WZTo2L2Q/*.root" />
+<d  name="WZTo3LNu" add="1" isData="0" NofEvts="-1" normf="1" xsection="1.0575"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WZTo3LNu/*.root" />
+<d  name="WZZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.01698"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WZZ/*.root" />
+<d  name="ZZTo2L2Nu" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.365"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/ZZTo2L2Nu/*.root" />
+<d  name="ZZTo2L2Q" add="1" isData="0" NofEvts="-1" normf="1" xsection="2.4487"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/ZZTo2L2Q/*.root" />
+<d  name="ZZTo4L" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.176908"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/ZZTo4L/*.root" />
+<d  name="ZZZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.005527"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/ZZZ/*.root" />
+-->
+
+<!-- DoubleLepton Data -->
+<!--
+<d  name="DoubleElec" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DoubleElec_*/*.root" />
+<d  name="DoubleMuon" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DoubleMuon_*/*.root" />
+<d  name="MuEl" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
+    filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/MuEl_*/*.root" />
+-->
+
+</Datasets>
+
+<!--
+	#################################################
+	#           Collections configuration           #
+	#################################################
+-->
+
+<!--
+    Note : the pT/treshold and others cuts listed are actually not used in the selection
+           see the TTbarMETSelection / combined1LeptonStopSelecton.cc
+-->
+
+<Selection>
+	
+<s 
+	type="Electron" 
+	Loaded="1" 
+	Algo="selectedPatElectrons" 
+    PtThreshold="-1" EtaThreshold="-1"  RelIso="-1"  D0Cut="-1" VertexMatchThr="-1" ElectronETSCThr="-1" RemuThr="-1"
+/>
+<s 
+	type="Muon"
+	Loaded="1"
+	Algo="selectedPatMuons" 
+    PtThreshold="-1" EtaThreshod="-1" RelIso="-1" D0Cut="-1" VertexMatchThr="-1" NofValidHits="-1"   NofValidTkHits="-1" NormChi2="-1" 
+/>
+<s 
+	type="Tau"      
+	Loaded="1" 
+	Algo="selectedPatTaus" 
+    PtThreshold="-1" EtaThreshold="-1" RelIso="-1" D0Cut="-1" VertexMatchThr="-1" TauLeadTrkPtCut="-1"
+/>
+<s 
+	type="Vertex"   
+	Loaded="1" 
+	Algo="goodVertices" 
+    VertexNdofThr="-1" VertexZThr="-1" VertexRhoThr="-1" 
+/>
+<s 
+	type="PFCandidate"
+	Loaded="1"
+	Algo="particleFlow"
+/>
+<s 
+	type="Jet" 
+	Loaded="1" 
+	Algo="pf" 
+    PtThreshold="-1" EtaThreshold="-1"
+/> 
+<s 
+	type="HeavyTagJet" 
+	Loaded="1" 
+	Algo="CA8Pruned"
+/>
+
+</Selection>
+
+
+
