@@ -15,7 +15,7 @@ CR4_4j_150evts
 
 for i in $CRs ; do
 	echo "### Compute SF for $i" 
-	sed -e "s/#define $i false/#define $i true/g" BDTDefinition.h.org > BDTDefinition.h
+	sed -e "s/#define $i false/#define $i true/g" BDTDefinition_link.h > BDTDefinition.h
 	make clean;
 	time make tables && time make predictions
 	cd scaleFactors;

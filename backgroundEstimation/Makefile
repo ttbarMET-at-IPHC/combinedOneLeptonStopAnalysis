@@ -64,7 +64,7 @@ SIGNAL_REGIONS += preselection
 #SIGNAL_REGIONS += cutAndCount_T2bw025_veryOffShell_loose cutAndCount_T2bw025_offShell_loose cutAndCount_T2bw025_lowDeltaM_tight    cutAndCount_T2bw025_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw050_offShell_loose     cutAndCount_T2bw050_lowMass        cutAndCount_T2bw050_mediumDeltaM_loose cutAndCount_T2bw050_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw075_lowDeltaM_tight    cutAndCount_T2bw075_mediumDeltaM   cutAndCount_T2bw075_highDeltaM
-SIGNAL_REGIONS += BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
+#SIGNAL_REGIONS += BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
 #SIGNAL_REGIONS += BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6       
 #SIGNAL_REGIONS += BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6  
 #SIGNAL_REGIONS += BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5
@@ -89,6 +89,13 @@ tables:
 		done;							\
 	done;								\
 	echo "Done";
+
+
+plots4CR1: plots4CR1Estimation.$(ExeSuf)
+	./plots4CR1Estimation.$(ExeSuf) 
+
+computeBDTCuts: computeBDTCuts.$(ExeSuf)
+	./computeBDTCuts.$(ExeSuf) 
 
 predictions: backgroundEstimation.$(ExeSuf)
 	@for REGION in $(SIGNAL_REGIONS);					\
