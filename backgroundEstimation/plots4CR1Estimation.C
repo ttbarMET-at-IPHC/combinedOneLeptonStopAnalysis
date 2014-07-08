@@ -30,22 +30,22 @@ bool goesInVetoControlRegionMTtail_withSRCuts() { return (goesInVetoControlRegio
 bool goesInVetoControlRegionNoMT_withSRCuts()   { return (goesInVetosControlRegion()      && SIGNAL_REGION_CUTS(disableMTCut)); }
 
 
-bool LowBDT_T2tt_1         () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_1"         )>  -0.12); }
-bool LowBDT_T2tt_2         () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_2"         )>  -0.20); }
-bool LowBDT_T2tt_5         () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_5_loose"   )>  -0.19); }
-bool LowBDT_T2bw075_1      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_1"      )>  -0.12); }
-bool LowBDT_T2bw075_2      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_2"      )>  -0.19); }
-bool LowBDT_T2bw075_3      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_3"      )>  -0.20); }
-bool LowBDT_T2bw075_5      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_5"      )>  -0.19); }
-bool LowBDT_T2bw050_1      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_1_loose")>  -0.12); }
-bool LowBDT_T2bw050_3      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_3"      )>  -0.12); }
-bool LowBDT_T2bw050_4      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_4"      )>  -0.14); }
-bool LowBDT_T2bw050_5      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_5"      )>  -0.19); }
-bool LowBDT_T2bw050_6      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_6"      )>  -0.19); }
-bool LowBDT_T2bw025_1      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_1"      )>  -0.12); }
-bool LowBDT_T2bw025_3      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_3"      )>  -0.12); }
-bool LowBDT_T2bw025_4      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_4"      )>  -0.14); }
-bool LowBDT_T2bw025_6      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_6"      )>  -0.22); }
+bool LowBDT_T2tt_1         () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_1"         )> 0.08 ); }
+bool LowBDT_T2tt_2         () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_2"         )> 0.12 ); }
+bool LowBDT_T2tt_5         () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_5_loose"   )> 0.04 ); }
+bool LowBDT_T2bw075_1      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_1"      )> 0.05 ); }
+bool LowBDT_T2bw075_2      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_2"      )> 0.05 ); }
+bool LowBDT_T2bw075_3      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_3"      )> 0.06 ); }
+bool LowBDT_T2bw075_5      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_5"      )> 0.04 ); }
+bool LowBDT_T2bw050_1      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_1_loose")> 0.06 ); }
+bool LowBDT_T2bw050_3      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_3"      )> 0.12 ); }
+bool LowBDT_T2bw050_4      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_4"      )> 0.08 ); }
+bool LowBDT_T2bw050_5      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_5"      )> 0.08 ); }
+bool LowBDT_T2bw050_6      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_6"      )> 0.06 ); }
+bool LowBDT_T2bw025_1      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_1"      )> 0.10 ); }
+bool LowBDT_T2bw025_3      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_3"      )> 0.12 ); }
+bool LowBDT_T2bw025_4      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_4"      )> 0.09 ); }
+bool LowBDT_T2bw025_6      () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_6"      )> 0.06 ); }
  
 
 // #########################################################################

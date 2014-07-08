@@ -243,7 +243,7 @@ struct FitSetup{
   float init_wjets;
 
   void Reset(){
-	 filename="plots4CR1/ttbar_madgraph/1DDataMCComparison.root";
+	 filename="plots4CR1/ttbar_powheg/1DDataMCComparison.root";
 	 //varname="Mlb";
 	 varname="Mlb";
 	 //varname="M3b";
@@ -688,6 +688,17 @@ int main()
   res = doFit(setup,conditions); 
   setup.varname="M3b"; setup.region="0btag_MTpeak";
   res = doFit(setup,conditions); 
+
+
+  //-- Apply the template fit on each SR --//
+ 
+  vector<string> signalRegions = {"LowBDT_T2tt_1",  "LowBDT_T2tt_2",  "LowBDT_T2tt_5",  "LowBDT_T2bw075_1",  "LowBDT_T2bw075_2",  "LowBDT_T2bw075_3",  "LowBDT_T2bw075_5",  "LowBDT_T2bw050_1",  "LowBDT_T2bw050_3",  "LowBDT_T2bw050_4",  "LowBDT_T2bw050_5",  "LowBDT_T2bw050_6",  "LowBDT_T2bw025_1",  "LowBDT_T2bw025_3",  "LowBDT_T2bw025_4",  "LowBDT_T2bw025_6"};
+  for(unsigned int i=0;i<signalRegions.size();i++){
+  	cout<<"%%%%%%%%%%%%%%%%%% "<<signalRegions[i]<<endl;
+	setup.Reset(); conditions="sigRegions"; setup.region=signalRegions[i]; uncert.name = conditions;
+ 	setup.varname="Mlb"; setup.varMin=0; setup.varMax=600;
+  	res = doFit(setup,conditions); 
+  }
 
   //-- split region --//
    /* 
