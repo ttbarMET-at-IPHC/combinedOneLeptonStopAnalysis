@@ -272,7 +272,7 @@ int main (int argc, char *argv[])
   Table tableCR1(dummy, vars, dummy, vars);
   channel = "singleLepton";
   region = "0btag";
-  float quantile = 0.25;
+  float quantile = 0.90;
   for(unsigned int i=0;i<vars.size();i++){
   	for(unsigned int j=0;j<MinNofEvts.size();j++){
 		Figure bdtCut(QuantileVariabelCut(screwdriver, quantile, vars[i], processClasses, region, channel),0);
