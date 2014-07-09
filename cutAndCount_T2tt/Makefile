@@ -33,7 +33,8 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-DEFAULT_TARGET = optimizeCuts
+#DEFAULT_TARGET = optimizeCuts
+DEFAULT_TARGET = Plotting
 #------------------------------------------------------------------------------
 
 all: compile run

@@ -76,8 +76,6 @@ bool cutAndCount_T2tt_highDeltaM   (bool applyMTCut) { return cutAndCount_T2tt( 
 #define REFERENCE_CUTS {15,    190, 240, -1}
 */
 
-float figureOfMerit(float S, float B, string mode);
-void optimize(bool* scenario, string mode);
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 void fillTable(Table* results, string label, bool* use, vector<float> cuts, float bestFOM, float bestYieldSig, float bestYieldBkg);
 
@@ -372,37 +370,6 @@ void fillTable(Table* results, string label, bool* use, vector<float> cuts, floa
     results->Set("FOM",          label, bestFOM);
     results->Set("S",            label, bestYieldSig);
     results->Set("B",            label, bestYieldBkg);
-}
-
-void optimize(bool* scenario, string mode)
-{
-
-  float bestFOM, bestYieldSig, bestYieldBkg;
-  vector<float> cuts = optimizeCuts(scenario, &bestFOM, &bestYieldSig, &bestYieldBkg, mode);
-
-  cout << "================================================" << endl;
-  cout << " MET/sqrt(HT),MT,MT2W,MET ="
-       << " ( " << cuts[0] * scenario[0] 
-       << " , " << cuts[1] * scenario[1] 
-       << " , " << cuts[2] * scenario[2] 
-       << " , " << cuts[3] * scenario[3] << " ) " << endl 
-       << " [FOM] = " << bestFOM << " ; S,B =  " << bestYieldSig << "," << bestYieldBkg << endl;
-  cout << "================================================" << endl;
-}
-
-float figureOfMerit(float S, float B, string mode)
-{
-    if (B < 1.0) B = 1.0;
-    if (S < 3) return 0;
-
-    float f_B = SYST_UNCERTAINTY;
-    B += f_B*f_B*B*B;
-
-    if (mode == "discovery") return S / sqrt(B);
-    if (mode == "exclusion") return S / sqrt(S + B);
-    if (mode == "azimov")    return sqrt(2 * ((S+B) * log(1 + S/B) - S));
-    
-    return -1.0;
 }
 
 vector<float> optimizeCuts(bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg, string mode)
