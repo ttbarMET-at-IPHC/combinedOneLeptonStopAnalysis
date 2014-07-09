@@ -21,11 +21,11 @@ string sampleType;
 // Define input and output folders
 
     // Standard babyTuples
-//#define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/"
+#define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/"
 //#define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim/1lepton4jetsMET80/"
     
     // Fix for dilepton channels with 1 and 2 jets bins
-#define FOLDER_INPUT  "../store/babyTuples_0603_fix2leptonAtLeast1jet_withBDT/"
+//#define FOLDER_INPUT  "../store/babyTuples_0603_fix2leptonAtLeast1jet_withBDT/"
 #define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim/2leptons1jetMET50/"
 
 // Files needed to compute on-fly variables
@@ -81,7 +81,7 @@ int main (int argc, char *argv[])
         if (myEvent.nJets < 4)           continue;
         if (myEvent.MET < 80)            continue;
         */
-        
+         
         if (myEvent.numberOfLepton != 2) continue;
         if (myEvent.nJets < 1)           continue;
         if (myEvent.MET < 50)            continue;

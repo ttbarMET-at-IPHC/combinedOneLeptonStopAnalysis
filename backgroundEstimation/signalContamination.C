@@ -35,62 +35,6 @@ bool goesInVetoControlRegionNoMT_withSRCuts()   { return (goesInVetosControlRegi
 
 bool goesInAnyChannel()                             { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
 
-//--- Access to quantiles of the plots   ---//
-
-float QuantileVariabelCut(SonicScrewdriver& sonic, float quantile, string var, vector<string> processClass, string region, string channel)
-{
-    //retrieve plots for the all processClasses
-    TH1F* hclone = 0;
-    TH1F* hMCSum = 0; // sum of all processClasses
-    for(unsigned int i=0;i<processClass.size();i++){
-        hclone = sonic.get1DHistoClone(var, processClass[i], region, channel);
-        if(i==0) hMCSum = hclone;
-        else hMCSum->Add(hclone);
-    }
-    //Search for the quantile
-    float integral = hMCSum->Integral();
-    float frac  = 0;
-    int qbin = 0; // bin where quantile is found
-    for(int i=0;i<hMCSum->GetNbinsX();i++){
-        if(integral!=0) frac = hMCSum->Integral(0,i)/integral;
-        if(frac>=quantile){
-            qbin = i;
-            break;
-        }
-    }
-    if(integral!=0 && qbin!=hMCSum->GetNbinsX()){
-        return hMCSum->GetBinCenter(qbin);
-    }
-    return -1;
-}
-//
-float MinNofEvtsVariabelCut(SonicScrewdriver& sonic, int nof, string var, vector<string> processClass, string region, string channel)
-{
-    //retrieve plots for the all processClasses
-    TH1F* hclone = 0;
-    TH1F* hMCSum = 0; // sum of all processClasses
-    for(unsigned int i=0;i<processClass.size();i++){
-        hclone = sonic.get1DHistoClone(var, processClass[i], region, channel);
-        if(i==0) hMCSum = hclone;
-        else hMCSum->Add(hclone);
-    }
-    //Search for the quantile
-    float integral = 0;
-    int qbin = 0; // bin where quantile is found
-    for(int i=hMCSum->GetNbinsX();i>0;i--){
-        integral = hMCSum->Integral(i,hMCSum->GetNbinsX());
-        if(integral>=nof){
-            qbin = i;
-            break;
-        }
-    }
-    if(integral!=0 && qbin!=hMCSum->GetNbinsX()){
-        return hMCSum->GetBinCenter(qbin);
-    }
-    return -1;
-}
-
-
 // #########################################################################
 //                              Main function
 // #########################################################################
@@ -118,54 +62,9 @@ int main (int argc, char *argv[])
      // ##########################
 
      screwdriver.AddVariable("MET",            "MET",                     "GeV",    16,50,530,      &(myEvent.MET),                  "logY");
-     screwdriver.AddVariable("METPhi",         "METPhi",                  "GeV",    16,50,530,      &(myEvent.METPhi),               "");
-     
      screwdriver.AddVariable("MT",             "M_{T}",                   "GeV",    40,0,400,       &(myEvent.MT),                   "logY");
-     screwdriver.AddVariable("MT_rebin2",      "M_{T}",                   "GeV",    16,0,400,       &(myEvent.MT),                   "logY");
-     screwdriver.AddVariable("MT_rebin3",      "M_{T}",                   "GeV",    8,0,400,        &(myEvent.MT),                   "logY");
-     screwdriver.AddVariable("MT_rebin4",      "M_{T}",                   "GeV",    4,0,400,        &(myEvent.MT),                   "logY");
-
-     screwdriver.AddVariable("MTpeak",         "M_{T}",                   "GeV",    20,0,100,       &(myEvent.MT),                   "noOverflowInLastBin");
-     screwdriver.AddVariable("MTtail",         "M_{T}",                   "GeV",    30,100,400,     &(myEvent.MT),                   "logY,noUnderflowInFirstBin");
-
-     screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
-     screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
-     screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),              "");
-     screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,10,        &(myEvent.hadronicChi2),         "");
-     screwdriver.AddVariable("HT",             "H_{T}",                   "",       46,120,1500,    &(myEvent.HT),                   "");
-     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    20,0,400,       &(myEvent.leadingBPt),           "");
-     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    20,0,600,       &(myEvent.leadingJetPt),         "");
-     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    28,20,300,      &(myEvent.leadingLeptonPt),      "");
-     screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    26,0,520,       &(myEvent.Mlb),                  "");
-     screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    26,0,520,       &(myEvent.Mlb_hemi),             "");
-     screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    20,50,750,      &(myEvent.M3b),                  "");
-     screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       20,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
-     screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
-     screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
-
-     int nJets, nBtag;
-
-     screwdriver.AddVariable("nJets",          "Number of selected jets",           "",       11,0,10,        &(nJets),                "");
-     screwdriver.AddVariable("nBtag",          "Number of selected b-tagged jets",  "",       5, 0,4,         &(nBtag),                "");
-
-     #ifdef BDT_OUTPUT_AVAILABLE
-         screwdriver.AddVariable("BDT_T2tt-1",      "BDT output T2tt-1",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R1   ), "");
-         screwdriver.AddVariable("BDT_T2tt-2",      "BDT output T2tt-2",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R2   ), "");
-         screwdriver.AddVariable("BDT_T2tt-5",      "BDT output T2tt-5",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R5   ), "");
-         screwdriver.AddVariable("BDT_T2bw075-1",   "BDT output T2bw075-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R1), "");
-         screwdriver.AddVariable("BDT_T2bw075-2",   "BDT output T2bw075-2",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R2), "");
-         screwdriver.AddVariable("BDT_T2bw075-3",   "BDT output T2bw075-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R3), "");
-         screwdriver.AddVariable("BDT_T2bw075-5",   "BDT output T2bw075-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R5), "");
-         screwdriver.AddVariable("BDT_T2bw050-1",   "BDT output T2bw050-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R1), "");
-         screwdriver.AddVariable("BDT_T2bw050-3",   "BDT output T2bw050-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R3), "");
-         screwdriver.AddVariable("BDT_T2bw050-4",   "BDT output T2bw050-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R4), "");
-         screwdriver.AddVariable("BDT_T2bw050-5",   "BDT output T2bw050-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R5), "");
-         screwdriver.AddVariable("BDT_T2bw050-6",   "BDT output T2bw050-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R6), "");
-         screwdriver.AddVariable("BDT_T2bw025-1",   "BDT output T2bw025-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R1), "");
-         screwdriver.AddVariable("BDT_T2bw025-3",   "BDT output T2bw025-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R3), "");
-         screwdriver.AddVariable("BDT_T2bw025-4",   "BDT output T2bw025-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R4), "");
-         screwdriver.AddVariable("BDT_T2bw025-6",   "BDT output T2bw025-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R6), "");
-     #endif
+     screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
+     screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "");
 
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
@@ -222,12 +121,7 @@ int main (int argc, char *argv[])
      // ##########################
    
      screwdriver.AddChannel("singleLepton", "e/#mu-channels",   &goesInSingleLeptonChannel);
-     //screwdriver.AddChannel("singleElec",   "e-channel",        &goesInSingleElecChannel  );
-     //screwdriver.AddChannel("singleMuon",   "#mu-channel",      &goesInSingleMuonChannel  );
      screwdriver.AddChannel("doubleLepton", "2l-channel",       &goesInDoubleLeptonChannel);
-     //screwdriver.AddChannel("doubleElec",   "ee-channel",       &goesInDoubleElecChannel  );
-     //screwdriver.AddChannel("doubleMuon",   "#mu#mu-channel",   &goesInDoubleMuonChannel  );
-     //screwdriver.AddChannel("elecAndMuon",  "e#mu-channel",     &goesInMuonElecChannel    );
      screwdriver.AddChannel("allChannels",  "",                 &goesInAnyChannel         );
 
   // ########################################
@@ -237,9 +131,11 @@ int main (int argc, char *argv[])
 
      // Create histograms
      screwdriver.Create1DHistos();
+     screwdriver.Add2DHisto("mStop","mNeutralino");
 
      // Schedule plots
      screwdriver.SchedulePlots("1DDataMCComparison");
+     screwdriver.SchedulePlots("2D");
 
      // Config plots
 
@@ -278,8 +174,16 @@ int main (int argc, char *argv[])
      intermediatePointers pointers;
      InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
-     myEvent.mStop       = -1;
-     myEvent.mNeutralino = -1;
+     if (currentDataset == "T2tt")
+     {
+        theTree->SetBranchAddress("mStop",       &(myEvent.mStop));
+        theTree->SetBranchAddress("mNeutralino", &(myEvent.mNeutralino));
+     }
+     else
+     {
+         myEvent.mStop       = -1;
+         myEvent.mNeutralino = -1;
+     }
 
   // ########################################
   // ##        Run over the events         ##
@@ -294,19 +198,6 @@ int main (int argc, char *argv[])
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
 
-          #ifdef CR4_2j
-              if (myEvent.nJets < 2) continue;
-          #endif
-          #ifdef CR4_3j
-              if (myEvent.nJets < 3) continue;
-          #endif
-          #if defined(CR4_4j) || defined(CR4_4j_50evts) || defined(CR4_4j_100evts) || defined(CR4_4j_150evts)
-              if (myEvent.nJets < 4) continue; 
-          #endif
-
-          nJets = myEvent.nJets;
-          nBtag = myEvent.nBTag;
-
           float weight = getWeight();
 
           // Split 1-lepton ttbar and 2-lepton ttbar
@@ -314,7 +205,17 @@ int main (int argc, char *argv[])
           if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2)) 
               currentProcessClass_ = "ttbar_2l";
 
-          screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+          if (currentDataset == "T2tt")
+          {
+              if ((myEvent.mStop == 250) && (myEvent.mNeutralino == 100)) screwdriver.AutoFillProcessClass("signal_250_100",weight); 
+              if ((myEvent.mStop == 350) && (myEvent.mNeutralino == 100)) screwdriver.AutoFillProcessClass("signal_350_100",weight); 
+              if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 100)) screwdriver.AutoFillProcessClass("signal_450_100",weight); 
+              if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 100)) screwdriver.AutoFillProcessClass("signal_650_100",weight); 
+          }
+          else
+          {
+            screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+          }
 
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
@@ -381,6 +282,32 @@ int main (int argc, char *argv[])
   screwdriver.WritePlots(string("./controlPlotsDataMC/")+SIGNAL_REGION_TAG);
 
   printBoxedMessage("Plot generation completed");
+
+  string referenceSignal;
+
+       if (string(SIGNAL_REGION_TAG) == "preselection"                  ) referenceSignal = "signal_250_100";
+  else if (string(SIGNAL_REGION_TAG) == "cutAndCount_T2tt_offShellLoose") referenceSignal = "signal_250_100";
+  else if (string(SIGNAL_REGION_TAG) == "cutAndCount_T2tt_offShellTight") referenceSignal = "signal_250_100";
+  else if (string(SIGNAL_REGION_TAG) == "cutAndCount_T2tt_lowDeltaM"    ) referenceSignal = "signal_350_100";
+  else if (string(SIGNAL_REGION_TAG) == "cutAndCount_T2tt_mediumDeltaM" ) referenceSignal = "signal_450_100";
+  else if (string(SIGNAL_REGION_TAG) == "cutAndCount_T2tt_highDeltaM"   ) referenceSignal = "signal_650_100";
+
+  vector<string> regions  = { "signalRegion", "MTpeak", "0btag", "2leptons", "reversedVeto" };
+  TableBackgroundSignal contaminationCheck(&screwdriver,regions,"allChannels");
+  contaminationCheck.Print();
+ 
+  vector<string> regions2 = { "signalRegion_noMTCut", "0btag_noMTCut", "2leptons_noMTCut", "reversedVeto_noMTCut" };
+  TableBackgroundSignal contaminationCheck2(&screwdriver,regions2,"allChannels");
+  contaminationCheck2.Print();
+
+  vector<string> dummyLabel = { SIGNAL_REGION_TAG };
+  Table contaminationSummary(regions,dummyLabel);
+  for (unsigned int r = 0 ; r < regions.size() ; r++)
+  {
+     contaminationSummary.Set(regions[r],SIGNAL_REGION_TAG,  contaminationCheck.Get(regions[r],referenceSignal)
+                                                           / contaminationCheck.Get(regions[r],"totalSM"));
+  }
+  contaminationSummary.Print(2,"noError");
 
   // #############################
   // ##   Post-plotting tests   ##
