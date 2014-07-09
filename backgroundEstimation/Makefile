@@ -17,7 +17,8 @@ CXXFLAGS     += -I../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
-LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA
+LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA 
+#LDFLAGS	     += -lRooFit -lRooFitCore
 LDFLAGS      += -l:`pwd`/../.vectorDictionnary_C.so 
 LDFLAGS      += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 
@@ -89,6 +90,18 @@ tables:
 		done;							\
 	done;								\
 	echo "Done";
+
+
+plots4CR1: plots4CR1Estimation.$(ExeSuf)
+	./plots4CR1Estimation.$(ExeSuf) 
+
+templateFitCR1: templateFitCR1.$(ExeSuf)
+	./templateFitCR1.$(ExeSuf)
+
+computeBDTCuts: computeBDTCuts.$(ExeSuf)
+	./computeBDTCuts.$(ExeSuf) 
+
+
 
 predictions: backgroundEstimation.$(ExeSuf)
 	@for REGION in $(SIGNAL_REGIONS);					\
