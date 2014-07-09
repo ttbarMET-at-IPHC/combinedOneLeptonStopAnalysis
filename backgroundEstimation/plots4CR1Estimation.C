@@ -4,6 +4,7 @@
 //#define ttbar_sample "ttbar_madgraph"
 
 
+
 bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
                                                                       
@@ -144,9 +145,10 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("Mlb_JESdown",             "Mlb_JESdown",        "GeV",    40,0,1000,       &(myEvent.Mlb_JESdown),      "");
      
      
-     int nJets;
-     //screwdriver.AddVariable("nJets",          "Number of selected jets",           "",       11,0,10,        &(nJets),                "");
-     
+     Float_t nJets;
+     screwdriver.AddVariable("nJets",          "Number of selected jets",           "",       3,4,7,        &(nJets),                "");
+     //screwdriver.AddVariable("nJets",          "Number of selected jets",           "",       3,4,7,        &(myEvent.nJets),                "");
+    
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
@@ -331,7 +333,8 @@ int main (int argc, char *argv[])
               currentProcessClass_ = "ttbar_2l";
 
           nJets = myEvent.nJets;
-          
+          if(myEvent.nJets>6) nJets = 6;
+
 	  screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
       } 
