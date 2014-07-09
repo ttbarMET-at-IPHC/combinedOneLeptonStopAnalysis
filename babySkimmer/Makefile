@@ -38,7 +38,7 @@ default: compile
 	
 compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
-skim:
+skim: $(TARGET).$(ExeSuf)
 	@for DATASET in `cat list`;							\
 	 do													\
 		   ./$(TARGET).$(ExeSuf) $$DATASET;				\
