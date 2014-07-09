@@ -63,15 +63,18 @@ class backgroundEstimation{
         Figure K3;
         Figure K4;
 
+
         // Tables 
 
         Table  rawYieldTable;
         Table  scaleFactorTable;
+        Table  scaleFactorTable_tt2l; // table take as input
         Table  predictionTable;
         Table  systematicsUncertainties;
 
         // Systematic flags / value
-        float ttll_CR4and5_rescale;   
+        float ttll_CR4and5_uncert;
+	float ttll_CR4and5_rescale;   
         float ttll_nJets_rescale;     
         float ttll_2ndlepVeto_rescale;
         float WjetCrossSection_rescale;

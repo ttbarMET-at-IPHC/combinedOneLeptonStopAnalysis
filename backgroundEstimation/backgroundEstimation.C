@@ -2,6 +2,7 @@
 
 #define NJetUncer_tt2l 0.05
 #define CR4CR5Uncert_tt2l 0.1
+#define ReadSF_tt2l false
 
 int main (int argc, char *argv[])
 {
@@ -71,6 +72,14 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     
     vector<string> dummy = { "value" };
     scaleFactorTable = Table(dummy,scaleFactorsTagList);
+    if(ReadSF_tt2l){
+    	scaleFactorTable_tt2l = Table("scaleFactors/SF_tt2l.tab"); // name of the table hard-coded
+    	// Read the uncertainty on ttbar-2l from the table
+        ttll_CR4and5_uncert =  scaleFactorTable_tt2l.Get("value",signalRegionLabel).error() ;
+    }
+    else{
+    	ttll_CR4and5_uncert = CR4CR5Uncert_tt2l;
+    }
 
     // ##################################################################
     // #  Initialize the table containing the systematic uncertainties  #
@@ -139,8 +148,9 @@ void backgroundEstimation::ComputePredictionWithSystematics()
 
         else if (systematic ==  "tt->ll_(CR4,CR5)")
         {
-            ttll_CR4and5_rescale = 1-CR4CR5Uncert_tt2l; float yieldDown = ComputePrediction().value(); 
-            ttll_CR4and5_rescale = 1+CR4CR5Uncert_tt2l; float yieldUp   = ComputePrediction().value();
+            // Determine the uncertainty from values stored in the table
+	    ttll_CR4and5_rescale = 1-ttll_CR4and5_uncert; float yieldDown = ComputePrediction().value(); 
+            ttll_CR4and5_rescale = 1+ttll_CR4and5_uncert; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         else if (systematic ==  "tt->ll_(nJets)")
