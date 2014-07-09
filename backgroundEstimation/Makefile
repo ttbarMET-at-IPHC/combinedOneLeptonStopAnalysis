@@ -17,7 +17,8 @@ CXXFLAGS     += -I../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
-LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA -lRooFit -lRooFitCore
+LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA 
+#LDFLAGS	     += -lRooFit -lRooFitCore
 LDFLAGS      += -l:`pwd`/../.vectorDictionnary_C.so 
 LDFLAGS      += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 

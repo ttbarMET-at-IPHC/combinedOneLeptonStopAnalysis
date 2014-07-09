@@ -38,12 +38,16 @@
 #define PlotDir plots4CR1 
 
 using namespace RooFit ;
+//using namespace theDoctor ;
 
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
+
+
+#include "../sonicScrewdriver/interface/Figure.h"
 
 using namespace std;
 
@@ -243,7 +247,7 @@ struct FitSetup{
   float init_wjets;
 
   void Reset(){
-	 filename="plots4CR1/ttbar_powheg/1DDataMCComparison.root";
+	 filename="plots4CR1/ttbar_madgraph/1DDataMCComparison.root";
 	 //varname="Mlb";
 	 varname="Mlb";
 	 //varname="M3b";
@@ -366,8 +370,8 @@ FitResult  doFit(const FitSetup& setup, string conditions, string fname=string("
   	val_tt1l = setup.init_tt1l*mc_norm_tt1l;
   	val_wjets = setup.init_wjets*mc_norm_wjets;
   }
-  RooRealVar norm_tt1l("norm_tt1l","norm_tt1l",val_tt1l,0.25*mc_norm_tt1l,4.*mc_norm_tt1l);
-  RooRealVar norm_wjets("norm_wjets","norm_wjets",val_wjets,0.25*mc_norm_wjets,4.*mc_norm_wjets);
+  RooRealVar norm_tt1l("norm_tt1l","norm_tt1l",val_tt1l,0.25*mc_norm_tt1l,10.*mc_norm_tt1l);
+  RooRealVar norm_wjets("norm_wjets","norm_wjets",val_wjets,0.25*mc_norm_wjets,10.*mc_norm_wjets);
   //RooRealVar norm_tt2l("norm_tt2l","norm_tt2l",mc_norm_tt2l,0.25*mc_norm_tt2l,2*mc_norm_tt2l);
   //RooRealVar norm_rare("norm_rare","norm_rare",mc_norm_rare,0.25*mc_norm_rare,2*mc_norm_rare);
   // possibility to study a systematic on it
@@ -471,24 +475,17 @@ struct SummaryResult{
 int main()
 {
 
+
+  bool bGenSyst = false;
+  bool bBinningSyst = false;
+  bool bChi2Tests = false;  
+
   //init random 
   rand_ = new TRandom();
 
   // Create observables
-  //string varname("R");
-  //RooRealVar var("R","R",0,1) ;
-  //RooRealVar var("MT","MT",0,400) ;
-  //string varname("MT");
-  //RooRealVar var("M3b","M3b",0,600) ;
-  //string varname("M3b");
-  //RooRealVar var("Mlb","Mlb",0,600) ;
-  //string varname("Mlb");
-  //RooRealVar var("hadronicChi2","hadronicChi2",0,10) ;
-  //string varname("hadronicChi2");
-  //RooRealVar var("leadingJetPt","leadingJetPt",0,600) ;
-  //string varname("leadingJetPt");
-  RooRealVar var("leadingBPt","leadingBPt",0,500) ;
-  string varname("leadingBPt");
+  RooRealVar var("Mlb","Mlb",0,600) ;
+  string varname("Mlb");
   
 
   TFile* fin = TFile::Open("plots4CR1/ttbar_madgraph/1DDataMCComparison.root");
@@ -510,7 +507,7 @@ int main()
  
 
   //--- nominal ---//
-  setup.Reset(); conditions="nominal";
+  setup.Reset(); conditions="nominal", setup.region="0btag_MTpeak";
   res = doFit(setup,conditions); 
   summary.nominal = res;
 
@@ -594,28 +591,29 @@ int main()
   
 
 
-  /*
   //---- Generator systematics --//
   	//--- Scale --//
+  if(bGenSyst){
+  
   setup.Reset(); conditions="scale"; uncert.name = conditions;
-  res = doFit(setup,conditions,"../plots/backgroundEstimation/ttbar_madgraph_scaledown/1DDataMCComparison.root"); value_down_SF_tt1l = res.SF_tt1l.first ; value_down_SF_wjets = res.SF_wjets.first;
-  res = doFit(setup,conditions,"../plots/backgroundEstimation/ttbar_madgraph_scaleup/1DDataMCComparison.root"); value_up_SF_tt1l = res.SF_tt1l.first ; value_up_SF_wjets = res.SF_wjets.first;
+  res = doFit(setup,conditions,"plots4CR1/ttbar_madgraph_scaledown/1DDataMCComparison.root"); value_down_SF_tt1l = res.SF_tt1l.first ; value_down_SF_wjets = res.SF_wjets.first;
+  res = doFit(setup,conditions,"plots4CR1/ttbar_madgraph_scaleup/1DDataMCComparison.root"); value_up_SF_tt1l = res.SF_tt1l.first ; value_up_SF_wjets = res.SF_wjets.first;
   uncert.SF_tt1l_uncert = fabs((value_down_SF_tt1l-value_up_SF_tt1l)/2.); 
   uncert.SF_wjets_uncert = fabs((value_down_SF_wjets-value_up_SF_wjets)/2.); 
   summary.uncert.push_back(uncert);
 
   	//--- matching --//
   setup.Reset(); conditions="matching"; uncert.name = conditions;
-  res = doFit(setup,conditions,"../plots/backgroundEstimation/ttbar_madgraph_matchingdown/1DDataMCComparison.root"); value_down_SF_tt1l = res.SF_tt1l.first ; value_down_SF_wjets = res.SF_wjets.first;
-  res = doFit(setup,conditions,"../plots/backgroundEstimation/ttbar_madgraph_matchingup/1DDataMCComparison.root"); value_up_SF_tt1l = res.SF_tt1l.first ; value_up_SF_wjets = res.SF_wjets.first;
+  res = doFit(setup,conditions,"plots4CR1/ttbar_madgraph_matchingdown/1DDataMCComparison.root"); value_down_SF_tt1l = res.SF_tt1l.first ; value_down_SF_wjets = res.SF_wjets.first;
+  res = doFit(setup,conditions,"plots4CR1/ttbar_madgraph_matchingup/1DDataMCComparison.root"); value_up_SF_tt1l = res.SF_tt1l.first ; value_up_SF_wjets = res.SF_wjets.first;
   uncert.SF_tt1l_uncert = fabs((value_down_SF_tt1l-value_up_SF_tt1l)/2.); 
   uncert.SF_wjets_uncert = fabs((value_down_SF_wjets-value_up_SF_wjets)/2.); 
   summary.uncert.push_back(uncert);
 
   	//--- Scale --//
   setup.Reset(); conditions="topmass"; uncert.name = conditions;
-  res = doFit(setup,conditions,"../plots/backgroundEstimation/ttbar_madgraph_mass166-5/1DDataMCComparison.root"); value_down_SF_tt1l = res.SF_tt1l.first ; value_down_SF_wjets = res.SF_wjets.first;
-  res = doFit(setup,conditions,"../plots/backgroundEstimation/ttbar_madgraph_mass178-5/1DDataMCComparison.root"); value_up_SF_tt1l = res.SF_tt1l.first ; value_up_SF_wjets = res.SF_wjets.first;
+  res = doFit(setup,conditions,"plots4CR1/ttbar_madgraph_mass166-5/1DDataMCComparison.root"); value_down_SF_tt1l = res.SF_tt1l.first ; value_down_SF_wjets = res.SF_wjets.first;
+  res = doFit(setup,conditions,"plots4CR1/ttbar_madgraph_mass178-5/1DDataMCComparison.root"); value_up_SF_tt1l = res.SF_tt1l.first ; value_up_SF_wjets = res.SF_wjets.first;
   uncert.SF_tt1l_uncert = fabs((value_down_SF_tt1l-value_up_SF_tt1l)/2.); 
   uncert.SF_wjets_uncert = fabs((value_down_SF_wjets-value_up_SF_wjets)/2.); 
   summary.uncert.push_back(uncert);
@@ -624,20 +622,21 @@ int main()
   setup.Reset(); conditions="powheg"; uncert.name = conditions;
   float vtt1l = 0;
   float vwjets = 0;
-  res = doFit(setup,conditions,"../plots/backgroundEstimation/ttbar_powheg/1DDataMCComparison.root"); vtt1l = res.SF_tt1l.first ; vwjets = res.SF_wjets.first;
+  res = doFit(setup,conditions,"plots4CR1/ttbar_powheg/1DDataMCComparison.root"); vtt1l = res.SF_tt1l.first ; vwjets = res.SF_wjets.first;
   uncert.SF_tt1l_uncert = fabs((vtt1l-summary.nominal.SF_tt1l.first)); 
   uncert.SF_wjets_uncert = fabs((vwjets-summary.nominal.SF_wjets.first)/2.); 
   summary.uncert.push_back(uncert);
 
 	//--- top pt reweighting --//
   setup.Reset(); conditions="ptreweight"; uncert.name = conditions;
-  res = doFit(setup,conditions,"../plots/backgroundEstimation/ttbar_madgraph_w_ptreweight/1DDataMCComparison.root"); vtt1l = res.SF_tt1l.first ; vwjets = res.SF_wjets.first;
+  res = doFit(setup,conditions,"plots4CR1/ttbar_madgraph_w_ptreweight/1DDataMCComparison.root"); vtt1l = res.SF_tt1l.first ; vwjets = res.SF_wjets.first;
   uncert.SF_tt1l_uncert = fabs((vtt1l-summary.nominal.SF_tt1l.first)); 
   uncert.SF_wjets_uncert = fabs((vwjets-summary.nominal.SF_wjets.first)/2.); 
   summary.uncert.push_back(uncert);
-  */	
-  /*
-//--- binning --//
+  }
+  
+  //--- binning --//
+ if(bBinningSyst){
   setup.Reset(); conditions="binning"; uncert.name = conditions;
   setup.varname="M3b_binningdown";
   res = doFit(setup,conditions); value_down_SF_tt1l = res.SF_tt1l.first ; value_down_SF_wjets = res.SF_wjets.first;
@@ -646,10 +645,9 @@ int main()
   uncert.SF_tt1l_uncert = fabs((value_down_SF_tt1l-value_up_SF_tt1l)/2.);
   uncert.SF_wjets_uncert = fabs((value_down_SF_wjets-value_up_SF_wjets)/2.); 
   summary.uncert.push_back(uncert);
+ }
   
-  //*/
   //--- choice of the variable --//
-
   setup.Reset(); conditions="variables"; uncert.name = conditions;
   /*
   setup.varname="R"; setup.varMin=0; setup.varMax=1;
@@ -690,15 +688,84 @@ int main()
   res = doFit(setup,conditions); 
 
 
+  //-- Apply the template fit on Njets = 4 && Njets >=5  
+  // This will change the fraction W+jets && ttbar
+  setup.Reset(); conditions="Njets"; setup.region="0btag_MTpeak_4j"; uncert.name = conditions; res = doFit(setup,conditions); 
+  setup.Reset(); conditions="Njets"; setup.region="0btag_MTpeak_5j"; uncert.name = conditions; res = doFit(setup,conditions); 
+  setup.Reset(); conditions="Njets"; setup.region="0btag_MTtail_4j"; uncert.name = conditions; res = doFit(setup,conditions); 
+  setup.Reset(); conditions="Njets"; setup.region="0btag_MTtail_5j"; uncert.name = conditions; res = doFit(setup,conditions); 
+
+  //---  Perform the template for MT = 120 --//
+  setup.Reset(); conditions="C&C"; setup.region="0btag_MTinverted120"; uncert.name = conditions; res = doFit(setup,conditions); 
+  setup.Reset(); conditions="C&C"; setup.region="0btag_MTtail120"; uncert.name = conditions; res = doFit(setup,conditions); 
+  
+
+  //---------------------------------------//
   //-- Apply the template fit on each SR --//
- 
+  //---------------------------------------//
+
+
+
   vector<string> signalRegions = {"LowBDT_T2tt_1",  "LowBDT_T2tt_2",  "LowBDT_T2tt_5",  "LowBDT_T2bw075_1",  "LowBDT_T2bw075_2",  "LowBDT_T2bw075_3",  "LowBDT_T2bw075_5",  "LowBDT_T2bw050_1",  "LowBDT_T2bw050_3",  "LowBDT_T2bw050_4",  "LowBDT_T2bw050_5",  "LowBDT_T2bw050_6",  "LowBDT_T2bw025_1",  "LowBDT_T2bw025_3",  "LowBDT_T2bw025_4",  "LowBDT_T2bw025_6"};
+  vector<string> signalRegions_MTpeak = {"LowBDT_MTpeak_T2tt_1",  "LowBDT_MTpeak_T2tt_2",  "LowBDT_MTpeak_T2tt_5",  "LowBDT_MTpeak_T2bw075_1",  "LowBDT_MTpeak_T2bw075_2",  "LowBDT_MTpeak_T2bw075_3",  "LowBDT_MTpeak_T2bw075_5",  "LowBDT_MTpeak_T2bw050_1",  "LowBDT_MTpeak_T2bw050_3",  "LowBDT_MTpeak_T2bw050_4",  "LowBDT_MTpeak_T2bw050_5",  "LowBDT_MTpeak_T2bw050_6",  "LowBDT_MTpeak_T2bw025_1",  "LowBDT_MTpeak_T2bw025_3",  "LowBDT_MTpeak_T2bw025_4",  "LowBDT_MTpeak_T2bw025_6"};
+  
+  //Create histos
+  TH1F h_SF_MTpeak_BDT_tt1l("h_SF_MTpeak_BDT_tt1l","",signalRegions.size(),0,signalRegions.size());
+  TH1F h_SF_MTtail_BDT_tt1l("h_SF_MTtail_BDT_tt1l","",signalRegions.size(),0,signalRegions.size());
+  TH1F h_SFR_BDT_tt1l("h_SFR_BDT_tt1l","",signalRegions.size(),0,signalRegions.size());
+  TH1F h_SF_MTpeak_BDT_wjets("h_SF_MTpeak_BDT_wjets","",signalRegions.size(),0,signalRegions.size());
+  TH1F h_SF_MTtail_BDT_wjets("h_SF_MTtail_BDT_wjets","",signalRegions.size(),0,signalRegions.size());
+  TH1F h_SFR_BDT_wjets("h_SFR_BDT_wjets","",signalRegions.size(),0,signalRegions.size());
+   
+  varname="Mlb";
   for(unsigned int i=0;i<signalRegions.size();i++){
   	cout<<"%%%%%%%%%%%%%%%%%% "<<signalRegions[i]<<endl;
-	setup.Reset(); conditions="sigRegions"; setup.region=signalRegions[i]; uncert.name = conditions;
- 	setup.varname="Mlb"; setup.varMin=0; setup.varMax=600;
+
+	string label = signalRegions[i].substr(7);
+	theDoctor::Figure SFR_tt1l;
+	theDoctor::Figure SFR_wjets;
+	
+	//MT tail
+	setup.Reset(); conditions="sigRegions"; setup.region=signalRegions[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
   	res = doFit(setup,conditions); 
+	SFR_tt1l=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
+	SFR_wjets=theDoctor::Figure(res.SF_wjets.first,res.SF_wjets.second);
+	h_SF_MTtail_BDT_tt1l.SetBinContent(i+1,res.SF_tt1l.first);
+	h_SF_MTtail_BDT_tt1l.SetBinError(i+1,res.SF_tt1l.second);
+	h_SF_MTtail_BDT_tt1l.GetXaxis()->SetBinLabel(i+1,label.c_str());
+	h_SF_MTtail_BDT_wjets.SetBinContent(i+1,res.SF_wjets.first);
+	h_SF_MTtail_BDT_wjets.SetBinError(i+1,res.SF_wjets.second);
+	h_SF_MTtail_BDT_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
+        
+	//MT peak
+	setup.Reset(); conditions="sigRegions"; setup.region=signalRegions_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+  	res = doFit(setup,conditions); 
+	h_SF_MTpeak_BDT_tt1l.SetBinContent(i+1,res.SF_tt1l.first);
+	h_SF_MTpeak_BDT_tt1l.SetBinError(i+1,res.SF_tt1l.second);
+	h_SF_MTpeak_BDT_tt1l.GetXaxis()->SetBinLabel(i+1,label.c_str());
+	h_SF_MTpeak_BDT_wjets.SetBinContent(i+1,res.SF_wjets.first);
+	h_SF_MTpeak_BDT_wjets.SetBinError(i+1,res.SF_wjets.second);
+	h_SF_MTpeak_BDT_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
+        SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
+        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_tt1l.second);
+  	
+	//SFR
+	h_SFR_BDT_tt1l.SetBinContent(i+1,SFR_tt1l.value());
+	h_SFR_BDT_tt1l.SetBinError(i+1,SFR_tt1l.error());
+	h_SFR_BDT_tt1l.GetXaxis()->SetBinLabel(i+1,label.c_str());
+	h_SFR_BDT_wjets.SetBinContent(i+1,SFR_wjets.value());
+	h_SFR_BDT_wjets.SetBinError(i+1,SFR_wjets.error());
+	h_SFR_BDT_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
   }
+  //Save plots in roofile
+  TFile fCR1_BDT("CR1_BDT.root","RECREATE");
+  h_SF_MTpeak_BDT_tt1l.Write();
+  h_SF_MTpeak_BDT_wjets.Write();
+  h_SF_MTtail_BDT_tt1l.Write();
+  h_SF_MTtail_BDT_wjets.Write();
+  h_SFR_BDT_tt1l.Write();
+  h_SFR_BDT_wjets.Write();
+  //---------------------------------------//
 
   //-- split region --//
    /* 
@@ -707,7 +774,8 @@ int main()
   res = doFit(setup,conditions); 
   setup.region = "0btagHD_MTtail";
   res = doFit(setup,conditions); 
-
+  
+ 
 
   //---  choice of MT test cut --//
   setup.Reset(); setup.region = "0btag_MT80"; conditions="MT80"; 
@@ -729,7 +797,7 @@ int main()
   setup.Reset(); setup.region = "0btag_MT160"; conditions="MT160"; setup.varname = "M3b_binningdown";
   setup.type="GSLMultiMin"; setup.algo="steepestdescent";
   res = doFit(setup,conditions); 
-*/
+  */
   //---- choice of MT test cut with Mlb ---//
   /*
   setup.Reset(); setup.region = "0btag_MT80"; conditions="MT80"; setup.varname="Mlb"; 
@@ -745,117 +813,31 @@ int main()
   setup.Reset(); setup.region = "0btag_MT130"; conditions="MT130"; setup.varname="Mlb";
   res = doFit(setup,conditions); 
   */
-  //--- Perform Chi2 test for several variables and CR --//
   
-  /*
+  
+  //--- Perform Chi2 test for several variables and CR --//
+  if(bChi2Tests){
   string region="0btag_MTpeak";
   cout<<"#### Chi2 test - "<<region<<endl;
   Chi2Test(fin,region,"M3b");
   Chi2Test(fin,region,"Mlb");
-  //Chi2Test(fin,region,"leadingJetPt");
-  //Chi2Test(fin,region,"leadingBPt");
   region="0btag_MTtail";
   Chi2Test(fin,region,"Mlb");
   region="presel_MTpeak";
   cout<<"#### Chi2 test - "<<region<<endl;
   Chi2Test(fin,region,"M3b");
   Chi2Test(fin,region,"Mlb");
-  //Chi2Test(fin,region,"leadingJetPt");
-  //Chi2Test(fin,region,"leadingBPt");
-  //Chi2Test(fin,region,"CVSdiscri");
   region="presel_noMET";
   cout<<"#### Chi2 test - "<<region<<endl;
   Chi2Test(fin,region,"M3b");
   Chi2Test(fin,region,"Mlb");
-  //--  MT distrib  --//
-  region="0btag";
-  cout<<"#### Chi2 test - "<<region<<endl;
-  Chi2Test(fin,region,"MT");
-  
-  
-  //---   Comparison Mlb M3b ---///
-  region="presel_MTpeak";
-  cout<<"#### Chi2 test -presel_MTpeak-  M3b"<<region<<endl;
-  Chi2Test(fin,region,"M3b");
   Chi2Test(fin,region,"Mlb");
   region="presel_MTinverted";
   cout<<"#### Chi2 test -presel_MTinverted-  M3b"<<region<<endl;
   Chi2Test(fin,region,"M3b");
   Chi2Test(fin,region,"Mlb");
+  }
 
-
-  //--- Apply it on CR --//
-  ///*
-  cout<<"step 1"<<endl;
-  setup.Reset(); setup.region = "cutAndCount_T2tt_lowDeltaM_CR"; conditions="cutAndCount_T2tt_lowDeltaM_CR"; setup.varname="Mlb_small"; 
-  res = doFit(setup,conditions); 
-  cout<<"step 2"<<endl;
-  setup.Reset(); setup.region = "cutAndCount_T2tt_mediumDeltaM_CR"; conditions="cutAndCount_T2tt_mediumDeltaM_CR"; setup.varname="Mlb_small"; 
-  //res = doFit(setup,conditions); 
-  cout<<"step 3"<<endl;
-  setup.Reset(); setup.region = "cutAndCount_T2tt_highDeltaM_CR"; conditions="cutAndCount_T2tt_tightDeltaM_CR"; setup.varname="Mlb_small"; 
-  res = doFit(setup,conditions); 
-  //---
-  cout<<"step 1"<<endl;
-  setup.Reset(); setup.region = "cutAndCount_T2tt_lowDeltaM_MTpeak"; conditions="cutAndCount_T2tt_lowDeltaM_MTpeak"; setup.varname="Mlb_small"; 
-  res = doFit(setup,conditions); 
-  cout<<"step 2"<<endl;
-  setup.Reset(); setup.region = "cutAndCount_T2tt_mediumDeltaM_MTpeak"; conditions="cutAndCount_T2tt_mediumDeltaM_MTpeak"; setup.varname="Mlb_small"; 
-  //res = doFit(setup,conditions); 
-  //res = doFit(setup,conditions); 
-  cout<<"step 3"<<endl;
-  setup.Reset(); setup.region = "cutAndCount_T2tt_highDeltaM_MTpeak"; conditions="cutAndCount_T2tt_tightDeltaM_MTpeak"; setup.varname="Mlb_small"; 
-  res = doFit(setup,conditions); 
-  //*/
-  //---   Test generators ---///
-  /*
-  //-- Test M3b distrib
-  cout<<"comparison with powheg"<<endl;
-  TFile* fpowheg = TFile::Open("../plots/backgroundEstimation/ttbar_powheg/1DDataMCComparison.root");
-  region="0btag_MTpeak";
-  Chi2Test(fpowheg,region,"M3b");
-  region="presel_MTpeak";
-  cout<<"ref"<<endl;
-  Chi2Test(fin,region,"M3b");
-  cout<<"ptreweigh"<<endl;
-  TFile* fptreweight = TFile::Open("../plots/backgroundEstimation/ttbar_madgraph_wo_ptrewight/1DDataMCComparison.root");
-  Chi2Test(fptreweight,region,"M3b");
-  cout<<"powheg"<<endl;
-  Chi2Test(fpowheg,region,"M3b");
-  cout<<"scale down"<<endl;
-  TFile* fscaledown = TFile::Open("../plots/backgroundEstimation/ttbar_madgraph_scaledown/1DDataMCComparison.root");
-  Chi2Test(fscaledown,region,"M3b");
-  cout<<"scale up"<<endl;
-  TFile* fscaleup = TFile::Open("../plots/backgroundEstimation/ttbar_madgraph_scaleup/1DDataMCComparison.root");
-  Chi2Test(fscaleup,region,"M3b");
-  cout<<"matchin down"<<endl;
-  TFile* fmatchingdown = TFile::Open("../plots/backgroundEstimation/ttbar_madgraph_matchingdown/1DDataMCComparison.root");
-  Chi2Test(fmatchingdown,region,"M3b");
-  cout<<"matchin up"<<endl;
-  TFile* fmatchingup = TFile::Open("../plots/backgroundEstimation/ttbar_madgraph_matchingup/1DDataMCComparison.root");
-  Chi2Test(fmatchingup,region,"M3b");
-  cout<<"mass down"<<endl;
-  TFile* fmassdown = TFile::Open("../plots/backgroundEstimation/ttbar_madgraph_mass166-5/1DDataMCComparison.root");
-  Chi2Test(fmassdown,region,"M3b");
-  cout<<"mass up"<<endl;
-  TFile* fmassup = TFile::Open("../plots/backgroundEstimation/ttbar_madgraph_mass178-5/1DDataMCComparison.root");
-  Chi2Test(fmassup,region,"M3b");
-  //TFile* fptreweight = TFile::Open("../plots/backgroundEstimation/ptreweight/1DDataMCComparison.root");
-  Chi2Test(fpowheg,region,"M3b");
-  //Chi2Test(fptreweight,region,"M3b");
-  //---
-  region="presel_MTpeak";
-  Chi2Test(fin,region,"M3b");
-  Chi2Test(fpowheg,region,"M3b");
-  Chi2Test(fptreweight,region,"M3b");
-  //-- Test MT distrib
-  region="0btag";
-  Chi2Test(fin,region,"MT");
-  Chi2Test(fpowheg,region,"MT");
-  Chi2Test(fptreweight,region,"MT");
-  */
-
-  //*/
 
   summary.Print();
 }  
