@@ -47,7 +47,16 @@ bool goesInAnyChannel()                             { return (goesInSingleLepton
 
 int main (int argc, char *argv[])
 {
-
+    string ControlRegion; 
+    if (argc == 2) { 
+    	ControlRegion = argv[1];
+	NOMINAL_BDT_CUT = false;
+	printBoxedMessage("Running on CR = "+ControlRegion);
+	LoadBDTCut(ControlRegion);
+    }
+    if (argc >= 3) { WARNING_MSG << "Too much argument specified" << endl; return -1; }
+    
+    
     printBoxedMessage("Starting plot generation");
 
     // ####################
@@ -181,16 +190,15 @@ int main (int argc, char *argv[])
                 
                 // Get the i-th entry
                 ReadEvent(theTree,i,&pointers,&myEvent);
-
-                #ifdef CR4_2j
+	
+		if(ControlRegion!=""){
+                 if(ControlRegion=="CR4_2j")
                     if (myEvent.nJets < 2) continue;
-                #endif
-                #ifdef CR4_3j
+                 if(ControlRegion=="CR4_3j")
                     if (myEvent.nJets < 3) continue;
-                #endif
-                #if defined(CR4_4j) || defined(CR4_4j_50evts) || defined(CR4_4j_100evts) || defined(CR4_4j_150evts)
+                 if(ControlRegion=="CR4_4j" || ControlRegion=="CR4_4j_50evts" || ControlRegion=="CR4_4j_50evts" || ControlRegion=="CR4_4j_150evts" )
                     if (myEvent.nJets < 4) continue; 
-                #endif
+		}
 
                 // Split 1-lepton ttbar and 2-lepton ttbar
                 string currentProcessClass_ = currentProcessClass;

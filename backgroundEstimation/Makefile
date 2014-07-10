@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 ObjSuf        = o
 SrcSuf        = C
 ExeSuf        = run
@@ -60,15 +62,30 @@ clean:
 # Running the background estimation on every signal regions
 
 SIGNAL_REGIONS = 
-SIGNAL_REGIONS += preselection
-SIGNAL_REGIONS += cutAndCount_T2tt_offShellLoose         cutAndCount_T2tt_offShellTight     cutAndCount_T2tt_lowDeltaM             cutAndCount_T2tt_mediumDeltaM   cutAndCount_T2tt_highDeltaM
+#SIGNAL_REGIONS += preselection
+#SIGNAL_REGIONS += cutAndCount_T2tt_offShellLoose         cutAndCount_T2tt_offShellTight     cutAndCount_T2tt_lowDeltaM             cutAndCount_T2tt_mediumDeltaM   cutAndCount_T2tt_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw025_veryOffShell_loose cutAndCount_T2bw025_offShell_loose cutAndCount_T2bw025_lowDeltaM_tight    cutAndCount_T2bw025_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw050_offShell_loose     cutAndCount_T2bw050_lowMass        cutAndCount_T2bw050_mediumDeltaM_loose cutAndCount_T2bw050_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw075_lowDeltaM_tight    cutAndCount_T2bw075_mediumDeltaM   cutAndCount_T2bw075_highDeltaM
-#SIGNAL_REGIONS += BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
+SIGNAL_REGIONS += BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
 #SIGNAL_REGIONS += BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6       
 #SIGNAL_REGIONS += BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6  
 #SIGNAL_REGIONS += BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5
+
+CONTROL_REGIONS_2l =  CR4_1j CR4_2j CR4_3j CR4_4j
+CONTROL_REGIONS_2l += CR4_4j_50evts CR4_4j_100evts CR4_4j_150evts
+
+SF_2l:
+	@for REGION in $(CONTROL_REGIONS_2l); 		  \
+	 do									      \
+	        touch toto; \
+		mv toto toti; 	\
+		echo "[Lauching signal region $$REGION]";     \
+	    	make tables ARG=$$REGION;     \
+		make predictions;		\
+		mv scaleFactors/*.tab scaleFactors/$$REGION/;	 \
+	done;
+	make SFreport
 
 tables:
 	@make --no-print-directory clean 
@@ -77,7 +94,7 @@ tables:
 	        echo "[Lauching signal region $$REGION]";     \
 	        make --quiet --no-print-directory compile TARGET=yieldTableProducer SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; 	\
 			mv yieldTableProducer.$(ExeSuf) yieldTableProducer_$$REGION.$(ExeSuf); \
-			./yieldTableProducer_$$REGION.$(ExeSuf) > yieldTableProducer_$$REGION.$(LogSuf) & \
+			./yieldTableProducer_$$REGION.$(ExeSuf) ${ARG} > yieldTableProducer_$$REGION.$(LogSuf) & \
 	done;
 	@for REGION in $(SIGNAL_REGIONS); 	\
 	do									\
@@ -152,7 +169,7 @@ signalContamination:
 	done;								\
 	echo "Done";
 
-SF: SF_ttbar2l.$(ExeSuf)
+SFreport: SF_ttbar2l.$(ExeSuf)
 	./SF_ttbar2l.$(ExeSuf) $(SIGNAL_REGIONS) | tee SF_ttbar2l.$(LogSuf) > SF_ttbar2l.log
 
 report: reportProducer.$(ExeSuf)

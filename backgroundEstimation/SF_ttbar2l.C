@@ -1,4 +1,4 @@
-#include "../common.h"
+//#include "../common.h"
 #include <fstream>
 
 // Sonic screwdriver headers
@@ -66,7 +66,7 @@ int main (int argc, char *argv[])
     	vector<Table> tables;
     	for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
     	{
-     	   tables.push_back(Table("scaleFactors/"+CRTagList[i]+"/"+signalRegionsTagList[j]+"_2leptons.tab"));
+     	   tables.push_back(Table("scaleFactors/"+CRTagList[i]+"/"+signalRegionsTagList[j]+".tab"));
 	}
 	SF_est.push_back(tables);
     }
@@ -76,7 +76,7 @@ int main (int argc, char *argv[])
     	vector<Table> tables;
     	for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
     	{
-     	   tables.push_back(Table("scaleFactors/"+CR4TagList[i]+"/"+signalRegionsTagList[j]+"_2leptons.tab"));
+     	   tables.push_back(Table("scaleFactors/"+CR4TagList[i]+"/"+signalRegionsTagList[j]+".tab"));
 	}
 	SF_est_CR4.push_back(tables);
     }
@@ -115,10 +115,10 @@ int main (int argc, char *argv[])
     {
     	for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
     	{
-		Figure SF_CR4_peak = SF_est[i][j].Get("value","SF2lpeak");
-		Figure SF_CR4_tail = SF_est[i][j].Get("value","SF2ltail");
-		Figure SF_CR5_peak = SF_est[i][j].Get("value","SFvetopeak");
-		Figure SF_CR5_tail = SF_est[i][j].Get("value","SFvetotail");
+		Figure SF_CR4_peak = SF_est[i][j].Get("value","SF_2l");
+		Figure SF_CR4_tail = SF_est[i][j].Get("value","SF_2ltail");
+		Figure SF_CR5_peak = SF_est[i][j].Get("value","SF_vetopeak");
+		Figure SF_CR5_tail = SF_est[i][j].Get("value","SF_vetotail");
 		
 		Figure CR4 = SF_CR4_peak;//*SF_CR4_tail;
 		Figure CR5 = SF_CR5_tail;
@@ -136,7 +136,7 @@ int main (int argc, char *argv[])
     {
     	for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
     	{
-		Figure CR4 = SF_est_CR4[i][j].Get("value","SF2ltail");
+		Figure CR4 = SF_est_CR4[i][j].Get("value","SF_2ltail");
 		CR4plots[i]->SetBinContent(j+1,CR4.value());
 		CR4plots[i]->SetBinError(j+1,CR4.error());
 	}
@@ -196,7 +196,7 @@ int main (int argc, char *argv[])
     legCR.Draw("same");
     
     
-    TFile fout("SF_2leptons.root","RECREATE");
+    TFile fout("SF.root","RECREATE");
     c1.Write();
     //fout.Close();
   
@@ -271,7 +271,7 @@ int main (int argc, char *argv[])
     	vector<Table> tables;
     	for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
     	{
-     	   tables.push_back(Table("scaleFactors/"+CRTagList[i]+"/"+signalRegionsTagList[j]+"_2leptons.tab"));
+     	   tables.push_back(Table("scaleFactors/"+CRTagList[i]+"/"+signalRegionsTagList[j]+".tab"));
 	}
 	SF_est.push_back(tables);
     }
@@ -301,14 +301,14 @@ int main (int argc, char *argv[])
     	for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
     	{
 		
-		Figure SF_CR4_peak = SF_est[i][j].Get("value","SF2lpeak");
-		Figure SF_CR4_tail = SF_est[i][j].Get("value","SF2ltail");
-		Figure SF_CR5_peak = SF_est[i][j].Get("value","SFvetopeak");
-		Figure SF_CR5_tail = SF_est[i][j].Get("value","SFvetotail");
+		Figure SF_CR4_peak = SF_est[i][j].Get("value","SF_2l");
+		Figure SF_CR4_tail = SF_est[i][j].Get("value","SF_2ltail");
+		Figure SF_CR5_peak = SF_est[i][j].Get("value","SF_vetopeak");
+		Figure SF_CR5_tail = SF_est[i][j].Get("value","SF_vetotail");
 		
-		Figure CR4_ref = SF_est[0][j].Get("value","SF2lpeak");
+		Figure CR4_ref = SF_est[0][j].Get("value","SF_2l");
 		Figure CR4 = SF_CR4_peak/CR4_ref;
-		Figure CR5_ref = SF_est[0][j].Get("value","SFvetotail");
+		Figure CR5_ref = SF_est[0][j].Get("value","SF_vetotail");
 		Figure CR5 = SF_CR5_tail/CR5_ref;
 		if(CRTagList[i].find("CR4")!=std::string::npos){
 			SRplots[j]->SetBinContent(i,CR4.value());
