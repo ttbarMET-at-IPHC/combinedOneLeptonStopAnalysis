@@ -2,13 +2,19 @@
 
 #define NJetUncer_tt2l 0.05
 #define CR4CR5Uncert_tt2l 0.1
-#define ReadSF_tt2l false
+
+bool ReadSF_tt2l = true;
 
 int main (int argc, char *argv[])
 {
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
 
     string signalRegion = argv[1]; 
+
+    if (argc == 3){
+    	if(string(argv[2]) == string("--CR4"))
+		ReadSF_tt2l = false;
+    }
 
     backgroundEstimation(signalRegion).Run();
 
