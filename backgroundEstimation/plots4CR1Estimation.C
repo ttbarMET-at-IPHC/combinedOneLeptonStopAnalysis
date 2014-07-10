@@ -316,6 +316,12 @@ int main (int argc, char *argv[])
   // ########################################
   // ##        Run over the events         ##
   // ########################################
+      
+      bool ttbarDatasetToBeSplitted = false;
+      if (findSubstring(currentDataset,"ttbar")
+            && (currentDataset != "ttbar_madgraph_1l") 
+            && (currentDataset != "ttbar_madgraph_2l"))
+                ttbarDatasetToBeSplitted = true;
 
       int nEntries = theTree->GetEntries();
       for (int i = 0 ; i < nEntries ; i++)
