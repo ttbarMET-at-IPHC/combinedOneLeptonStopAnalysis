@@ -6,8 +6,8 @@
 
 bool additionalCuts()
 {
-    if (myEvent.deltaPhiMETJets < 0.8) return false;
-    if (myEvent.hadronicChi2    > 5)   return false;
+//    if (myEvent.deltaPhiMETJets < 0.8) return false;
+//    if (myEvent.hadronicChi2    > 5)   return false;
 
     if (myEvent.MT < 120) return false;
     if (myEvent.ISRJet == false) return false;
@@ -27,7 +27,7 @@ bool cutAndCount_T2tt_mediumDeltaM (bool applyMTCut) { return cutAndCount_T2tt( 
 bool cutAndCount_T2tt_highDeltaM   (bool applyMTCut) { return cutAndCount_T2tt( -1,  15, 190 * applyMTCut, 240, -1,  999999, false); }
 */
 
-/*
+
 #define BENCHMARK_STOP_MASS         250
 #define BENCHMARK_NEUTRALINO_MASS   100
 #define SF_1ltop                    2
@@ -36,7 +36,7 @@ bool cutAndCount_T2tt_highDeltaM   (bool applyMTCut) { return cutAndCount_T2tt( 
 
                      // METsig  MT, MT2W, MET
 #define REFERENCE_CUTS {-1,    120, -1, 200}
-*/
+
 /*
 #define BENCHMARK_STOP_MASS         350
 #define BENCHMARK_NEUTRALINO_MASS   200
