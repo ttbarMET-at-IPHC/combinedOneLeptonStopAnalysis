@@ -15,7 +15,6 @@ bool disableMTCut = false;
 #include "interface/tables/TableDataMC.h" 
 using namespace theDoctor;
 
-
 #include <TCanvas.h>
 #include <TH1F.h>
 
@@ -29,6 +28,7 @@ using namespace theDoctor;
 #define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
 #define BDT_OUTPUT_AVAILABLE
 #define ISR_JET_ALREADY_COMPUTED
+#define USING_TTBAR_MADGRAPH
 
 // #################################################
 // #  Analysis, cut-and-count and BDT definitions  #

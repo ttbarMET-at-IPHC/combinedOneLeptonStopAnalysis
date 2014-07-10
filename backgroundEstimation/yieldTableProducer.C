@@ -47,17 +47,25 @@ bool goesInAnyChannel()                             { return (goesInSingleLepton
 
 int main (int argc, char *argv[])
 {
+  
+    // Special region for 2, 3 or 4 jets with 50, 100 or 150 minimum events
+    
     string ControlRegion; 
-    if (argc == 2) { 
-    	ControlRegion = argv[1];
-	NOMINAL_BDT_CUT = false;
-	printBoxedMessage("Running on CR = "+ControlRegion);
-	LoadBDTCut(ControlRegion);
+    if (argc == 2) 
+    { 
+        ControlRegion = argv[1];
+        NOMINAL_BDT_CUT = false;
+        printBoxedMessage("Running on CR = "+ControlRegion);
+        LoadBDTCut(ControlRegion);
     }
-    if (argc >= 3) { WARNING_MSG << "Too much argument specified" << endl; return -1; }
+    if (argc >= 3) { WARNING_MSG << "Too many argument specified" << endl; return -1; }
     
+    // Check if we're running on a BDT region
     
-    printBoxedMessage("Starting plot generation");
+    bool runningOnBDTRegion = false;
+    if (findSubstring(SIGNAL_REGION_TAG,"BDT")) runningOnBDTRegion = true;
+    
+    printBoxedMessage("Starting tables generation");
 
     // ####################
     // ##   Init tools   ##
@@ -71,19 +79,26 @@ int main (int argc, char *argv[])
     // #########################################################
 
         screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
-            screwdriver.AddDataset("ttbar_powheg",                "1ltop",  0, 0);
+            #ifdef USING_TTBAR_POWHEG
+                screwdriver.AddDataset("ttbar_powheg",                "1ltop",  0, 0);
+            #endif
+            #ifdef USING_TTBAR_MADGRAPH
+                screwdriver.AddDataset("ttbar_madgraph_1l",             "1ltop",  0, 0);
+            #endif
             //screwdriver.AddDataset("ttbar_madgraph_scaledown",    "1ltop",  0, 0);
             //screwdriver.AddDataset("ttbar_madgraph_scaleup",      "1ltop",  0, 0);
             //screwdriver.AddDataset("ttbar_madgraph_matchingdown", "1ltop",  0, 0);
             //screwdriver.AddDataset("ttbar_madgraph_matchingup",   "1ltop",  0, 0);
             //screwdriver.AddDataset("ttbar_madgraph_mass166-5",    "1ltop",  0, 0);
             //screwdriver.AddDataset("ttbar_madgraph_mass178-5",    "1ltop",  0, 0);
-            //screwdriver.AddDataset("ttbar_madgraph_1l",             "1ltop",  0, 0);
+
             screwdriver.AddDataset("singleTop_st",                  "1ltop",  0, 0);
 
 
         screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
-            //screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
+            #ifdef USING_TTBAR_MADGRAPH
+                screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
+            #endif
 
         screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
             screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
@@ -180,7 +195,9 @@ int main (int argc, char *argv[])
         // ########################################
 
             bool ttbarDatasetToBeSplitted = false;
-            if ((currentDataset != "ttbar_madgraph_1l") && (currentDataset != "ttbar_madgraph_2l"))
+            if (findSubstring(currentDataset,"ttbar")
+            && (currentDataset != "ttbar_madgraph_1l") 
+            && (currentDataset != "ttbar_madgraph_2l"))
                 ttbarDatasetToBeSplitted = true;
 
             int nEntries = theTree->GetEntries();
@@ -190,22 +207,34 @@ int main (int argc, char *argv[])
                 
                 // Get the i-th entry
                 ReadEvent(theTree,i,&pointers,&myEvent);
-	
-		if(ControlRegion!=""){
-                 if(ControlRegion=="CR4_2j")
-                    if (myEvent.nJets < 2) continue;
-                 if(ControlRegion=="CR4_3j")
-                    if (myEvent.nJets < 3) continue;
-                 if(ControlRegion=="CR4_4j" || ControlRegion=="CR4_4j_50evts" || ControlRegion=="CR4_4j_50evts" || ControlRegion=="CR4_4j_150evts" )
-                    if (myEvent.nJets < 4) continue; 
-		}
+    
+                if (ControlRegion != "")
+                {
+                    if (ControlRegion == "CR4_2j")         if (myEvent.nJets < 2) continue;
+                    if (ControlRegion == "CR4_3j")         if (myEvent.nJets < 3) continue;
+                    if (ControlRegion == "CR4_4j"
+                     || ControlRegion == "CR4_4j_50evts" 
+                     || ControlRegion == "CR4_4j_100evts" 
+                     || ControlRegion == "CR4_4j_150evts") if (myEvent.nJets < 4) continue; 
+                }
+                
+                float weight = getWeight();
+                if ((runningOnBDTRegion) && (ttbarDatasetToBeSplitted))
+                {
+                    // Here we should at some point ignore the part of ttbar events used in the training
+                    // but at this point all ttbar madgraph was used...
+
+                    // Ignore event with id%2 == 0 TODO : check this is the correct thing
+                    //if (myEvent.event % 2 == 0) continue;
+                    //else  weight *= 2; 
+                }
 
                 // Split 1-lepton ttbar and 2-lepton ttbar
                 string currentProcessClass_ = currentProcessClass;
                 if (ttbarDatasetToBeSplitted && (myEvent.numberOfGenLepton == 2))
                     currentProcessClass_ = "ttbar_2l";
 
-                screwdriver.AutoFillProcessClass(currentProcessClass_,getWeight());
+                screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
             } 
             printProgressBar(nEntries,nEntries,currentDataset);
@@ -214,7 +243,11 @@ int main (int argc, char *argv[])
 
         }
 
-        printBoxedMessage("Now computing misc tests ... ");
+        // ####################################
+        // ##        Write the table         ##
+        // ####################################
+
+        printBoxedMessage("Writing the table ... ");
 
         vector<string> regions  = { "preveto_MTpeak",      "preveto_MTtail",      
                                     "signalRegion_MTpeak", "signalRegion_MTtail", 

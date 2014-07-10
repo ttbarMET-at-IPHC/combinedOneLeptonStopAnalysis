@@ -35,74 +35,39 @@ bool goesInVetoControlRegionNoMT_withSRCuts()   { return (goesInVetosControlRegi
 
 bool goesInAnyChannel()                             { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
 
-//--- Access to quantiles of the plots   ---//
-
-float QuantileVariabelCut(SonicScrewdriver& sonic, float quantile, string var, vector<string> processClass, string region, string channel)
-{
-    //retrieve plots for the all processClasses
-    TH1F* hclone = 0;
-    TH1F* hMCSum = 0; // sum of all processClasses
-    for(unsigned int i=0;i<processClass.size();i++){
-        hclone = sonic.get1DHistoClone(var, processClass[i], region, channel);
-        if(i==0) hMCSum = hclone;
-        else hMCSum->Add(hclone);
-    }
-    //Search for the quantile
-    float integral = hMCSum->Integral();
-    float frac  = 0;
-    int qbin = 0; // bin where quantile is found
-    for(int i=0;i<hMCSum->GetNbinsX();i++){
-        if(integral!=0) frac = hMCSum->Integral(0,i)/integral;
-        if(frac>=quantile){
-            qbin = i;
-            break;
-        }
-    }
-    if(integral!=0 && qbin!=hMCSum->GetNbinsX()){
-        return hMCSum->GetBinCenter(qbin);
-    }
-    return -1;
-}
-//
-float MinNofEvtsVariabelCut(SonicScrewdriver& sonic, int nof, string var, vector<string> processClass, string region, string channel)
-{
-    //retrieve plots for the all processClasses
-    TH1F* hclone = 0;
-    TH1F* hMCSum = 0; // sum of all processClasses
-    for(unsigned int i=0;i<processClass.size();i++){
-        hclone = sonic.get1DHistoClone(var, processClass[i], region, channel);
-        if(i==0) hMCSum = hclone;
-        else hMCSum->Add(hclone);
-    }
-    //Search for the quantile
-    float integral = 0;
-    int qbin = 0; // bin where quantile is found
-    for(int i=hMCSum->GetNbinsX();i>0;i--){
-        integral = hMCSum->Integral(i,hMCSum->GetNbinsX());
-        if(integral>=nof){
-            qbin = i;
-            break;
-        }
-    }
-    if(integral!=0 && qbin!=hMCSum->GetNbinsX()){
-        return hMCSum->GetBinCenter(qbin);
-    }
-    return -1;
-}
-
-
 // #########################################################################
 //                              Main function
 // #########################################################################
 
 int main (int argc, char *argv[])
 {
+  // Check the label of the signal region is defined
+  
   string signalRegionLabel_ = signalRegionLabel(SIGNAL_REGION_TAG);
   if (signalRegionLabel_ == "") 
   { 
       DEBUG_MSG << "Please define the signal region label associated to tag '" << SIGNAL_REGION_TAG << "'" << endl; 
       return -1; 
   }
+ 
+  // Special region for 2, 3 or 4 jets with 50, 100 or 150 minimum events
+
+  string ControlRegion; 
+  if (argc == 2) 
+  { 
+      ControlRegion = argv[1];
+      NOMINAL_BDT_CUT = false;
+      printBoxedMessage("Running on CR = "+ControlRegion);
+      LoadBDTCut(ControlRegion);
+  }
+  if (argc >= 3) { WARNING_MSG << "Too many argument specified" << endl; return -1; }
+  
+
+  // Check if we're running on a BDT region
+
+  bool runningOnBDTRegion = false;
+  if (findSubstring(SIGNAL_REGION_TAG,"BDT")) runningOnBDTRegion = true;
+
 
   printBoxedMessage("Starting plot generation");
 
@@ -145,26 +110,35 @@ int main (int argc, char *argv[])
 
      int nJets, nBtag;
 
-     screwdriver.AddVariable("nJets",          "Number of selected jets",           "",       11,0,10,        &(nJets),                "");
-     screwdriver.AddVariable("nBtag",          "Number of selected b-tagged jets",  "",       5, 0,4,         &(nBtag),                "");
+     screwdriver.AddVariable("nJets",          "Number of selected jets",           "",       11,0,10,        &(nJets),              "");
+     screwdriver.AddVariable("nBtag",          "Number of selected b-tagged jets",  "",       5, 0,4,         &(nBtag),              "");
 
      #ifdef BDT_OUTPUT_AVAILABLE
-         screwdriver.AddVariable("BDT_T2tt-1",      "BDT output T2tt-1",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R1   ), "");
-         screwdriver.AddVariable("BDT_T2tt-2",      "BDT output T2tt-2",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R2   ), "");
-         screwdriver.AddVariable("BDT_T2tt-5",      "BDT output T2tt-5",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R5   ), "");
-         screwdriver.AddVariable("BDT_T2bw075-1",   "BDT output T2bw075-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R1), "");
-         screwdriver.AddVariable("BDT_T2bw075-2",   "BDT output T2bw075-2",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R2), "");
-         screwdriver.AddVariable("BDT_T2bw075-3",   "BDT output T2bw075-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R3), "");
-         screwdriver.AddVariable("BDT_T2bw075-5",   "BDT output T2bw075-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R5), "");
-         screwdriver.AddVariable("BDT_T2bw050-1",   "BDT output T2bw050-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R1), "");
-         screwdriver.AddVariable("BDT_T2bw050-3",   "BDT output T2bw050-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R3), "");
-         screwdriver.AddVariable("BDT_T2bw050-4",   "BDT output T2bw050-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R4), "");
-         screwdriver.AddVariable("BDT_T2bw050-5",   "BDT output T2bw050-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R5), "");
-         screwdriver.AddVariable("BDT_T2bw050-6",   "BDT output T2bw050-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R6), "");
-         screwdriver.AddVariable("BDT_T2bw025-1",   "BDT output T2bw025-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R1), "");
-         screwdriver.AddVariable("BDT_T2bw025-3",   "BDT output T2bw025-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R3), "");
-         screwdriver.AddVariable("BDT_T2bw025-4",   "BDT output T2bw025-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R4), "");
-         screwdriver.AddVariable("BDT_T2bw025-6",   "BDT output T2bw025-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R6), "");
+         float BDToutputValue;
+
+         if (string(SIGNAL_REGION_TAG) == "preselection")
+         {
+             screwdriver.AddVariable("BDT_T2tt-1",      "BDT output T2tt-1",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R1   ), "");
+             screwdriver.AddVariable("BDT_T2tt-2",      "BDT output T2tt-2",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R2   ), "");
+             screwdriver.AddVariable("BDT_T2tt-5",      "BDT output T2tt-5",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R5   ), "");
+             screwdriver.AddVariable("BDT_T2bw075-1",   "BDT output T2bw075-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R1), "");
+             screwdriver.AddVariable("BDT_T2bw075-2",   "BDT output T2bw075-2",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R2), "");
+             screwdriver.AddVariable("BDT_T2bw075-3",   "BDT output T2bw075-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R3), "");
+             screwdriver.AddVariable("BDT_T2bw075-5",   "BDT output T2bw075-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R5), "");
+             screwdriver.AddVariable("BDT_T2bw050-1",   "BDT output T2bw050-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R1), "");
+             screwdriver.AddVariable("BDT_T2bw050-3",   "BDT output T2bw050-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R3), "");
+             screwdriver.AddVariable("BDT_T2bw050-4",   "BDT output T2bw050-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R4), "");
+             screwdriver.AddVariable("BDT_T2bw050-5",   "BDT output T2bw050-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R5), "");
+             screwdriver.AddVariable("BDT_T2bw050-6",   "BDT output T2bw050-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R6), "");
+             screwdriver.AddVariable("BDT_T2bw025-1",   "BDT output T2bw025-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R1), "");
+             screwdriver.AddVariable("BDT_T2bw025-3",   "BDT output T2bw025-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R3), "");
+             screwdriver.AddVariable("BDT_T2bw025-4",   "BDT output T2bw025-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R4), "");
+             screwdriver.AddVariable("BDT_T2bw025-6",   "BDT output T2bw025-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R6), "");
+         }
+         else if (runningOnBDTRegion)
+         {
+             screwdriver.AddVariable(SIGNAL_REGION_TAG, SIGNAL_REGION_TAG,       "",   100,-0.5,0.5, &BDToutputValue,                  "");
+         }
      #endif
 
      // #########################################################
@@ -172,10 +146,12 @@ int main (int argc, char *argv[])
      // #########################################################
 
      screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
-            screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
-            screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
+            screwdriver.AddDataset("ttbar_madgraph_1l",   "1ltop",  0, 0);
+            screwdriver.AddDataset("singleTop_st",        "1ltop",  0, 0);
      
      screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
+            screwdriver.AddDataset("ttbar_madgraph_2l",   "1ltop",  0, 0);
      
      screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
              screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
@@ -284,6 +260,12 @@ int main (int argc, char *argv[])
   // ########################################
   // ##        Run over the events         ##
   // ########################################
+      
+     bool ttbarDatasetToBeSplitted = false;
+      if (findSubstring(currentDataset,"ttbar")
+      && (currentDataset != "ttbar_madgraph_1l") 
+      && (currentDataset != "ttbar_madgraph_2l"))
+          ttbarDatasetToBeSplitted = true;
 
       int nEntries = theTree->GetEntries();
       for (int i = 0 ; i < nEntries ; i++)
@@ -294,29 +276,44 @@ int main (int argc, char *argv[])
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
 
-          #ifdef CR4_2j
-              if (myEvent.nJets < 2) continue;
-          #endif
-          #ifdef CR4_3j
-              if (myEvent.nJets < 3) continue;
-          #endif
-          #if defined(CR4_4j) || defined(CR4_4j_50evts) || defined(CR4_4j_100evts) || defined(CR4_4j_150evts)
-              if (myEvent.nJets < 4) continue; 
+          if (ControlRegion != "")
+          {
+              if (ControlRegion == "CR4_2j")         if (myEvent.nJets < 2) continue;
+              if (ControlRegion == "CR4_3j")         if (myEvent.nJets < 3) continue;
+              if (ControlRegion == "CR4_4j"
+               || ControlRegion == "CR4_4j_50evts" 
+               || ControlRegion == "CR4_4j_100evts" 
+               || ControlRegion == "CR4_4j_150evts") if (myEvent.nJets < 4) continue; 
+          }
+
+          #ifdef BDT_OUTPUT_AVAILABLE
+             // Keep BDT tag by keepting substr after "BDT_" in SIGNAL_REGION_TAG
+             // This is dirty..
+             BDToutputValue = BDToutput(string(SIGNAL_REGION_TAG).substr(4));
           #endif
 
           nJets = myEvent.nJets;
           nBtag = myEvent.nBTag;
 
           float weight = getWeight();
+          if ((runningOnBDTRegion) && (ttbarDatasetToBeSplitted))
+          {
+              // Here we should at some point ignore the part of ttbar events used in the training
+              // but at this point all ttbar madgraph was used...
+
+              // Ignore event with id%2 == 0 TODO : check this is the correct thing
+              //if (myEvent.event % 2 == 0) continue;
+              //else  weight *= 2; 
+          }
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
-          if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2)) 
+          if (ttbarDatasetToBeSplitted && (myEvent.numberOfGenLepton == 2))
               currentProcessClass_ = "ttbar_2l";
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
-
       } 
+
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
       f.Close();

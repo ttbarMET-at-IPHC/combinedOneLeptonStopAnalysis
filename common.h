@@ -35,6 +35,12 @@ using namespace theDoctor;
 // Used to print info
 #define INFO_MSG cout << "     > "
 
+bool findSubstring(string input,string substring)
+{
+    if (input.find(substring) != string::npos) return true;
+    else return false;
+}
+
 void printProgressBar(int current, int max, string name = "Progress")
 {
     std::string bar;
