@@ -10,10 +10,8 @@ using namespace theDoctor;
 
 // BabyTuple format and location
 
-//#define FOLDER_BABYTUPLES "../store/babyTuples_0603_1lepton4jetsMET80/"
-//#include "Reader_newFinal0603_skimmed.h"
-#define FOLDER_BABYTUPLES "../store/babyTuples_old/"
-#include "Reader_newFinal0603_skimmed_dirty.h"
+#define FOLDER_BABYTUPLES "../store/babyTuples_0603_withBDT_skim/1lepton4jetsMET80/"
+#include "Reader.h"
 
 #include "analysisDefinitions.h"
 
@@ -48,37 +46,37 @@ int main (int argc, char *argv[])
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
-/*
+
      screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
      screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
      screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
 
      screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
 
-*/
      screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
-     screwdriver.AddDataset("Wjets",    "W+jets", 0, 0);
+     screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
 
-/*
+
      screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
      screwdriver.AddDataset("rare",   "rare", 0, 0);
 
      screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
      screwdriver.AddDataset("SingleElec",   "data", 0, 0);
      screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
-*/
+
+/*
      screwdriver.AddProcessClass("T2tt",     "T2tt",                   "signal",kViolet-1);
           screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
 
      screwdriver.AddProcessClass("T2tt_175_25",  "T2tt (175/25)",      "signal",COLORPLOT_BLUE);
- 
+*/
 
   // ##########################
   // ##    Create Regions    ##
   // ##########################
 
-     screwdriver.AddRegion("presel_MTtail",          "Preselection, MT tail",                &goesInPreselectionMTtail);
-     screwdriver.AddRegion("presel_MTinverted",      "Preselection, MT inverted",            &goesInPreselectionMTinverted);
+     screwdriver.AddRegion("presel_MTtail",     "Preselection, MT tail",     &goesInPreselectionMTtail);
+     screwdriver.AddRegion("presel_MTinverted", "Preselection, MT inverted", &goesInPreselectionMTinverted);
 
   // ##########################
   // ##   Create Channels    ##
@@ -146,7 +144,6 @@ int main (int argc, char *argv[])
      
      intermediatePointers pointers;
      InitializeBranchesForReading(theTree,&myEvent,&pointers);
-     //InitializeBranches(theTree,&myEvent,&pointers);
 
   // ########################################
   // ##        Run over the events         ##
@@ -172,8 +169,8 @@ int main (int argc, char *argv[])
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
-          if ((myEvent.mStop == 175) && (myEvent.mNeutralino == 25))
-            screwdriver.AutoFillProcessClass("T2tt_175_25",weight);
+          //if ((myEvent.mStop == 175) && (myEvent.mNeutralino == 25))
+          //  screwdriver.AutoFillProcessClass("T2tt_175_25",weight);
       } 
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
@@ -206,9 +203,9 @@ int main (int argc, char *argv[])
   TableDataMC(&screwdriver,tableRegions,"singleMuon").Print();
   TableDataMC(&screwdriver,tableRegions,"singleLepton").Print();
 
-  TableBackgroundSignal(&screwdriver,tableRegions,"singleElec").Print();
-  TableBackgroundSignal(&screwdriver,tableRegions,"singleMuon").Print();
-  TableBackgroundSignal(&screwdriver,tableRegions,"singleLepton").Print();
+  //TableBackgroundSignal(&screwdriver,tableRegions,"singleElec").Print();
+  //TableBackgroundSignal(&screwdriver,tableRegions,"singleMuon").Print();
+  //TableBackgroundSignal(&screwdriver,tableRegions,"singleLepton").Print();
 
 
   printBoxedMessage("Program done.");

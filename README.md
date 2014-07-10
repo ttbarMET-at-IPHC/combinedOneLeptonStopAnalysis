@@ -6,9 +6,11 @@ Install
 -------
 
     git clone https://github.com/ttbarMET-at-IPHC/combinedOneLeptonStopAnalysis.git
+    cd combinedOneLeptonStopAnalysis
     git submodule init
     git submodule update
-    cd sonicScrewdriver && make && cd ..
+    cd AN-14-067 && git checkout master && git pull
+    cd sonicScrewdriver && git checkout master && git pull && make && cd ..
 
 Setup environment (each time)
 -----------------
