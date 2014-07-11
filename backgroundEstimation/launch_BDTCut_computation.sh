@@ -14,6 +14,6 @@ for i in $CRs ; do
 	sed -e "s/#define $i false/#define $i true/g" BDTDefinition.h.org > BDTDefinition.h
 	make clean;
 	time make controlPlots 
-	cp controlPlotsProducer_cut_nocut.log BDTcuts_$i.res
+	cp controlPlotsProducer_preselection.log BDTcuts_$i.res
 done
 

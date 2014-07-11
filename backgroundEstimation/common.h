@@ -28,7 +28,7 @@ using namespace theDoctor;
 #define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
 #define BDT_OUTPUT_AVAILABLE
 #define ISR_JET_ALREADY_COMPUTED
-#define USING_TTBAR_MADGRAPH
+#define USING_TTBAR_POWHEG
 
 // #################################################
 // #  Analysis, cut-and-count and BDT definitions  #
