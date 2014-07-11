@@ -2,6 +2,7 @@ SHELL := /bin/bash
 
 ObjSuf        = o
 SrcSuf        = C
+SrcSuf2       = cpp
 ExeSuf        = run
 LogSuf        = log
 
@@ -20,7 +21,7 @@ CXXFLAGS     += -I../sonicScrewdriver/
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA 
-#LDFLAGS	     += -lRooFit -lRooFitCore
+ROOFITFLAGS	     += -lRooFit -lRooFitCore
 LDFLAGS      += -l:`pwd`/../.vectorDictionnary_C.so 
 LDFLAGS      += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 
@@ -78,14 +79,13 @@ CONTROL_REGIONS_2l += CR4_4j_50evts CR4_4j_100evts CR4_4j_150evts
 SF_2l:
 	@for REGION in $(CONTROL_REGIONS_2l); 		  \
 	 do									      \
-	        touch toto; \
-		mv toto toti; 	\
 		echo "[Lauching signal region $$REGION]";     \
 	    	make tables ARG=$$REGION;     \
-		make predictions;		\
-		mv scaleFactors/*.tab scaleFactors/$$REGION/;	 \
+		make predictions ARG=--CR4 CR=$$REGION;		\
 	done;
 	make SFreport
+
+#mv scaleFactors/*.tab scaleFactors/$$REGION/;	 
 
 tables:
 	@make --no-print-directory clean 
@@ -112,7 +112,7 @@ tables:
 plots4CR1: plots4CR1Estimation.$(ExeSuf)
 	./plots4CR1Estimation.$(ExeSuf) 
 
-templateFitCR1: templateFitCR1.$(ExeSuf)
+templateFitCR1: templateFitCR1.$(ExeSuf) 
 	./templateFitCR1.$(ExeSuf)
 
 computeBDTCuts: computeBDTCuts.$(ExeSuf)
@@ -124,7 +124,7 @@ predictions: backgroundEstimation.$(ExeSuf)
 	@for REGION in $(SIGNAL_REGIONS);					\
 	 do													\
 	 	   echo "[Running on $$REGION]";			    \
-		   ./backgroundEstimation.$(ExeSuf) $$REGION;	\
+		   ./backgroundEstimation.$(ExeSuf) $$REGION  ${ARG} ${CR};	\
 	 done;
 
 controlPlots:
@@ -184,5 +184,8 @@ syst: reportGenSystProducer.$(ExeSuf)
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
 %.$(ExeSuf): %.$(SrcSuf) 
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) ${ARGS} -o $@ $< $(LIBS) $(GCCPARSER)
+
+%.$(ExeSuf): %.$(SrcSuf2) 
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) ${ROOFITFLAGS} -o $@ $< $(LIBS) $(GCCPARSER)
 

@@ -219,7 +219,8 @@ int main (int argc, char *argv[])
     // Create a table with the uncertainy for each SR
     //-------------------------------------------------------------------------------
     vector<string> columns = {"value"};
-    Table SF_tt2l(signalRegionsTagList,columns,signalRegionsTagList,columns);
+    //Table SF_tt2l(signalRegionsTagList,columns,signalRegionsTagList,columns);
+    Table SF_tt2l(columns,signalRegionsTagList,columns,signalRegionsTagList);
     for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
     {
     	float min = hMin->GetBinContent(j+1);
@@ -227,24 +228,12 @@ int main (int argc, char *argv[])
 	float uncert = min;
 	if(max>min) uncert = max;
 	uncert*=(1+ExtrapUncert);
-    	Figure funcert(uncert,0);
-	SF_tt2l.Set(signalRegionsTagList[j],"value",funcert);
+    	//Figure funcert(uncert,0);
+    	Figure funcert(1.0,uncert-1);
+	SF_tt2l.Set("value",signalRegionsTagList[j],funcert);
     }
 
-       
-    cout << "\\documentclass[a4paper, 12pt]{article}" << endl;
-    cout << "\\usepackage{amsmath}" << endl;
-    cout << "\\usepackage[landscape]{geometry}" << endl;
-    //cout << "\\usepackage{geometry}" << endl;
-    cout << "\\geometry{a4paper, top=0.5cm, bottom=0.5cm, left=0.3cm, right=0.3cm}" << endl;
-
-    cout << "\\begin{document}" << endl;
-    cout << "\\begin{center}" << endl;
-
-    cout << "{\\Large Raw yields}\\\\" << endl;
-    SF_tt2l.Print("SF_tt2l.tab",4);
-    cout << "\\end{center}" << endl;
-    cout << "\\end{document}" << endl;
+    SF_tt2l.Print("scaleFactors/SF_tt2l.tab",4);
 
 	
     //-------------------------------------------------------------------------------
