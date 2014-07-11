@@ -29,6 +29,7 @@ using namespace theDoctor;
 #define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
 #define BDT_OUTPUT_AVAILABLE
 #define ISR_JET_ALREADY_COMPUTED
+#define USING_TTBAR_POWHEG
 
 // #################################################
 // #  Analysis, cut-and-count and BDT definitions  #
@@ -41,12 +42,12 @@ using namespace theDoctor;
 #include "../AN-14-067/cutAndCountDefinitions.h"
 #include "../AN-14-067/signalRegionDefinitions.h"
 
-float figureOfMerit(float S, float B, string mode, bool minimumEventRequirement = true, float systUncertainty = SYST_UNCERTAINTY)
+float figureOfMerit(float S, float B, string mode, bool minimumEventRequirement = true, float systUncertainty = 0.15)
 {
     if (minimumEventRequirement)
     {
         if (B < 1.0) B = 1.0;
-        if (S < 3) return 0;
+        if (S < 2) return 0;
     }
 
     float f_B = systUncertainty;

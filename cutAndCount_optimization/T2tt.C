@@ -1,16 +1,15 @@
 #include "common.h"
-
 // ##################
 // Others tools/stuff
 // ##################
 
 bool additionalCuts()
 {
-//    if (myEvent.deltaPhiMETJets < 0.8) return false;
-//    if (myEvent.hadronicChi2    > 5)   return false;
+    //if (myEvent.deltaPhiMETJets < 0.8) return false;
+    //if (myEvent.hadronicChi2    > 3)   return false;
 
     if (myEvent.MT < 120) return false;
-    if (myEvent.ISRJet == false) return false;
+    //if (myEvent.ISRJet == false) return false;
 
     return true;
 }
@@ -27,54 +26,49 @@ bool cutAndCount_T2tt_mediumDeltaM (bool applyMTCut) { return cutAndCount_T2tt( 
 bool cutAndCount_T2tt_highDeltaM   (bool applyMTCut) { return cutAndCount_T2tt( -1,  15, 190 * applyMTCut, 240, -1,  999999, false); }
 */
 
+#define SF_1ltop                    5
+#define SF_allOthers                5
 
+/*
 #define BENCHMARK_STOP_MASS         250
 #define BENCHMARK_NEUTRALINO_MASS   100
-#define SF_1ltop                    2
-#define SF_ttbar2l                  1.5
-#define SYST_UNCERTAINTY            0.2
 
                      // METsig  MT, MT2W, MET
 #define REFERENCE_CUTS {-1,    120, -1, 200}
-
+#define SYST_UNCERTAINTY            0.17
+*/
 /*
 #define BENCHMARK_STOP_MASS         350
 #define BENCHMARK_NEUTRALINO_MASS   200
-#define SF_1ltop                    10
-#define SF_ttbar2l                  1.3
-#define SYST_UNCERTAINTY            0.23
 
                      // METsig  MT, MT2W, MET
 #define REFERENCE_CUTS {10,    140, -1, -1}
+#define SYST_UNCERTAINTY            0.21
 */
+/*
 #define BENCHMARK_STOP_MASS         250
 #define BENCHMARK_NEUTRALINO_MASS   25
-#define SF_1ltop                    4
-#define SF_ttbar2l                  1.5
-#define SYST_UNCERTAINTY            0.2
 
                      // METsig  MT, MT2W, MET
 #define REFERENCE_CUTS {-1,    130, -1, 130}
+#define SYST_UNCERTAINTY            0.22
+*/
 /*
-#define BENCHMARK_STOP_MASS         350
-#define BENCHMARK_NEUTRALINO_MASS   50
-#define SF_1ltop                    10
-#define SF_ttbar2l                  2
-#define SYST_UNCERTAINTY            0.33
+#define BENCHMARK_STOP_MASS         450
+#define BENCHMARK_NEUTRALINO_MASS   100
 
                      // METsig  MT, MT2W, MET
 #define REFERENCE_CUTS {10,    140, 180, -1}
+#define SYST_UNCERTAINTY            0.37
 */
-/*
-#define BENCHMARK_STOP_MASS         650
+
+#define BENCHMARK_STOP_MASS         600
 #define BENCHMARK_NEUTRALINO_MASS   50
-#define SF_1ltop                    5
-#define SF_ttbar2l                  5
-#define SYST_UNCERTAINTY            0.43
 
                      // METsig  MT, MT2W, MET
 #define REFERENCE_CUTS {15,    190, 240, -1}
-*/
+#define SYST_UNCERTAINTY            0.37
+
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 void fillTable(Table* results, string label, bool* use, vector<float> cuts, float bestFOM, float bestYieldSig, float bestYieldBkg);
@@ -112,12 +106,20 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
+     screwdriver.AddProcessClass("1ltop",                        "1l top", "background",kRed-7);
+         #ifdef USING_TTBAR_POWHEG
+             screwdriver.AddDataset("ttbar_powheg",              "1ltop",  0, 0);
+         #endif
+         #ifdef USING_TTBAR_MADGRAPH
+             screwdriver.AddDataset("ttbar_madgraph_1l",         "1ltop",  0, 0);
+         #endif
+         screwdriver.AddDataset("singleTop_st",                  "1ltop",  0, 0);
 
-     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
-            screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
-            screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
-     
+
      screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
+         #ifdef USING_TTBAR_MADGRAPH
+             screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
+         #endif
 
      screwdriver.AddProcessClass("W+jets",         "W+jets",                          "background", kOrange-2);
              screwdriver.AddDataset("W+jets",      "W+jets", 0, 0);
@@ -255,9 +257,8 @@ int main (int argc, char *argv[])
               }
               else
               {
-                      if (currentProcessClass_ == "1ltop")    values.push_back(getWeight() * SF_1ltop);
-                 else if (currentProcessClass_ == "ttbar_2l") values.push_back(getWeight() * SF_ttbar2l);
-                 else                                         values.push_back(getWeight());
+                 if (currentProcessClass_ == "1ltop") values.push_back(getWeight() * SF_1ltop);
+                 else                                 values.push_back(getWeight() * SF_allOthers);
                  
                  listBackground.push_back(values);
               }
@@ -302,20 +303,20 @@ int main (int argc, char *argv[])
   vector<string> lines = 
   {
       "123/discovery",
-      "123/exclusion",
-      "123/azimov",
-      
       "234/discovery",
-      "234/exclusion",
-      "234/azimov",
-      
       "12/discovery",
-      "12/exclusion",
-      "12/azimov",
-
       "24/discovery",
+      
+      "123/azimov",
+      "234/azimov",
+      "12/azimov",
+      "24/azimov",
+      
+      "123/exclusion",
+      "234/exclusion",
+      "12/exclusion",
       "24/exclusion",
-      "24/azimov"
+
   };
   Table optimizationResult(columns,lines);
 
@@ -355,7 +356,9 @@ int main (int argc, char *argv[])
   float yieldBackgroundRef  = getYield(listBackground,REFERENCE_CUTS);
   float yieldSignalRef      = getYield(listSignal,REFERENCE_CUTS);
 
-  cout << "FOM for Reference cuts : " << figureOfMerit(yieldSignalRef, yieldBackgroundRef, "exclusion") << " S, B = " << yieldSignalRef << ", " << yieldBackgroundRef<< endl; 
+  cout << "FOM for Reference cuts : " << figureOfMerit(yieldSignalRef, yieldBackgroundRef, "discovery") << " (discovery)"
+                                      << figureOfMerit(yieldSignalRef, yieldBackgroundRef, "exclusion") << " (exclusion)"
+      << " S, B = " << yieldSignalRef << ", " << yieldBackgroundRef<< endl; 
 
   printBoxedMessage("Program done.");
   return (0);
@@ -388,8 +391,8 @@ vector<float> optimizeCuts(bool* use, float* bestFOM, float* bestYieldSig, float
 
     for (cuts[0] = (use[0] ? 6 : -1)   ; cuts[0] <= (use[0] ? 15  : -1) ; cuts[0] += 1  ) {  // MET / sqrt(HT)
         printProgressBar(cuts[0]-6,9);
-    for (cuts[1] = (use[1] ? 120 : -1) ; cuts[1] <= (use[1] ? 200 : -1) ; cuts[1] += 20 ) {  // MT
-    for (cuts[2] = (use[2] ? 100 : -1) ; cuts[2] <= (use[2] ? 280 : -1) ; cuts[2] += 30 ) {  // MT2W
+    for (cuts[1] = (use[1] ? 120 : -1) ; cuts[1] <= (use[1] ? 140 : -1) ; cuts[1] += 5  ) {  // MT
+    for (cuts[2] = (use[2] ? 100 : -1) ; cuts[2] <= (use[2] ? 200 : -1) ; cuts[2] += 10 ) {  // MT2W
     for (cuts[3] = (use[3] ? 100 : -1) ; cuts[3] <= (use[3] ? 400 : -1) ; cuts[3] += 50 ) {  // MET
 
         float yieldBackground  = getYield(listBackground,cuts);
