@@ -10,13 +10,16 @@ int main (int argc, char *argv[])
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
 
     string signalRegion = argv[1]; 
-
+    string CR = "SRs";
     if (argc == 3){
     	if(string(argv[2]) == string("--CR4"))
 		ReadSF_tt2l = false;
     }
+    if (argc == 4){
+    	CR = string(argv[3]);
+    }
 
-    backgroundEstimation(signalRegion).Run();
+    backgroundEstimation(signalRegion).Run(CR);
 
     return 0;
 }
@@ -98,13 +101,13 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     ResetSystematics();
 }
 
-void backgroundEstimation::Run()
+void backgroundEstimation::Run(string CR)
 {
     ComputePredictionWithSystematics();
-
-    scaleFactorTable.        Print("scaleFactors/"+signalRegionLabel+".tab",4);
-    systematicsUncertainties.Print("systematics/" +signalRegionLabel+".tab",4);
-    predictionTable.         Print("prediction/"  +signalRegionLabel+".tab",4);
+  
+    scaleFactorTable.        Print("scaleFactors/"+CR+"/"+signalRegionLabel+".tab",4);
+    systematicsUncertainties.Print("systematics/" +CR+"/"+signalRegionLabel+".tab",4);
+    predictionTable.         Print("prediction/"  +CR+"/"+signalRegionLabel+".tab",4);
 
 }
 

@@ -36,7 +36,7 @@ class backgroundEstimation{
         Table GetPredictionTable() { return predictionTable; };
         Table GetUncertaintyTable()   { return systematicsUncertainties;  };
 
-        void Run();
+        void Run(string CR = "");
 
     private:
        
