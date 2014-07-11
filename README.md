@@ -9,7 +9,8 @@ Install
     cd combinedOneLeptonStopAnalysis
     git submodule init
     git submodule update
-    cd AN-14-067 && git checkout master && git pull
+    cd AN-14-067 && git checkout master && git pull && cd ..
+    <here, make sure to have a ROOT setup somewhere>
     cd sonicScrewdriver && git checkout master && git pull && make && cd ..
 
 Setup environment (each time)
