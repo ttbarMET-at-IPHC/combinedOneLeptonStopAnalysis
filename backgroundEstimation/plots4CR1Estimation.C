@@ -398,12 +398,12 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("SR_BDT_T2bw025_4", " SR_BDT_T2bw025_4   ",  &SR_BDT_T2bw025_4  );
      screwdriver.AddRegion("SR_BDT_T2bw025_6", " SR_BDT_T2bw025_6   ",  &SR_BDT_T2bw025_6  );
      
-     screwdriver.AddRegion("CR0btag_MTail_MT_120"          ,        "CR0btag_MTtail_MT_120"           ,  &goesIn0BtagControlRegionMTtail120);
-     screwdriver.AddRegion("CR0btag_MTail_MT_125"          ,        "CR0btag_MTtail_MT_125"           ,  &goesIn0BtagControlRegionMTtail125);
-     screwdriver.AddRegion("CR0btag_MTail_MT_130"          ,        "CR0btag_MTtail_MT_130"           ,  &goesIn0BtagControlRegionMTtail130);
-     screwdriver.AddRegion("CR0btag_MTail_MT_140"          ,        "CR0btag_MTtail_MT_140"           ,  &goesIn0BtagControlRegionMTtail140);
-     screwdriver.AddRegion("CR0btag_MTail_MT_150"          ,        "CR0btag_MTtail_MT_150"           ,  &goesIn0BtagControlRegionMTtail150);
-     screwdriver.AddRegion("CR0btag_MTail_MT_160"          ,        "CR0btag_MTtail_MT_160"           ,  &goesIn0BtagControlRegionMTtail160);
+     screwdriver.AddRegion("CR0btag_MTtail_MT_120"          ,        "CR0btag_MTtail_MT_120"           ,  &goesIn0BtagControlRegionMTtail120);
+     screwdriver.AddRegion("CR0btag_MTtail_MT_125"          ,        "CR0btag_MTtail_MT_125"           ,  &goesIn0BtagControlRegionMTtail125);
+     screwdriver.AddRegion("CR0btag_MTtail_MT_130"          ,        "CR0btag_MTtail_MT_130"           ,  &goesIn0BtagControlRegionMTtail130);
+     screwdriver.AddRegion("CR0btag_MTtail_MT_140"          ,        "CR0btag_MTtail_MT_140"           ,  &goesIn0BtagControlRegionMTtail140);
+     screwdriver.AddRegion("CR0btag_MTtail_MT_150"          ,        "CR0btag_MTtail_MT_150"           ,  &goesIn0BtagControlRegionMTtail150);
+     screwdriver.AddRegion("CR0btag_MTtail_MT_160"          ,        "CR0btag_MTtail_MT_160"           ,  &goesIn0BtagControlRegionMTtail160);
      
      screwdriver.AddRegion("CR0btag_MTpeak_MET_200"          ,      "CR0btag_MTpeak_MET_200"          ,  &CR0btag_MTpeak_MET_200          ); 
      screwdriver.AddRegion("CR0btag_MTpeak_MET_250"          ,      "CR0btag_MTpeak_MET_250"          ,  &CR0btag_MTpeak_MET_250          );

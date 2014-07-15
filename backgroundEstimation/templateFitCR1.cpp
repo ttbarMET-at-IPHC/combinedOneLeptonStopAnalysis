@@ -34,6 +34,7 @@
 #include "TRandom.h"
 #include "TMath.h"
 
+#include "interface/Table.h" 
 
 #define PlotDir plots4CR1 
 
@@ -737,6 +738,15 @@ int main()
   TH1F h_SFR_BDT_wjets("h_SFR_BDT_wjets","",signalRegions.size(),0,signalRegions.size());
    
   varname="Mlb";
+  
+  float mean_SFtt1l = 0;
+  float rms_SFtt1l = 0;
+  float MaxStatUncert_SFtt1l = 0;
+
+  float mean_SFwjets = 0;
+  float rms_SFwjets = 0;
+  float MaxStatUncert_SFwjets = 0;
+
   for(unsigned int i=0;i<signalRegions.size();i++){
   	cout<<"%%%%%%%%%%%%%%%%%% "<<signalRegions[i]<<endl;
 
@@ -771,6 +781,17 @@ int main()
 	//MT peak (no btag req)
 	setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
   	res = doFit(setup,conditions); 
+        
+	//Computation of mean/rms/ ..
+	//-- tt1l
+	mean_SFtt1l+=SFR_tt1l.value();
+	rms_SFtt1l+=(SFR_tt1l.value()*SFR_tt1l.value());
+	if(SFR_tt1l.error()>(MaxStatUncert_SFtt1l/SFR_tt1l.value()))  MaxStatUncert_SFtt1l=SFR_tt1l.error()/SFR_tt1l.value();
+	//-- W+jets
+	mean_SFwjets+=SFR_wjets.value();
+	rms_SFwjets+=(SFR_wjets.value()*SFR_wjets.value());
+	if(SFR_wjets.error()>(MaxStatUncert_SFwjets/SFR_wjets.value()))  MaxStatUncert_SFwjets=SFR_wjets.error()/SFR_wjets.value();
+        //-----------------------------------
 
 	//SFR
 	h_SFR_BDT_tt1l.SetBinContent(i+1,SFR_tt1l.value());
@@ -791,10 +812,82 @@ int main()
   h_SF_MTtail_BDT_wjets.Write();
   h_SFR_BDT_tt1l.Write();
   h_SFR_BDT_wjets.Write();
+  
+  //---------------------------------------//
+  mean_SFtt1l/=signalRegions.size();
+  rms_SFtt1l/=signalRegions.size();
+  rms_SFtt1l-=(mean_SFtt1l*mean_SFtt1l);
+  theDoctor::Figure BDT_SFtt1l(mean_SFtt1l,sqrt(rms_SFtt1l+MaxStatUncert_SFtt1l*MaxStatUncert_SFtt1l*mean_SFtt1l*mean_SFtt1l));
+  //---------------------------------------//
+  mean_SFwjets/=signalRegions.size();
+  rms_SFwjets/=signalRegions.size();
+  rms_SFwjets-=(mean_SFwjets*mean_SFwjets);
+  theDoctor::Figure BDT_SFwjets(mean_SFwjets,sqrt(rms_SFwjets+MaxStatUncert_SFwjets*MaxStatUncert_SFwjets*mean_SFwjets*mean_SFwjets));
+  //---------------------------------------//
+  
+  
+  vector<string> sigReglabels(signalRegions.size());
+  for(unsigned int i=0;i<signalRegions.size();i++){
+  	sigReglabels[i] = signalRegions[i].substr(3);
+  } 
+  vector<string> columns = {"SFR_tt1l","SFR_wjets"};
+  theDoctor::Table SFR_BDT(columns,sigReglabels,columns,sigReglabels);
+
+
+  for(unsigned int i=0;i<signalRegions.size();i++){
+  	SFR_BDT.Set("SFR_tt1l",sigReglabels[i],BDT_SFtt1l);
+  	SFR_BDT.Set("SFR_wjets",sigReglabels[i],BDT_SFwjets);
+  }
+  SFR_BDT.Print("scaleFactors/SFR_BDT.tab",4);
   //---------------------------------------//
 
-  vector<string> signalRegions_CC = {"CR0btag_MTail_MT_120","CR0btag_MTail_MT_125", "CR0btag_MTail_MT_130","CR0btag_MTail_MT_140", "CR0btag_MTail_MT_150", "CR0btag_MTail_MT_160","CR0btag_MTtail_MET_200"          ,  "CR0btag_MTtail_MET_250"          ,  "CR0btag_MTtail_MET_300"          ,  "CR0btag_MTtail_MET_320"          ,  "CR0btag_MTtail_METoverSqrtHT_6" ,  "CR0btag_MTtail_METoverSqrtHT_7" ,  "CR0btag_MTtail_METoverSqrtHT_8" ,  "CR0btag_MTtail_METoverSqrtHT_9" ,  "CR0btag_MTtail_METoverSqrtHT_10",  "CR0btag_MTtail_METoverSqrtHT_12",  "CR0btag_MTtail_BPt_100"         , "CR0btag_MTtail_BPt_150",  "CR0btag_MTtail_BPt_180"          ,  "CR0btag_MTtail_DPhi_02"          ,  "CR0btag_MTtail_DPhi_08"          ,  "CR0btag_MTtail_ISRJet"          ,  "CR0btag_MTtail_MT2W_180"         ,  "CR0btag_MTtail_MT2W_190"         };//,  "CR0btag_MTtail_MT2W_200"};
+  vector<string> signalRegions_CC = {"CR0btag_MTtail_MT_120","CR0btag_MTtail_MT_125", "CR0btag_MTtail_MT_130","CR0btag_MTtail_MT_140", "CR0btag_MTtail_MT_150", "CR0btag_MTtail_MT_160","CR0btag_MTtail_MET_200"          ,  "CR0btag_MTtail_MET_250"          ,  "CR0btag_MTtail_MET_300"          ,  "CR0btag_MTtail_MET_320"          ,  "CR0btag_MTtail_METoverSqrtHT_6" ,  "CR0btag_MTtail_METoverSqrtHT_7" ,  "CR0btag_MTtail_METoverSqrtHT_8" ,  "CR0btag_MTtail_METoverSqrtHT_9" ,  "CR0btag_MTtail_METoverSqrtHT_10",  "CR0btag_MTtail_METoverSqrtHT_12",  "CR0btag_MTtail_BPt_100"         , "CR0btag_MTtail_BPt_150",  "CR0btag_MTtail_BPt_180"          ,  "CR0btag_MTtail_DPhi_02"          ,  "CR0btag_MTtail_DPhi_08"          ,  "CR0btag_MTtail_ISRJet"          ,  "CR0btag_MTtail_MT2W_180"         ,  "CR0btag_MTtail_MT2W_190"         };//,  "CR0btag_MTtail_MT2W_200"};
   vector<string> signalRegions_CC_MTpeak = {"0btag_MTpeak", "0btag_MTpeak",  "0btag_MTpeak",   "0btag_MTpeak",  "0btag_MTpeak",  "0btag_MTpeak", "CR0btag_MTpeak_MET_200"          ,  "CR0btag_MTpeak_MET_250"          ,  "CR0btag_MTpeak_MET_300"          ,  "CR0btag_MTpeak_MET_320"          ,  "CR0btag_MTpeak_METoverSqrtHT_6" ,  "CR0btag_MTpeak_METoverSqrtHT_7" ,  "CR0btag_MTpeak_METoverSqrtHT_8" ,  "CR0btag_MTpeak_METoverSqrtHT_9" ,  "CR0btag_MTpeak_METoverSqrtHT_10",  "CR0btag_MTpeak_METoverSqrtHT_12",  "CR0btag_MTpeak_BPt_100"         ,  "CR0btag_MTtail_BPt_150", "CR0btag_MTpeak_BPt_180"          ,  "CR0btag_MTpeak_DPhi_02"          ,  "CR0btag_MTpeak_DPhi_08"          ,  "CR0btag_MTpeak_ISRJet"          ,  "CR0btag_MTpeak_MT2W_180"         ,  "CR0btag_MTpeak_MT2W_190"         };//,  "CR0btag_MTpeak_MT2W_200"};
+  
+  std::map<string,vector<string> > CC_Cuts;
+  CC_Cuts["cutAndCount_T2tt_offShellLoose"]    		= {"MT_125"};
+  CC_Cuts["cutAndCount_T2tt_offShellTight"]   		= {"MT_130","MET_300"};
+  CC_Cuts["cutAndCount_T2tt_lowDeltaM"]    			= {"MT_140","METoverSqrtHT_8"};
+  CC_Cuts["cutAndCount_T2tt_mediumDeltaM"] 			= {"MT_140","MET_200"};
+  CC_Cuts["cutAndCount_T2tt_highDeltaM"] 			= {"MT_130","MET_350"};
+  CC_Cuts["cutAndCount_T2bw025_veryOffShell_loose"] 	= {"MT_120","METoverSqrtHT_9"};
+  CC_Cuts["cutAndCount_T2bw025_offShell_looSS"] 		= {"MT_120","METoverSqrtHT_7"};
+  CC_Cuts["cutAndCount_T2bw025_lowDeltaM_tight"] 		= {"MT_120","METoverSqrtHT_6"};
+  CC_Cuts["cutAndCount_T2bw025_highDeltaM"] 		= {"MT_140","METoverSqrtHT_10"};
+  CC_Cuts["cutAndCount_T2bw050_offShell_loose"] 		= {"MT_120","METoverSqrtHT_9"};
+  CC_Cuts["cutAndCount_T2bw050_lowMass"] 			= {"MT_120","METoverSqrtHT_6"};
+  CC_Cuts["cutAndCount_T2bw050_mediumDeltaM_loose"] 	= {"MT_150","METoverSqrtHT_7"};
+  CC_Cuts["cutAndCount_T2bw050_highDeltaM"] 	= {"MT_160","METoverSqrtHT_10"};
+  CC_Cuts["cutAndCount_T2bw075_lowDeltaM_tight"] 		= {"MT_120","METoverSqrtHT_12"};
+  CC_Cuts["cutAndCount_T2bw075_mediumDeltaM"] 		= {"MT_120","METoverSqrtHT_10"};
+  CC_Cuts["cutAndCount_T2bw075_highDeltaM"] 		= {"MT_140","MET_320"};
+
+/*
+bool cutAndCount_T2tt_offShellLoose(bool applyMTCut) { return cutAndCount_T2tt( -1,  8,  125 * applyMTCut, -1,   -1, 999999, true ); }
+bool cutAndCount_T2tt_offShellTight(bool applyMTCut) { return cutAndCount_T2tt( 300, -1, 130 * applyMTCut, -1,   -1, 999999, true ); }
+bool cutAndCount_T2tt_lowDeltaM    (bool applyMTCut) { return cutAndCount_T2tt( -1,  8,  140 * applyMTCut, -1,  0.8, 5,      false); }
+bool cutAndCount_T2tt_mediumDeltaM (bool applyMTCut) { return cutAndCount_T2tt( 200, -1, 140 * applyMTCut, 180, 0.8, 3,      false); }
+bool cutAndCount_T2tt_highDeltaM   (bool applyMTCut) { return cutAndCount_T2tt( 350, -1, 130 * applyMTCut, 190,  -1, 999999, false); }
+
+bool cutAndCount_T2bw025_veryOffShell_loose(bool applyMTCut) { return cutAndCount_T2bw(-1,   9,    120 * applyMTCut, -1,  -1,  0.2, true ); }
+bool cutAndCount_T2bw025_offShell_loose(bool applyMTCut)     { return cutAndCount_T2bw(-1,   7,    120 * applyMTCut, 200, 150, 0.8, false); }
+bool cutAndCount_T2bw025_lowDeltaM_tight(bool applyMTCut)    { return cutAndCount_T2bw(-1,   6,    120 * applyMTCut, 200, 180, 0.8, false); }
+bool cutAndCount_T2bw025_highDeltaM(bool applyMTCut)         { return cutAndCount_T2bw(-1,  10,    140 * applyMTCut, 200, 180, 0.8, false); }
+
+                                                                                    // MET METsig   MT                MT2W BPt dPhi ISRjet
+bool cutAndCount_T2bw050_offShell_loose(bool applyMTCut)     { return cutAndCount_T2bw(-1,   9,   120 * applyMTCut, -1,  -1, 0.2, true ); }
+bool cutAndCount_T2bw050_lowMass(bool applyMTCut)            { return cutAndCount_T2bw(-1,   6,   120 * applyMTCut, 200,100, 0.8, false); }
+bool cutAndCount_T2bw050_mediumDeltaM_loose(bool applyMTCut) { return cutAndCount_T2bw(-1,   7,   150 * applyMTCut, 200,150, 0.8, false); }
+bool cutAndCount_T2bw050_highDeltaM(bool applyMTCut)         { return cutAndCount_T2bw(-1,  10,   160 * applyMTCut, 200,180, 0.8, false); }
+
+                                                                                    // MET METsig   MT                MT2W BPt dPhi ISRjet
+bool cutAndCount_T2bw075_lowDeltaM_tight(bool applyMTCut)    { return cutAndCount_T2bw(-1,  12,    120 * applyMTCut, -1,  -1, 0.8, true);  }
+bool cutAndCount_T2bw075_mediumDeltaM(bool applyMTCut)       { return cutAndCount_T2bw(-1,  10,    140 * applyMTCut, 180, -1, 0.8, false); }
+bool cutAndCount_T2bw075_highDeltaM(bool applyMTCut)         { return cutAndCount_T2bw(320, -1,    160 * applyMTCut, 200, -1, 0.8, false); }
+*/
+
+  std::map<string,theDoctor::Figure> SFR_CC_tt1l_map;
+  std::map<string,theDoctor::Figure> SFR_CC_wjets_map;
 
   //Create histos
   TH1F h_SF_MTpeak_CC_tt1l("h_SF_MTpeak_CC_tt1l","",signalRegions_CC.size(),0,signalRegions_CC.size());
@@ -803,7 +896,7 @@ int main()
   TH1F h_SF_MTpeak_CC_wjets("h_SF_MTpeak_CC_wjets","",signalRegions_CC.size(),0,signalRegions_CC.size());
   TH1F h_SF_MTtail_CC_wjets("h_SF_MTtail_CC_wjets","",signalRegions_CC.size(),0,signalRegions_CC.size());
   TH1F h_SFR_CC_wjets("h_SFR_CC_wjets","",signalRegions_CC.size(),0,signalRegions_CC.size());
-   
+  
   for(unsigned int i=0;i<signalRegions_CC.size();i++){
   	cout<<"%%%%%%%%%%%%%%%%%% "<<signalRegions_CC[i]<<endl;
 
@@ -839,6 +932,11 @@ int main()
 	//setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
   	//res = doFit(setup,conditions); 
 
+
+        //
+	SFR_CC_tt1l_map[label] = SFR_tt1l;
+	SFR_CC_wjets_map[label] = SFR_wjets;
+
 	//SFR
 	h_SFR_CC_tt1l.SetBinContent(i+1,SFR_tt1l.value());
 	h_SFR_CC_tt1l.SetBinError(i+1,SFR_tt1l.error());
@@ -850,6 +948,7 @@ int main()
   	
 	cout<<"signRegions (CC): SFR_tt1l: "<<SFR_tt1l.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
   }
+
   //Save plots in roofile
   TFile fCR1_CC("CR1_CC.root","RECREATE");
   h_SF_MTpeak_CC_tt1l.Write();
@@ -858,7 +957,54 @@ int main()
   h_SF_MTtail_CC_wjets.Write();
   h_SFR_CC_tt1l.Write();
   h_SFR_CC_wjets.Write();
- 
+
+  //---------------------------------------------
+  // Results for C&C
+  vector<string> listOfCCRegions = {
+  "cutAndCount_T2tt_offShellLoose",    	        
+  "cutAndCount_T2tt_offShellTight",   		
+  "cutAndCount_T2tt_lowDeltaM",    			
+  "cutAndCount_T2tt_mediumDeltaM", 			
+  "cutAndCount_T2tt_highDeltaM", 			
+  "cutAndCount_T2bw025_veryOffShell_loose", 	
+  "cutAndCount_T2bw025_offShell_looSS", 		
+  "cutAndCount_T2bw025_lowDeltaM_tight", 		
+  "cutAndCount_T2bw025_highDeltaM", 		
+  "cutAndCount_T2bw050_offShell_loose", 		
+  "cutAndCount_T2bw050_lowMass", 			
+  "cutAndCount_T2bw050_mediumDeltaM_loose", 	
+  "cutAndCount_T2bw050_highDeltaM", 	
+  "cutAndCount_T2bw075_lowDeltaM_tight", 		
+  "cutAndCount_T2bw075_mediumDeltaM" 		
+  };
+  vector<string> cuts;
+
+  theDoctor::Table SFR_CC(columns,listOfCCRegions,columns,listOfCCRegions);
+  for(unsigned int r=0;r<listOfCCRegions.size();r++){
+  	cuts = CC_Cuts[listOfCCRegions[r]];	
+ 	theDoctor::Figure SFR_CC_tt1l;
+ 	theDoctor::Figure SFR_CC_wjets;
+  	for(unsigned i=0;i<cuts.size();i++)
+  	{
+  		cout<<cuts[i]<<" "<<SFR_CC_tt1l_map[cuts[i]].Print()<<endl;
+		if(i==0) SFR_CC_tt1l = SFR_CC_tt1l_map[cuts[i]];
+  		else SFR_CC_tt1l = theDoctor::Figure(SFR_CC_tt1l.value(),sqrt(pow(SFR_CC_tt1l.error(),2)+pow(SFR_CC_tt1l.value()-SFR_CC_tt1l_map[cuts[i].c_str()].value(),2)));
+		
+		if(i==0) SFR_CC_wjets = SFR_CC_wjets_map[cuts[i]];
+  		else SFR_CC_wjets = theDoctor::Figure(SFR_CC_wjets.value(),sqrt(pow(SFR_CC_wjets.error(),2)+pow(SFR_CC_wjets.value()-SFR_CC_wjets_map[cuts[i].c_str()].value(),2)));
+	}
+  	SFR_CC.Set("SFR_tt1l",listOfCCRegions[r],SFR_CC_tt1l);
+  	SFR_CC.Set("SFR_wjets",listOfCCRegions[r],SFR_CC_wjets);
+  	cout<<"TOO "<<listOfCCRegions[r]<<" "<<SFR_CC_tt1l.Print()<<endl;
+  }
+
+
+  SFR_CC.Print("scaleFactors/SFR_CC.tab",4);
+  //---------------------------------------//
+  //---------------------------------------------
+  
+
+
   //---------------------------------------------
   //  Perform an estimation for SFR C&C
   //---------------------------------------------
