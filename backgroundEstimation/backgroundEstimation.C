@@ -4,6 +4,7 @@
 #define CR4CR5Uncert_tt2l 0.1
 
 bool ReadSF_tt2l = true;
+bool ReadSF_SFR = true;
 
 int main (int argc, char *argv[])
 {
@@ -13,7 +14,8 @@ int main (int argc, char *argv[])
     string CR = "SRs";
     if (argc == 3)
     {
-		ReadSF_tt2l = false;
+	ReadSF_tt2l = false;
+	ReadSF_SFR = false;
     	CR = string(argv[2]);
     }
 
@@ -448,13 +450,37 @@ void backgroundEstimation::ComputeRandSFR()
     SFR_all    = noBTagTail_data / ((noBTagTail_Wjets + noBTagTail_1ltop)*SF_0btag + noBTagTail_ttbar_2l + noBTagTail_rare);
     SFR_W      = (noBTagTail_data - noBTagTail_1ltop*SF_0btag - noBTagTail_ttbar_2l - noBTagTail_rare) / (noBTagTail_Wjets*SF_0btag);
     
-    SFR_W_mean = Figure((SFR_all.value()+SFR_W.value())/2.0 , (SFR_all.error() + SFR_W.error())/2.0);
+    //SFR_W_mean is take from an input file
+    if(ReadSF_SFR){
+    	Table SFR_table;
+   	 string srLabelInTable = signalRegionLabel;
+	    if(signalRegionLabel.find("BDT")!=std::string::npos){
+    		//trick to not search for loose or tight SR in the table
+		size_t pos = signalRegionLabel.find("loose");
+		if(pos!=std::string::npos) srLabelInTable = signalRegionLabel.substr(0,pos-1);
+    		pos = signalRegionLabel.find("tight");
+		if(pos!=std::string::npos) srLabelInTable = signalRegionLabel.substr(0,pos-1);
+        	//-- end of trick
+
+		SFR_table = Table("scaleFactors/SFR_BDT.tab");
+   	 }
+    	else{
+    		SFR_table = Table("scaleFactors/SFR_CC.tab");
+    	}
+ 	   SFR_W_mean = SFR_table.Get("SFR_wjets",srLabelInTable);
+    	SFR_lj_mean = SFR_table.Get("SFR_tt1l",srLabelInTable);
+    }
+    else SFR_W_mean = Figure((SFR_all.value()+SFR_W.value())/2.0 , (SFR_all.error() + SFR_W.error())/2.0);
+
     if (SFR_Wjets_variation) SFR_W_mean.keepVariation(SFR_Wjets_variation);
 
     RW_corrected  = RW_mc  * SFR_W_mean.value();
     Rlj_corrected = Rlj_mc * SFR_W_mean.value();
 
-    Rlj_mean = Figure((RW_corrected.value() + Rlj_corrected.value()) / 2.0, fabs(RW_corrected.value() - Rlj_corrected.value()) / 2.0);
+    //Rlj_mean = Figure((RW_corrected.value() + Rlj_corrected.value()) / 2.0, fabs(RW_corrected.value() - Rlj_corrected.value()) / 2.0);
+    //We now take the ration R from MC without averaging
+    Rlj_mean = Rlj_corrected;
+
     if (tailToPeakRatio_1lTop_variation) Rlj_mean.keepVariation(tailToPeakRatio_1lTop_variation);
 }
 

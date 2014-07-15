@@ -52,6 +52,7 @@ class backgroundEstimation{
         Figure SFR_all;
         Figure SFR_W;
         Figure SFR_W_mean;
+        Figure SFR_lj_mean;
         Figure RW_corrected;
         Figure Rlj_corrected;
         Figure Rlj_mean;
