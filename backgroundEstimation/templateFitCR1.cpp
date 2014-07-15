@@ -184,6 +184,7 @@ TH1F* GetData(TFile* fin, string region, string varname){
 
 RooDataHist* GetRooData(TFile* fin, string region, string varname, RooRealVar* var){
 	TH1F* h = GetData(fin, region, varname);
+	cout<<"data = "<<h->GetEntries()<<endl;
 	string dname = "data_"+region;
   	RooDataHist *datah = new RooDataHist(dname.c_str(),dname.c_str(), RooArgList(*var), Import(*h));
 	return datah;
@@ -862,9 +863,13 @@ int main()
   //  Perform an estimation for SFR C&C
   //---------------------------------------------
 
-  vector<string> signalRegionsEstim_CC = {"CR0bag_MTtail_T2tt_offShellLoose",         "CR0bag_MTtail_T2tt_offShellTight",         "CR0bag_MTtail_T2tt_lowDeltaM",             "CR0bag_MTtail_T2tt_mediumDeltaM",          "CR0bag_MTtail_T2tt_highDeltaM",            "CR0bag_MTtail_T2bw025_veryOffShell_loose", "CR0bag_MTtail_T2bw025_offShell_loose",     "CR0bag_MTtail_T2bw025_lowDeltaM_tight",    "CR0bag_MTtail_T2bw025_highDeltaM",         "CR0bag_MTtail_T2bw050_offShell_loose",     "CR0bag_MTtail_T2bw050_lowMass",            "CR0bag_MTtail_T2bw050_mediumDeltaM_loose", "CR0bag_MTtail_T2bw050_highDeltaM",         "CR0bag_MTtail_T2bw075_lowDeltaM_tight",    "CR0bag_MTtail_T2bw075_mediumDeltaM",       "CR0bag_MTtail_T2bw075_highDeltaM",         "CR0bag_MTpeak_T2bw075_highDeltaM"};
+  vector<string> signalRegionsEstim_CC = {
+  "CR0bag_MTtail_T2tt_offShellLoose",         "CR0bag_MTtail_T2tt_offShellTight",         "CR0bag_MTtail_T2tt_lowDeltaM",             "CR0bag_MTtail_T2tt_mediumDeltaM",          "CR0bag_MTtail_T2tt_highDeltaM",            
+  "CR0bag_MTtail_T2bw025_veryOffShell_loose", "CR0bag_MTtail_T2bw025_offShell_loose",     "CR0bag_MTtail_T2bw025_lowDeltaM_tight",    "CR0bag_MTtail_T2bw025_highDeltaM",         "CR0bag_MTtail_T2bw050_offShell_loose",     "CR0bag_MTtail_T2bw050_lowMass",            "CR0bag_MTtail_T2bw050_mediumDeltaM_loose", "CR0bag_MTtail_T2bw050_highDeltaM",         "CR0bag_MTtail_T2bw075_lowDeltaM_tight",    "CR0bag_MTtail_T2bw075_mediumDeltaM",       "CR0bag_MTtail_T2bw075_highDeltaM"};
 
-  vector<string> signalRegionsEstim_CC_MTpeak = {"CR0bag_MTtail_T2tt_offShellLoose",         "CR0bag_MTtail_T2tt_offShellTight",         "CR0bag_MTtail_T2tt_lowDeltaM",             "CR0bag_MTtail_T2tt_mediumDeltaM",          "CR0bag_MTtail_T2tt_highDeltaM",            "CR0bag_MTtail_T2bw025_veryOffShell_loose", "CR0bag_MTtail_T2bw025_offShell_loose",     "CR0bag_MTtail_T2bw025_lowDeltaM_tight",    "CR0bag_MTtail_T2bw025_highDeltaM",         "CR0bag_MTtail_T2bw050_offShell_loose",     "CR0bag_MTtail_T2bw050_lowMass",            "CR0bag_MTtail_T2bw050_mediumDeltaM_loose", "CR0bag_MTtail_T2bw050_highDeltaM",         "CR0bag_MTtail_T2bw075_lowDeltaM_tight",    "CR0bag_MTtail_T2bw075_mediumDeltaM",       "CR0bag_MTtail_T2bw075_highDeltaM",         "CR0bag_MTpeak_T2bw075_highDeltaM"};
+  vector<string> signalRegionsEstim_CC_MTpeak = {
+  "CR0bag_MTpeak_T2tt_offShellLoose",         "CR0bag_MTpeak_T2tt_offShellTight",         "CR0bag_MTpeak_T2tt_lowDeltaM",             "CR0bag_MTpeak_T2tt_mediumDeltaM",          "CR0bag_MTpeak_T2tt_highDeltaM",            
+  "CR0bag_MTpeak_T2bw025_veryOffShell_loose", "CR0bag_MTpeak_T2bw025_offShell_loose",     "CR0bag_MTpeak_T2bw025_lowDeltaM_tight",    "CR0bag_MTpeak_T2bw025_highDeltaM",         "CR0bag_MTpeak_T2bw050_offShell_loose",     "CR0bag_MTpeak_T2bw050_lowMass",            "CR0bag_MTpeak_T2bw050_mediumDeltaM_loose", "CR0bag_MTpeak_T2bw050_highDeltaM",         "CR0bag_MTpeak_T2bw075_lowDeltaM_tight",    "CR0bag_MTpeak_T2bw075_mediumDeltaM",       "CR0bag_MTpeak_T2bw075_highDeltaM"};
 
 
   //Create histos
@@ -874,7 +879,7 @@ int main()
   TH1F h_SF_MTpeakEstim_CC_wjets("h_SF_MTpeakEstim_CC_wjets","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
   TH1F h_SF_MTtailEstim_CC_wjets("h_SF_MTtailEstim_CC_wjets","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
   TH1F h_SFREstim_CC_wjets("h_SFREstim_CC_wjets","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
-   
+  
   for(unsigned int i=0;i<signalRegionsEstim_CC.size();i++){
   	cout<<"%%%%%%%%%%%%%%%%%% "<<signalRegionsEstim_CC[i]<<endl;
 
@@ -884,6 +889,7 @@ int main()
 	
 	//MT tail
 	setup.Reset(); conditions="sigRegionsEstim_CC_tail"; setup.region=signalRegionsEstim_CC[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.varname="M3b_small";
   	res = doFit(setup,conditions); 
 	SFR_tt1l=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
 	SFR_wjets=theDoctor::Figure(res.SF_wjets.first,res.SF_wjets.second);
@@ -896,6 +902,7 @@ int main()
         
 	//MT peak
 	setup.Reset(); conditions="sigRegionsEstim_CC_peak"; setup.region=signalRegionsEstim_CC_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.varname="M3b_small";
   	res = doFit(setup,conditions); 
 	h_SF_MTpeakEstim_CC_tt1l.SetBinContent(i+1,res.SF_tt1l.first);
 	h_SF_MTpeakEstim_CC_tt1l.SetBinError(i+1,res.SF_tt1l.second);
@@ -919,7 +926,7 @@ int main()
 	h_SFREstim_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
   
   	
-	cout<<"signRegions (CC): SFR_tt1l: "<<SFR_tt1l.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
+	cout<<"signRegions (CC) - "<<signalRegionsEstim_CC_MTpeak[i]<<": SFR_tt1l: "<<SFR_tt1l.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
   }
   //Save plots in roofile
   TFile fCR1Estim_CC("CR1Estim_CC.root","RECREATE");

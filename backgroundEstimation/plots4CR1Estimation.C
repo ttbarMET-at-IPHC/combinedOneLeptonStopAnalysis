@@ -182,45 +182,45 @@ bool CR0btag_MTtail_MT2W_180(){ return (goesIn0BtagControlRegionMTtail() && myEv
 bool CR0btag_MTtail_MT2W_190(){ return (goesIn0BtagControlRegionMTtail() && myEvent.MT2W>=190); }
 bool CR0btag_MTtail_MT2W_200(){ return (goesIn0BtagControlRegionMTtail() && myEvent.MT2W>=200); }
 
-bool CR0bag_MTtail_T2tt_offShellLoose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=125 && myEvent.METoverSqrtHT>=8 );}
-bool CR0bag_MTtail_T2tt_offShellTight() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=130 && myEvent.MET>=300);}
-bool CR0bag_MTtail_T2tt_lowDeltaM    () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=140 && myEvent.METoverSqrtHT>=8 );}
-bool CR0bag_MTtail_T2tt_mediumDeltaM () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=140 && myEvent.METoverSqrtHT>=200 );}
-bool CR0bag_MTtail_T2tt_highDeltaM   () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=140 && myEvent.METoverSqrtHT>=350 );}
+bool CR0bag_MTtail_T2tt_offShellLoose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//125 - 8
+bool CR0bag_MTtail_T2tt_offShellTight() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.MET>=120);}//130 - 200
+bool CR0bag_MTtail_T2tt_lowDeltaM    () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//140 - 8 
+bool CR0bag_MTtail_T2tt_mediumDeltaM () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.MET>=140 );}//140 - 200
+bool CR0bag_MTtail_T2tt_highDeltaM   () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=130 && myEvent.MET>=100 );}//140 - 350 
 
-bool CR0bag_MTpeak_T2tt_offShellLoose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=8 );}
-bool CR0bag_MTpeak_T2tt_offShellTight() { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=300);}
-bool CR0bag_MTpeak_T2tt_lowDeltaM    () { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=8 );}
-bool CR0bag_MTpeak_T2tt_mediumDeltaM () { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=200 );}
-bool CR0bag_MTpeak_T2tt_highDeltaM   () { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=350 );}
+bool CR0bag_MTpeak_T2tt_offShellLoose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//8
+bool CR0bag_MTpeak_T2tt_offShellTight() { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=120);}//200
+bool CR0bag_MTpeak_T2tt_lowDeltaM    () { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//8
+bool CR0bag_MTpeak_T2tt_mediumDeltaM () { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=140 );}//200
+bool CR0bag_MTpeak_T2tt_highDeltaM   () { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=100 );}//350
 
-bool CR0bag_MTtail_T2bw025_veryOffShell_loose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=9 );}
+bool CR0bag_MTtail_T2bw025_veryOffShell_loose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//9
 bool CR0bag_MTtail_T2bw025_offShell_loose()     { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}
 bool CR0bag_MTtail_T2bw025_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=6 );}
-bool CR0bag_MTtail_T2bw025_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=10 );}
+bool CR0bag_MTtail_T2bw025_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//10
 
-bool CR0bag_MTpeak_T2bw025_veryOffShell_loose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=9 );}
+bool CR0bag_MTpeak_T2bw025_veryOffShell_loose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//9
 bool CR0bag_MTpeak_T2bw025_offShell_loose()     { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}
 bool CR0bag_MTpeak_T2bw025_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=6 );}
-bool CR0bag_MTpeak_T2bw025_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=10 );}
+bool CR0bag_MTpeak_T2bw025_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//10
 
-bool CR0bag_MTtail_T2bw050_offShell_loose()     { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=9 );}
+bool CR0bag_MTtail_T2bw050_offShell_loose()     { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//9
 bool CR0bag_MTtail_T2bw050_lowMass()            { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=6 );}
-bool CR0bag_MTtail_T2bw050_mediumDeltaM_loose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=150 && myEvent.METoverSqrtHT>=7 );}
-bool CR0bag_MTtail_T2bw050_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=160 && myEvent.METoverSqrtHT>=10 );}
+bool CR0bag_MTtail_T2bw050_mediumDeltaM_loose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=130 && myEvent.METoverSqrtHT>=5 );}//150-7
+bool CR0bag_MTtail_T2bw050_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//160 - 10
 
-bool CR0bag_MTpeak_T2bw050_offShell_loose()     { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=9 );}
+bool CR0bag_MTpeak_T2bw050_offShell_loose()     { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//9
 bool CR0bag_MTpeak_T2bw050_lowMass()            { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=6 );}
-bool CR0bag_MTpeak_T2bw050_mediumDeltaM_loose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}
-bool CR0bag_MTpeak_T2bw050_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=10 );}
+bool CR0bag_MTpeak_T2bw050_mediumDeltaM_loose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=5 );}//7
+bool CR0bag_MTpeak_T2bw050_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//10
 
-bool CR0bag_MTtail_T2bw075_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=12 );}
-bool CR0bag_MTtail_T2bw075_mediumDeltaM()       { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=140 && myEvent.METoverSqrtHT>=10 );}
-bool CR0bag_MTtail_T2bw075_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=160 && myEvent.METoverSqrtHT>=320 );}
+bool CR0bag_MTtail_T2bw075_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//120 - 12
+bool CR0bag_MTtail_T2bw075_mediumDeltaM()       { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//140 - 10
+bool CR0bag_MTtail_T2bw075_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.MET>=120 );}//MT>=160 - MET>=320
 
-bool CR0bag_MTpeak_T2bw075_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=12 );}
-bool CR0bag_MTpeak_T2bw075_mediumDeltaM()       { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=10 );}
-bool CR0bag_MTpeak_T2bw075_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=320 );}
+bool CR0bag_MTpeak_T2bw075_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7);}//12
+bool CR0bag_MTpeak_T2bw075_mediumDeltaM()       { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//10
+bool CR0bag_MTpeak_T2bw075_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=120 );}//MET>=320
 
 //#endif
 // #########################################################################
