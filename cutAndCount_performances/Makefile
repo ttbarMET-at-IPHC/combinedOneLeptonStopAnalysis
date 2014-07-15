@@ -33,8 +33,7 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-#DEFAULT_TARGET = optimizeCuts
-DEFAULT_TARGET = Plotting
+DEFAULT_TARGET = Plotting_T2tt
 #------------------------------------------------------------------------------
 
 all: compile run
@@ -43,6 +42,9 @@ compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
 
 run:
 	./$(DEFAULT_TARGET).$(ExeSuf) | tee $(DEFAULT_TARGET).$(LogSuf)
+
+compare:
+	root -l -b -q -L compare.C 
 
 browse:
 	export PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse

@@ -11,12 +11,10 @@ int main (int argc, char *argv[])
 
     string signalRegion = argv[1]; 
     string CR = "SRs";
-    if (argc == 3){
-    	if(string(argv[2]) == string("--CR4"))
+    if (argc == 3)
+    {
 		ReadSF_tt2l = false;
-    }
-    if (argc == 4){
-    	CR = string(argv[3]);
+    	CR = string(argv[2]);
     }
 
     backgroundEstimation(signalRegion).Run(CR);
@@ -81,12 +79,14 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     
     vector<string> dummy = { "value" };
     scaleFactorTable = Table(dummy,scaleFactorsTagList);
-    if(ReadSF_tt2l){
-    	scaleFactorTable_tt2l = Table("scaleFactors/SF_tt2l.tab"); // name of the table hard-coded
+    if(ReadSF_tt2l)
+    {
     	// Read the uncertainty on ttbar-2l from the table
+    	Table scaleFactorTable_tt2l = Table("scaleFactors/SF_tt2l.tab"); // name of the table hard-coded
         ttll_CR4and5_uncert =  scaleFactorTable_tt2l.Get("value",signalRegionLabel).error() ;
     }
-    else{
+    else
+    {
     	ttll_CR4and5_uncert = CR4CR5Uncert_tt2l;
     }
 
@@ -105,9 +105,9 @@ void backgroundEstimation::Run(string CR)
 {
     ComputePredictionWithSystematics();
   
-    scaleFactorTable.        Print("scaleFactors/"+CR+"/"+signalRegionLabel+".tab",4);
-    systematicsUncertainties.Print("systematics/" +CR+"/"+signalRegionLabel+".tab",4);
-    predictionTable.         Print("prediction/"  +CR+"/"+signalRegionLabel+".tab",4);
+    scaleFactorTable.        Print("scaleFactors/"+signalRegionLabel+".tab",4);
+    systematicsUncertainties.Print("systematics/" +signalRegionLabel+".tab",4);
+    predictionTable.         Print("prediction/"  +signalRegionLabel+".tab",4);
 
 }
 
@@ -479,7 +479,7 @@ void backgroundEstimation::FillPredictionTable()
 
     // To have the (temporary and arbitrary) numbers for tt->ll systematics in the per-process prediction table
     N2ltop_tail *= Figure(1.0,NJetUncer_tt2l);  
-    N2ltop_tail *= Figure(1.0,CR4CR5Uncert_tt2l);  
+    N2ltop_tail *= Figure(1.0,ttll_CR4and5_uncert);  
     N2ltop_tail *= Figure(1.0,ComputeSecondLeptonVetoUncertainty()); 
 
     // Prediction

@@ -1,5 +1,6 @@
 ObjSuf        = o
 SrcSuf        = C
+ExeSuf        = run
 LogSuf        = log
 
 ROOTCFLAGS    = $(shell root-config --cflags)
@@ -8,7 +9,8 @@ ROOTLIBS      = $(shell root-config --libs)
 DEFINES       = 
 
 CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
+CXXFLAGS      = -std=c++0x
+CXXFLAGS      += -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
 CXXFLAGS      += $(ROOTCFLAGS) -I./
 CXXFLAGS      += -I../sonicScrewdriver/
 
@@ -28,25 +30,18 @@ LIBS          =
 #------------------------------------------------------------------------------
 SOURCES       = $(wildcard *.$(SrcSuf))
 OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
-EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
+EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-#DEFAULT_TARGET = optimizeCuts
-#DEFAULT_TARGET = Plotting
-#DEFAULT_TARGET = Plotting2
-DEFAULT_TARGET = Plotting3
-#DEFAULT_TARGET = Table
+DEFAULT_TARGET = T2tt
 #------------------------------------------------------------------------------
 
-all: compile run browse
+all: compile run
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET)
+compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
 
 run:
-	./$(DEFAULT_TARGET) | tee $(DEFAULT_TARGET).$(LogSuf)
-
-browse:
-	export PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse
+	./$(DEFAULT_TARGET).$(ExeSuf) | tee $(DEFAULT_TARGET).$(LogSuf)
 
 clean:
 	@echo "Cleaning..."
@@ -57,6 +52,6 @@ clean:
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
-$(DEFAULT_TARGET): $(DEFAULT_TARGET).$(SrcSuf)
+$(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 

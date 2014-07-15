@@ -1,6 +1,4 @@
 
-#define SYST_UNCERTAINTY            0.15
-
 #include "common.h"
 
 void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, bool enableText);
@@ -22,9 +20,7 @@ bool Selector_cutAndCount(float cutMEToverSqrtHT, float cutMT, float cutMT2W, fl
     return goesInPreselectionMTtail();
 }
 
-/*
                                                                     // METsig MT  MT2W  MET  dPhi  Chi2   ISRjet
-*/
 /*
 bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(-1,   120, -1,  200, -1,  999999, true ); }
 bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(10,   140, -1,  -1,  -1,  999999, true ); }
@@ -33,11 +29,12 @@ bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,   14
 bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,   190, 240, -1,  -1,  999999, false); }
 */
 
-bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(8,    120, -1,  -1,  -1,  999999, true ); }
-bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(10,   140, -1,  -1,  -1,  999999, true ); }
+bool Selector_cutAndCount_offShellLoose() { return Selector_cutAndCount(8,    125, -1,  -1,   -1, 999999, true ); }
+bool Selector_cutAndCount_offShellTight() { return Selector_cutAndCount(-1,   130, -1,  300,  -1, 999999, true ); }
 bool Selector_cutAndCount_lowDeltaM()     { return Selector_cutAndCount(8,    140, -1,  -1,  0.8, 5,      false); }
-bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(10,   160, 180, -1,  0.8, 3,      false); }
-bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(15,   190, 240, -1,  -1,  999999, false); }
+bool Selector_cutAndCount_mediumDeltaM()  { return Selector_cutAndCount(-1,   140, 180, 200, 0.8, 3,      false); }
+bool Selector_cutAndCount_highDeltaM()    { return Selector_cutAndCount(-1,   130, 190, 350,  -1, 999999, false); }
+
 
 
 bool Selector_MTAnalysis(float METcut, bool useMT2Wcut)
@@ -84,24 +81,12 @@ int main (int argc, char *argv[])
   // ##   Create Variables   ##
   // ##########################
 
-     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,      &(myEvent.MET),                  "logY=true");
-/*
-     screwdriver.AddVariable("MT",             "MT",                      "GeV",    17,0,510,       &(myEvent.MT),                   "logY=true");
-     screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,       &(myEvent.deltaPhiMETJets),      "");
-     screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,       &(myEvent.MT2W),                 "");
-     screwdriver.AddVariable("HTratio",        "H_{T}^{ratio}",           "",       20,0,1.2,       &(myEvent.HTRatio),              "");
-     screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,20,        &(myEvent.hadronicChi2),         "");
-     screwdriver.AddVariable("HT",             "H_{T}",                   "",       45,150,1500,    &(myEvent.HT),                   "");
-     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    25,0,500,       &(myEvent.leadingBPt),           "");
-     screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    25,0,500,       &(myEvent.leadingJetPt),         "");
-     screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    25,0,500,       &(myEvent.leadingLeptonPt),      "");
-     screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    25,0,500,       &(myEvent.Mlb),                  "");
-     screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    25,0,500,       &(myEvent.Mlb_hemi),             "");
-     screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    25,0,500,       &(myEvent.M3b),                  "");
-     screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       25,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
-     screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
-     screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,        &(myEvent.METoverSqrtHT),        "");
-*/
+     screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,         &(myEvent.METoverSqrtHT),       "");
+     screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,       &(myEvent.MET),                 "logY=true");
+     screwdriver.AddVariable("MT",             "MT",                      "GeV",    20,0,400,        &(myEvent.MT),                  "logY=true");
+     screwdriver.AddVariable("MT2W",           "M_{T2}^{W}",              "GeV",    20,0,500,        &(myEvent.MT2W),                "");
+     screwdriver.AddVariable("deltaPhiMETJets","#Delta#Phi(MET,j_{1,2})", "rad",    16,0,3.2,        &(myEvent.deltaPhiMETJets),     "");
+     screwdriver.AddVariable("HadronicChi2",   "Hadronic #chi^{2}",       "",       40,0,20,         &(myEvent.hadronicChi2),        "");
      
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
      screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "noOverflowInLastBin");
@@ -110,19 +95,28 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
-            screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
-            screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
-     
-     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
+     screwdriver.AddProcessClass("1ltop",                        "1l top", "background",kRed-7);
+         #ifdef USING_TTBAR_POWHEG
+             screwdriver.AddDataset("ttbar_powheg",              "1ltop",  0, 0);
+         #endif
+         #ifdef USING_TTBAR_MADGRAPH
+             screwdriver.AddDataset("ttbar_madgraph_1l",         "1ltop",  0, 0);
+         #endif
+         screwdriver.AddDataset("singleTop_st",                  "1ltop",  0, 0);
 
-     screwdriver.AddProcessClass("W+jets",         "W+jets",                          "background", kOrange-2);
+
+     screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
+         #ifdef USING_TTBAR_MADGRAPH
+             screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
+         #endif
+
+     screwdriver.AddProcessClass("W+jets",         "W+jets",                    "background", kOrange-2);
              screwdriver.AddDataset("W+jets",      "W+jets", 0, 0);
                                                    
-     screwdriver.AddProcessClass("rare",           "rare",                            "background", kMagenta-5);
+     screwdriver.AddProcessClass("rare",           "rare",                      "background", kMagenta-5);
              screwdriver.AddDataset("rare",        "rare", 0, 0);
                                                    
-     screwdriver.AddProcessClass("T2tt",           "T2tt",                            "signal",     kViolet-1);
+     screwdriver.AddProcessClass("T2tt",           "T2tt",                      "signal",     kViolet-1);
              screwdriver.AddDataset("T2tt",        "T2tt",   0, 0);
 
      screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",      "signal",COLORPLOT_BLUE   );
@@ -178,14 +172,11 @@ int main (int argc, char *argv[])
      screwdriver.SetGlobalStringOption("DataMCComparison", "includeSignal",                   "stack");
      screwdriver.SetGlobalFloatOption ("DataMCComparison", "factorSignal",                    1.0    );
 
-     screwdriver.SetGlobalFloatOption ("FigureOfMerit",    "backgroundSystematicUncertainty", 0.15   );
-
      // Schedule plots
      screwdriver.SchedulePlots("1DSuperimposed");
      screwdriver.SchedulePlots("1DStack");
      screwdriver.SchedulePlots("2D");
      screwdriver.SchedulePlots("2DSuperimposed");
-     screwdriver.SchedulePlots("1DFigureOfMerit","var=METoverSqrtHT,cutType=keepHighValues");
 
      // Config plots
 
@@ -294,37 +285,20 @@ int main (int argc, char *argv[])
       "CC_highDM"
   };
 
-
-  vector<float> oneLepTopScaleFactor =
-  {
-      2, 
-      10,
-      4,
-      10,
-      5,
-  };
-
-  vector<float> ttbar2lScaleFactor =
-  {
-      1.5,
-      1.3,
-      1.5,
-      2,
-      8,
-  };
+  float SF_1ltop = 5;  
 
   vector<float> globalBackgroundUncertainty =
   {
-      0.2,
-      0.23,
-      0.2,
-      0.33,
-      0.43
+      0.17,
+      0.21,
+      0.22,
+      0.37,
+      0.37
   };
-
+  
   vector<TH2F*> signalMaps;
-  //vector<TH2F*> backgroundMaps;
-  vector<TH2F*> FOMMaps;
+  vector<TH2F*> FOMdiscoveryMaps;
+  vector<TH2F*> FOMexclusionMaps;
   vector<TH2F*> efficiencies;
 
   int nBinsX = -1;
@@ -344,18 +318,15 @@ int main (int argc, char *argv[])
   {
       signalMaps.push_back(screwdriver.get2DHistoClone("mStop","mNeutralino","T2tt",cutAndCountRegions[i],"singleLepton"));
       signalMaps[i]->SetName((string("signalMap_")+cutAndCountRegions[i]).c_str());
-      //backgroundMaps.push_back(screwdriver.get2DCompositeHistoClone("mStop","mNeutralino","2DSumBackground",cutAndCountRegions[i],"singleLepton",""));
 
-      float B =   screwdriver.GetYieldAndError("1ltop",    cutAndCountRegions[i],"singleLepton").value() * oneLepTopScaleFactor[i]
-                + screwdriver.GetYieldAndError("ttbar_2l", cutAndCountRegions[i],"singleLepton").value() * ttbar2lScaleFactor[i]
+      float B =   screwdriver.GetYieldAndError("1ltop",    cutAndCountRegions[i],"singleLepton").value() //* SF_1ltop
+                + screwdriver.GetYieldAndError("ttbar_2l", cutAndCountRegions[i],"singleLepton").value()
                 + screwdriver.GetYieldAndError("W+jets",   cutAndCountRegions[i],"singleLepton").value() 
                 + screwdriver.GetYieldAndError("rare",     cutAndCountRegions[i],"singleLepton").value();
 
-      //float B = backgroundMaps[i]->Integral(0,nBinsX+1,0,nBinsY+1);
-
       // Apply scale factor from background prediction
-      float f_B = globalBackgroundUncertainty[i];
-      //float f_B = 0.15;
+      //float f_B = globalBackgroundUncertainty[i];
+      float f_B = 0.15;
 
       if (B < 1.0) B = 1.0;
  
@@ -364,16 +335,22 @@ int main (int argc, char *argv[])
       efficiencies[i]->Divide(signalMapPresel);
       efficiencies[i]->SetBinContent(backgroundBin,B/backgroundYieldPresel);
       
-      FOMMaps.push_back((TH2F*) signalMaps[i]->Clone());
-      FOMMaps[i]->SetName((string("FOM_")+cutAndCountRegions[i]).c_str());
+      FOMdiscoveryMaps.push_back((TH2F*) signalMaps[i]->Clone());
+      FOMdiscoveryMaps[i]->SetName((string("FOMdisco_")+cutAndCountRegions[i]).c_str());
+
+      FOMexclusionMaps.push_back((TH2F*) signalMaps[i]->Clone());
+      FOMexclusionMaps[i]->SetName((string("FOMexclu_")+cutAndCountRegions[i]).c_str());
 
       for (int x = 1 ; x <= nBinsX ; x++)
       for (int y = 1 ; y <= nBinsY ; y++)
       {
           float S = signalMaps[i]->GetBinContent(x,y);
 
-          float FOM = figureOfMerit(S,B,"discovery",false,f_B);
-          FOMMaps[i]->SetBinContent(x,y,FOM);
+          float FOMdiscovery = figureOfMerit(S,B,"discovery",false,f_B);
+          FOMdiscoveryMaps[i]->SetBinContent(x,y,FOMdiscovery);
+          
+          float FOMexclusion = figureOfMerit(S,B,"exclusion",false,f_B);
+          FOMexclusionMaps[i]->SetBinContent(x,y,FOMexclusion);
       }
 
   }
@@ -382,33 +359,59 @@ int main (int argc, char *argv[])
   // ##   Compute "best" FOM map   ##
   // ################################
 
-  TH2F* bestFOMMap = (TH2F*) signalMaps[0]->Clone();  bestFOMMap->SetName("bestFOM");
-  TH2F* bestSetMap = (TH2F*) signalMaps[0]->Clone();  bestSetMap->SetName("bestSet");
-  TH2F* bestSigEff = (TH2F*) signalMaps[0]->Clone();  bestSigEff->SetName("bestSigEff");
-  TH2F* bestBkgEff = (TH2F*) signalMaps[0]->Clone();  bestBkgEff->SetName("bestBkgEff");
+  TH2F* bestDiscoFOMMap = (TH2F*) signalMaps[0]->Clone();  bestDiscoFOMMap->SetName("bestDiscoFOM");
+  TH2F* bestDiscoSetMap = (TH2F*) signalMaps[0]->Clone();  bestDiscoSetMap->SetName("bestDiscoSet");
+  TH2F* bestDiscoSigEff = (TH2F*) signalMaps[0]->Clone();  bestDiscoSigEff->SetName("bestDiscoSigEff");
+  TH2F* bestDiscoBkgEff = (TH2F*) signalMaps[0]->Clone();  bestDiscoBkgEff->SetName("bestDiscoBkgEff");
+  
+  TH2F* bestExcluFOMMap = (TH2F*) signalMaps[0]->Clone();  bestExcluFOMMap->SetName("bestExcluFOM");
+  TH2F* bestExcluSetMap = (TH2F*) signalMaps[0]->Clone();  bestExcluSetMap->SetName("bestExcluSet");
+  TH2F* bestExcluSigEff = (TH2F*) signalMaps[0]->Clone();  bestExcluSigEff->SetName("bestExcluSigEff");
+  TH2F* bestExcluBkgEff = (TH2F*) signalMaps[0]->Clone();  bestExcluBkgEff->SetName("bestExcluBkgEff");
   
   for (int x = 1 ; x <= nBinsX ; x++)
   for (int y = 1 ; y <= nBinsY ; y++)
   {
-      float bestFOM = -1.0;
-      int bestSet = 0;
-      float bestSigEff_ = -1.0;
-      float bestBkgEff_ = -1.0;
+      float bestDiscoFOM = -1.0;
+      int   bestDiscoSet = 0;
+      float bestDiscoSigEff_ = -1.0;
+      float bestDiscoBkgEff_ = -1.0;
       for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
       {
-          float FOM = FOMMaps[i]->GetBinContent(x,y);
-          if (bestFOM < FOM)
+          float DiscoFOM = FOMdiscoveryMaps[i]->GetBinContent(x,y);
+          if (bestDiscoFOM < DiscoFOM)
           {
-              bestFOM = FOM;
-              if (bestFOM > 0) bestSet = i+1;
-              bestSigEff_ = efficiencies[i]->GetBinContent(x,y);
-              bestBkgEff_ = efficiencies[i]->GetBinContent(backgroundBin);
+              bestDiscoFOM = DiscoFOM;
+              if (bestDiscoFOM > 0) bestDiscoSet = i+1;
+              bestDiscoSigEff_ = efficiencies[i]->GetBinContent(x,y);
+              bestDiscoBkgEff_ = efficiencies[i]->GetBinContent(backgroundBin);
           }
       }
-      bestFOMMap->SetBinContent(x,y,bestFOM);
-      bestSetMap->SetBinContent(x,y,bestSet);
-      bestSigEff->SetBinContent(x,y,bestSigEff_);
-      bestBkgEff->SetBinContent(x,y,bestBkgEff_);
+      bestDiscoFOMMap->SetBinContent(x,y,bestDiscoFOM);
+      bestDiscoSetMap->SetBinContent(x,y,bestDiscoSet);
+      bestDiscoSigEff->SetBinContent(x,y,bestDiscoSigEff_);
+      bestDiscoBkgEff->SetBinContent(x,y,bestDiscoBkgEff_);
+
+      float bestExcluFOM = -1.0;
+      int   bestExcluSet = 0;
+      float bestExcluSigEff_ = -1.0;
+      float bestExcluBkgEff_ = -1.0;
+      for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
+      {
+          float ExcluFOM = FOMexclusionMaps[i]->GetBinContent(x,y);
+          if (bestExcluFOM < ExcluFOM)
+          {
+              bestExcluFOM = ExcluFOM;
+              if (bestExcluFOM > 0) bestExcluSet = i+1;
+              bestExcluSigEff_ = efficiencies[i]->GetBinContent(x,y);
+              bestExcluBkgEff_ = efficiencies[i]->GetBinContent(backgroundBin);
+          }
+      }
+      bestExcluFOMMap->SetBinContent(x,y,bestExcluFOM);
+      bestExcluSetMap->SetBinContent(x,y,bestExcluSet);
+      bestExcluSigEff->SetBinContent(x,y,bestExcluSigEff_);
+      bestExcluBkgEff->SetBinContent(x,y,bestExcluBkgEff_);
+
   }
 
   // #####################################
@@ -428,15 +431,15 @@ int main (int argc, char *argv[])
 
   vector<TH2F*> signalMaps_MTanalysis;
   vector<TH2F*> backgroundMaps_MTanalysis;
-  vector<TH2F*> FOMMaps_MTanalysis;
+  vector<TH2F*> FOMdiscoveryMaps_MTanalysis;
 
   for (unsigned int i = 0 ; i < cutAndCountRegions_MTanalysis.size() ; i++)
   {
       signalMaps_MTanalysis.push_back(screwdriver.get2DHistoClone("mStop","mNeutralino","T2tt",cutAndCountRegions_MTanalysis[i],"singleLepton"));
       backgroundMaps_MTanalysis.push_back(screwdriver.get2DCompositeHistoClone("mStop","mNeutralino","2DSumBackground",cutAndCountRegions_MTanalysis[i],"singleLepton",""));
 
-      FOMMaps_MTanalysis.push_back((TH2F*) signalMaps_MTanalysis[i]->Clone());
-      FOMMaps_MTanalysis[i]->SetName((string("FOM_")+cutAndCountRegions_MTanalysis[i]).c_str());
+      FOMdiscoveryMaps_MTanalysis.push_back((TH2F*) signalMaps_MTanalysis[i]->Clone());
+      FOMdiscoveryMaps_MTanalysis[i]->SetName((string("FOM_")+cutAndCountRegions_MTanalysis[i]).c_str());
 
       float B = backgroundMaps_MTanalysis[i]->Integral(0,nBinsX+1,0,nBinsY+1);
       if (B < 1.0) B = 1.0;
@@ -446,15 +449,15 @@ int main (int argc, char *argv[])
       {
           float S = signalMaps_MTanalysis[i]->GetBinContent(x,y);
           float FOM = figureOfMerit(S,B,"discovery",false);
-          FOMMaps_MTanalysis[i]->SetBinContent(x,y,FOM);
+          FOMdiscoveryMaps_MTanalysis[i]->SetBinContent(x,y,FOM);
       }
   }
   
  
   
-  TH2F* bestFOMMap_MTanalysis = (TH2F*) FOMMaps_MTanalysis[0]->Clone();
+  TH2F* bestFOMMap_MTanalysis = (TH2F*) FOMdiscoveryMaps_MTanalysis[0]->Clone();
   bestFOMMap_MTanalysis->SetName("bestFOMMap_MTanalysis");
-  TH2F* ratio_newCC_MTanalysisCC = (TH2F*) FOMMaps_MTanalysis[0]->Clone();
+  TH2F* ratio_newCC_MTanalysisCC = (TH2F*) FOMdiscoveryMaps_MTanalysis[0]->Clone();
   ratio_newCC_MTanalysisCC->SetName("ratio_newCC_MTanalysisCC");
   
   TFile bestSetMap_MTanalysis_File("CC_MTanalysis_mapBestSet.root","READ");
@@ -467,7 +470,7 @@ int main (int argc, char *argv[])
   {
       int bestSet = bestSetMap_MTanalysis->GetBinContent(x,y);
       if (bestSet == 0) continue;
-      float bestFOM = FOMMaps_MTanalysis[bestSet-1]->GetBinContent(x,y);
+      float bestFOM = FOMdiscoveryMaps_MTanalysis[bestSet-1]->GetBinContent(x,y);
       bestFOMMap_MTanalysis->SetBinContent(x,y,bestFOM);
       
       if (bestFOM == 0)
@@ -483,7 +486,7 @@ int main (int argc, char *argv[])
   // #################################
 
   /*
-  TH2F* ratio_newCC_newBDT = (TH2F*) FOMMaps_MTanalysis[0]->Clone();
+  TH2F* ratio_newCC_newBDT = (TH2F*) FOMdiscoveryMaps_MTanalysis[0]->Clone();
   ratio_newCC_newBDT->SetName("ratio_newCC_newBDT");
   for (int x = 1 ; x <= nBinsX ; x++)
   for (int y = 1 ; y <= nBinsY ; y++)
@@ -517,21 +520,26 @@ int main (int argc, char *argv[])
 
   TFile fOutput("../plots/cutAndCount_T2tt/custom.root","RECREATE");
   gStyle->SetPaintTextFormat("4.0f");
-  formatAndWriteMapPlot(&screwdriver,bestSetMap,bestSetMap->GetName(),"T2tt;Best set of cuts",true);
+  formatAndWriteMapPlot(&screwdriver,bestDiscoSetMap,bestDiscoSetMap->GetName(),"T2tt;Best set of cuts;(for discovery)",true);
+  formatAndWriteMapPlot(&screwdriver,bestExcluSetMap,bestExcluSetMap->GetName(),"T2tt;Best set of cuts;(for exclusion)",true);
   gStyle->SetPaintTextFormat("4.1f");
   for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
   {
-      FOMMaps[i]->SetMaximum(5.0);
-      formatAndWriteMapPlot(&screwdriver,FOMMaps[i],FOMMaps[i]->GetName(),string("FOM for ")+cutAndCountRegions[i], true);
+      FOMdiscoveryMaps[i]->SetMaximum(5.0);
+      formatAndWriteMapPlot(&screwdriver,FOMdiscoveryMaps[i],FOMdiscoveryMaps[i]->GetName(),string("Discovery FOM for ")+cutAndCountRegions[i], true);
       formatAndWriteMapPlot(&screwdriver,efficiencies[i],efficiencies[i]->GetName(),string("Efficiencies for")+cutAndCountRegions[i], true);
   }
-  bestFOMMap->SetMaximum(5.0);
+  bestDiscoFOMMap->SetMaximum(5.0);
+  bestExcluFOMMap->SetMaximum(5.0);
   //bestFOMMap_MTanalysis->SetMaximum(5.0);
   //ratio_newCC_MTanalysisCC->SetMaximum(2.0);
   //ratio_newCC_newBDT->SetMaximum(2.0);
-  formatAndWriteMapPlot(&screwdriver,bestFOMMap,bestFOMMap->GetName(),"T2tt;Best FOM",true);
-  formatAndWriteMapPlot(&screwdriver,bestSigEff,bestSigEff->GetName(),"T2tt;Best signal efficiency",true);
-  formatAndWriteMapPlot(&screwdriver,bestBkgEff,bestBkgEff->GetName(),"T2tt;Best backgr efficiency",true);
+  formatAndWriteMapPlot(&screwdriver,bestDiscoFOMMap,bestDiscoFOMMap->GetName(),"T2tt;Best FOM;(for discovery)",true);
+  formatAndWriteMapPlot(&screwdriver,bestDiscoSigEff,bestDiscoSigEff->GetName(),"T2tt;Best signal efficiency;(for discovery)",true);
+  formatAndWriteMapPlot(&screwdriver,bestDiscoBkgEff,bestDiscoBkgEff->GetName(),"T2tt;Best backgr efficiency;(for discovery)",true);
+  formatAndWriteMapPlot(&screwdriver,bestExcluFOMMap,bestExcluFOMMap->GetName(),"T2tt;Best FOM;(for exclusion)",true);
+  formatAndWriteMapPlot(&screwdriver,bestExcluSigEff,bestExcluSigEff->GetName(),"T2tt;Best signal efficiency;(for exclusion)",true);
+  formatAndWriteMapPlot(&screwdriver,bestExcluBkgEff,bestExcluBkgEff->GetName(),"T2tt;Best backgr efficiency;(for exclusion)",true);
   //formatAndWriteMapPlot(&screwdriver,bestFOMMap_MTanalysis,bestFOMMap_MTanalysis->GetName(),"T2tt;Best FOM;from MT analysis",true);
   //formatAndWriteMapPlot(&screwdriver,ratio_newCC_MTanalysisCC,ratio_newCC_MTanalysisCC->GetName(),"T2tt;FOM gain;wrt MT analysis",true);
   //formatAndWriteMapPlot(&screwdriver,ratio_newCC_newBDT,ratio_newCC_newBDT->GetName(),"T2tt;FOM gain;wrt BDT",true);
