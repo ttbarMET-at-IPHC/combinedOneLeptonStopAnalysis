@@ -68,7 +68,6 @@ class backgroundEstimation{
 
         Table  rawYieldTable;
         Table  scaleFactorTable;
-        Table  scaleFactorTable_tt2l; // table take as input
         Table  predictionTable;
         Table  systematicsUncertainties;
 
