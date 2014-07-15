@@ -34,6 +34,7 @@ EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
 TARGET = synchronizationTables
+TARGET = checksV4vsV5
 #------------------------------------------------------------------------------
 
 all: compile run
