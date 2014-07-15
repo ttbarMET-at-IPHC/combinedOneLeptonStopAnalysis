@@ -33,7 +33,8 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-DEFAULT_TARGET = Plotting_T2tt
+#DEFAULT_TARGET = Plotting_T2tt
+DEFAULT_TARGET = Plotting_T2bw-x025
 #------------------------------------------------------------------------------
 
 all: compile run

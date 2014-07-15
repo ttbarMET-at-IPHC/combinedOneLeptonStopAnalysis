@@ -1,16 +1,18 @@
 {
     gStyle->SetPaintTextFormat("4.1f");
-    
-    TFile* currentCuts_rawMC      = new TFile("currentCuts_rawMC.root","READ");
-    TFile* currentCuts_prediction = new TFile("currentCuts_prediction.root","READ");
-    TFile* newCuts_prediction     = new TFile("newCuts_prediction.root","READ");
+   
+    string signalType = "T2bw-025";
 
-    ((TCanvas*) currentCuts_rawMC     ->Get("bestDiscoFOM"))->SaveAs("FOMDisco_currentCuts_rawMC.pdf"     );
-    ((TCanvas*) currentCuts_prediction->Get("bestDiscoFOM"))->SaveAs("FOMDisco_currentCuts_prediction.pdf");
-    ((TCanvas*) newCuts_prediction    ->Get("bestDiscoFOM"))->SaveAs("FOMDisco_newCuts_prediction.pdf"    );
-    ((TCanvas*) currentCuts_rawMC     ->Get("bestExcluFOM"))->SaveAs("FOMExclu_currentCuts_rawMC.pdf"     );
-    ((TCanvas*) currentCuts_prediction->Get("bestExcluFOM"))->SaveAs("FOMExclu_currentCuts_prediction.pdf");
-    ((TCanvas*) newCuts_prediction    ->Get("bestExcluFOM"))->SaveAs("FOMExclu_newCuts_prediction.pdf"    );
+    TFile* currentCuts_rawMC      = new TFile((signalType+"/currentCuts_rawMC.root").c_str(),"READ");
+    TFile* currentCuts_prediction = new TFile((signalType+"/currentCuts_prediction.root").c_str(),"READ");
+    TFile* newCuts_prediction     = new TFile((signalType+"/newCuts_prediction.root").c_str(),"READ");
+
+    ((TCanvas*) currentCuts_rawMC     ->Get("bestDiscoFOM"))->SaveAs((signalType+"/FOMDisco_currentCuts_rawMC.pdf"     ).c_str());
+    ((TCanvas*) currentCuts_prediction->Get("bestDiscoFOM"))->SaveAs((signalType+"/FOMDisco_currentCuts_prediction.pdf").c_str());
+    ((TCanvas*) newCuts_prediction    ->Get("bestDiscoFOM"))->SaveAs((signalType+"/FOMDisco_newCuts_prediction.pdf"    ).c_str());
+    ((TCanvas*) currentCuts_rawMC     ->Get("bestExcluFOM"))->SaveAs((signalType+"/FOMExclu_currentCuts_rawMC.pdf"     ).c_str());
+    ((TCanvas*) currentCuts_prediction->Get("bestExcluFOM"))->SaveAs((signalType+"/FOMExclu_currentCuts_prediction.pdf").c_str());
+    ((TCanvas*) newCuts_prediction    ->Get("bestExcluFOM"))->SaveAs((signalType+"/FOMExclu_newCuts_prediction.pdf"    ).c_str());
 
     TH2F* FOMdisco_currentCuts_rawMC      =  (TH2F*) ((TCanvas*) currentCuts_rawMC     ->Get("bestDiscoFOM"))->GetPrimitive("bestDiscoFOM");
     TH2F* FOMdisco_currentCuts_prediction =  (TH2F*) ((TCanvas*) currentCuts_prediction->Get("bestDiscoFOM"))->GetPrimitive("bestDiscoFOM");
@@ -50,19 +52,19 @@
     TCanvas* c = new TCanvas("","",850,750); c->cd(); 
     
     ratioDisco_1->Draw("colz text");
-    c->SaveAs("ratioDisco_currentCutsPrediction_currentCutsRawMC.pdf");
+    c->SaveAs((signalType+"/ratioDisco_currentCutsPrediction_currentCutsRawMC.pdf").c_str());
     ratioExclu_1->Draw("colz text");
-    c->SaveAs("ratioExclu_currentCutsPrediction_currentCutsRawMC.pdf");
+    c->SaveAs((signalType+"/ratioExclu_currentCutsPrediction_currentCutsRawMC.pdf").c_str());
 
     ratioDisco_2->Draw("colz text");
-    c->SaveAs("ratioDisco_newCutsPrediction_currentCutsPrediction.pdf");
+    c->SaveAs((signalType+"/ratioDisco_newCutsPrediction_currentCutsPrediction.pdf").c_str());
     ratioExclu_2->Draw("colz text");
-    c->SaveAs("ratioExclu_newCutsPrediction_currentCutsPrediction.pdf");
+    c->SaveAs((signalType+"/ratioExclu_newCutsPrediction_currentCutsPrediction.pdf").c_str());
     
     ratioDisco_3->Draw("colz text");
-    c->SaveAs("ratioDisco_newCutsPrediction_currentCutsRawMC.pdf");
+    c->SaveAs((signalType+"/ratioDisco_newCutsPrediction_currentCutsRawMC.pdf").c_str());
     ratioExclu_3->Draw("colz text");
-    c->SaveAs("ratioExclu_newCutsPrediction_currentCutsRawMC.pdf");
+    c->SaveAs((signalType+"/ratioExclu_newCutsPrediction_currentCutsRawMC.pdf").c_str());
 
 
 }
