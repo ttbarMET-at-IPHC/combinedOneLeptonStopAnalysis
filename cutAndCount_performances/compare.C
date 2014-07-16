@@ -1,7 +1,7 @@
 {
     gStyle->SetPaintTextFormat("4.1f");
    
-    string signalType = "T2bw-025";
+    string signalType = "T2bw-075";
 
     TFile* currentCuts_rawMC      = new TFile((signalType+"/currentCuts_rawMC.root").c_str(),"READ");
     TFile* currentCuts_prediction = new TFile((signalType+"/currentCuts_prediction.root").c_str(),"READ");

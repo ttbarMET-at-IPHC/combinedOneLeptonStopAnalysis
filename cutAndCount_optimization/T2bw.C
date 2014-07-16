@@ -9,7 +9,7 @@ bool additionalCuts()
     if (myEvent.deltaPhiMETJets < 0.8) return false;
 
     if (myEvent.MT < 120) return false;
-    //if (myEvent.ISRJet == false) return false;
+    if (myEvent.ISRJet == false) return false;
 
     return true;
 }
@@ -70,12 +70,12 @@ bool cutAndCount_T2bw075_highDeltaM(bool applyMTCut)         { return cutAndCoun
 #define REFERENCE_CUTS {10,   150, 200,   -1, 180}
 #define SYST_UNCERTAINTY            0.4
 */
-
+/*
 #define T2BW_x050
 
 #define SF_1ltop_and_Wjets          1.5
 #define SF_allOthers                1.1
-
+*/
 /*
 #define BENCHMARK_STOP_MASS         300
 #define BENCHMARK_NEUTRALINO_MASS   150
@@ -97,13 +97,42 @@ bool cutAndCount_T2bw075_highDeltaM(bool applyMTCut)         { return cutAndCoun
 #define REFERENCE_CUTS {7,   150, 200,  -1, 150}
 #define SYST_UNCERTAINTY            0.25
 */
-
+/*
 #define BENCHMARK_STOP_MASS         650
 #define BENCHMARK_NEUTRALINO_MASS    50
                    // METsig  MT, MT2W, MET BPt
 #define REFERENCE_CUTS {10,   150, 200,  -1, 180}
 #define SYST_UNCERTAINTY            0.4
+*/
+#define T2BW_x075
 
+#define SF_1ltop_and_Wjets          2
+#define SF_allOthers                1.2
+
+
+#define BENCHMARK_STOP_MASS         300
+#define BENCHMARK_NEUTRALINO_MASS   150
+                   // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {12,   120, -1,  -1, -1}
+                    // same (with ISR)
+#define SYST_UNCERTAINTY            0.30
+
+/*
+#define BENCHMARK_STOP_MASS         350
+#define BENCHMARK_NEUTRALINO_MASS    50
+                   // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {10,   140, 180,  -1, -1}
+                    //  9     140  180 
+#define SYST_UNCERTAINTY            0.20
+*/
+/*
+#define BENCHMARK_STOP_MASS         600
+#define BENCHMARK_NEUTRALINO_MASS    50
+                   // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {-1,   160, 200, 320, 80}
+                    //        125  200  300  40
+#define SYST_UNCERTAINTY            0.30
+*/
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 void fillTable(Table* results, string label, bool* use, vector<float> cuts, float bestFOM, float bestYieldSig, float bestYieldBkg);
@@ -429,14 +458,14 @@ vector<float> optimizeCuts(bool* use, float* bestFOM, float* bestYieldSig, float
     for (cuts[1] = (use[1] ? 120 : -1) ; cuts[1] <= (use[1] ? 140 : -1) ; cuts[1] += 5  ) {  // MT
     for (cuts[2] = (use[2] ? 100 : -1) ; cuts[2] <= (use[2] ? 200 : -1) ; cuts[2] += 10 ) {  // MT2W
     for (cuts[3] = (use[3] ? 100 : -1) ; cuts[3] <= (use[3] ? 400 : -1) ; cuts[3] += 50 ) {  // MET
-    for (cuts[4] = (use[4] ? 80  : -1) ; cuts[4] <= (use[4] ? 200 : -1) ; cuts[4] += 20 ) {  // bPt 
+    for (cuts[4] = (use[4] ? 40  : -1) ; cuts[4] <= (use[4] ? 200 : -1) ; cuts[4] += 20 ) {  // bPt 
 
         float yieldBackground  = getYield(listBackground,cuts);
         float yieldSignal      = getYield(listSignal,cuts);
 
         //DEBUG_MSG << "S, B = " << yieldSignal << " ; " << yieldBackground << endl;
 
-        float FOM = figureOfMerit(yieldSignal, yieldBackground, mode); 
+        float FOM = figureOfMerit(yieldSignal, yieldBackground, mode, SYST_UNCERTAINTY); 
 
         if (FOM > *bestFOM)
         { 
