@@ -63,10 +63,10 @@ clean:
 # Running the background estimation on every signal regions
 
 SIGNAL_REGIONS = 
-SIGNAL_REGIONS += preselection
+#SIGNAL_REGIONS += preselection
 #SIGNAL_REGIONS += cutAndCount_T2tt_offShellLoose         cutAndCount_T2tt_offShellTight     cutAndCount_T2tt_lowDeltaM             cutAndCount_T2tt_mediumDeltaM   cutAndCount_T2tt_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw025_veryOffShell_loose cutAndCount_T2bw025_offShell_loose cutAndCount_T2bw025_lowDeltaM_tight    cutAndCount_T2bw025_highDeltaM
-SIGNAL_REGIONS += cutAndCount_T2bw050_offShell_loose     cutAndCount_T2bw050_lowMass        cutAndCount_T2bw050_mediumDeltaM_loose cutAndCount_T2bw050_highDeltaM
+#SIGNAL_REGIONS += cutAndCount_T2bw050_offShell_loose     cutAndCount_T2bw050_lowMass        cutAndCount_T2bw050_mediumDeltaM_loose cutAndCount_T2bw050_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw075_lowDeltaM_tight    cutAndCount_T2bw075_mediumDeltaM   cutAndCount_T2bw075_highDeltaM
 #SIGNAL_REGIONS += BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
 #SIGNAL_REGIONS += BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6       
@@ -75,6 +75,12 @@ SIGNAL_REGIONS += cutAndCount_T2bw050_offShell_loose     cutAndCount_T2bw050_low
 
 CONTROL_REGIONS_2l =  CR4_1j CR4_2j CR4_3j CR4_4j
 CONTROL_REGIONS_2l += CR4_4j_50evts CR4_4j_100evts CR4_4j_150evts
+
+
+SIGNAL_REGIONS += LowBDT_T2tt_1  LowBDT_T2tt_2  LowBDT_T2tt_5
+SIGNAL_REGIONS += LowBDT_T2bw025_1 LowBDT_T2bw025_3 LowBDT_T2bw025_4  LowBDT_T2bw025_6       
+SIGNAL_REGIONS += LowBDT_T2bw050_1 LowBDT_T2bw050_3 LowBDT_T2bw050_4 LowBDT_T2bw050_5  LowBDT_T2bw050_6  
+SIGNAL_REGIONS += LowBDT_T2bw075_1 LowBDT_T2bw075_2 LowBDT_T2bw075_3 LowBDT_T2bw075_5
 
 checkCR4CR5modeling:
 	@for REGION in $(CONTROL_REGIONS_2l); 		  \
@@ -113,7 +119,7 @@ plots4CR1: plots4CR1Estimation.$(ExeSuf)
 	./plots4CR1Estimation.$(ExeSuf) 
 
 templateFitCR1: templateFitCR1.$(ExeSuf) 
-	./templateFitCR1.$(ExeSuf)
+	./templateFitCR1.$(ExeSuf) > templateFitCR1.res
 
 computeBDTCuts: computeBDTCuts.$(ExeSuf)
 	./computeBDTCuts.$(ExeSuf) 

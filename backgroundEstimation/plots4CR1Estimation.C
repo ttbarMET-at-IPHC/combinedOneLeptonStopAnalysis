@@ -126,6 +126,24 @@ bool LowBDT_MTPeakNoBtag_T2bw025_3      () { return ( goesIn0BtagControlRegionMT
 bool LowBDT_MTPeakNoBtag_T2bw025_4      () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_4"      )> 0.01   ); }
 bool LowBDT_MTPeakNoBtag_T2bw025_6      () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_6"      )> -0.01  ); }
 
+bool LowBDT_MTPeakOneBtag_T2tt_1         () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_1"         )> -0.00  ); }
+bool LowBDT_MTPeakOneBtag_T2tt_2         () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_2"         )> 0.01   ); }
+bool LowBDT_MTPeakOneBtag_T2tt_5         () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_5_loose"   )> -0.06  ); }
+bool LowBDT_MTPeakOneBtag_T2bw075_1      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_1"      )> -0.01  ); }
+bool LowBDT_MTPeakOneBtag_T2bw075_2      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_2"      )> -0.04  ); }
+bool LowBDT_MTPeakOneBtag_T2bw075_3      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_3"      )> -0.04  ); }
+bool LowBDT_MTPeakOneBtag_T2bw075_5      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_5"      )> -0.05  ); }
+bool LowBDT_MTPeakOneBtag_T2bw050_1      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_1_loose")> -0.00  ); }
+bool LowBDT_MTPeakOneBtag_T2bw050_3      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_3"      )> 0.04   ); }
+bool LowBDT_MTPeakOneBtag_T2bw050_4      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_4"      )> 0.01   ); }
+bool LowBDT_MTPeakOneBtag_T2bw050_5      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_5"      )> 0.00   ); }
+bool LowBDT_MTPeakOneBtag_T2bw050_6      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_6"      )> -0.00  ); }
+bool LowBDT_MTPeakOneBtag_T2bw025_1      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_1"      )> 0.04   ); }
+bool LowBDT_MTPeakOneBtag_T2bw025_3      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_3"      )> 0.05   ); }
+bool LowBDT_MTPeakOneBtag_T2bw025_4      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_4"      )> 0.01   ); }
+bool LowBDT_MTPeakOneBtag_T2bw025_6      () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_6"      )> -0.01  ); }
+
+
 //-- Functions for C&C  variable per variable --//
 // -- MET
 bool CR0btag_MTpeak_MET_200(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=200); }
@@ -380,6 +398,22 @@ int main (int argc, char *argv[])
      screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw025_4", " LowBDT_MTPeakNoBtag_T2bw025_4   ",  &LowBDT_MTPeakNoBtag_T2bw025_4  ,rebinning);
      screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw025_6", " LowBDT_MTPeakNoBtag_T2bw025_6   ",  &LowBDT_MTPeakNoBtag_T2bw025_6  ,rebinning);
      
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2tt_1", " LowBDT_MTPeakOneBtag_T2tt_1      ",  &LowBDT_MTPeakOneBtag_T2tt_1     ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2tt_2", " LowBDT_MTPeakOneBtag_T2tt_2      ",  &LowBDT_MTPeakOneBtag_T2tt_2     ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2tt_5", " LowBDT_MTPeakOneBtag_T2tt_5      ",  &LowBDT_MTPeakOneBtag_T2tt_5     ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw075_1", " LowBDT_MTPeakOneBtag_T2bw075_1   ",  &LowBDT_MTPeakOneBtag_T2bw075_1  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw075_2", " LowBDT_MTPeakOneBtag_T2bw075_2   ",  &LowBDT_MTPeakOneBtag_T2bw075_2  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw075_3", " LowBDT_MTPeakOneBtag_T2bw075_3   ",  &LowBDT_MTPeakOneBtag_T2bw075_3  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw075_5", " LowBDT_MTPeakOneBtag_T2bw075_5   ",  &LowBDT_MTPeakOneBtag_T2bw075_5  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_1", " LowBDT_MTPeakOneBtag_T2bw050_1   ",  &LowBDT_MTPeakOneBtag_T2bw050_1  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_3", " LowBDT_MTPeakOneBtag_T2bw050_3   ",  &LowBDT_MTPeakOneBtag_T2bw050_3  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_4", " LowBDT_MTPeakOneBtag_T2bw050_4   ",  &LowBDT_MTPeakOneBtag_T2bw050_4  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_5", " LowBDT_MTPeakOneBtag_T2bw050_5   ",  &LowBDT_MTPeakOneBtag_T2bw050_5  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_6", " LowBDT_MTPeakOneBtag_T2bw050_6   ",  &LowBDT_MTPeakOneBtag_T2bw050_6  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw025_1", " LowBDT_MTPeakOneBtag_T2bw025_1   ",  &LowBDT_MTPeakOneBtag_T2bw025_1  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw025_3", " LowBDT_MTPeakOneBtag_T2bw025_3   ",  &LowBDT_MTPeakOneBtag_T2bw025_3  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw025_4", " LowBDT_MTPeakOneBtag_T2bw025_4   ",  &LowBDT_MTPeakOneBtag_T2bw025_4  ,rebinning);
+     screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw025_6", " LowBDT_MTPeakOneBtag_T2bw025_6   ",  &LowBDT_MTPeakOneBtag_T2bw025_6  ,rebinning);
      
      screwdriver.AddRegion("SR_BDT_T2tt_1", " SR_BDT_T2tt_1      ",  &SR_BDT_T2tt_1        );
      screwdriver.AddRegion("SR_BDT_T2tt_2", " SR_BDT_T2tt_2      ",  &SR_BDT_T2tt_2        );
@@ -582,6 +616,52 @@ int main (int argc, char *argv[])
     Figure SF_2ltail    = scaleFactors.Get("value","SF_2ltail");
     Figure SF_vetotail  = scaleFactors.Get("value","SF_vetotail");
     Figure SF_vetopeak  = scaleFactors.Get("value","SF_vetopeak");
+     
+     
+     // Apply SF for the regions used to determined SF for C&C SR - SF are taken at preselection level
+     
+     vector<string> CC_Regions = { "CR0btag_MTtail_MT_120"          ,      "CR0btag_MTtail_MT_125"          ,      "CR0btag_MTtail_MT_130"          ,      "CR0btag_MTtail_MT_140"          ,      "CR0btag_MTtail_MT_150"          ,      "CR0btag_MTtail_MT_160"          ,      "CR0btag_MTpeak_MET_200"         ,      "CR0btag_MTpeak_MET_250"         ,      "CR0btag_MTpeak_MET_300"         ,      "CR0btag_MTpeak_MET_320"         ,      "CR0btag_MTtail_MET_200"         ,      "CR0btag_MTtail_MET_250"         ,      "CR0btag_MTtail_MET_300"         ,      "CR0btag_MTtail_MET_320"         ,      "CR0btag_MTpeak_METoverSqrtHT_6" ,      "CR0btag_MTpeak_METoverSqrtHT_7" ,      "CR0btag_MTpeak_METoverSqrtHT_8" ,      "CR0btag_MTpeak_METoverSqrtHT_9" ,      "CR0btag_MTpeak_METoverSqrtHT_10",      "CR0btag_MTpeak_METoverSqrtHT_12",      "CR0btag_MTtail_METoverSqrtHT_6" ,      "CR0btag_MTtail_METoverSqrtHT_7" ,      "CR0btag_MTtail_METoverSqrtHT_8" ,      "CR0btag_MTtail_METoverSqrtHT_9" ,      "CR0btag_MTtail_METoverSqrtHT_10",      "CR0btag_MTtail_METoverSqrtHT_12",      "CR0btag_MTpeak_BPt_100"         ,      "CR0btag_MTpeak_BPt_150"         ,      "CR0btag_MTpeak_BPt_180"         ,      "CR0btag_MTtail_BPt_100"         ,      "CR0btag_MTtail_BPt_150"         ,      "CR0btag_MTtail_BPt_180"         ,      "CR0btag_MTpeak_DPhi_02"         ,      "CR0btag_MTpeak_DPhi_08"         ,      "CR0btag_MTtail_DPhi_02"         ,      "CR0btag_MTtail_DPhi_08"         ,      "CR0btag_MTpeak_ISRJet"          ,      "CR0btag_MTtail_ISRJet"          ,      "CR0btag_MTpeak_MT2W_180"        ,      "CR0btag_MTpeak_MT2W_190"        ,      "CR0btag_MTpeak_MT2W_200"        ,      "CR0btag_MTtail_MT2W_180"        ,      "CR0btag_MTtail_MT2W_190" };
+     for(unsigned int r=0;r<CC_Regions.size();r++){
+		screwdriver.ApplyScaleFactor("W+jets",      CC_Regions[r],                "singleLepton",SF_0btag);
+    		screwdriver.ApplyScaleFactor("1ltop",       CC_Regions[r],                "singleLepton",SF_0btag);
+     }
+
+    vector<string> LowBDT_Regions={
+    "LowBDT_T2tt_1",    "LowBDT_T2tt_2",    "LowBDT_T2tt_5",    "LowBDT_T2bw075_1",    "LowBDT_T2bw075_2",    "LowBDT_T2bw075_3",    "LowBDT_T2bw075_5",    "LowBDT_T2bw050_1",    "LowBDT_T2bw050_3",    "LowBDT_T2bw050_4",    "LowBDT_T2bw050_5",    "LowBDT_T2bw050_6",    "LowBDT_T2bw025_1",    "LowBDT_T2bw025_3",    "LowBDT_T2bw025_4",    "LowBDT_T2bw025_6"    };
+
+     for(unsigned int r=0;r<LowBDT_Regions.size();r++){
+
+		//---- 0btag ---//
+		// Reweight MC in the MT tail for each loose BDT regions
+
+    		Table scaleFactors = Table("scaleFactors/"+LowBDT_Regions[r]+".tab");
+
+    		Figure SF_pre       = scaleFactors.Get("value","SF_pre");
+   		Figure SF_post      = scaleFactors.Get("value","SF_post");
+    		Figure SF_0btag     = scaleFactors.Get("value","SF_0btag");
+    		
+		screwdriver.ApplyScaleFactor("W+jets",      LowBDT_Regions[r],                "singleLepton",SF_0btag);
+    		screwdriver.ApplyScaleFactor("1ltop",       LowBDT_Regions[r],                "singleLepton",SF_0btag);
+     		
+		//idem in the MT peak region (same SF)
+		string MTpeakRegion = LowBDT_Regions[r];
+		MTpeakRegion.replace(6,1,"_MTpeak_");
+		screwdriver.ApplyScaleFactor("W+jets",      MTpeakRegion,                "singleLepton",SF_0btag);
+    		screwdriver.ApplyScaleFactor("1ltop",       MTpeakRegion,                "singleLepton",SF_0btag);
+		//-----------------------------------------------------------------------------------------------------//
+     
+     		//Do the same thing for Nbjets >=1
+		//idem in the MT peak region (same SF)
+		string MTpeakRegionOneBtag = LowBDT_Regions[r];
+		MTpeakRegionOneBtag.replace(6,1,"_MTpeakOneBtag_");
+		screwdriver.ApplyScaleFactor("W+jets",      MTpeakRegionOneBtag,                "singleLepton",SF_post);
+    		screwdriver.ApplyScaleFactor("1ltop",       MTpeakRegionOneBtag,                "singleLepton",SF_post);
+    		screwdriver.ApplyScaleFactor("ttbar_2l",    MTpeakRegionOneBtag,                "singleLepton",SF_pre);
+
+
+     }
+      
+
 /*
     screwdriver.ApplyScaleFactor("ttbar_2l",    "MTpeak",               "singleLepton",SF_pre);
     screwdriver.ApplyScaleFactor("1ltop",       "MTpeak",               "singleLepton",SF_post);

@@ -728,6 +728,7 @@ int main()
   vector<string> signalRegions = {"LowBDT_T2tt_1",  "LowBDT_T2tt_2",  "LowBDT_T2tt_5",  "LowBDT_T2bw075_1",  "LowBDT_T2bw075_2",  "LowBDT_T2bw075_3",  "LowBDT_T2bw075_5",  "LowBDT_T2bw050_1",  "LowBDT_T2bw050_3",  "LowBDT_T2bw050_4",  "LowBDT_T2bw050_5",  "LowBDT_T2bw050_6",  "LowBDT_T2bw025_1",  "LowBDT_T2bw025_3",  "LowBDT_T2bw025_4",  "LowBDT_T2bw025_6"};
   vector<string> signalRegions_MTpeak = {"LowBDT_MTpeak_T2tt_1",  "LowBDT_MTpeak_T2tt_2",  "LowBDT_MTpeak_T2tt_5",  "LowBDT_MTpeak_T2bw075_1",  "LowBDT_MTpeak_T2bw075_2",  "LowBDT_MTpeak_T2bw075_3",  "LowBDT_MTpeak_T2bw075_5",  "LowBDT_MTpeak_T2bw050_1",  "LowBDT_MTpeak_T2bw050_3",  "LowBDT_MTpeak_T2bw050_4",  "LowBDT_MTpeak_T2bw050_5",  "LowBDT_MTpeak_T2bw050_6",  "LowBDT_MTpeak_T2bw025_1",  "LowBDT_MTpeak_T2bw025_3",  "LowBDT_MTpeak_T2bw025_4",  "LowBDT_MTpeak_T2bw025_6"};
   vector<string> signalRegions_MTpeak_NoBtag = {"LowBDT_MTPeakNoBtag_T2tt_1",  "LowBDT_MTPeakNoBtag_T2tt_2",  "LowBDT_MTPeakNoBtag_T2tt_5",  "LowBDT_MTPeakNoBtag_T2bw075_1",  "LowBDT_MTPeakNoBtag_T2bw075_2",  "LowBDT_MTPeakNoBtag_T2bw075_3",  "LowBDT_MTPeakNoBtag_T2bw075_5",  "LowBDT_MTPeakNoBtag_T2bw050_1",  "LowBDT_MTPeakNoBtag_T2bw050_3",  "LowBDT_MTPeakNoBtag_T2bw050_4",  "LowBDT_MTPeakNoBtag_T2bw050_5",  "LowBDT_MTPeakNoBtag_T2bw050_6",  "LowBDT_MTPeakNoBtag_T2bw025_1",  "LowBDT_MTPeakNoBtag_T2bw025_3",  "LowBDT_MTPeakNoBtag_T2bw025_4",  "LowBDT_MTPeakNoBtag_T2bw025_6"};
+  vector<string> signalRegions_MTpeak_OneBtag = {"LowBDT_MTPeakOneBtag_T2tt_1",  "LowBDT_MTPeakOneBtag_T2tt_2",  "LowBDT_MTPeakOneBtag_T2tt_5",  "LowBDT_MTPeakOneBtag_T2bw075_1",  "LowBDT_MTPeakOneBtag_T2bw075_2",  "LowBDT_MTPeakOneBtag_T2bw075_3",  "LowBDT_MTPeakOneBtag_T2bw075_5",  "LowBDT_MTPeakOneBtag_T2bw050_1",  "LowBDT_MTPeakOneBtag_T2bw050_3",  "LowBDT_MTPeakOneBtag_T2bw050_4",  "LowBDT_MTPeakOneBtag_T2bw050_5",  "LowBDT_MTPeakOneBtag_T2bw050_6",  "LowBDT_MTPeakOneBtag_T2bw025_1",  "LowBDT_MTPeakOneBtag_T2bw025_3",  "LowBDT_MTPeakOneBtag_T2bw025_4",  "LowBDT_MTPeakOneBtag_T2bw025_6"};
   
   //Create histos
   TH1F h_SF_MTpeak_BDT_tt1l("h_SF_MTpeak_BDT_tt1l","",signalRegions.size(),0,signalRegions.size());
@@ -775,14 +776,17 @@ int main()
 	h_SF_MTpeak_BDT_wjets.SetBinContent(i+1,res.SF_wjets.first);
 	h_SF_MTpeak_BDT_wjets.SetBinError(i+1,res.SF_wjets.second);
 	h_SF_MTpeak_BDT_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
-        SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
-        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_tt1l.second);
   	
 	//MT peak (no btag req)
 	setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
   	res = doFit(setup,conditions); 
+	
+	//MT peak (one btag req)
+	setup.Reset(); conditions="sigRegions_peak_OneBtag"; setup.region=signalRegions_MTpeak_OneBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+  	res = doFit(setup,conditions); 
         
 	//Computation of mean/rms/ ..
+	//It is based on the SF computed in the tail, not the ratio SF_tail/SF_peak
 	//-- tt1l
 	mean_SFtt1l+=SFR_tt1l.value();
 	rms_SFtt1l+=(SFR_tt1l.value()*SFR_tt1l.value());
@@ -793,6 +797,11 @@ int main()
 	if(SFR_wjets.error()>(MaxStatUncert_SFwjets/SFR_wjets.value()))  MaxStatUncert_SFwjets=SFR_wjets.error()/SFR_wjets.value();
         //-----------------------------------
 
+        //Now compute the ration : SF_tail/SF_peak
+	SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
+        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_tt1l.second);
+	
+	
 	//SFR
 	h_SFR_BDT_tt1l.SetBinContent(i+1,SFR_tt1l.value());
 	h_SFR_BDT_tt1l.SetBinError(i+1,SFR_tt1l.error());
@@ -925,17 +934,20 @@ bool cutAndCount_T2bw075_highDeltaM(bool applyMTCut)         { return cutAndCoun
 	h_SF_MTpeak_CC_wjets.SetBinContent(i+1,res.SF_wjets.first);
 	h_SF_MTpeak_CC_wjets.SetBinError(i+1,res.SF_wjets.second);
 	h_SF_MTpeak_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
-        SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
-        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_tt1l.second);
   	
 	//MT peak (no btag req)
 	//setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
   	//res = doFit(setup,conditions); 
 
 
-        //
+	//It is based on the SF computed in the tail, not the ratio SF_tail/SF_peak
 	SFR_CC_tt1l_map[label] = SFR_tt1l;
 	SFR_CC_wjets_map[label] = SFR_wjets;
+        
+	
+        //Now compute the ration : SF_tail/SF_peak
+	SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
+        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_tt1l.second);
 
 	//SFR
 	h_SFR_CC_tt1l.SetBinContent(i+1,SFR_tt1l.value());

@@ -12,12 +12,13 @@ int main (int argc, char *argv[])
 
     string signalRegion = argv[1]; 
     string CR = "SRs";
-    if (argc == 3)
+    if (argc >= 3)
     {
 	ReadSF_tt2l = false;
 	ReadSF_SFR = false;
-    	CR = string(argv[2]);
     }
+    if (argc == 4)
+    	CR = string(argv[3]);
 
     backgroundEstimation(signalRegion).Run(CR);
 
