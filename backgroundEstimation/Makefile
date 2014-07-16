@@ -68,7 +68,7 @@ SIGNAL_REGIONS =
 #SIGNAL_REGIONS += cutAndCount_T2bw025_veryOffShell_loose cutAndCount_T2bw025_offShell_loose cutAndCount_T2bw025_lowDeltaM_tight    cutAndCount_T2bw025_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw050_offShell_loose     cutAndCount_T2bw050_lowMass        cutAndCount_T2bw050_mediumDeltaM_loose cutAndCount_T2bw050_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw075_lowDeltaM_tight    cutAndCount_T2bw075_mediumDeltaM   cutAndCount_T2bw075_highDeltaM
-#SIGNAL_REGIONS += BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
+SIGNAL_REGIONS += BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
 #SIGNAL_REGIONS += BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6       
 #SIGNAL_REGIONS += BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6  
 #SIGNAL_REGIONS += BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5
@@ -83,13 +83,16 @@ SIGNAL_REGIONS += LowBDT_T2bw050_1 LowBDT_T2bw050_3 LowBDT_T2bw050_4 LowBDT_T2bw
 SIGNAL_REGIONS += LowBDT_T2bw075_1 LowBDT_T2bw075_2 LowBDT_T2bw075_3 LowBDT_T2bw075_5
 
 checkCR4CR5modeling:
-	@for REGION in $(CONTROL_REGIONS_2l); 		  \
-	 do									      \
+	@for REGION in $(CONTROL_REGIONS_2l); 		      \
+	 do									      		  \
 		echo "[Lauching signal region $$REGION]";     \
-	    	make tables ARG=$$REGION;     \
-		make predictions ARG=$$REGION;		\
+	    	make tables ARG=$$REGION;     			  \
+		make predictions ARG="--CR4 $$REGION";				  \
 	done;
 	make reportCR4CR5modeling
+
+reportCR4CR5modeling: checkCR4CR5modeling.$(ExeSuf)
+	./checkCR4CR5modeling.$(ExeSuf) $(SIGNAL_REGIONS) | tee checkCR4CR5modeling.$(LogSuf)
 
 #mv scaleFactors/*.tab scaleFactors/$$REGION/;	 
 
@@ -115,21 +118,19 @@ tables:
 	echo "Done";
 
 
-plots4CR1: plots4CR1Estimation.$(ExeSuf)
-	./plots4CR1Estimation.$(ExeSuf) 
+histoForSFRestimation: histoForSFRestimationProducer.$(ExeSuf)
+	./histoForSFRestimationProducer.$(ExeSuf) 
 
-templateFitCR1: templateFitCR1.$(ExeSuf) 
-	./templateFitCR1.$(ExeSuf) > templateFitCR1.res
+SFRestimation: histoForSFRestimation SFRestimation.$(ExeSuf) 
+	./SFRestimation.$(ExeSuf) > SFRestimation.res
 
 computeBDTCuts: computeBDTCuts.$(ExeSuf)
 	./computeBDTCuts.$(ExeSuf) 
 
-
-
 predictions: backgroundEstimation.$(ExeSuf)
-	@for REGION in $(SIGNAL_REGIONS);					\
-	 do													\
-	 	   echo "[Running on $$REGION]";			    \
+	@for REGION in $(SIGNAL_REGIONS);							\
+	 do															\
+	 	   echo "[Running on $$REGION]";			  	 		\
 		   ./backgroundEstimation.$(ExeSuf) $$REGION  ${ARG};	\
 	 done;
 
@@ -174,9 +175,6 @@ signalContamination:
 		done;							\
 	done;								\
 	echo "Done";
-
-reportCR4CR5modeling: SF_ttbar2l.$(ExeSuf)
-	./SF_ttbar2l.$(ExeSuf) $(SIGNAL_REGIONS) | tee SF_ttbar2l.$(LogSuf) > SF_ttbar2l.log
 
 report: reportProducer.$(ExeSuf)
 	./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf) > reports/report.tex && cd reports && pdflatex report.tex 

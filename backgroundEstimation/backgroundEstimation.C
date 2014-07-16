@@ -11,7 +11,7 @@ int main (int argc, char *argv[])
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
 
     string signalRegion = argv[1]; 
-    string CR = "SRs";
+    string CR = "";
     if (argc >= 3)
     {
 	ReadSF_tt2l = false;
@@ -82,10 +82,10 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     
     vector<string> dummy = { "value" };
     scaleFactorTable = Table(dummy,scaleFactorsTagList);
-    if(ReadSF_tt2l)
+    if (ReadSF_tt2l)
     {
     	// Read the uncertainty on ttbar-2l from the table
-    	Table scaleFactorTable_tt2l = Table("scaleFactors/SF_tt2l.tab"); // name of the table hard-coded
+    	Table scaleFactorTable_tt2l = Table("scaleFactors/checkCR4CR5modeling.tab"); // name of the table hard-coded
         ttll_CR4and5_uncert =  scaleFactorTable_tt2l.Get("value",signalRegionLabel).error() ;
     }
     else
@@ -104,13 +104,20 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     ResetSystematics();
 }
 
-void backgroundEstimation::Run(string CR)
+void backgroundEstimation::Run(string workingRegion)
 {
     ComputePredictionWithSystematics();
-  
-    scaleFactorTable.        Print("scaleFactors/"+signalRegionLabel+".tab",4);
-    systematicsUncertainties.Print("systematics/" +signalRegionLabel+".tab",4);
-    predictionTable.         Print("prediction/"  +signalRegionLabel+".tab",4);
+ 
+    if (workingRegion != "")
+    {
+        system(("mkdir -p scaleFactors/"+workingRegion).c_str());
+        system(("mkdir -p systematics/" +workingRegion).c_str());
+        system(("mkdir -p prediction/"  +workingRegion).c_str());
+    }
+
+    scaleFactorTable.        Print("scaleFactors/"+workingRegion+"/"+signalRegionLabel+".tab",4);
+    systematicsUncertainties.Print("systematics/" +workingRegion+"/"+signalRegionLabel+".tab",4);
+    predictionTable.         Print("prediction/"  +workingRegion+"/"+signalRegionLabel+".tab",4);
 
 }
 

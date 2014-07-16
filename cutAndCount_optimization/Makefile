@@ -34,6 +34,7 @@ EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
 DEFAULT_TARGET = T2tt
+DEFAULT_TARGET = T2bw
 #------------------------------------------------------------------------------
 
 all: compile run

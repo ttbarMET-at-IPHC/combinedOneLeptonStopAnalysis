@@ -327,13 +327,14 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     pointers->pointerToLeadingLepton = 0;
     theTree->SetBranchAddress("leadingLepton",                                &(pointers->pointerToLeadingLepton));
     theTree->SetBranchAddress("leadingLeptonPDGId",                           &(myEvent->leadingLeptonPDGId));
-    theTree->SetBranchAddress("leadingLeptonIdEfficiency",                    &(myEvent->leadingLeptonIdEfficiency));
-    theTree->SetBranchAddress("leadingLeptonIsoScaleFactor",                  &(myEvent->leadingLeptonIsoScaleFactor));
+
+    //theTree->SetBranchAddress("leadingLeptonIdEfficiency",                    &(myEvent->leadingLeptonIdEfficiency));
+    //theTree->SetBranchAddress("leadingLeptonIsoScaleFactor",                  &(myEvent->leadingLeptonIsoScaleFactor));
     pointers->pointerToSecondLepton = 0;
     theTree->SetBranchAddress("secondLepton",                                 &(pointers->pointerToSecondLepton));
     theTree->SetBranchAddress("secondLeptonPDGId",                            &(myEvent->secondLeptonPDGId));
-    theTree->SetBranchAddress("secondLeptonIdEfficiency",                     &(myEvent->secondLeptonIdEfficiency));
-    theTree->SetBranchAddress("secondLeptonIsoScaleFactor",                   &(myEvent->secondLeptonIsoScaleFactor));
+    //theTree->SetBranchAddress("secondLeptonIdEfficiency",                     &(myEvent->secondLeptonIdEfficiency));
+    //theTree->SetBranchAddress("secondLeptonIsoScaleFactor",                   &(myEvent->secondLeptonIsoScaleFactor));
     theTree->SetBranchAddress("isolatedTrackVeto",                            &(myEvent->isolatedTrackVeto));
     theTree->SetBranchAddress("tauVeto",                                      &(myEvent->tauVeto));
     
@@ -369,11 +370,11 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     /*
     theTree->SetBranchAddress("nWTag",                                        &(myEvent->nWTag));
     theTree->SetBranchAddress("leadingWjetPt",                                &(myEvent->leadingWjetPt));
-    
+    */ 
     theTree->SetBranchAddress("mStop",                                        &(myEvent->mStop));
     theTree->SetBranchAddress("mNeutralino",                                  &(myEvent->mNeutralino));
-    theTree->SetBranchAddress("mCharginoParameter",                           &(myEvent->mCharginoParameter));
-    */
+    //theTree->SetBranchAddress("mCharginoParameter",                           &(myEvent->mCharginoParameter));
+    
 
     theTree->SetBranchAddress("numberOfGenLepton",                            &(myEvent->numberOfGenLepton));
 
@@ -390,8 +391,8 @@ void InitializeBranchesForReading(TTree* theTree, babyEvent* myEvent,intermediat
     /*
     theTree->SetBranchAddress("crossSection",                                 &(myEvent->crossSection));
     theTree->SetBranchAddress("numberOfTruePU",                               &(myEvent->numberOfTruePU));
-    theTree->SetBranchAddress("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
     */
+    theTree->SetBranchAddress("numberOfPrimaryVertices",                      &(myEvent->numberOfPrimaryVertices));
     theTree->SetBranchAddress("weightCrossSection",                           &(myEvent->weightCrossSection));
     theTree->SetBranchAddress("weightPileUp",                                 &(myEvent->weightPileUp));
     theTree->SetBranchAddress("weightISRmodeling",                            &(myEvent->weightISRmodeling));

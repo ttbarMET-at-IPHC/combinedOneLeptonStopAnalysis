@@ -1,16 +1,15 @@
 #include "common.h"
-
 // ##################
 // Others tools/stuff
 // ##################
 
 bool additionalCuts()
 {
+    //if (myEvent.deltaPhiMETJets < 0.2) return false;
     if (myEvent.deltaPhiMETJets < 0.8) return false;
-    if (myEvent.hadronicChi2    > 5)   return false;
 
     if (myEvent.MT < 120) return false;
-    if (myEvent.ISRJet == false) return false;
+    //if (myEvent.ISRJet == false) return false;
 
     return true;
 }
@@ -19,68 +18,97 @@ bool goesInPreselectionMTtail_withAdditionalCuts() { return (goesInPreselectionM
 
 /*
  * Reference :
-                                                                            // MET METsig   MT             MT2W dPhi Chi2    ISRjet
-bool cutAndCount_T2tt_offShellLoose(bool applyMTCut) { return cutAndCount_T2tt( 200, -1, 120 * applyMTCut, -1,  -1,  999999, true ); }
-bool cutAndCount_T2tt_offShellTight(bool applyMTCut) { return cutAndCount_T2tt( -1,  10, 140 * applyMTCut, -1,  -1,  999999, true ); }
-bool cutAndCount_T2tt_lowDeltaM    (bool applyMTCut) { return cutAndCount_T2tt( 130, -1, 130 * applyMTCut, -1,  0.8, 5,      false); }
-bool cutAndCount_T2tt_mediumDeltaM (bool applyMTCut) { return cutAndCount_T2tt( -1,  10, 140 * applyMTCut, 180, 0.8, 3,      false); }
-bool cutAndCount_T2tt_highDeltaM   (bool applyMTCut) { return cutAndCount_T2tt( -1,  15, 190 * applyMTCut, 240, -1,  999999, false); }
-*/
+                                                                                    // MET METsig   MT              MT2W BPt dPhi ISRjet
+bool cutAndCount_T2bw025_veryOffShell_loose(bool applyMTCut) { return cutAndCount_T2bw(-1,   9,    120 * applyMTCut, -1,  -1,  0.2, true ); }
+bool cutAndCount_T2bw025_offShell_loose(bool applyMTCut)     { return cutAndCount_T2bw(-1,   7,    120 * applyMTCut, 200, 150, 0.8, false); }
+bool cutAndCount_T2bw025_lowDeltaM_tight(bool applyMTCut)    { return cutAndCount_T2bw(-1,   6,    120 * applyMTCut, 200, 180, 0.8, false); }
+bool cutAndCount_T2bw025_highDeltaM(bool applyMTCut)         { return cutAndCount_T2bw(-1,  10,    140 * applyMTCut, 200, 180, 0.8, false); }
 
+                                                                                    // MET METsig   MT              MT2W BPt dPhi ISRjet
+bool cutAndCount_T2bw050_offShell_loose(bool applyMTCut)     { return cutAndCount_T2bw(-1,   9,   120 * applyMTCut, -1,  -1, 0.2, true ); }
+bool cutAndCount_T2bw050_lowMass(bool applyMTCut)            { return cutAndCount_T2bw(-1,   6,   120 * applyMTCut, 200,100, 0.8, false); }
+bool cutAndCount_T2bw050_mediumDeltaM_loose(bool applyMTCut) { return cutAndCount_T2bw(-1,   7,   150 * applyMTCut, 200,150, 0.8, false); }
+bool cutAndCount_T2bw050_highDeltaM(bool applyMTCut)         { return cutAndCount_T2bw(-1,  10,   160 * applyMTCut, 200,180, 0.8, false); }
+
+                                                                                    // MET METsig   MT              MT2W BPt dPhi ISRjet
+bool cutAndCount_T2bw075_lowDeltaM_tight(bool applyMTCut)    { return cutAndCount_T2bw(-1,  12,    120 * applyMTCut, -1,  -1, 0.8, true);  }
+bool cutAndCount_T2bw075_mediumDeltaM(bool applyMTCut)       { return cutAndCount_T2bw(-1,  10,    140 * applyMTCut, 180, -1, 0.8, false); }
+bool cutAndCount_T2bw075_highDeltaM(bool applyMTCut)         { return cutAndCount_T2bw(320, -1,    160 * applyMTCut, 200, -1, 0.8, false); }
+
+*/
+/*
+#define T2BW_x025
+
+#define SF_1ltop_and_Wjets          2
+#define SF_allOthers                1.3
+*/
 /*
 #define BENCHMARK_STOP_MASS         250
 #define BENCHMARK_NEUTRALINO_MASS   100
-#define SF_1ltop                    2
-#define SF_ttbar2l                  1.5
+                   // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {9,   120, -1,   -1, -1}
 #define SYST_UNCERTAINTY            0.2
-
-                     // METsig  MT, MT2W, MET
-#define REFERENCE_CUTS {-1,    120, -1, 200}
 */
 /*
-#define BENCHMARK_STOP_MASS         350
-#define BENCHMARK_NEUTRALINO_MASS   200
-#define SF_1ltop                    10
-#define SF_ttbar2l                  1.3
-#define SYST_UNCERTAINTY            0.23
-
-                     // METsig  MT, MT2W, MET
-#define REFERENCE_CUTS {10,    140, -1, -1}
-*/
-#define BENCHMARK_STOP_MASS         250
-#define BENCHMARK_NEUTRALINO_MASS   25
-#define SF_1ltop                    4
-#define SF_ttbar2l                  1.5
+#define BENCHMARK_STOP_MASS         450
+#define BENCHMARK_NEUTRALINO_MASS   225
+                    // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {7,   120, 200,   -1, 150}
 #define SYST_UNCERTAINTY            0.2
-
-                     // METsig  MT, MT2W, MET
-#define REFERENCE_CUTS {-1,    130, -1, 130}
+*/
 /*
-#define BENCHMARK_STOP_MASS         350
+#define BENCHMARK_STOP_MASS         500
 #define BENCHMARK_NEUTRALINO_MASS   50
-#define SF_1ltop                    10
-#define SF_ttbar2l                  2
-#define SYST_UNCERTAINTY            0.33
-
-                     // METsig  MT, MT2W, MET
-#define REFERENCE_CUTS {10,    140, 180, -1}
+                    // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {6,   120, 200,   -1, 180}
+#define SYST_UNCERTAINTY            0.2
 */
 /*
 #define BENCHMARK_STOP_MASS         650
-#define BENCHMARK_NEUTRALINO_MASS   50
-#define SF_1ltop                    5
-#define SF_ttbar2l                  5
-#define SYST_UNCERTAINTY            0.43
-
-                     // METsig  MT, MT2W, MET
-#define REFERENCE_CUTS {15,    190, 240, -1}
+#define BENCHMARK_NEUTRALINO_MASS   150
+                    // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {10,   150, 200,   -1, 180}
+#define SYST_UNCERTAINTY            0.4
 */
+
+#define T2BW_x050
+
+#define SF_1ltop_and_Wjets          1.5
+#define SF_allOthers                1.1
+
+/*
+#define BENCHMARK_STOP_MASS         300
+#define BENCHMARK_NEUTRALINO_MASS   150
+                   // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {9,   120, -1,   -1, -1}
+#define SYST_UNCERTAINTY            0.20
+*/
+/*
+#define BENCHMARK_STOP_MASS         300
+#define BENCHMARK_NEUTRALINO_MASS    50
+                   // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {6,   120, 200,  -1, 100}
+#define SYST_UNCERTAINTY            0.20
+*/
+/*
+#define BENCHMARK_STOP_MASS         500
+#define BENCHMARK_NEUTRALINO_MASS   150
+                   // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {7,   150, 200,  -1, 150}
+#define SYST_UNCERTAINTY            0.25
+*/
+
+#define BENCHMARK_STOP_MASS         650
+#define BENCHMARK_NEUTRALINO_MASS    50
+                   // METsig  MT, MT2W, MET BPt
+#define REFERENCE_CUTS {10,   150, 200,  -1, 180}
+#define SYST_UNCERTAINTY            0.4
+
 
 float getYield(vector< vector<float> > listEvent, vector<float> cuts);
 void fillTable(Table* results, string label, bool* use, vector<float> cuts, float bestFOM, float bestYieldSig, float bestYieldBkg);
 
-vector<float> optimizeCuts(bool* use, float* bestFOM, 
-                           float* bestYieldSig, float* bestYieldBkg, string mode);
+vector<float> optimizeCuts(bool* use, float* bestFOM, float* bestYieldSig, float* bestYieldBkg, string mode);
 
 vector< vector<float> > listBackground;
 vector< vector<float> > listSignal;
@@ -112,34 +140,39 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
+     screwdriver.AddProcessClass("1ltop",                        "1l top", "background",kRed-7);
+         #ifdef USING_TTBAR_POWHEG
+             screwdriver.AddDataset("ttbar_powheg",              "1ltop",  0, 0);
+         #endif
+         #ifdef USING_TTBAR_MADGRAPH
+             screwdriver.AddDataset("ttbar_madgraph_1l",         "1ltop",  0, 0);
+         #endif
+         screwdriver.AddDataset("singleTop_st",                  "1ltop",  0, 0);
 
-     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
-            screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
-            screwdriver.AddDataset("singleTop_st",   "1ltop",  0, 0);
-     
+
      screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
+         #ifdef USING_TTBAR_MADGRAPH
+             screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
+         #endif
 
      screwdriver.AddProcessClass("W+jets",         "W+jets",                          "background", kOrange-2);
              screwdriver.AddDataset("W+jets",      "W+jets", 0, 0);
                                                    
      screwdriver.AddProcessClass("rare",           "rare",                            "background", kMagenta-5);
              screwdriver.AddDataset("rare",        "rare", 0, 0);
-     
-/*
-     screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",COLORPLOT_AZURE);
+                                                   
+     #ifdef T2BW_x025
+     screwdriver.AddProcessClass("T2bw-025",     "T2bw (x=0.25)",          "signal",kViolet-1);
           screwdriver.AddDataset("T2bw-025",     "T2bw-025",   0, 0);
-*/
-/*
-     screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kCyan-3);
+     #endif
+     #ifdef T2BW_x050
+     screwdriver.AddProcessClass("T2bw-050",     "T2bw (x=0.50)",          "signal",kViolet-1);
           screwdriver.AddDataset("T2bw-050",     "T2bw-050",   0, 0);
-*/
-/*
-     screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",COLORPLOT_GREEN);
+     #endif
+     #ifdef T2BW_x075
+     screwdriver.AddProcessClass("T2bw-075",     "T2bw (x=0.75)",          "signal",kViolet-1);
           screwdriver.AddDataset("T2bw-075",     "T2bw-075",   0, 0);
-*/
-     //screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",             "signal",COLORPLOT_AZURE);
-     //screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",             "signal",kCyan-3);
-     //screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",             "signal",COLORPLOT_GREEN);
+     #endif
 
   // ##########################
   // ##    Create Regions    ##
@@ -210,7 +243,7 @@ int main (int argc, char *argv[])
       intermediatePointers pointers;
       InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
-      if (currentDataset == "T2tt")
+      if (findSubstring(currentDataset,"T2"))
       {
           theTree->SetBranchAddress("mStop",       &(myEvent.mStop));
           theTree->SetBranchAddress("mNeutralino", &(myEvent.mNeutralino));
@@ -252,8 +285,9 @@ int main (int argc, char *argv[])
               values.push_back(myEvent.MT);
               values.push_back(myEvent.MT2W);
               values.push_back(myEvent.MET);
+              values.push_back(myEvent.leadingBPt);
 
-              if (currentDataset == "T2tt") 
+              if (findSubstring(currentDataset,"T2"))
               {
                   if ((myEvent.mStop       == BENCHMARK_STOP_MASS     ) 
                    && (myEvent.mNeutralino == BENCHMARK_NEUTRALINO_MASS))
@@ -264,9 +298,9 @@ int main (int argc, char *argv[])
               }
               else
               {
-                      if (currentProcessClass_ == "1ltop")    values.push_back(getWeight() * SF_1ltop);
-                 else if (currentProcessClass_ == "ttbar_2l") values.push_back(getWeight() * SF_ttbar2l);
-                 else                                         values.push_back(getWeight());
+                 if ((currentProcessClass_ == "1ltop") 
+                  || (currentProcessClass_ == "W+jets")) values.push_back(getWeight() * SF_1ltop_and_Wjets);
+                 else                                    values.push_back(getWeight() * SF_allOthers);
                  
                  listBackground.push_back(values);
               }
@@ -299,72 +333,66 @@ int main (int argc, char *argv[])
   // #####################################
   // ##   Other optimization stuff...   ##
   // #####################################
-  
-  bool scenario_3_123[4] = {1,1,1,0}; 
-  bool scenario_3_234[4] = {0,1,1,1};
-  bool scenario_2_12[4]  = {1,1,0,0};
-  bool scenario_2_24[4]  = {0,1,0,1}; 
-  
-  float bestFOM, bestYieldSig, bestYieldBkg;
 
-  vector<string> columns = { "MET/sqrt(HT)", "MET", "MT", "MT2W", "FOM", "S", "B" };
+  bool scenario_1235[5] = {1,1,1,0,1};
+  bool scenario_2345[5] = {0,1,1,1,1}; 
+  bool scenario_125 [5] = {1,1,0,0,1}; 
+  bool scenario_245 [5] = {0,1,0,1,1}; 
+
+  vector<bool*> scenarios =
+  {
+      scenario_1235,
+      scenario_2345,
+      scenario_125,
+      scenario_245,
+  };
+
+  vector<string> columns = { "MET/sqrt(HT)", "MET", "MT", "MT2W", "BPt", "FOM", "S", "B" };
   vector<string> lines = 
   {
-      "123/discovery",
-      "123/exclusion",
-      "123/azimov",
-      
-      "234/discovery",
-      "234/exclusion",
-      "234/azimov",
-      
-      "12/discovery",
-      "12/exclusion",
-      "12/azimov",
+      "1235/discovery",
+      "2345/discovery",
+      "125/discovery",
+      "245/discovery",
 
-      "24/discovery",
-      "24/exclusion",
-      "24/azimov"
+      "1235/azimov",
+      "2345/azimov",
+      "125/azimov",
+      "245/azimov",
+      
+      "1235/exclusion",
+      "2345/exclusion",
+      "125/exclusion",
+      "245/exclusion",
   };
   Table optimizationResult(columns,lines);
 
+  float bestFOM, bestYieldSig, bestYieldBkg;
   vector<float> cuts;
-  
-  cuts = optimizeCuts(scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg, "discovery");
-  fillTable(&optimizationResult, "123/discovery",scenario_3_123,cuts,bestFOM,bestYieldSig,bestYieldBkg);
-  cuts = optimizeCuts(scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg, "exclusion");
-  fillTable(&optimizationResult, "123/exclusion",scenario_3_123,cuts,bestFOM,bestYieldSig,bestYieldBkg);
-  cuts = optimizeCuts(scenario_3_123, &bestFOM, &bestYieldSig, &bestYieldBkg, "azimov");
-  fillTable(&optimizationResult, "123/azimov",   scenario_3_123,cuts,bestFOM,bestYieldSig,bestYieldBkg);
+  for (unsigned int s = 0 ; s < scenarios.size() ; s++)
+  {
+      printProgressBar(s*3,scenarios.size()*3);
+      cuts = optimizeCuts(scenarios[s], &bestFOM, &bestYieldSig, &bestYieldBkg, "discovery");
+      fillTable(&optimizationResult, lines[s                  ], scenarios[s],cuts,bestFOM,bestYieldSig,bestYieldBkg);
+      
+      printProgressBar(s*3+1,scenarios.size()*3);
+      cuts = optimizeCuts(scenarios[s], &bestFOM, &bestYieldSig, &bestYieldBkg, "azimov");
+      fillTable(&optimizationResult, lines[s+  scenarios.size()], scenarios[s],cuts,bestFOM,bestYieldSig,bestYieldBkg);
+      
+      printProgressBar(s*3+2,scenarios.size()*3);
+      cuts = optimizeCuts(scenarios[s], &bestFOM, &bestYieldSig, &bestYieldBkg, "exclusion");
+      fillTable(&optimizationResult, lines[s+2*scenarios.size()], scenarios[s],cuts,bestFOM,bestYieldSig,bestYieldBkg);
+  }
 
-  cuts = optimizeCuts(scenario_3_234, &bestFOM, &bestYieldSig, &bestYieldBkg, "discovery");
-  fillTable(&optimizationResult, "234/discovery",scenario_3_234,cuts,bestFOM,bestYieldSig,bestYieldBkg);                  
-  cuts = optimizeCuts(scenario_3_234, &bestFOM, &bestYieldSig, &bestYieldBkg, "exclusion");
-  fillTable(&optimizationResult, "234/exclusion",scenario_3_234,cuts,bestFOM,bestYieldSig,bestYieldBkg);                  
-  cuts = optimizeCuts(scenario_3_234, &bestFOM, &bestYieldSig, &bestYieldBkg, "azimov");
-  fillTable(&optimizationResult, "234/azimov",   scenario_3_234,cuts,bestFOM,bestYieldSig,bestYieldBkg);
- 
-  cuts = optimizeCuts(scenario_2_12, &bestFOM, &bestYieldSig, &bestYieldBkg, "discovery");
-  fillTable(&optimizationResult, "12/discovery",scenario_2_12,cuts,bestFOM,bestYieldSig,bestYieldBkg);                  
-  cuts = optimizeCuts(scenario_2_12, &bestFOM, &bestYieldSig, &bestYieldBkg, "exclusion");
-  fillTable(&optimizationResult, "12/exclusion",scenario_2_12,cuts,bestFOM,bestYieldSig,bestYieldBkg);                  
-  cuts = optimizeCuts(scenario_2_12, &bestFOM, &bestYieldSig, &bestYieldBkg, "azimov");
-  fillTable(&optimizationResult, "12/azimov",   scenario_2_12,cuts,bestFOM,bestYieldSig,bestYieldBkg); 
- 
-  cuts = optimizeCuts(scenario_2_24, &bestFOM, &bestYieldSig, &bestYieldBkg, "discovery");
-  fillTable(&optimizationResult, "24/discovery",scenario_2_24,cuts,bestFOM,bestYieldSig,bestYieldBkg);                  
-  cuts = optimizeCuts(scenario_2_24, &bestFOM, &bestYieldSig, &bestYieldBkg, "exclusion");
-  fillTable(&optimizationResult, "24/exclusion",scenario_2_24,cuts,bestFOM,bestYieldSig,bestYieldBkg);                  
-  cuts = optimizeCuts(scenario_2_24, &bestFOM, &bestYieldSig, &bestYieldBkg, "azimov");
-  fillTable(&optimizationResult, "24/azimov",   scenario_2_24,cuts,bestFOM,bestYieldSig,bestYieldBkg);  
-    
 
   optimizationResult.Print(3,"noError");
 
   float yieldBackgroundRef  = getYield(listBackground,REFERENCE_CUTS);
   float yieldSignalRef      = getYield(listSignal,REFERENCE_CUTS);
 
-  cout << "FOM for Reference cuts : " << figureOfMerit(yieldSignalRef, yieldBackgroundRef, "exclusion") << " S, B = " << yieldSignalRef << ", " << yieldBackgroundRef<< endl; 
+  cout << "FOM for Reference cuts : " << figureOfMerit(yieldSignalRef, yieldBackgroundRef, "discovery") << " (discovery)"
+                                      << figureOfMerit(yieldSignalRef, yieldBackgroundRef, "exclusion") << " (exclusion)"
+      << " S, B = " << yieldSignalRef << ", " << yieldBackgroundRef<< endl; 
 
   printBoxedMessage("Program done.");
   return (0);
@@ -376,6 +404,7 @@ void fillTable(Table* results, string label, bool* use, vector<float> cuts, floa
     results->Set("MET",          label, use[3] ? cuts[3] : -1);
     results->Set("MT",           label, use[1] ? cuts[1] : -1);
     results->Set("MT2W",         label, use[2] ? cuts[2] : -1);
+    results->Set("BPt",          label, use[4] ? cuts[4] : -1);
     results->Set("FOM",          label, bestFOM);
     results->Set("S",            label, bestYieldSig);
     results->Set("B",            label, bestYieldBkg);
@@ -393,13 +422,14 @@ vector<float> optimizeCuts(bool* use, float* bestFOM, float* bestYieldSig, float
     cuts.push_back(0);
     cuts.push_back(0);
     cuts.push_back(0);
+    cuts.push_back(0);
     bestCuts = cuts;
 
-    for (cuts[0] = (use[0] ? 6 : -1)   ; cuts[0] <= (use[0] ? 15  : -1) ; cuts[0] += 1  ) {  // MET / sqrt(HT)
-        printProgressBar(cuts[0]-6,9);
-    for (cuts[1] = (use[1] ? 120 : -1) ; cuts[1] <= (use[1] ? 200 : -1) ; cuts[1] += 20 ) {  // MT
-    for (cuts[2] = (use[2] ? 100 : -1) ; cuts[2] <= (use[2] ? 280 : -1) ; cuts[2] += 30 ) {  // MT2W
+    for (cuts[0] = (use[0] ? 6   : -1) ; cuts[0] <= (use[0] ? 15  : -1) ; cuts[0] += 1  ) {  // MET / sqrt(HT)
+    for (cuts[1] = (use[1] ? 120 : -1) ; cuts[1] <= (use[1] ? 140 : -1) ; cuts[1] += 5  ) {  // MT
+    for (cuts[2] = (use[2] ? 100 : -1) ; cuts[2] <= (use[2] ? 200 : -1) ; cuts[2] += 10 ) {  // MT2W
     for (cuts[3] = (use[3] ? 100 : -1) ; cuts[3] <= (use[3] ? 400 : -1) ; cuts[3] += 50 ) {  // MET
+    for (cuts[4] = (use[4] ? 80  : -1) ; cuts[4] <= (use[4] ? 200 : -1) ; cuts[4] += 20 ) {  // bPt 
 
         float yieldBackground  = getYield(listBackground,cuts);
         float yieldSignal      = getYield(listSignal,cuts);
@@ -416,7 +446,7 @@ vector<float> optimizeCuts(bool* use, float* bestFOM, float* bestYieldSig, float
             (*bestYieldBkg) = yieldBackground;
         }
         
-    } } } }
+    } } } } }
         
     return bestCuts;
 }
