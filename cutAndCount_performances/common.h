@@ -60,7 +60,7 @@ float figureOfMerit(float S, float B, string mode, bool minimumEventRequirement 
     return -1.0;
 }
 
-void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, string pathExport)
+void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string name, string comment, string pathExport, float lineOffset)
 {
     Plot thePlot(name,"custom",screwdriver->GetGlobalOptions());
     thePlot.SetParameter("name",name);
@@ -92,7 +92,8 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
         pal->SetY2NDC(1.0-thePlot.getCanvas()->GetTopMargin());
     }
 
-    TLine* line1 = new TLine(160,-12.5,560,387.5);
+    TLine* line1 = new TLine(lineOffset-12.5,-12.5,lineOffset+387.5,387.5);
+    //TLine* line1 = new TLine(160,-12.5,560,387.5);
     line1->SetLineWidth(2);
     line1->SetLineStyle(2);
     line1->Draw();
