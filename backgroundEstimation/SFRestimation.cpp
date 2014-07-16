@@ -777,6 +777,12 @@ int main()
 	h_SF_MTpeak_BDT_wjets.SetBinError(i+1,res.SF_wjets.second);
 	h_SF_MTpeak_BDT_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
   	
+        //Now compute the ration : SF_tail/SF_peak
+	SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
+        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_wjets.second);
+
+        //-- do some additionnal test as function of the b-tag multiplicity
+	
 	//MT peak (no btag req)
 	setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
   	res = doFit(setup,conditions); 
@@ -785,8 +791,10 @@ int main()
 	setup.Reset(); conditions="sigRegions_peak_OneBtag"; setup.region=signalRegions_MTpeak_OneBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
   	res = doFit(setup,conditions); 
         
+	//-- End of additionnal tests
+
 	//Computation of mean/rms/ ..
-	//It is based on the SF computed in the tail, not the ratio SF_tail/SF_peak
+	//It is based on  the ratio SF_tail/SF_peak
 	//-- tt1l
 	mean_SFtt1l+=SFR_tt1l.value();
 	rms_SFtt1l+=(SFR_tt1l.value()*SFR_tt1l.value());
@@ -797,9 +805,6 @@ int main()
 	if(SFR_wjets.error()>(MaxStatUncert_SFwjets/SFR_wjets.value()))  MaxStatUncert_SFwjets=SFR_wjets.error()/SFR_wjets.value();
         //-----------------------------------
 
-        //Now compute the ration : SF_tail/SF_peak
-	SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
-        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_tt1l.second);
 	
 	
 	//SFR
@@ -939,15 +944,15 @@ bool cutAndCount_T2bw075_highDeltaM(bool applyMTCut)         { return cutAndCoun
 	//setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
   	//res = doFit(setup,conditions); 
 
+        //Now compute the ration : SF_tail/SF_peak
+	SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
+        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_wjets.second);
 
-	//It is based on the SF computed in the tail, not the ratio SF_tail/SF_peak
+	//It is based on the ratio SF_tail/SF_peak
 	SFR_CC_tt1l_map[label] = SFR_tt1l;
 	SFR_CC_wjets_map[label] = SFR_wjets;
         
 	
-        //Now compute the ration : SF_tail/SF_peak
-	SFR_tt1l/=theDoctor::Figure(res.SF_tt1l.first,res.SF_tt1l.second);
-        SFR_wjets/=theDoctor::Figure(res.SF_wjets.first,res.SF_tt1l.second);
 
 	//SFR
 	h_SFR_CC_tt1l.SetBinContent(i+1,SFR_tt1l.value());
