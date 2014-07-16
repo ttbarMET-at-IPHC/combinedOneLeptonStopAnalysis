@@ -827,16 +827,19 @@ int main()
   h_SFR_BDT_tt1l.Write();
   h_SFR_BDT_wjets.Write();
   
+
   //---------------------------------------//
+  //We add quadratically 20% uncert. on the fit procedure (MC stat, JES, etc...
+  float SystUncert = 0.2;
   mean_SFtt1l/=signalRegions.size();
   rms_SFtt1l/=signalRegions.size();
   rms_SFtt1l-=(mean_SFtt1l*mean_SFtt1l);
-  theDoctor::Figure BDT_SFtt1l(mean_SFtt1l,sqrt(rms_SFtt1l+MaxStatUncert_SFtt1l*MaxStatUncert_SFtt1l*mean_SFtt1l*mean_SFtt1l));
+  theDoctor::Figure BDT_SFtt1l(mean_SFtt1l,sqrt(rms_SFtt1l+MaxStatUncert_SFtt1l*MaxStatUncert_SFtt1l*mean_SFtt1l*mean_SFtt1l+pow(SystUncert*mean_SFtt1l,2)));
   //---------------------------------------//
   mean_SFwjets/=signalRegions.size();
   rms_SFwjets/=signalRegions.size();
   rms_SFwjets-=(mean_SFwjets*mean_SFwjets);
-  theDoctor::Figure BDT_SFwjets(mean_SFwjets,sqrt(rms_SFwjets+MaxStatUncert_SFwjets*MaxStatUncert_SFwjets*mean_SFwjets*mean_SFwjets));
+  theDoctor::Figure BDT_SFwjets(mean_SFwjets,sqrt(rms_SFwjets+MaxStatUncert_SFwjets*MaxStatUncert_SFwjets*mean_SFwjets*mean_SFwjets+pow(SystUncert*mean_SFtt1l,2)));
   //---------------------------------------//
   
   
@@ -1010,6 +1013,9 @@ bool cutAndCount_T2bw075_highDeltaM(bool applyMTCut)         { return cutAndCoun
 		if(i==0) SFR_CC_wjets = SFR_CC_wjets_map[cuts[i]];
   		else SFR_CC_wjets = theDoctor::Figure(SFR_CC_wjets.value(),sqrt(pow(SFR_CC_wjets.error(),2)+pow(SFR_CC_wjets.value()-SFR_CC_wjets_map[cuts[i].c_str()].value(),2)));
 	}
+	//Add quadratically uncert. of the fit itself (JES, MC stat. ...)
+	SFR_CC_tt1l = theDoctor::Figure(SFR_CC_tt1l.value(),sqrt(pow(SFR_CC_tt1l.error(),2)+pow(SystUncert*mean_SFtt1l,2)));
+	SFR_CC_wjets = theDoctor::Figure(SFR_CC_wjets.value(),sqrt(pow(SFR_CC_wjets.error(),2)+pow(SystUncert*mean_SFwjets,2)));
   	SFR_CC.Set("SFR_tt1l",listOfCCRegions[r],SFR_CC_tt1l);
   	SFR_CC.Set("SFR_wjets",listOfCCRegions[r],SFR_CC_wjets);
   	cout<<"TOO "<<listOfCCRegions[r]<<" "<<SFR_CC_tt1l.Print()<<endl;
