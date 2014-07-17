@@ -48,23 +48,6 @@ bool goesInAnyChannel()                             { return (goesInSingleLepton
 int main (int argc, char *argv[])
 {
   
-    // Special region for 2, 3 or 4 jets with 50, 100 or 150 minimum events
-    
-    string ControlRegion; 
-    if (argc == 2) 
-    { 
-        ControlRegion = argv[1];
-        NOMINAL_BDT_CUT = false;
-        printBoxedMessage("Running on CR = "+ControlRegion);
-        LoadBDTCut(ControlRegion);
-    }
-    if (argc >= 3) { WARNING_MSG << "Too many argument specified" << endl; return -1; }
-    
-    // Check if we're running on a BDT region
-    
-    bool runningOnBDTRegion = false;
-    if (findSubstring(SIGNAL_REGION_TAG,"BDT")) runningOnBDTRegion = true;
-    
     printBoxedMessage("Starting tables generation");
 
     // ####################
@@ -208,26 +191,7 @@ int main (int argc, char *argv[])
                 // Get the i-th entry
                 ReadEvent(theTree,i,&pointers,&myEvent);
     
-                if (ControlRegion != "")
-                {
-                    if (ControlRegion == "CR4_2j")         if (myEvent.nJets < 2) continue;
-                    if (ControlRegion == "CR4_3j")         if (myEvent.nJets < 3) continue;
-                    if (ControlRegion == "CR4_4j"
-                     || ControlRegion == "CR4_4j_50evts" 
-                     || ControlRegion == "CR4_4j_100evts" 
-                     || ControlRegion == "CR4_4j_150evts") if (myEvent.nJets < 4) continue; 
-                }
-                
                 float weight = getWeight();
-                if ((runningOnBDTRegion) && (ttbarDatasetToBeSplitted))
-                {
-                    // Here we should at some point ignore the part of ttbar events used in the training
-                    // but at this point all ttbar madgraph was used...
-
-                    // Ignore event with id%2 == 0 TODO : check this is the correct thing
-                    //if (myEvent.event % 2 == 0) continue;
-                    //else  weight *= 2; 
-                }
 
                 // Split 1-lepton ttbar and 2-lepton ttbar
                 string currentProcessClass_ = currentProcessClass;

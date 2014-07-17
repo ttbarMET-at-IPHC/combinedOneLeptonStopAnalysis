@@ -21,11 +21,6 @@ class backgroundEstimation{
         void ComputeSFpre();
         void ComputeSFpost();
         void ComputeRandSFR();
-        void ComputeSF2l();
-        void ComputeSF2ltail();
-        void ComputeSFvetopeak();
-        void ComputeSFvetotail();
-        void ComputeK3K4();
         void FillPredictionTable();
         
         void PrintReport();
@@ -57,14 +52,6 @@ class backgroundEstimation{
         Figure Rlj_corrected;
         Figure Rlj_mean;
 
-        Figure SF2l;
-        Figure SFvetopeak;
-        Figure SF2ltail;
-        Figure SFvetotail;
-        Figure K3;
-        Figure K4;
-
-
         // Tables 
 
         Table  rawYieldTable;
@@ -74,7 +61,7 @@ class backgroundEstimation{
 
         // Systematic flags / value
         float ttll_CR4and5_uncert;
-	float ttll_CR4and5_rescale;   
+        float ttll_CR4and5_rescale;   
         float ttll_nJets_rescale;     
         float ttll_2ndlepVeto_rescale;
         float WjetCrossSection_rescale;

@@ -30,6 +30,12 @@ using namespace theDoctor;
 #define ISR_JET_ALREADY_COMPUTED
 #define USING_TTBAR_POWHEG
 
+// #########################################
+// #  Background estimation configuration  #
+// #########################################
+
+#define USE_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+
 // #################################################
 // #  Analysis, cut-and-count and BDT definitions  #
 // #################################################
@@ -115,8 +121,6 @@ vector<string> scaleFactorsTagList =
     "R_1ltop",
     "SF_2l",
     "SF_2ltail",
-    "K3",
-    "K4",
     "SF_vetopeak",
     "SF_vetotail"
 };
@@ -131,8 +135,6 @@ vector<string> scaleFactorsLabelList =
     "$R_{\\text{1$\\ell$top}}$",
     "$SF_{2l}$",
     "$SF_{2ltail}$",
-    "$K_3$",
-    "$K_4$",
     "$SF_{vetopeak}$",
     "$SF_{vetotail}$"
 };

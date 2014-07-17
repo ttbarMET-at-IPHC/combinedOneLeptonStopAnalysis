@@ -21,7 +21,7 @@ CXXFLAGS     += -I../sonicScrewdriver/
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA 
-ROOFITFLAGS	     += -lRooFit -lRooFitCore
+ROOFITFLAGS  += -lRooFit -lRooFitCore
 LDFLAGS      += -l:`pwd`/../.vectorDictionnary_C.so 
 LDFLAGS      += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 
@@ -45,7 +45,7 @@ TARGET = yieldTableProducer
 #------------------------------------------------------------------------------
 
 default: compile run
-	
+
 compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
 run:
@@ -64,7 +64,7 @@ clean:
 
 SIGNAL_REGIONS = 
 SIGNAL_REGIONS += preselection
-SIGNAL_REGIONS  += BDT_T2tt_1
+SIGNAL_REGIONS += BDT_T2tt_1
 
 #SIGNAL_REGIONS += cutAndCount_T2tt_offShellLoose         cutAndCount_T2tt_offShellTight     cutAndCount_T2tt_lowDeltaM             cutAndCount_T2tt_mediumDeltaM   cutAndCount_T2tt_highDeltaM
 #SIGNAL_REGIONS += cutAndCount_T2bw025_offShell  cutAndCount_T2bw025_lowDeltaM    cutAndCount_T2bw025_highDeltaM
@@ -80,23 +80,6 @@ SIGNAL_REGIONS  += BDT_T2tt_1
 #SIGNAL_REGIONS += LowBDT_T2bw025_1 LowBDT_T2bw025_3 LowBDT_T2bw025_4  LowBDT_T2bw025_6       
 #SIGNAL_REGIONS += LowBDT_T2bw050_1 LowBDT_T2bw050_3 LowBDT_T2bw050_4 LowBDT_T2bw050_5  LowBDT_T2bw050_6  
 #SIGNAL_REGIONS += LowBDT_T2bw075_1 LowBDT_T2bw075_2 LowBDT_T2bw075_3 LowBDT_T2bw075_5
-
-CONTROL_REGIONS_2l =  CR4_1j CR4_2j CR4_3j CR4_4j
-CONTROL_REGIONS_2l += CR4_4j_50evts CR4_4j_100evts CR4_4j_150evts
-
-checkCR4CR5modeling:
-	@for REGION in $(CONTROL_REGIONS_2l); 		      \
-	 do									      		  \
-		echo "[Lauching signal region $$REGION]";     \
-	    	make tables ARG=$$REGION;     			  \
-		make predictions ARG="--CR4 $$REGION";				  \
-	done;
-	make reportCR4CR5modeling
-
-reportCR4CR5modeling: checkCR4CR5modeling.$(ExeSuf)
-	./checkCR4CR5modeling.$(ExeSuf) $(SIGNAL_REGIONS) | tee checkCR4CR5modeling.$(LogSuf)
-
-#mv scaleFactors/*.tab scaleFactors/$$REGION/;	 
 
 tables:
 	@make --no-print-directory clean 
@@ -133,7 +116,7 @@ predictions: backgroundEstimation.$(ExeSuf)
 	@for REGION in $(SIGNAL_REGIONS);							\
 	 do															\
 	 	   echo "[Running on $$REGION]";			  	 		\
-		   ./backgroundEstimation.$(ExeSuf) $$REGION  ${ARG};	\
+		   ./backgroundEstimation.$(ExeSuf) $$REGION $(ARG);	\
 	 done;
 
 controlPlots:
@@ -190,8 +173,5 @@ syst: reportGenSystProducer.$(ExeSuf)
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
 %.$(ExeSuf): %.$(SrcSuf) 
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) ${ARGS} -o $@ $< $(LIBS) $(GCCPARSER)
-
-%.$(ExeSuf): %.$(SrcSuf2) 
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) ${ROOFITFLAGS} -o $@ $< $(LIBS) $(GCCPARSER)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
 

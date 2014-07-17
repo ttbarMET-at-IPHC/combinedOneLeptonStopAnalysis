@@ -14,11 +14,11 @@ int main (int argc, char *argv[])
     string CR = "";
     if (argc >= 3)
     {
-	ReadSF_tt2l = false;
-	ReadSF_SFR = false;
+        ReadSF_tt2l = false;
+        ReadSF_SFR = false;
     }
     if (argc == 4)
-    	CR = string(argv[3]);
+        CR = string(argv[3]);
 
     backgroundEstimation(signalRegion).Run(CR);
 
@@ -84,8 +84,8 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     scaleFactorTable = Table(dummy,scaleFactorsTagList);
     if (ReadSF_tt2l)
     {
-    	// Read the uncertainty on ttbar-2l from the table
-    	Table scaleFactorTable_tt2l = Table("scaleFactors/checkCR4CR5modeling.tab"); // name of the table hard-coded
+    	// Read the uncertainty from CR4 CR5 modeling checks 
+    	Table scaleFactorTable_tt2l = Table("../backgroundEstimation_checkCR4CR5modeling/results/uncertainties.tab"); 
         ttll_CR4and5_uncert =  scaleFactorTable_tt2l.Get("value",signalRegionLabel).error() ;
     }
     else
@@ -143,11 +143,6 @@ Figure backgroundEstimation::ComputePrediction()
     ComputeSFpost();
     ComputeRandSFR();
     
-    ComputeSF2l();
-    ComputeSFvetopeak();
-    ComputeSF2ltail();
-    ComputeSFvetotail();
-
     FillPredictionTable();
     return predictionTable.Get("prediction","totalSM");
 }
@@ -271,18 +266,12 @@ void backgroundEstimation::ComputePredictionWithSystematics()
 
     // Fill scale factor table
    
-    scaleFactorTable.Set("value","SF_pre",      SFpre);
-    scaleFactorTable.Set("value","SF_post",     SFpost);
-    scaleFactorTable.Set("value","SF_0btag",    SF_0btag);
-    scaleFactorTable.Set("value","SF_2l",       SF2l);
-    scaleFactorTable.Set("value","SF_2ltail",   SF2ltail);
-    scaleFactorTable.Set("value","SF_vetopeak", SFvetopeak);
-    scaleFactorTable.Set("value","SF_vetotail", SFvetotail);
-    scaleFactorTable.Set("value","K3",          K3);
-    scaleFactorTable.Set("value","K4",          K4);
-    scaleFactorTable.Set("value","SFR_W+jets",  SFR_W_mean);
-    scaleFactorTable.Set("value","R_W+jets",    RW_corrected);
-    scaleFactorTable.Set("value","R_1ltop",     Rlj_mean);
+    scaleFactorTable.Set("value","SF_pre",     SFpre);
+    scaleFactorTable.Set("value","SF_post",    SFpost);
+    scaleFactorTable.Set("value","SF_0btag",   SF_0btag);
+    scaleFactorTable.Set("value","SFR_W+jets", SFR_W_mean);
+    scaleFactorTable.Set("value","R_W+jets",   RW_corrected);
+    scaleFactorTable.Set("value","R_1ltop",    Rlj_mean);
     scaleFactorTable.Print("scaleFactors/"+signalRegionLabel+".tab",4);
 
 }
@@ -323,103 +312,6 @@ void backgroundEstimation::ComputeSFpost()
     SFpost = (postveto_data - postveto_rare - SFpre * postveto_ttbar_2l) 
            / (postveto_1ltop + postveto_Wjets);
     if (MTpeakStat_variation) SFpost.keepVariation(MTpeakStat_variation);
-}
-
-void backgroundEstimation::ComputeSF2l()
-{
-    Figure peak2l_1ltop    = rawYieldTable.Get("2leptons","1ltop"    );
-    Figure peak2l_ttbar_2l = rawYieldTable.Get("2leptons","ttbar_2l" );
-    Figure peak2l_Wjets    = rawYieldTable.Get("2leptons","W+jets"   );
-    Figure peak2l_rare     = rawYieldTable.Get("2leptons","rare"     );
-    Figure peak2l_data     = rawYieldTable.Get("2leptons","data"     );
-
-    if (peak2l_data.value() > 0) 
-        SF2l = (peak2l_data - peak2l_rare) 
-                 / (peak2l_1ltop + peak2l_Wjets + peak2l_ttbar_2l);
-
-}
-void backgroundEstimation::ComputeSF2ltail()
-{
-    Figure tail2l_1ltop    = rawYieldTable.Get("2leptons_MTtail","1ltop"   );
-    Figure tail2l_ttbar_2l = rawYieldTable.Get("2leptons_MTtail","ttbar_2l");
-    Figure tail2l_Wjets    = rawYieldTable.Get("2leptons_MTtail","W+jets"  ); 
-    Figure tail2l_rare     = rawYieldTable.Get("2leptons_MTtail","rare"    );
-    Figure tail2l_data     = rawYieldTable.Get("2leptons_MTtail","data"    );
-
-    if (tail2l_data.value() > 0)
-        SF2ltail = (tail2l_data - tail2l_rare - SF2l* tail2l_1ltop - SF2l* tail2l_Wjets) 
-                 / (SF2l* tail2l_ttbar_2l);
-
-}
-void backgroundEstimation::ComputeSFvetopeak()
-{
-
-    Figure peakveto_1ltop    = rawYieldTable.Get("reversedVeto_MTpeak","1ltop"   );
-    Figure peakveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTpeak","ttbar_2l");
-    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTpeak","W+jets"  ); 
-    Figure peakveto_rare     = rawYieldTable.Get("reversedVeto_MTpeak","rare"    );
-    Figure peakveto_data     = rawYieldTable.Get("reversedVeto_MTpeak","data"    );
-
-    if (peakveto_data.value() > 0) 
-        SFvetopeak = (peakveto_data - peakveto_rare - SFpre * peakveto_ttbar_2l) 
-                   / (peakveto_1ltop + peakveto_Wjets);
-/*
-    Figure peakveto_1ltop    = rawYieldTable.Get("reversedVeto_MTinv","1ltop"   );
-    Figure peakveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTinv","ttbar_2l");
-    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTinv","W+jets"  ); 
-    Figure peakveto_rare     = rawYieldTable.Get("reversedVeto_MTinv","rare"    );
-    Figure peakveto_data     = rawYieldTable.Get("reversedVeto_MTinv","data"    );
-    
-    if (peakveto_data.value()>0) SFvetopeak = (peakveto_data - peakveto_rare) / (peakveto_1ltop + peakveto_Wjets + peakveto_ttbar_2l);
-    // if (peakveto_data.value()>0) SFvetopeak = (peakveto_data) / (peakveto_1ltop + peakveto_Wjets + peakveto_ttbar_2l + peakveto_rare);
-*/
-
-}
-void backgroundEstimation::ComputeSFvetotail()
-{
-    Figure tailveto_1ltop    = rawYieldTable.Get("reversedVeto_MTtail","1ltop"   );
-    Figure tailveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTtail","ttbar_2l");
-    Figure tailveto_Wjets    = rawYieldTable.Get("reversedVeto_MTtail","W+jets"  ); 
-    Figure tailveto_rare     = rawYieldTable.Get("reversedVeto_MTtail","rare"    );
-    Figure tailveto_data     = rawYieldTable.Get("reversedVeto_MTtail","data"    );
-    
-    if (tailveto_data.value() > 0)
-        SFvetotail = (tailveto_data - tailveto_rare - SFvetopeak*SFR_W_mean* tailveto_1ltop - SFvetopeak*SFR_W_mean* tailveto_Wjets) 
-                   / (SFpre* tailveto_ttbar_2l);
-
-    //if (tailveto_data.value()>0) SFvetotail = (tailveto_data - tailveto_rare - SFvetopeak* tailveto_1ltop - SFvetopeak* tailveto_Wjets) / (SFvetopeak* tailveto_ttbar_2l);
-    //if (tailveto_data.value()>0) SFvetotail = (tailveto_data - SFvetopeak* tailveto_rare - SFvetopeak* tailveto_1ltop - SFvetopeak* tailveto_Wjets) / (SFvetopeak* tailveto_ttbar_2l) ;
-
-}
-void backgroundEstimation::ComputeK3K4()
-{
-    Figure N2_1ltop    = rawYieldTable.Get("2leptons_1or2jets","1ltop"   );
-    Figure N2_ttbar_2l = rawYieldTable.Get("2leptons_1or2jets","ttbar_2l");
-    Figure N2_Wjets    = rawYieldTable.Get("2leptons_1or2jets","W+jets"  ); 
-    Figure N2_rare     = rawYieldTable.Get("2leptons_1or2jets","rare"    );
-    Figure N2_data     = rawYieldTable.Get("2leptons_1or2jets","data"    );
-    Figure N3_1ltop    = rawYieldTable.Get("2leptons_3jets","1ltop"   );
-    Figure N3_ttbar_2l = rawYieldTable.Get("2leptons_3jets","ttbar_2l");
-    Figure N3_Wjets    = rawYieldTable.Get("2leptons_3jets","W+jets"  ); 
-    Figure N3_rare     = rawYieldTable.Get("2leptons_3jets","rare"    );
-    Figure N3_data     = rawYieldTable.Get("2leptons_3jets","data"    );
-    Figure N4_1ltop    = rawYieldTable.Get("2leptons_atLeast4jets","1ltop"   );
-    Figure N4_ttbar_2l = rawYieldTable.Get("2leptons_atLeast4jets","ttbar_2l");
-    Figure N4_Wjets    = rawYieldTable.Get("2leptons_atLeast4jets","W+jets"  ); 
-    Figure N4_rare     = rawYieldTable.Get("2leptons_atLeast4jets","rare"    );
-    Figure N4_data     = rawYieldTable.Get("2leptons_atLeast4jets","data"    );
-
-    Figure N2 = N2_data - SF2l*N2_1ltop - SF2l*N2_Wjets - N2_rare;  // substract all MC except ttbar -> ll for Njets =1 or 2.
-    Figure N3 = N3_data - SF2l*N3_1ltop - SF2l*N3_Wjets - N3_rare;  // substract all MC except ttbar -> ll for Njets =3.
-    Figure N4 = N4_data - SF2l*N4_1ltop - SF2l*N4_Wjets - N4_rare;  // substract all MC except ttbar -> ll for Njets >=4.
-
-    Figure SF2 = N2/N2_ttbar_2l;
-    Figure SF3 = N3/N3_ttbar_2l;
-    Figure SF4 = N4/N4_ttbar_2l;
-    
-    K3 = SF3/SF2;
-    K4 = SF4/SF3;
-
 }
 
 void backgroundEstimation::ComputeRandSFR()

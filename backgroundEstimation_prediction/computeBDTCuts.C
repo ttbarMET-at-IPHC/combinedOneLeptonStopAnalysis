@@ -237,10 +237,28 @@ int main (int argc, char *argv[])
   // ##   Quantiles of all BDTS       ##
   // ###################################
   
-  //--- Looking quantiles for all the BDTs
-//  vector<string> vars = {"BDT1","BDT2","BDT3","BDT4","BDT5","BDT6","BDT7","BDT8","BDT9","BDT10",
-//  			 "BDT11","BDT12","BDT13","BDT14","BDT15","BDT16"};
-  vector<string> vars =  {"BDT_T2tt-1","BDT_T2tt-2","BDT_T2tt-5","BDT_T2bw075-1","BDT_T2bw075-2","BDT_T2bw075-3","BDT_T2bw075-5","BDT_T2bw050-1","BDT_T2bw050-3","BDT_T2bw050-4","BDT_T2bw050-5","BDT_T2bw050-6","BDT_T2bw025-1","BDT_T2bw025-3","BDT_T2bw025-4","BDT_T2bw025-6"};
+    //--- Looking quantiles for all the BDTs
+    //  vector<string> vars = {"BDT1","BDT2","BDT3","BDT4","BDT5","BDT6","BDT7","BDT8","BDT9","BDT10",
+    //  "BDT11","BDT12","BDT13","BDT14","BDT15","BDT16"};
+  vector<string> vars = 
+  {
+      "BDT_T2tt-1",
+      "BDT_T2tt-2",
+      "BDT_T2tt-5",
+      "BDT_T2bw075-1",
+      "BDT_T2bw075-2",
+      "BDT_T2bw075-3",
+      "BDT_T2bw075-5",
+      "BDT_T2bw050-1",
+      "BDT_T2bw050-3",
+      "BDT_T2bw050-4",
+      "BDT_T2bw050-5",
+      "BDT_T2bw050-6",
+      "BDT_T2bw025-1",
+      "BDT_T2bw025-3",
+      "BDT_T2bw025-4",
+      "BDT_T2bw025-6"
+  };
   vector<string> processClasses = {"1ltop","ttbar_2l","W+jets","rare"};
 
 
@@ -254,10 +272,10 @@ int main (int argc, char *argv[])
   string channel = "doubleLepton";
   string region = "2lepton";
   for(unsigned int i=0;i<vars.size();i++){
-  	for(unsigned int j=0;j<MinNofEvts.size();j++){
-		Figure bdtCut(MinNofEvtsVariabelCut(screwdriver, MinNofEvts[j], vars[i], processClasses, region, channel),0);
-  		tableCR4.Set(dummy[j],vars[i],bdtCut);
-  	}
+      for(unsigned int j=0;j<MinNofEvts.size();j++){
+          Figure bdtCut(MinNofEvtsVariabelCut(screwdriver, MinNofEvts[j], vars[i], processClasses, region, channel),0);
+          tableCR4.Set(dummy[j],vars[i],bdtCut);
+      }
   }
   tableCR4.Print(output_prefix+"CR4.dat");
   
@@ -265,10 +283,10 @@ int main (int argc, char *argv[])
   Table tableCR5(dummy, vars, dummy, vars);
   region = "antiveto";
   for(unsigned int i=0;i<vars.size();i++){
-  	for(unsigned int j=0;j<MinNofEvts.size();j++){
-		Figure bdtCut(MinNofEvtsVariabelCut(screwdriver, MinNofEvts[j], vars[i], processClasses, region, channel),0);
-  		tableCR5.Set(dummy[j],vars[i],bdtCut);
-  	}
+      for(unsigned int j=0;j<MinNofEvts.size();j++){
+          Figure bdtCut(MinNofEvtsVariabelCut(screwdriver, MinNofEvts[j], vars[i], processClasses, region, channel),0);
+          tableCR5.Set(dummy[j],vars[i],bdtCut);
+      }
   }
   tableCR5.Print(output_prefix+"CR5.dat");
 
@@ -279,10 +297,10 @@ int main (int argc, char *argv[])
   region = "0btag";
   float quantile = 0.75;//0.90
   for(unsigned int i=0;i<vars.size();i++){
-  	for(unsigned int j=0;j<MinNofEvts.size();j++){
-		Figure bdtCut(QuantileVariabelCut(screwdriver, quantile, vars[i], processClasses, region, channel),0);
-  		tableCR1.Set(dummy[j],vars[i],bdtCut);
-  	}
+      for(unsigned int j=0;j<MinNofEvts.size();j++){
+          Figure bdtCut(QuantileVariabelCut(screwdriver, quantile, vars[i], processClasses, region, channel),0);
+          tableCR1.Set(dummy[j],vars[i],bdtCut);
+      }
   }
   tableCR1.Print(output_prefix+"CR1.dat");
   
@@ -294,11 +312,11 @@ int main (int argc, char *argv[])
   channel = "doubleLepton";
   region = "2lepton";
   for(unsigned int i=0;i<vars.size();i++){
-  	vector<float> BDTCuts =  EquiStatIndepIntervalInTail(screwdriver, MinNofEvts_, NofInterval, vars[i], processClasses, region, channel);
-	for(unsigned int j=0;j<BDTCuts.size();j++){
-		Figure bdtCut(BDTCuts[j],0);
-  		tableIndepIntCR4.Set(dummy[j],vars[i],bdtCut);
-	}
+      vector<float> BDTCuts =  EquiStatIndepIntervalInTail(screwdriver, MinNofEvts_, NofInterval, vars[i], processClasses, region, channel);
+      for(unsigned int j=0;j<BDTCuts.size();j++){
+          Figure bdtCut(BDTCuts[j],0);
+          tableIndepIntCR4.Set(dummy[j],vars[i],bdtCut);
+      }
   }
   tableIndepIntCR4.Print(output_prefix+"IndepIntCR4.dat");
 
