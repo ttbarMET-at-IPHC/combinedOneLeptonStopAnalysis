@@ -18,6 +18,12 @@ bool Selector_cutAndCount(float cutMET, float cutMETsig, float cutMT, float cutM
     
     return goesInPreselectionMTtail();
 }
+
+bool Selector_veryOffShell_loose() { return Selector_cutAndCount(-1,  9,    120, -1,  -1,  0.2, true ); }
+bool Selector_offShell_loose()     { return Selector_cutAndCount(-1,  7,    120, 200, 150, 0.8, false); }
+bool Selector_lowDeltaM_tight()    { return Selector_cutAndCount(-1,  6,    120, 200, 180, 0.8, false); }
+bool Selector_highDeltaM()         { return Selector_cutAndCount(-1,  10,   150, 200, 180, 0.8, false); }
+
 /*
 bool Selector_veryOffShell_loose() { return Selector_cutAndCount(-1,  8,    140, 170, 200, 0.2, false); }
 bool Selector_offShell_loose()     { return Selector_cutAndCount(300, -1,   120, 190, 100, 0.8, false); }
@@ -25,11 +31,12 @@ bool Selector_lowDeltaM_tight()    { return Selector_cutAndCount(200, -1,   130,
 bool Selector_highDeltaM()         { return Selector_cutAndCount(300, -1,   120, 200, 160, 0.8, false); }
 */
 
-                                                              // MET METsig MT   MT2W BPt dPhi ISRjet
+                                                            // MET METsig MT   MT2W BPt dPhi ISRjet
+/*
 bool Selector_offShell()    { return Selector_cutAndCount(-1,   9,   120,   -1, - 1, 0.2, true ); }
 bool Selector_lowMasses()   { return Selector_cutAndCount(-1,   6,   120,  200, 180, 0.8, false); }
 bool Selector_highMasses()  { return Selector_cutAndCount(300, -1,   120,  200, 100, 0.8, false); }
-
+*/
 
 // #########################################################################
 //                              Main function
@@ -98,16 +105,16 @@ int main (int argc, char *argv[])
 
      screwdriver.AddRegion("presel",             "Preselection",                          &goesInPreselectionMTtail);
 
-     /*
      screwdriver.AddRegion("veryOffShell_loose", "Cut-and-count;Very off-shell (loose)",  &Selector_veryOffShell_loose);
      screwdriver.AddRegion("offShell_loose",     "Cut-and-count;Off-shell (loose)",       &Selector_offShell_loose );
      screwdriver.AddRegion("lowDeltaM_tight",    "Cut-and-count;Low #DeltaM (tight)",     &Selector_lowDeltaM_tight );
      screwdriver.AddRegion("highDeltaM",         "Cut-and-count;High #DeltaM",            &Selector_highDeltaM );
-     */
 
+     /*
      screwdriver.AddRegion("offshell",           "Cut-and-count;Off-shell",              &Selector_offShell);
      screwdriver.AddRegion("lowMasses",          "Cut-and-count;Low masses",             &Selector_lowMasses);
      screwdriver.AddRegion("highMasses",         "Cut-and-count;High masses",            &Selector_highMasses);
+     */
 
   // ##########################
   // ##   Create Channels    ##
@@ -233,12 +240,8 @@ int main (int argc, char *argv[])
   // #############################
   
   printBoxedMessage("Now computing misc tests ... ");
-
-  // ##########################
-  // ##   Compute FOM maps   ##
-  // ##########################
-
-  /*
+  
+  
   vector<string> cutAndCountRegions =
   {
       "veryOffShell_loose",
@@ -257,8 +260,8 @@ int main (int argc, char *argv[])
       0.2,
       0.4
   };
-  */
   
+  /*
   vector<string> cutAndCountRegions =
   {
     "offshell",
@@ -275,6 +278,13 @@ int main (int argc, char *argv[])
       0.2,
       0.2
   };
+  */
+  TableBackgroundSignal(&screwdriver,cutAndCountRegions,"singleLepton").Print();
+  TableBackgroundSignal(&screwdriver,cutAndCountRegions,"singleLepton").PrintLatex();
+
+  // ##########################
+  // ##   Compute FOM maps   ##
+  // ##########################
 
   vector<TH2F*> signalMaps;
   vector<TH2F*> FOMdiscoveryMaps;
@@ -299,14 +309,14 @@ int main (int argc, char *argv[])
       signalMaps.push_back(screwdriver.get2DHistoClone("mStop","mNeutralino",signalCategory,cutAndCountRegions[i],"singleLepton"));
       signalMaps[i]->SetName((string("signalMap_")+cutAndCountRegions[i]).c_str());
 
-      float B =   screwdriver.GetYieldAndError("1ltop",    cutAndCountRegions[i],"singleLepton").value()   * SF_1ltop_and_Wjets
-                + screwdriver.GetYieldAndError("ttbar_2l", cutAndCountRegions[i],"singleLepton").value()   * SF_allOthers
-                + screwdriver.GetYieldAndError("W+jets",   cutAndCountRegions[i],"singleLepton").value()   * SF_1ltop_and_Wjets
-                + screwdriver.GetYieldAndError("rare",     cutAndCountRegions[i],"singleLepton").value()  * SF_allOthers;
+      float B =   screwdriver.GetYieldAndError("1ltop",    cutAndCountRegions[i],"singleLepton").value() //  * SF_1ltop_and_Wjets
+                + screwdriver.GetYieldAndError("ttbar_2l", cutAndCountRegions[i],"singleLepton").value() //  * SF_allOthers
+                + screwdriver.GetYieldAndError("W+jets",   cutAndCountRegions[i],"singleLepton").value() //  * SF_1ltop_and_Wjets
+                + screwdriver.GetYieldAndError("rare",     cutAndCountRegions[i],"singleLepton").value(); //  * SF_allOthers;
 
       // Apply scale factor from background prediction
-      float f_B = globalBackgroundUncertainty[i];
-      //float f_B = 0.15;
+      //float f_B = globalBackgroundUncertainty[i];
+      float f_B = 0.15;
 
       if (B < 1.0) B = 1.0;
  

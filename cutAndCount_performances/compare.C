@@ -1,11 +1,18 @@
 {
     gStyle->SetPaintTextFormat("4.1f");
    
-    string signalType = "T2bw-075";
+    string signalType = "T2tt";
 
     TFile* currentCuts_rawMC      = new TFile((signalType+"/currentCuts_rawMC.root").c_str(),"READ");
     TFile* currentCuts_prediction = new TFile((signalType+"/currentCuts_prediction.root").c_str(),"READ");
     TFile* newCuts_prediction     = new TFile((signalType+"/newCuts_prediction.root").c_str(),"READ");
+
+    ((TCanvas*) currentCuts_rawMC     ->Get("bestDiscoSet"))->SaveAs((signalType+"/bestSetDisco_currentCuts_rawMC.pdf"     ).c_str());
+    ((TCanvas*) currentCuts_prediction->Get("bestDiscoSet"))->SaveAs((signalType+"/bestSetDisco_currentCuts_prediction.pdf").c_str());
+    ((TCanvas*) newCuts_prediction    ->Get("bestDiscoSet"))->SaveAs((signalType+"/bestSetDisco_newCuts_prediction.pdf"    ).c_str());
+    ((TCanvas*) currentCuts_rawMC     ->Get("bestExcluSet"))->SaveAs((signalType+"/bestSetExclu_currentCuts_rawMC.pdf"     ).c_str());
+    ((TCanvas*) currentCuts_prediction->Get("bestExcluSet"))->SaveAs((signalType+"/bestSetExclu_currentCuts_prediction.pdf").c_str());
+    ((TCanvas*) newCuts_prediction    ->Get("bestExcluSet"))->SaveAs((signalType+"/bestSetExclu_newCuts_prediction.pdf"    ).c_str());
 
     ((TCanvas*) currentCuts_rawMC     ->Get("bestDiscoFOM"))->SaveAs((signalType+"/FOMDisco_currentCuts_rawMC.pdf"     ).c_str());
     ((TCanvas*) currentCuts_prediction->Get("bestDiscoFOM"))->SaveAs((signalType+"/FOMDisco_currentCuts_prediction.pdf").c_str());

@@ -104,11 +104,11 @@ int main (int argc, char *argv[])
 
      screwdriver.AddRegion("presel",            "Preselection",              &goesInPreselectionMTtail);
 
-     screwdriver.AddRegion("CC_offShell_Loose", "Cut&Count;Off-shell Loose", &Selector_cutAndCount_offShellLoose);
-     screwdriver.AddRegion("CC_offShell_Tight", "Cut&Count;Off-shell tight", &Selector_cutAndCount_offShellTight);
-     screwdriver.AddRegion("CC_lowDM",          "Cut&Count;Low #DeltaM",     &Selector_cutAndCount_lowDeltaM    );
-     screwdriver.AddRegion("CC_mediumDM",       "Cut&Count;Medium #DeltaM",  &Selector_cutAndCount_mediumDeltaM );
-     screwdriver.AddRegion("CC_highDM",         "Cut&Count;High #DeltaM",    &Selector_cutAndCount_highDeltaM   );
+     screwdriver.AddRegion("offShell_Loose", "Cut&Count;Off-shell Loose", &Selector_cutAndCount_offShellLoose);
+     screwdriver.AddRegion("offShell_Tight", "Cut&Count;Off-shell tight", &Selector_cutAndCount_offShellTight);
+     screwdriver.AddRegion("lowDM",          "Cut&Count;Low #DeltaM",     &Selector_cutAndCount_lowDeltaM    );
+     screwdriver.AddRegion("mediumDM",       "Cut&Count;Medium #DeltaM",  &Selector_cutAndCount_mediumDeltaM );
+     screwdriver.AddRegion("highDM",         "Cut&Count;High #DeltaM",    &Selector_cutAndCount_highDeltaM   );
    
   // ##########################
   // ##   Create Channels    ##
@@ -232,21 +232,25 @@ int main (int argc, char *argv[])
   // #############################
   // ##   Post-plotting tests   ##
   // #############################
-  
+ 
   printBoxedMessage("Now computing misc tests ... ");
+
+
+  vector<string> cutAndCountRegions =
+  {
+      "offShell_Loose",
+      "offShell_Tight",
+      "lowDM",
+      "mediumDM",
+      "highDM"
+  };
+
+  TableBackgroundSignal(&screwdriver,cutAndCountRegions,"singleLepton").Print();
+  TableBackgroundSignal(&screwdriver,cutAndCountRegions,"singleLepton").PrintLatex();
 
   // ##########################
   // ##   Compute FOM maps   ##
   // ##########################
-
-  vector<string> cutAndCountRegions =
-  {
-      "CC_offShell_Loose",
-      "CC_offShell_Tight",
-      "CC_lowDM",
-      "CC_mediumDM",
-      "CC_highDM"
-  };
 
   float SF_1ltop = 5;  
 
@@ -381,26 +385,33 @@ int main (int argc, char *argv[])
   // ##   Save those maps   ##
   // #########################
 
+  float lineOffset = 0.0;
+  string label;
+  if (signalCategory == "T2tt"    ) { lineOffset = 172; label = "T2tt;";            }
+  if (signalCategory == "T2bw-025") { lineOffset = 320; label = "T2bw (x = 0.25);"; }
+  if (signalCategory == "T2bw-050") { lineOffset = 160; label = "T2bw (x = 0.50);"; }
+  if (signalCategory == "T2bw-075") { lineOffset = 105; label = "T2bw (x = 0.75);"; }
+
   TFile fOutput(("../plots/cutAndCount_performances/"+signalCategory+"/custom.root").c_str(),"RECREATE");
   string pathExport = "../plots/cutAndCount_performances/"+signalCategory+"/";
   gStyle->SetPaintTextFormat("4.0f");
-  formatAndWriteMapPlot(&screwdriver,bestDiscoSetMap,bestDiscoSetMap->GetName(),signalCategory+";Best set of cuts;(for discovery)",pathExport);
-  formatAndWriteMapPlot(&screwdriver,bestExcluSetMap,bestExcluSetMap->GetName(),signalCategory+";Best set of cuts;(for exclusion)",pathExport);
+  formatAndWriteMapPlot(&screwdriver,bestDiscoSetMap,bestDiscoSetMap->GetName(),label+"Best set of cuts;(for discovery)",pathExport,lineOffset);
+  formatAndWriteMapPlot(&screwdriver,bestExcluSetMap,bestExcluSetMap->GetName(),label+"Best set of cuts;(for exclusion)",pathExport,lineOffset);
   gStyle->SetPaintTextFormat("4.1f");
   for (unsigned int i = 0 ; i < cutAndCountRegions.size() ; i++)
   {
       FOMdiscoveryMaps[i]->SetMaximum(5.0);
-      formatAndWriteMapPlot(&screwdriver,FOMdiscoveryMaps[i],FOMdiscoveryMaps[i]->GetName(),string("Discovery FOM for ")+cutAndCountRegions[i], pathExport);
-      formatAndWriteMapPlot(&screwdriver,    efficiencies[i],    efficiencies[i]->GetName(),string("Efficiencies for " )+cutAndCountRegions[i], pathExport);
+      formatAndWriteMapPlot(&screwdriver,FOMdiscoveryMaps[i],FOMdiscoveryMaps[i]->GetName(),string("Discovery FOM for ")+cutAndCountRegions[i], pathExport,lineOffset);
+      formatAndWriteMapPlot(&screwdriver,    efficiencies[i],    efficiencies[i]->GetName(),string("Efficiencies for " )+cutAndCountRegions[i], pathExport,lineOffset);
   }
   bestDiscoFOMMap->SetMaximum(5.0);
   bestExcluFOMMap->SetMaximum(5.0);
-  formatAndWriteMapPlot(&screwdriver,bestDiscoFOMMap,bestDiscoFOMMap->GetName(),signalCategory+";Best FOM;(for discovery)"              ,pathExport);
-  formatAndWriteMapPlot(&screwdriver,bestDiscoSigEff,bestDiscoSigEff->GetName(),signalCategory+";Best signal efficiency;(for discovery)",pathExport);
-  formatAndWriteMapPlot(&screwdriver,bestDiscoBkgEff,bestDiscoBkgEff->GetName(),signalCategory+";Best backgr efficiency;(for discovery)",pathExport);
-  formatAndWriteMapPlot(&screwdriver,bestExcluFOMMap,bestExcluFOMMap->GetName(),signalCategory+";Best FOM;(for exclusion)"              ,pathExport);
-  formatAndWriteMapPlot(&screwdriver,bestExcluSigEff,bestExcluSigEff->GetName(),signalCategory+";Best signal efficiency;(for exclusion)",pathExport);
-  formatAndWriteMapPlot(&screwdriver,bestExcluBkgEff,bestExcluBkgEff->GetName(),signalCategory+";Best backgr efficiency;(for exclusion)",pathExport);
+  formatAndWriteMapPlot(&screwdriver,bestDiscoFOMMap,bestDiscoFOMMap->GetName(),label+"Best FOM;(for discovery)"              ,pathExport,lineOffset);
+  formatAndWriteMapPlot(&screwdriver,bestDiscoSigEff,bestDiscoSigEff->GetName(),label+"Best signal efficiency;(for discovery)",pathExport,lineOffset);
+  formatAndWriteMapPlot(&screwdriver,bestDiscoBkgEff,bestDiscoBkgEff->GetName(),label+"Best backgr efficiency;(for discovery)",pathExport,lineOffset);
+  formatAndWriteMapPlot(&screwdriver,bestExcluFOMMap,bestExcluFOMMap->GetName(),label+"Best FOM;(for exclusion)"              ,pathExport,lineOffset);
+  formatAndWriteMapPlot(&screwdriver,bestExcluSigEff,bestExcluSigEff->GetName(),label+"Best signal efficiency;(for exclusion)",pathExport,lineOffset);
+  formatAndWriteMapPlot(&screwdriver,bestExcluBkgEff,bestExcluBkgEff->GetName(),label+"Best backgr efficiency;(for exclusion)",pathExport,lineOffset);
   fOutput.Close();
 
   printBoxedMessage("Program done.");

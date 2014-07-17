@@ -230,10 +230,6 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
 
-  // ##########################
-  // ##   Compute FOM maps   ##
-  // ##########################
-
   vector<string> cutAndCountRegions =
   {
       "offShell",   
@@ -253,6 +249,13 @@ int main (int argc, char *argv[])
       0.4
   };
 
+  TableBackgroundSignal(&screwdriver,cutAndCountRegions,"singleLepton").Print();
+  TableBackgroundSignal(&screwdriver,cutAndCountRegions,"singleLepton").PrintLatex();
+  
+  // ##########################
+  // ##   Compute FOM maps   ##
+  // ##########################
+ 
   vector<TH2F*> signalMaps;
   vector<TH2F*> FOMdiscoveryMaps;
   vector<TH2F*> FOMexclusionMaps;

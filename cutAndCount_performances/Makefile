@@ -35,6 +35,8 @@ LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
 #DEFAULT_TARGET = Plotting_T2tt
 DEFAULT_TARGET = Plotting_T2bw-x025
+#DEFAULT_TARGET = Plotting_T2bw-x050
+#DEFAULT_TARGET = Plotting_T2bw-x075
 #------------------------------------------------------------------------------
 
 all: compile run
@@ -48,7 +50,7 @@ compare:
 	root -l -b -q -L compare.C 
 
 browse:
-	export PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*.root`; root -l .browse
+	export PLOTS_TO_BROWSE=`ls ../plots/$(shell basename `pwd`)/*/*.root`; root -l .browse
 
 clean:
 	@echo "Cleaning..."
