@@ -139,15 +139,14 @@ void backgroundEstimation::ResetSystematics()
 
 Figure backgroundEstimation::ComputePrediction()
 {
+    ComputeSFpre();
+    ComputeSFpost();
+    ComputeRandSFR();
+    
     ComputeSF2l();
     ComputeSFvetopeak();
     ComputeSF2ltail();
     ComputeSFvetotail();
-
-    ComputeK3K4();
-    ComputeSFpre();
-    ComputeSFpost();
-    ComputeRandSFR();
 
     FillPredictionTable();
     return predictionTable.Get("prediction","totalSM");
