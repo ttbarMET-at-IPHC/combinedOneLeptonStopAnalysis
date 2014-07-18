@@ -60,7 +60,13 @@ using namespace theDoctor;
 #define OUTPUT_FOLDER "./results/"
 
 #define OBSERVABLE_FOR_FIT "Mlb"
-TRandom* randomnessGenerator; 
+TRandom* randomnessGenerator;
+
+// Uncertainty of the template fit method itself,
+// coming from test with MCstat, JES, algorithms, ...
+
+#define TEMPLATE_FIT_METHOD_UNCERTAINTY 0.2
+
 
 // ##############################
 // # Regions for BDT correction #
@@ -270,7 +276,7 @@ void initCutAndCountCuts()
     listCutAndCounts_cuts["cutAndCount_T2tt_offShellTight"]   = { "MT_130", "MET_300"          };
     listCutAndCounts_cuts["cutAndCount_T2tt_lowDeltaM"]       = { "MT_140", "METoverSqrtHT_8"  };
     listCutAndCounts_cuts["cutAndCount_T2tt_mediumDeltaM"]    = { "MT_140", "MET_200"          };
-    listCutAndCounts_cuts["cutAndCount_T2tt_highDeltaM"]      = { "MT_130", "MET_350"          };
+    listCutAndCounts_cuts["cutAndCount_T2tt_highDeltaM"]      = { "MT_130", "MET_300"          }; // (FIXME) NB : real MET cut here is 350 ...
     
     listCutAndCounts_cuts["cutAndCount_T2bw025_offShell"]     = { "MT_120", "METoverSqrtHT_9"  };
     listCutAndCounts_cuts["cutAndCount_T2bw025_lowMasses"]    = { "MT_120", "METoverSqrtHT_6"  };

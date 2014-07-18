@@ -634,13 +634,13 @@ int main()
 
     varname=OBSERVABLE_FOR_FIT;
 
-    float mean_SF1ltop = 0;
-    float rms_SF1ltop = 0;
-    float MaxStatUncert_SF1ltop = 0;
+    float mean_SF1ltop_value = 0;
+    float mean_SF1ltop_error = 0;
+    float rms_SF1ltop_value = 0;
 
-    float mean_SFwjets = 0;
-    float rms_SFwjets = 0;
-    float MaxStatUncert_SFwjets = 0;
+    float mean_SFwjets_value = 0;
+    float mean_SFwjets_error = 0;
+    float rms_SFwjets_value = 0;
 
     for(unsigned int i=0;i<listBDTSignalRegions_MTtail.size();i++)
     {
@@ -690,14 +690,17 @@ int main()
 
         //Computation of mean/rms/ ..
         //It is based on  the ratio SF_tail/SF_peak
+        
         //-- 1ltop
-        mean_SF1ltop+=SFR_1ltop.value();
-        rms_SF1ltop+=(SFR_1ltop.value()*SFR_1ltop.value());
-        if (MaxStatUncert_SF1ltop < SFR_1ltop.error()/SFR_1ltop.value())  MaxStatUncert_SF1ltop=SFR_1ltop.error()/SFR_1ltop.value();
+        mean_SF1ltop_value += SFR_1ltop.value();
+        mean_SF1ltop_error += SFR_1ltop.error();
+        rms_SF1ltop_value  += (SFR_1ltop.value()*SFR_1ltop.value());
+        
         //-- W+jets
-        mean_SFwjets+=SFR_wjets.value();
-        rms_SFwjets+=(SFR_wjets.value()*SFR_wjets.value());
-        if (MaxStatUncert_SFwjets < SFR_wjets.error()/SFR_wjets.value())  MaxStatUncert_SFwjets=SFR_wjets.error()/SFR_wjets.value();
+        mean_SFwjets_value += SFR_wjets.value();
+        mean_SFwjets_error += SFR_wjets.error();
+        rms_SFwjets_value  += (SFR_wjets.value()*SFR_wjets.value());
+
         //-----------------------------------
 
         //SFR
@@ -721,17 +724,27 @@ int main()
 
 
     //---------------------------------------//
-    //We add quadratically 20% uncert. on the fit procedure (MC stat, JES, etc...
-    float SystUncert = 0.2;
-    mean_SF1ltop/=listBDTSignalRegions_MTtail.size();
-    rms_SF1ltop/=listBDTSignalRegions_MTtail.size();
-    rms_SF1ltop-=(mean_SF1ltop*mean_SF1ltop);
-    Figure BDT_SF1ltop(mean_SF1ltop,sqrt(rms_SF1ltop+MaxStatUncert_SF1ltop*MaxStatUncert_SF1ltop*mean_SF1ltop*mean_SF1ltop+pow(SystUncert*mean_SF1ltop,2)));
+
+    mean_SF1ltop_value /= listBDTSignalRegions_MTtail.size();
+    mean_SF1ltop_error /= listBDTSignalRegions_MTtail.size();
+    
+    rms_SF1ltop_value  /= listBDTSignalRegions_MTtail.size();
+    rms_SF1ltop_value  -= (mean_SF1ltop_value*mean_SF1ltop_value);
+
+    Figure BDT_SF1ltop(mean_SF1ltop_value,sqrt(rms_SF1ltop_value
+                                              +mean_SF1ltop_error*mean_SF1ltop_error
+                                              +pow(TEMPLATE_FIT_METHOD_UNCERTAINTY*mean_SF1ltop_value,2)));
     //---------------------------------------//
-    mean_SFwjets/=listBDTSignalRegions_MTtail.size();
-    rms_SFwjets/=listBDTSignalRegions_MTtail.size();
-    rms_SFwjets-=(mean_SFwjets*mean_SFwjets);
-    Figure BDT_SFwjets(mean_SFwjets,sqrt(rms_SFwjets+MaxStatUncert_SFwjets*MaxStatUncert_SFwjets*mean_SFwjets*mean_SFwjets+pow(SystUncert*mean_SF1ltop,2)));
+    
+    mean_SFwjets_value /= listBDTSignalRegions_MTtail.size();
+    mean_SFwjets_error /= listBDTSignalRegions_MTtail.size();
+
+    rms_SFwjets_value  /= listBDTSignalRegions_MTtail.size();
+    rms_SFwjets_value  -= (mean_SFwjets_value*mean_SFwjets_value);
+
+    Figure BDT_SFwjets(mean_SFwjets_value,sqrt(rms_SFwjets_value
+                                              +mean_SFwjets_error*mean_SFwjets_error
+                                              +pow(TEMPLATE_FIT_METHOD_UNCERTAINTY*mean_SFwjets_value,2)));
     //---------------------------------------//
 
     for(unsigned int i=0;i<listBDTSignalRegions.size();i++)
@@ -854,13 +867,11 @@ int main()
                                                -SFR_CC_wjets_map[cuts[i].c_str()].value(),2)
                                            ));
         }
-        //Add quadratically uncert. of the fit itself (JES, MC stat. ...)
-        // FIXME What to do here ? mean_SF is not recomputed for C&C 
-        // and it doesn't make sense to do it for C&C since the MT cuts are not the same...
         
-        //SFR_CC_1ltop = Figure(SFR_CC_1ltop.value(),sqrt(pow(SFR_CC_1ltop.error(),2)+pow(SystUncert*mean_SF1ltop ,2)));
-        //SFR_CC_wjets = Figure(SFR_CC_wjets.value(),sqrt(pow(SFR_CC_wjets.error(),2)+pow(SystUncert*mean_SFwjets, 2)));
-        
+        // Add 20% of uncertainty for fit itself (JES, MC stat. ...)
+        SFR_CC_1ltop *= Figure(1.0,TEMPLATE_FIT_METHOD_UNCERTAINTY);
+        SFR_CC_wjets *= Figure(1.0,TEMPLATE_FIT_METHOD_UNCERTAINTY);
+
         tableSFR.Set("SFR_1ltop",listCutAndCounts[r],SFR_CC_1ltop);
         tableSFR.Set("SFR_wjets",listCutAndCounts[r],SFR_CC_wjets);
     }

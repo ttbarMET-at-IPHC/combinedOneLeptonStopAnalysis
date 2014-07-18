@@ -51,7 +51,11 @@ MTTailCorrectionProducer:
 	ROOFITLDFLAGS="-lRooFit -lRooFitCore"
 
 MTTailCorrection: MTTailCorrectionProducer
-	LD_LIBRARY_PATH="$(shell /opt/sbg/data/safe1/cms/echabert/root_v5.34.05/bin/root-config --libdir):$$LD_LIBRARY_PATH" ./MTTailCorrectionProducer.$(ExeSuf) | tee MTTailCorrectionProducer.$(LogSuf)
+	@echo ""
+	@echo " [Producing scale factors to correct MT tail...]"
+	@echo ""
+	@LD_LIBRARY_PATH="$(shell /opt/sbg/data/safe1/cms/echabert/root_v5.34.05/bin/root-config --libdir):$$LD_LIBRARY_PATH" ./MTTailCorrectionProducer.$(ExeSuf) > MTTailCorrectionProducer.$(LogSuf)
+	@cat results/SFR.tab
 
 clean:
 	@echo "Cleaning..."
