@@ -1,64 +1,15 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// 'ORGANIZATION AND SIMULTANEOUS FITS' RooFit tutorial macro #501
-// 
-// Using simultaneous p.d.f.s to describe simultaneous fits to multiple
-// datasets
-//
-//
-//
-// 07/2008 - Wouter Verkerke 
-// 
-/////////////////////////////////////////////////////////////////////////
 
-#ifndef __CINT__
-#include "RooGlobalFunc.h"
-#endif
-#include "RooRealVar.h"
-#include "RooDataSet.h"
-#include "RooGaussian.h"
-#include "RooConstVar.h"
-#include "RooChebychev.h"
-#include "RooAddPdf.h"
-#include "RooSimultaneous.h"
-#include "RooCategory.h"
-#include "RooDataHist.h"
-#include "RooHistPdf.h"
-#include "RooPlot.h"
-#include "RooFitResult.h"
-#include "TCanvas.h"
-#include "TAxis.h"
-#include "TFile.h"
-#include "TH1F.h"
-#include "THStack.h"
-#include "TRandom.h"
-#include "TMath.h"
+// ########################################################################
+// #  Thanks to Wouter Verkerke, awesome stat teacher, for original code  #
+// #                                                                      #
+// # 'ORGANIZATION AND SIMULTANEOUS FITS' RooFit tutorial macro #501      #
+// # Using simultaneous p.d.f.s to describe simultaneous fits to multiple #
+// # datasets                                                             #
+// #                                                                      #
+// # 07/2008                                                              #
+// ########################################################################
 
-#include "interface/Table.h" 
-
-// Congratulations for most useless define ever...
-//#define PlotDir plots4CR1 
-
-#define inputPlotsFolder string("./inputPlots/")
-
-using namespace RooFit ;
-//using namespace theDoctor ;
-
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
-
-#include "../sonicScrewdriver/interface/Figure.h"
-using namespace theDoctor;
-
-
-
-//global variable !
-TRandom* rand_; 
+#include "MTTailCorrectionProducer.h"
 
 std::pair<double,double>  GetSF(RooFitResult* res, string param)
 {
@@ -76,13 +27,6 @@ std::pair<double,double>  GetSF(RooFitResult* res, string param)
     return pSF;
 }
 
-
-/*
-   RooHistPdf* GetRooHistPdf(TFile* fin, string region, string process, string varname, RooRealVar* var, float& norm, bool do_mcstat)
-   {
-   TH1F* h  =  GetHisto(fin,region,process,varname, norm);
-   }
-   */
 //----------  Retrieve pdf (norm distrib) -----------------//
 
 TH1F* GetHisto(TFile* fin, string region, string process, string varname, float& norm)
@@ -116,7 +60,7 @@ RooHistPdf* GetRooHistPdf(TFile* fin, string region, string process, string varn
         //randomisation of the histo ...
         for(int i=1;i<=h->GetNbinsX();i++)
         {
-            h->SetBinContent(i,rand_->Gaus(h->GetBinContent(i),h->GetBinError(i)));
+            h->SetBinContent(i,randomnessGenerator->Gaus(h->GetBinContent(i),h->GetBinError(i)));
         }
     }
     string rdhname = "rdh_"+region+"_"+process;
@@ -277,8 +221,8 @@ struct FitSetup{
 
     void Reset()
     {
-        filename=inputPlotsFolder+"/1DDataMCComparison.root";
-        varname="Mlb";
+        filename=string(INPUT_FOLDER)+"/1DDataMCComparison.root";
+        varname=OBSERVABLE_FOR_FIT;
         varMin = 0;
         varMax = 1000;
         region = "0btag_MTtail";
@@ -511,12 +455,13 @@ struct SummaryResult{
 
 int main()
 {
-    //init random 
-    rand_ = new TRandom();
+    randomnessGenerator = new TRandom();
+
+    system((string("mkdir -p ")+OUTPUT_FOLDER).c_str());
 
     // Create observables
-    RooRealVar var("Mlb","Mlb",0,600) ;
-    string varname("Mlb");
+    RooRealVar var(OBSERVABLE_FOR_FIT,OBSERVABLE_FOR_FIT,0,600) ;
+    string varname(OBSERVABLE_FOR_FIT);
 
     SummaryResult summary;
 
@@ -627,9 +572,9 @@ int main()
     //--- JES uncertainty --//
     /*
     setup.Reset(); conditions="JES"; uncert.name = conditions;
-    setup.varname="Mlb_JESdown"; setup.varMin=0; setup.varMax=600;
+    setup.varname=OBSERVABLE_FOR_FIT+"_JESdown"; setup.varMin=0; setup.varMax=600;
     res = doFit(setup,conditions); value_down_SF_tt1l = res.SF_tt1l.first ; value_down_SF_wjets = res.SF_wjets.first;
-    setup.varname="Mlb_JESup"; setup.varMin=0; setup.varMax=600;
+    setup.varname=OBSERVABLE_FOR_FIT+"_JESup"; setup.varMin=0; setup.varMax=600;
     res = doFit(setup,conditions); value_up_SF_tt1l = res.SF_tt1l.first ; value_up_SF_wjets = res.SF_wjets.first;
     uncert.SF_tt1l_uncert = fabs((value_down_SF_tt1l-value_up_SF_tt1l)/2.); 
     uncert.SF_wjets_uncert = fabs((value_down_SF_wjets-value_up_SF_wjets)/2.); 
@@ -650,7 +595,7 @@ int main()
        res = doFit(setup,conditions); 
        */
     /*
-       setup.varname="Mlb"; setup.varMin=0; setup.varMax=600;
+       setup.varname=OBSERVABLE_FOR_FIT; setup.varMin=0; setup.varMax=600;
        res = doFit(setup,conditions); 
        setup.varname="leadingJetPt"; setup.varMin=0; setup.varMax=600;
        res = doFit(setup,conditions); 
@@ -672,7 +617,7 @@ int main()
        res = doFit(setup,conditions); 
        */
     setup.Reset(); conditions="variables2"; setup.region="0btag_MTpeak"; uncert.name = conditions;
-    setup.varname="Mlb"; setup.varMin=0; setup.varMax=600;
+    setup.varname=OBSERVABLE_FOR_FIT; setup.varMin=0; setup.varMax=600;
     res = doFit(setup,conditions); 
     setup.varname="M3b"; setup.region="0btag_MTpeak";
     res = doFit(setup,conditions); 
@@ -694,95 +639,15 @@ int main()
     //-- Apply the template fit on each SR --//
     //---------------------------------------//
 
-    vector<string> signalRegions = 
-    {
-        "LowBDT_T2tt_1",  
-        "LowBDT_T2tt_2",  
-        "LowBDT_T2tt_5",  
-        "LowBDT_T2bw075_1",  
-        "LowBDT_T2bw075_2",  
-        "LowBDT_T2bw075_3",  
-        "LowBDT_T2bw075_5",  
-        "LowBDT_T2bw050_1",  
-        "LowBDT_T2bw050_3",  
-        "LowBDT_T2bw050_4",  
-        "LowBDT_T2bw050_5",  
-        "LowBDT_T2bw050_6",  
-        "LowBDT_T2bw025_1",  
-        "LowBDT_T2bw025_3",  
-        "LowBDT_T2bw025_4",  
-        "LowBDT_T2bw025_6"
-    };
-
-    vector<string> signalRegions_MTpeak = 
-    {
-        "LowBDT_MTpeak_T2tt_1",  
-        "LowBDT_MTpeak_T2tt_2",  
-        "LowBDT_MTpeak_T2tt_5",  
-        "LowBDT_MTpeak_T2bw075_1",  
-        "LowBDT_MTpeak_T2bw075_2",  
-        "LowBDT_MTpeak_T2bw075_3",  
-        "LowBDT_MTpeak_T2bw075_5",  
-        "LowBDT_MTpeak_T2bw050_1",  
-        "LowBDT_MTpeak_T2bw050_3",  
-        "LowBDT_MTpeak_T2bw050_4",  
-        "LowBDT_MTpeak_T2bw050_5",  
-        "LowBDT_MTpeak_T2bw050_6",  
-        "LowBDT_MTpeak_T2bw025_1",  
-        "LowBDT_MTpeak_T2bw025_3",  
-        "LowBDT_MTpeak_T2bw025_4",  
-        "LowBDT_MTpeak_T2bw025_6"
-    };
-
-    vector<string> signalRegions_MTpeak_NoBtag = 
-    {
-        "LowBDT_MTPeakNoBtag_T2tt_1",  
-        "LowBDT_MTPeakNoBtag_T2tt_2",  
-        "LowBDT_MTPeakNoBtag_T2tt_5",  
-        "LowBDT_MTPeakNoBtag_T2bw075_1",  
-        "LowBDT_MTPeakNoBtag_T2bw075_2",  
-        "LowBDT_MTPeakNoBtag_T2bw075_3",  
-        "LowBDT_MTPeakNoBtag_T2bw075_5",  
-        "LowBDT_MTPeakNoBtag_T2bw050_1",  
-        "LowBDT_MTPeakNoBtag_T2bw050_3",  
-        "LowBDT_MTPeakNoBtag_T2bw050_4",  
-        "LowBDT_MTPeakNoBtag_T2bw050_5",  
-        "LowBDT_MTPeakNoBtag_T2bw050_6",  
-        "LowBDT_MTPeakNoBtag_T2bw025_1",  
-        "LowBDT_MTPeakNoBtag_T2bw025_3",  
-        "LowBDT_MTPeakNoBtag_T2bw025_4",  
-        "LowBDT_MTPeakNoBtag_T2bw025_6"
-    };
-
-    vector<string> signalRegions_MTpeak_OneBtag = 
-    {
-        "LowBDT_MTPeakOneBtag_T2tt_1",  
-        "LowBDT_MTPeakOneBtag_T2tt_2",  
-        "LowBDT_MTPeakOneBtag_T2tt_5",  
-        "LowBDT_MTPeakOneBtag_T2bw075_1",  
-        "LowBDT_MTPeakOneBtag_T2bw075_2",  
-        "LowBDT_MTPeakOneBtag_T2bw075_3",  
-        "LowBDT_MTPeakOneBtag_T2bw075_5",  
-        "LowBDT_MTPeakOneBtag_T2bw050_1",  
-        "LowBDT_MTPeakOneBtag_T2bw050_3",  
-        "LowBDT_MTPeakOneBtag_T2bw050_4",  
-        "LowBDT_MTPeakOneBtag_T2bw050_5",  
-        "LowBDT_MTPeakOneBtag_T2bw050_6",  
-        "LowBDT_MTPeakOneBtag_T2bw025_1",  
-        "LowBDT_MTPeakOneBtag_T2bw025_3",  
-        "LowBDT_MTPeakOneBtag_T2bw025_4",  
-        "LowBDT_MTPeakOneBtag_T2bw025_6"
-    };
-
     //Create histos
-    TH1F h_SF_MTpeak_BDT_tt1l ("h_SF_MTpeak_BDT_tt1l",  "", signalRegions.size(),0,signalRegions.size());
-    TH1F h_SF_MTtail_BDT_tt1l ("h_SF_MTtail_BDT_tt1l",  "", signalRegions.size(),0,signalRegions.size());
-    TH1F h_SFR_BDT_tt1l       ("h_SFR_BDT_tt1l",        "", signalRegions.size(),0,signalRegions.size());
-    TH1F h_SF_MTpeak_BDT_wjets("h_SF_MTpeak_BDT_wjets", "", signalRegions.size(),0,signalRegions.size());
-    TH1F h_SF_MTtail_BDT_wjets("h_SF_MTtail_BDT_wjets", "", signalRegions.size(),0,signalRegions.size());
-    TH1F h_SFR_BDT_wjets      ("h_SFR_BDT_wjets",       "", signalRegions.size(),0,signalRegions.size());
+    TH1F h_SF_MTpeak_BDT_tt1l ("h_SF_MTpeak_BDT_tt1l",  "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
+    TH1F h_SF_MTtail_BDT_tt1l ("h_SF_MTtail_BDT_tt1l",  "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
+    TH1F h_SFR_BDT_tt1l       ("h_SFR_BDT_tt1l",        "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
+    TH1F h_SF_MTpeak_BDT_wjets("h_SF_MTpeak_BDT_wjets", "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
+    TH1F h_SF_MTtail_BDT_wjets("h_SF_MTtail_BDT_wjets", "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
+    TH1F h_SFR_BDT_wjets      ("h_SFR_BDT_wjets",       "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
 
-    varname="Mlb";
+    varname=OBSERVABLE_FOR_FIT;
 
     float mean_SFtt1l = 0;
     float rms_SFtt1l = 0;
@@ -792,16 +657,16 @@ int main()
     float rms_SFwjets = 0;
     float MaxStatUncert_SFwjets = 0;
 
-    for(unsigned int i=0;i<signalRegions.size();i++)
+    for(unsigned int i=0;i<listBDTSignalRegions_MTtail.size();i++)
     {
-        cout<<"%%%%%%%%%%%%%%%%%% "<<signalRegions[i]<<endl;
+        cout<<"%%%%%%%%%%%%%%%%%% "<<listBDTSignalRegions_MTtail[i]<<endl;
 
-        string label = signalRegions[i].substr(7);
+        string label = listBDTSignalRegions_MTtail[i].substr(7);
         Figure SFR_tt1l;
         Figure SFR_wjets;
 
         //MT tail
-        setup.Reset(); conditions="sigRegions_tail"; setup.region=signalRegions[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.Reset(); conditions="sigRegions_tail"; setup.region=listBDTSignalRegions_MTtail[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
         res = doFit(setup,conditions); 
         SFR_tt1l=Figure(res.SF_tt1l.first,res.SF_tt1l.second);
         SFR_wjets=Figure(res.SF_wjets.first,res.SF_wjets.second);
@@ -813,7 +678,7 @@ int main()
         h_SF_MTtail_BDT_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
 
         //MT peak
-        setup.Reset(); conditions="sigRegions_peak"; setup.region=signalRegions_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.Reset(); conditions="sigRegions_peak"; setup.region=listBDTSignalRegions_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
         res = doFit(setup,conditions); 
         h_SF_MTpeak_BDT_tt1l.SetBinContent(i+1,res.SF_tt1l.first);
         h_SF_MTpeak_BDT_tt1l.SetBinError(i+1,res.SF_tt1l.second);
@@ -829,11 +694,11 @@ int main()
         //-- do some additionnal test as function of the b-tag multiplicity
 
         //MT peak (no btag req)
-        setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=listBDTSignalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
         res = doFit(setup,conditions); 
 
         //MT peak (one btag req)
-        setup.Reset(); conditions="sigRegions_peak_OneBtag"; setup.region=signalRegions_MTpeak_OneBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.Reset(); conditions="sigRegions_peak_OneBtag"; setup.region=listBDTSignalRegions_MTpeak_OneBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
         res = doFit(setup,conditions); 
 
         //-- End of additionnal tests
@@ -864,7 +729,7 @@ int main()
         cout<<"signRegions: SFR_tt1l: "<<SFR_tt1l.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
     }
     //Save plots in roofile
-    TFile fCR1_BDT("CR1_BDT.root","RECREATE");
+    TFile fCR1_BDT((string(OUTPUT_FOLDER)+"/CR1_BDT.root").c_str(),"RECREATE");
     h_SF_MTpeak_BDT_tt1l.Write();
     h_SF_MTpeak_BDT_wjets.Write();
     h_SF_MTtail_BDT_tt1l.Write();
@@ -876,129 +741,55 @@ int main()
     //---------------------------------------//
     //We add quadratically 20% uncert. on the fit procedure (MC stat, JES, etc...
     float SystUncert = 0.2;
-    mean_SFtt1l/=signalRegions.size();
-    rms_SFtt1l/=signalRegions.size();
+    mean_SFtt1l/=listBDTSignalRegions_MTtail.size();
+    rms_SFtt1l/=listBDTSignalRegions_MTtail.size();
     rms_SFtt1l-=(mean_SFtt1l*mean_SFtt1l);
     Figure BDT_SFtt1l(mean_SFtt1l,sqrt(rms_SFtt1l+MaxStatUncert_SFtt1l*MaxStatUncert_SFtt1l*mean_SFtt1l*mean_SFtt1l+pow(SystUncert*mean_SFtt1l,2)));
     //---------------------------------------//
-    mean_SFwjets/=signalRegions.size();
-    rms_SFwjets/=signalRegions.size();
+    mean_SFwjets/=listBDTSignalRegions_MTtail.size();
+    rms_SFwjets/=listBDTSignalRegions_MTtail.size();
     rms_SFwjets-=(mean_SFwjets*mean_SFwjets);
     Figure BDT_SFwjets(mean_SFwjets,sqrt(rms_SFwjets+MaxStatUncert_SFwjets*MaxStatUncert_SFwjets*mean_SFwjets*mean_SFwjets+pow(SystUncert*mean_SFtt1l,2)));
     //---------------------------------------//
 
 
-    vector<string> sigReglabels(signalRegions.size());
-    for(unsigned int i=0;i<signalRegions.size();i++)
+    vector<string> sigReglabels(listBDTSignalRegions_MTtail.size());
+    for(unsigned int i=0;i<listBDTSignalRegions_MTtail.size();i++)
     {
-        sigReglabels[i] = signalRegions[i].substr(3);
+        sigReglabels[i] = listBDTSignalRegions_MTtail[i].substr(3);
     } 
     vector<string> columns = {"SFR_tt1l","SFR_wjets"};
     Table SFR_BDT(columns,sigReglabels,columns,sigReglabels);
 
 
-    for(unsigned int i=0;i<signalRegions.size();i++)
+    for(unsigned int i=0;i<listBDTSignalRegions_MTtail.size();i++)
     {
         SFR_BDT.Set("SFR_tt1l",sigReglabels[i],BDT_SFtt1l);
         SFR_BDT.Set("SFR_wjets",sigReglabels[i],BDT_SFwjets);
     }
-    SFR_BDT.Print("scaleFactors/SFR_BDT.tab",4);
+    SFR_BDT.Print(string(OUTPUT_FOLDER)+"/SFR_BDT.tab",4);
     //---------------------------------------//
-
-    vector<string> signalRegions_CC = 
-    {
-        "CR0btag_MTtail_MT_120",
-        "CR0btag_MTtail_MT_125", 
-        "CR0btag_MTtail_MT_130",
-        "CR0btag_MTtail_MT_140", 
-        "CR0btag_MTtail_MT_150", 
-        "CR0btag_MTtail_MT_160",
-        "CR0btag_MTtail_MET_200",  
-        "CR0btag_MTtail_MET_250",  
-        "CR0btag_MTtail_MET_300",  
-        "CR0btag_MTtail_MET_320",  
-        "CR0btag_MTtail_METoverSqrtHT_6",  
-        "CR0btag_MTtail_METoverSqrtHT_7",  
-        "CR0btag_MTtail_METoverSqrtHT_8",  
-        "CR0btag_MTtail_METoverSqrtHT_9",  
-        "CR0btag_MTtail_METoverSqrtHT_10",  
-        "CR0btag_MTtail_METoverSqrtHT_12",  
-        "CR0btag_MTtail_BPt_100", 
-        "CR0btag_MTtail_BPt_150",  
-        "CR0btag_MTtail_BPt_180",  
-        "CR0btag_MTtail_DPhi_02",  
-        "CR0btag_MTtail_DPhi_08",  
-        "CR0btag_MTtail_ISRJet",  
-        "CR0btag_MTtail_MT2W_180",  
-        "CR0btag_MTtail_MT2W_190"         
-    };
-    vector<string> signalRegions_CC_MTpeak = 
-    {
-        "0btag_MTpeak", 
-        "0btag_MTpeak",  
-        "0btag_MTpeak",   
-        "0btag_MTpeak",  
-        "0btag_MTpeak",  
-        "0btag_MTpeak", 
-        "CR0btag_MTpeak_MET_200",  
-        "CR0btag_MTpeak_MET_250",  
-        "CR0btag_MTpeak_MET_300",  
-        "CR0btag_MTpeak_MET_320",  
-        "CR0btag_MTpeak_METoverSqrtHT_6",  
-        "CR0btag_MTpeak_METoverSqrtHT_7",  
-        "CR0btag_MTpeak_METoverSqrtHT_8",  
-        "CR0btag_MTpeak_METoverSqrtHT_9",  
-        "CR0btag_MTpeak_METoverSqrtHT_10",  
-        "CR0btag_MTpeak_METoverSqrtHT_12",  
-        "CR0btag_MTpeak_BPt_100",  
-        "CR0btag_MTtail_BPt_150", 
-        "CR0btag_MTpeak_BPt_180",  
-        "CR0btag_MTpeak_DPhi_02",  
-        "CR0btag_MTpeak_DPhi_08",  
-        "CR0btag_MTpeak_ISRJet",  
-        "CR0btag_MTpeak_MT2W_180",  
-        "CR0btag_MTpeak_MT2W_190"         
-    };
-
-    std::map<string,vector<string> > CC_Cuts;
-    CC_Cuts["cutAndCount_T2tt_offShellLoose"]         = {"MT_125"};
-    CC_Cuts["cutAndCount_T2tt_offShellTight"]         = {"MT_130","MET_300"};
-    CC_Cuts["cutAndCount_T2tt_lowDeltaM"]             = {"MT_140","METoverSqrtHT_8"};
-    CC_Cuts["cutAndCount_T2tt_mediumDeltaM"]          = {"MT_140","MET_200"};
-    CC_Cuts["cutAndCount_T2tt_highDeltaM"]            = {"MT_130","MET_350"};
-    CC_Cuts["cutAndCount_T2bw025_veryOffShell_loose"] = {"MT_120","METoverSqrtHT_9"};
-    CC_Cuts["cutAndCount_T2bw025_offShell_looSS"]     = {"MT_120","METoverSqrtHT_7"};
-    CC_Cuts["cutAndCount_T2bw025_lowDeltaM_tight"]    = {"MT_120","METoverSqrtHT_6"};
-    CC_Cuts["cutAndCount_T2bw025_highDeltaM"]         = {"MT_140","METoverSqrtHT_10"};
-    CC_Cuts["cutAndCount_T2bw050_offShell_loose"]     = {"MT_120","METoverSqrtHT_9"};
-    CC_Cuts["cutAndCount_T2bw050_lowMass"]            = {"MT_120","METoverSqrtHT_6"};
-    CC_Cuts["cutAndCount_T2bw050_mediumDeltaM_loose"] = {"MT_150","METoverSqrtHT_7"};
-    CC_Cuts["cutAndCount_T2bw050_highDeltaM"]         = {"MT_160","METoverSqrtHT_10"};
-    CC_Cuts["cutAndCount_T2bw075_lowDeltaM_tight"]    = {"MT_120","METoverSqrtHT_12"};
-    CC_Cuts["cutAndCount_T2bw075_mediumDeltaM"]       = {"MT_120","METoverSqrtHT_10"};
-    CC_Cuts["cutAndCount_T2bw075_highDeltaM"]         = {"MT_140","MET_320"};
-
     std::map<string,Figure> SFR_CC_tt1l_map;
     std::map<string,Figure> SFR_CC_wjets_map;
 
     //Create histos
-    TH1F h_SF_MTpeak_CC_tt1l ("h_SF_MTpeak_CC_tt1l",  "", signalRegions_CC.size(), 0, signalRegions_CC.size());
-    TH1F h_SF_MTtail_CC_tt1l ("h_SF_MTtail_CC_tt1l",  "", signalRegions_CC.size(), 0, signalRegions_CC.size());
-    TH1F h_SFR_CC_tt1l       ("h_SFR_CC_tt1l",        "", signalRegions_CC.size(), 0, signalRegions_CC.size());
-    TH1F h_SF_MTpeak_CC_wjets("h_SF_MTpeak_CC_wjets", "", signalRegions_CC.size(), 0, signalRegions_CC.size());
-    TH1F h_SF_MTtail_CC_wjets("h_SF_MTtail_CC_wjets", "", signalRegions_CC.size(), 0, signalRegions_CC.size());
-    TH1F h_SFR_CC_wjets      ("h_SFR_CC_wjets",       "", signalRegions_CC.size(), 0, signalRegions_CC.size());
+    TH1F h_SF_MTpeak_CC_tt1l ("h_SF_MTpeak_CC_tt1l",  "", listIndividualCuts_MTtail.size(), 0, listIndividualCuts_MTtail.size());
+    TH1F h_SF_MTtail_CC_tt1l ("h_SF_MTtail_CC_tt1l",  "", listIndividualCuts_MTtail.size(), 0, listIndividualCuts_MTtail.size());
+    TH1F h_SFR_CC_tt1l       ("h_SFR_CC_tt1l",        "", listIndividualCuts_MTtail.size(), 0, listIndividualCuts_MTtail.size());
+    TH1F h_SF_MTpeak_CC_wjets("h_SF_MTpeak_CC_wjets", "", listIndividualCuts_MTtail.size(), 0, listIndividualCuts_MTtail.size());
+    TH1F h_SF_MTtail_CC_wjets("h_SF_MTtail_CC_wjets", "", listIndividualCuts_MTtail.size(), 0, listIndividualCuts_MTtail.size());
+    TH1F h_SFR_CC_wjets      ("h_SFR_CC_wjets",       "", listIndividualCuts_MTtail.size(), 0, listIndividualCuts_MTtail.size());
 
-    for(unsigned int i=0;i<signalRegions_CC.size();i++)
+    for(unsigned int i=0;i<listIndividualCuts_MTtail.size();i++)
     {
-        cout<<"%%%%%%%%%%%%%%%%%% "<<signalRegions_CC[i]<<endl;
+        cout<<"%%%%%%%%%%%%%%%%%% "<<listIndividualCuts_MTtail[i]<<endl;
 
-        string label = signalRegions_CC[i].substr(15);
+        string label = listIndividualCuts_MTtail[i].substr(15);
         Figure SFR_tt1l;
         Figure SFR_wjets;
 
         //MT tail
-        setup.Reset(); conditions="sigRegions_CC_tail"; setup.region=signalRegions_CC[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.Reset(); conditions="sigRegions_CC_tail"; setup.region=listIndividualCuts_MTtail[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
         res = doFit(setup,conditions); 
         SFR_tt1l=Figure(res.SF_tt1l.first,res.SF_tt1l.second);
         SFR_wjets=Figure(res.SF_wjets.first,res.SF_wjets.second);
@@ -1010,7 +801,7 @@ int main()
         h_SF_MTtail_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
 
         //MT peak
-        setup.Reset(); conditions="sigRegions_CC_peak"; setup.region=signalRegions_CC_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.Reset(); conditions="sigRegions_CC_peak"; setup.region=listIndividualCuts_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
         res = doFit(setup,conditions); 
         h_SF_MTpeak_CC_tt1l.SetBinContent(i+1,res.SF_tt1l.first);
         h_SF_MTpeak_CC_tt1l.SetBinError(i+1,res.SF_tt1l.second);
@@ -1020,7 +811,7 @@ int main()
         h_SF_MTpeak_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
 
         //MT peak (no btag req)
-        //setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        //setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=listBDTSignalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
         //res = doFit(setup,conditions); 
 
         //Now compute the ration : SF_tail/SF_peak
@@ -1046,7 +837,7 @@ int main()
     }
 
     //Save plots in roofile
-    TFile fCR1_CC("CR1_CC.root","RECREATE");
+    TFile fCR1_CC((string(OUTPUT_FOLDER)+"/CR1_CC.root").c_str(),"RECREATE");
     h_SF_MTpeak_CC_tt1l.Write();
     h_SF_MTpeak_CC_wjets.Write();
     h_SF_MTtail_CC_tt1l.Write();
@@ -1056,30 +847,13 @@ int main()
 
     //---------------------------------------------
     // Results for C&C
-    vector<string> listOfCCRegions = 
-    {
-        "cutAndCount_T2tt_offShellLoose",                
-        "cutAndCount_T2tt_offShellTight",           
-        "cutAndCount_T2tt_lowDeltaM",                
-        "cutAndCount_T2tt_mediumDeltaM",             
-        "cutAndCount_T2tt_highDeltaM",             
-        "cutAndCount_T2bw025_veryOffShell_loose",     
-        "cutAndCount_T2bw025_offShell_looSS",         
-        "cutAndCount_T2bw025_lowDeltaM_tight",         
-        "cutAndCount_T2bw025_highDeltaM",         
-        "cutAndCount_T2bw050_offShell_loose",         
-        "cutAndCount_T2bw050_lowMass",             
-        "cutAndCount_T2bw050_mediumDeltaM_loose",     
-        "cutAndCount_T2bw050_highDeltaM",     
-        "cutAndCount_T2bw075_lowDeltaM_tight",         
-        "cutAndCount_T2bw075_mediumDeltaM"         
-    };
+    initCutAndCountCuts();
     vector<string> cuts;
 
-    Table SFR_CC(columns,listOfCCRegions,columns,listOfCCRegions);
-    for(unsigned int r=0;r<listOfCCRegions.size();r++)
+    Table SFR_CC(columns,listCutAndCounts,columns,listCutAndCounts);
+    for(unsigned int r=0;r<listCutAndCounts.size();r++)
     {
-        cuts = CC_Cuts[listOfCCRegions[r]];    
+        cuts = listCutAndCounts_cuts[listCutAndCounts[r]];    
         Figure SFR_CC_tt1l;
         Figure SFR_CC_wjets;
         for(unsigned i=0;i<cuts.size();i++)
@@ -1094,46 +868,37 @@ int main()
         //Add quadratically uncert. of the fit itself (JES, MC stat. ...)
         SFR_CC_tt1l = Figure(SFR_CC_tt1l.value(),sqrt(pow(SFR_CC_tt1l.error(),2)+pow(SystUncert*mean_SFtt1l,2)));
         SFR_CC_wjets = Figure(SFR_CC_wjets.value(),sqrt(pow(SFR_CC_wjets.error(),2)+pow(SystUncert*mean_SFwjets,2)));
-        SFR_CC.Set("SFR_tt1l",listOfCCRegions[r],SFR_CC_tt1l);
-        SFR_CC.Set("SFR_wjets",listOfCCRegions[r],SFR_CC_wjets);
-        cout<<"TOO "<<listOfCCRegions[r]<<" "<<SFR_CC_tt1l.Print()<<endl;
+        SFR_CC.Set("SFR_tt1l",listCutAndCounts[r],SFR_CC_tt1l);
+        SFR_CC.Set("SFR_wjets",listCutAndCounts[r],SFR_CC_wjets);
+        cout<<"TOO "<<listCutAndCounts[r]<<" "<<SFR_CC_tt1l.Print()<<endl;
     }
 
 
-    SFR_CC.Print("scaleFactors/SFR_CC.tab",4);
+    SFR_CC.Print(string(OUTPUT_FOLDER)+"/SFR_CC.tab",4);
 
     //---------------------------------------------
     //  Perform an estimation for SFR C&C
     //---------------------------------------------
 
-    vector<string> signalRegionsEstim_CC = {
-        "CR0bag_MTtail_T2tt_offShellLoose",         "CR0bag_MTtail_T2tt_offShellTight",         "CR0bag_MTtail_T2tt_lowDeltaM",             "CR0bag_MTtail_T2tt_mediumDeltaM",          "CR0bag_MTtail_T2tt_highDeltaM",            
-        "CR0bag_MTtail_T2bw025_veryOffShell_loose", "CR0bag_MTtail_T2bw025_offShell_loose",     "CR0bag_MTtail_T2bw025_lowDeltaM_tight",    "CR0bag_MTtail_T2bw025_highDeltaM",         "CR0bag_MTtail_T2bw050_offShell_loose",     "CR0bag_MTtail_T2bw050_lowMass",            "CR0bag_MTtail_T2bw050_mediumDeltaM_loose", "CR0bag_MTtail_T2bw050_highDeltaM",         "CR0bag_MTtail_T2bw075_lowDeltaM_tight",    "CR0bag_MTtail_T2bw075_mediumDeltaM",       "CR0bag_MTtail_T2bw075_highDeltaM"};
-
-    vector<string> signalRegionsEstim_CC_MTpeak = {
-        "CR0bag_MTpeak_T2tt_offShellLoose",         "CR0bag_MTpeak_T2tt_offShellTight",         "CR0bag_MTpeak_T2tt_lowDeltaM",             "CR0bag_MTpeak_T2tt_mediumDeltaM",          "CR0bag_MTpeak_T2tt_highDeltaM",            
-        "CR0bag_MTpeak_T2bw025_veryOffShell_loose", "CR0bag_MTpeak_T2bw025_offShell_loose",     "CR0bag_MTpeak_T2bw025_lowDeltaM_tight",    "CR0bag_MTpeak_T2bw025_highDeltaM",         "CR0bag_MTpeak_T2bw050_offShell_loose",     "CR0bag_MTpeak_T2bw050_lowMass",            "CR0bag_MTpeak_T2bw050_mediumDeltaM_loose", "CR0bag_MTpeak_T2bw050_highDeltaM",         "CR0bag_MTpeak_T2bw075_lowDeltaM_tight",    "CR0bag_MTpeak_T2bw075_mediumDeltaM",       "CR0bag_MTpeak_T2bw075_highDeltaM"};
-
-
     //Create histos
-    TH1F h_SF_MTpeakEstim_CC_tt1l("h_SF_MTpeakEstim_CC_tt1l","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
-    TH1F h_SF_MTtailEstim_CC_tt1l("h_SF_MTtailEstim_CC_tt1l","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
-    TH1F h_SFREstim_CC_tt1l("h_SFREstim_CC_tt1l","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
-    TH1F h_SF_MTpeakEstim_CC_wjets("h_SF_MTpeakEstim_CC_wjets","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
-    TH1F h_SF_MTtailEstim_CC_wjets("h_SF_MTtailEstim_CC_wjets","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
-    TH1F h_SFREstim_CC_wjets("h_SFREstim_CC_wjets","",signalRegionsEstim_CC.size(),0,signalRegionsEstim_CC.size());
+    TH1F h_SF_MTpeakEstim_CC_tt1l("h_SF_MTpeakEstim_CC_tt1l","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
+    TH1F h_SF_MTtailEstim_CC_tt1l("h_SF_MTtailEstim_CC_tt1l","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
+    TH1F h_SFREstim_CC_tt1l("h_SFREstim_CC_tt1l","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
+    TH1F h_SF_MTpeakEstim_CC_wjets("h_SF_MTpeakEstim_CC_wjets","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
+    TH1F h_SF_MTtailEstim_CC_wjets("h_SF_MTtailEstim_CC_wjets","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
+    TH1F h_SFREstim_CC_wjets("h_SFREstim_CC_wjets","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
 
-    for(unsigned int i=0;i<signalRegionsEstim_CC.size();i++)
+    for(unsigned int i=0;i<listCutAndCountsRegions_MTtail.size();i++)
     {
-        cout<<"%%%%%%%%%%%%%%%%%% "<<signalRegionsEstim_CC[i]<<endl;
+        cout<<"%%%%%%%%%%%%%%%%%% "<<listCutAndCountsRegions_MTtail[i]<<endl;
 
-        string label = signalRegionsEstim_CC[i].substr(15);
+        string label = listCutAndCountsRegions_MTtail[i].substr(15);
         Figure SFR_tt1l;
         Figure SFR_wjets;
 
         //MT tail
-        setup.Reset(); conditions="sigRegionsEstim_CC_tail"; setup.region=signalRegionsEstim_CC[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
-        setup.varname="Mlb_small";
+        setup.Reset(); conditions="sigRegionsEstim_CC_tail"; setup.region=listCutAndCountsRegions_MTtail[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.varname=string(OBSERVABLE_FOR_FIT)+"_small";
         res = doFit(setup,conditions); 
         SFR_tt1l=Figure(res.SF_tt1l.first,res.SF_tt1l.second);
         SFR_wjets=Figure(res.SF_wjets.first,res.SF_wjets.second);
@@ -1145,8 +910,8 @@ int main()
         h_SF_MTtailEstim_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
 
         //MT peak
-        setup.Reset(); conditions="sigRegionsEstim_CC_peak"; setup.region=signalRegionsEstim_CC_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
-        setup.varname="Mlb_small";
+        setup.Reset(); conditions="sigRegionsEstim_CC_peak"; setup.region=listCutAndCountsRegions_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        setup.varname=string(OBSERVABLE_FOR_FIT)+"_small";
         res = doFit(setup,conditions); 
         h_SF_MTpeakEstim_CC_tt1l.SetBinContent(i+1,res.SF_tt1l.first);
         h_SF_MTpeakEstim_CC_tt1l.SetBinError(i+1,res.SF_tt1l.second);
@@ -1158,7 +923,7 @@ int main()
         SFR_wjets /= Figure(res.SF_wjets.first,res.SF_tt1l.second);
 
         //MT peak (no btag req)
-        //setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=signalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
+        //setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=listBDTSignalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
         //res = doFit(setup,conditions); 
 
         //SFR
@@ -1170,10 +935,10 @@ int main()
         h_SFREstim_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
 
 
-        cout<<"signRegions (CC) - "<<signalRegionsEstim_CC_MTpeak[i]<<": SFR_tt1l: "<<SFR_tt1l.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
+        cout<<"signRegions (CC) - "<<listCutAndCountsRegions_MTpeak[i]<<": SFR_tt1l: "<<SFR_tt1l.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
     }
     //Save plots in roofile
-    TFile fCR1Estim_CC("CR1Estim_CC.root","RECREATE");
+    TFile fCR1Estim_CC((string(OUTPUT_FOLDER)+"/CR1Estim_CC.root").c_str(),"RECREATE");
     h_SF_MTpeakEstim_CC_tt1l.Write();
     h_SF_MTpeakEstim_CC_wjets.Write();
     h_SF_MTtailEstim_CC_tt1l.Write();
@@ -1218,17 +983,17 @@ int main()
     */
     //---- choice of MT test cut with Mlb ---//
     /*
-       setup.Reset(); setup.region = "0btag_MT80"; conditions="MT80"; setup.varname="Mlb"; 
+       setup.Reset(); setup.region = "0btag_MT80";   conditions="MT80";  setup.varname=OBSERVABLE_FOR_FIT; 
        res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MT90"; conditions="MT90"; setup.varname="Mlb";
+       setup.Reset(); setup.region = "0btag_MT90";   conditions="MT90";  setup.varname=OBSERVABLE_FOR_FIT;
        res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MTtail"; conditions="MT100"; setup.varname="Mlb";
+       setup.Reset(); setup.region = "0btag_MTtail"; conditions="MT100"; setup.varname=OBSERVABLE_FOR_FIT;
        res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MT110"; conditions="M110"; setup.varname="Mlb";
+       setup.Reset(); setup.region = "0btag_MT110";  conditions="MT110"; setup.varname=OBSERVABLE_FOR_FIT;
        res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MT120"; conditions="MT120"; setup.varname="Mlb";
+       setup.Reset(); setup.region = "0btag_MT120";  conditions="MT120"; setup.varname=OBSERVABLE_FOR_FIT;
        res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MT130"; conditions="MT130"; setup.varname="Mlb";
+       setup.Reset(); setup.region = "0btag_MT130";  conditions="MT130"; setup.varname=OBSERVABLE_FOR_FIT;
        res = doFit(setup,conditions); 
        */
 
