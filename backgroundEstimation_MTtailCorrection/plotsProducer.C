@@ -36,6 +36,7 @@ bool goesIn0BtagControlRegionMTinverted_4j() { return (goesIn0BtagControlRegionM
 bool goesIn0BtagControlRegionMTinverted_5j() { return (goesIn0BtagControlRegionMTinverted() && myEvent.nJets==5); }
 bool goesIn0BtagControlRegionMTinverted_6j() { return (goesIn0BtagControlRegionMTinverted() && myEvent.nJets>=6); }
 
+bool goesIn0BtagControlRegionMTtail100()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 100); } 
 bool goesIn0BtagControlRegionMTtail120()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 120); } 
 bool goesIn0BtagControlRegionMTtail125()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 125); } 
 bool goesIn0BtagControlRegionMTtail130()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 130); } 
@@ -353,6 +354,7 @@ int main (int argc, char *argv[])
     screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw025_4", "",  &BDT_MTPeakOneBtag_T2bw025_4  , rebinning);
     screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw025_6", "",  &BDT_MTPeakOneBtag_T2bw025_6  , rebinning);
 
+    screwdriver.AddRegion("CR0btag_MTtail_MT_100",           "",  &goesIn0BtagControlRegionMTtail100);
     screwdriver.AddRegion("CR0btag_MTtail_MT_120",           "",  &goesIn0BtagControlRegionMTtail120);
     screwdriver.AddRegion("CR0btag_MTtail_MT_125",           "",  &goesIn0BtagControlRegionMTtail125);
     screwdriver.AddRegion("CR0btag_MTtail_MT_130",           "",  &goesIn0BtagControlRegionMTtail130);

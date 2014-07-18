@@ -66,6 +66,26 @@ TRandom* randomnessGenerator;
 // # Regions for BDT correction #
 // ##############################
 
+vector<string> listBDTSignalRegions =
+{
+    "BDT_T2tt_1",  
+    "BDT_T2tt_2",  
+    "BDT_T2tt_5",  
+    "BDT_T2bw075_1",  
+    "BDT_T2bw075_2",  
+    "BDT_T2bw075_3",  
+    "BDT_T2bw075_5",  
+    "BDT_T2bw050_1",  
+    "BDT_T2bw050_3",  
+    "BDT_T2bw050_4",  
+    "BDT_T2bw050_5",  
+    "BDT_T2bw050_6",  
+    "BDT_T2bw025_1",  
+    "BDT_T2bw025_3",  
+    "BDT_T2bw025_4",  
+    "BDT_T2bw025_6"
+};
+
 vector<string> listBDTSignalRegions_MTtail = 
 {
     "BDT_MTtail_T2tt_1",  
@@ -152,6 +172,7 @@ vector<string> listBDTSignalRegions_MTpeak_OneBtag =
 
 vector<string> listIndividualCuts_MTtail = 
 {
+    "CR0btag_MTtail_MT_100",
     "CR0btag_MTtail_MT_120",
     "CR0btag_MTtail_MT_125", 
     "CR0btag_MTtail_MT_130",
@@ -186,6 +207,7 @@ vector<string> listIndividualCuts_MTtail =
 vector<string>  listIndividualCuts_MTpeak = 
 {
     "0btag_MTpeak", 
+    "0btag_MTpeak", 
     "0btag_MTpeak",  
     "0btag_MTpeak",   
     "0btag_MTpeak",  
@@ -218,6 +240,7 @@ vector<string>  listIndividualCuts_MTpeak =
 
 vector<string> listCutAndCounts = 
 {
+    "preselection",
     "cutAndCount_T2tt_offShellLoose",
     "cutAndCount_T2tt_offShellTight",
     "cutAndCount_T2tt_lowDeltaM",
@@ -242,6 +265,7 @@ map<string,vector<string> > listCutAndCounts_cuts;
 
 void initCutAndCountCuts()
 {
+    listCutAndCounts_cuts["preselection"]                     = { "MT_100"                     };
     listCutAndCounts_cuts["cutAndCount_T2tt_offShellLoose"]   = { "MT_125"                     };
     listCutAndCounts_cuts["cutAndCount_T2tt_offShellTight"]   = { "MT_130", "MET_300"          };
     listCutAndCounts_cuts["cutAndCount_T2tt_lowDeltaM"]       = { "MT_140", "METoverSqrtHT_8"  };

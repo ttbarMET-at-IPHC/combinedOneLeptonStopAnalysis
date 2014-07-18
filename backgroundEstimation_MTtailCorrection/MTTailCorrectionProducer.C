@@ -246,7 +246,8 @@ struct FitSetup{
     }
 };
 
-struct FitResult{
+struct FitResult
+{
     string conditions;
     pair<float,float> SF_1ltop;
     pair<float,float> SF_wjets;
@@ -409,7 +410,7 @@ FitResult  doFit(const FitSetup& setup, string conditions, string fname=string("
     fitRes.correlation = res->correlationMatrix()[0][1];
     fitRes.conditions = conditions;
 
-    fitRes.Print();
+    //fitRes.Print();
     return fitRes;
 
     // Plot data and complete PDF overlaid
@@ -427,13 +428,15 @@ FitResult  doFit(const FitSetup& setup, string conditions, string fname=string("
 
 }
 
-struct FitUncert{
+struct FitUncert
+{
     string name;
     float SF_1ltop_uncert;
     float SF_wjets_uncert;
 };
 
-struct SummaryResult{
+struct SummaryResult
+{
     FitResult nominal;
     vector<FitUncert> uncert;
     void Print()
@@ -458,6 +461,17 @@ int main()
     randomnessGenerator = new TRandom();
 
     system((string("mkdir -p ")+OUTPUT_FOLDER).c_str());
+
+    // ###########################
+    // # Prepare final SFR table #
+    // ###########################
+
+    vector<string> columns = {"SFR_1ltop","SFR_wjets"};
+
+    vector<string> listAllSignalRegion = listBDTSignalRegions;
+                   listAllSignalRegion.insert(listAllSignalRegion.end(), listCutAndCounts.begin(), listCutAndCounts.end());
+
+    Table tableSFR(columns,listAllSignalRegion);
 
     // Create observables
     RooRealVar var(OBSERVABLE_FOR_FIT,OBSERVABLE_FOR_FIT,0,600) ;
@@ -599,12 +613,18 @@ int main()
     setup.Reset(); conditions="C&C"; setup.region="0btag_MTinverted120"; uncert.name = conditions; res = doFit(setup,conditions); 
     setup.Reset(); conditions="C&C"; setup.region="0btag_MTtail120";     uncert.name = conditions; res = doFit(setup,conditions); 
 
+    // ######################## 
+    // #  ____________ _____  #
+    // #  | ___ \  _  \_   _| #
+    // #  | |_/ / | | | | |   #
+    // #  | ___ \ | | | | |   #
+    // #  | |_/ / |/ /  | |   #
+    // #  \____/|___/   \_/   #
+    // #                      #
+    // ########################               
 
-    //---------------------------------------//
-    //-- Apply the template fit on each SR --//
-    //---------------------------------------//
-
-    //Create histos
+    // Create histos
+    
     TH1F h_SF_MTpeak_BDT_1ltop ("h_SF_MTpeak_BDT_1ltop", "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
     TH1F h_SF_MTtail_BDT_1ltop ("h_SF_MTtail_BDT_1ltop", "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
     TH1F h_SFR_BDT_1ltop       ("h_SFR_BDT_1ltop",       "", listBDTSignalRegions_MTtail.size(),0,listBDTSignalRegions_MTtail.size());
@@ -626,7 +646,7 @@ int main()
     {
         cout<<"%%%%%%%%%%%%%%%%%% "<<listBDTSignalRegions_MTtail[i]<<endl;
 
-        string label = listBDTSignalRegions_MTtail[i].substr(7);
+        string label = listBDTSignalRegions[i];
         Figure SFR_1ltop;
         Figure SFR_wjets;
 
@@ -673,14 +693,12 @@ int main()
         //-- 1ltop
         mean_SF1ltop+=SFR_1ltop.value();
         rms_SF1ltop+=(SFR_1ltop.value()*SFR_1ltop.value());
-        if(SFR_1ltop.error()>(MaxStatUncert_SF1ltop/SFR_1ltop.value()))  MaxStatUncert_SF1ltop=SFR_1ltop.error()/SFR_1ltop.value();
+        if (MaxStatUncert_SF1ltop < SFR_1ltop.error()/SFR_1ltop.value())  MaxStatUncert_SF1ltop=SFR_1ltop.error()/SFR_1ltop.value();
         //-- W+jets
         mean_SFwjets+=SFR_wjets.value();
         rms_SFwjets+=(SFR_wjets.value()*SFR_wjets.value());
-        if(SFR_wjets.error()>(MaxStatUncert_SFwjets/SFR_wjets.value()))  MaxStatUncert_SFwjets=SFR_wjets.error()/SFR_wjets.value();
+        if (MaxStatUncert_SFwjets < SFR_wjets.error()/SFR_wjets.value())  MaxStatUncert_SFwjets=SFR_wjets.error()/SFR_wjets.value();
         //-----------------------------------
-
-
 
         //SFR
         h_SFR_BDT_1ltop.SetBinContent(i+1,SFR_1ltop.value());
@@ -690,11 +708,10 @@ int main()
         h_SFR_BDT_wjets.SetBinError(i+1,SFR_wjets.error());
         h_SFR_BDT_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
 
-
-        cout<<"signRegions: SFR_1ltop: "<<SFR_1ltop.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
+        cout << listBDTSignalRegions[i] << " : SFR_1ltop: "<<SFR_1ltop.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
     }
     //Save plots in roofile
-    TFile fCR1_BDT((string(OUTPUT_FOLDER)+"/CR1_BDT.root").c_str(),"RECREATE");
+    TFile fCR1_BDT((string(OUTPUT_FOLDER)+"/results_BDT.root").c_str(),"RECREATE");
     h_SF_MTpeak_BDT_1ltop.Write();
     h_SF_MTpeak_BDT_wjets.Write();
     h_SF_MTtail_BDT_1ltop.Write();
@@ -717,23 +734,22 @@ int main()
     Figure BDT_SFwjets(mean_SFwjets,sqrt(rms_SFwjets+MaxStatUncert_SFwjets*MaxStatUncert_SFwjets*mean_SFwjets*mean_SFwjets+pow(SystUncert*mean_SF1ltop,2)));
     //---------------------------------------//
 
-
-    vector<string> sigReglabels(listBDTSignalRegions_MTtail.size());
-    for(unsigned int i=0;i<listBDTSignalRegions_MTtail.size();i++)
+    for(unsigned int i=0;i<listBDTSignalRegions.size();i++)
     {
-        sigReglabels[i] = listBDTSignalRegions_MTtail[i].substr(3);
-    } 
-    vector<string> columns = {"SFR_1ltop","SFR_wjets"};
-    Table SFR_BDT(columns,sigReglabels,columns,sigReglabels);
-
-
-    for(unsigned int i=0;i<listBDTSignalRegions_MTtail.size();i++)
-    {
-        SFR_BDT.Set("SFR_1ltop",sigReglabels[i],BDT_SF1ltop);
-        SFR_BDT.Set("SFR_wjets",sigReglabels[i],BDT_SFwjets);
+        tableSFR.Set("SFR_1ltop",listBDTSignalRegions[i],BDT_SF1ltop);
+        tableSFR.Set("SFR_wjets",listBDTSignalRegions[i],BDT_SFwjets);
     }
-    SFR_BDT.Print(string(OUTPUT_FOLDER)+"/SFR_BDT.tab",4);
-    //---------------------------------------//
+    
+    // ########################
+    // #  _____        _____  #
+    // # /  __ \ ___  /  __ \ #
+    // # | /  \/( _ ) | /  \/ #
+    // # | |    / _ \/\ |     #
+    // # | \__/\ (_>  < \__/\ #
+    // #  \____/\___/\/\____/ #
+    // #                      #
+    // ########################                      
+    
     std::map<string,Figure> SFR_CC_1ltop_map;
     std::map<string,Figure> SFR_CC_wjets_map;
 
@@ -780,8 +796,8 @@ int main()
         //res = doFit(setup,conditions); 
 
         //Now compute the ration : SF_tail/SF_peak
-        SFR_1ltop/=Figure(res.SF_1ltop.first,res.SF_1ltop.second);
-        SFR_wjets/=Figure(res.SF_wjets.first,res.SF_wjets.second);
+        SFR_1ltop /= Figure(res.SF_1ltop.first, res.SF_1ltop.second);
+        SFR_wjets /= Figure(res.SF_wjets.first, res.SF_wjets.second);
 
         //It is based on the ratio SF_tail/SF_peak
         SFR_CC_1ltop_map[label] = SFR_1ltop;
@@ -798,11 +814,11 @@ int main()
         h_SFR_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
 
 
-        cout<<"signRegions (CC): SFR_1ltop: "<<SFR_1ltop.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
+        cout<<"individual cut: " << listIndividualCuts_MTtail[i] << " ; SFR_1ltop: "<<SFR_1ltop.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
     }
 
     //Save plots in roofile
-    TFile fCR1_CC((string(OUTPUT_FOLDER)+"/CR1_CC.root").c_str(),"RECREATE");
+    TFile fCR1_CC((string(OUTPUT_FOLDER)+"/results_CC.root").c_str(),"RECREATE");
     h_SF_MTpeak_CC_1ltop.Write();
     h_SF_MTpeak_CC_wjets.Write();
     h_SF_MTtail_CC_1ltop.Write();
@@ -812,10 +828,10 @@ int main()
 
     //---------------------------------------------
     // Results for C&C
+    //---------------------------------------------
     initCutAndCountCuts();
     vector<string> cuts;
-
-    Table SFR_CC(columns,listCutAndCounts,columns,listCutAndCounts);
+    
     for(unsigned int r=0;r<listCutAndCounts.size();r++)
     {
         cuts = listCutAndCounts_cuts[listCutAndCounts[r]];    
@@ -839,138 +855,16 @@ int main()
                                            ));
         }
         //Add quadratically uncert. of the fit itself (JES, MC stat. ...)
-        SFR_CC_1ltop = Figure(SFR_CC_1ltop.value(),sqrt(pow(SFR_CC_1ltop.error(),2)+pow(SystUncert*mean_SF1ltop ,2)));
-        SFR_CC_wjets = Figure(SFR_CC_wjets.value(),sqrt(pow(SFR_CC_wjets.error(),2)+pow(SystUncert*mean_SFwjets,2)));
-        SFR_CC.Set("SFR_1ltop",listCutAndCounts[r],SFR_CC_1ltop);
-        SFR_CC.Set("SFR_wjets",listCutAndCounts[r],SFR_CC_wjets);
-        cout<<"TOO "<<listCutAndCounts[r]<<" "<<SFR_CC_1ltop.Print()<<endl;
+        // FIXME What to do here ? mean_SF is not recomputed for C&C 
+        // and it doesn't make sense to do it for C&C since the MT cuts are not the same...
+        
+        //SFR_CC_1ltop = Figure(SFR_CC_1ltop.value(),sqrt(pow(SFR_CC_1ltop.error(),2)+pow(SystUncert*mean_SF1ltop ,2)));
+        //SFR_CC_wjets = Figure(SFR_CC_wjets.value(),sqrt(pow(SFR_CC_wjets.error(),2)+pow(SystUncert*mean_SFwjets, 2)));
+        
+        tableSFR.Set("SFR_1ltop",listCutAndCounts[r],SFR_CC_1ltop);
+        tableSFR.Set("SFR_wjets",listCutAndCounts[r],SFR_CC_wjets);
     }
 
-
-    SFR_CC.Print(string(OUTPUT_FOLDER)+"/SFR_CC.tab",4);
-
-    //---------------------------------------------
-    //  Perform an estimation for SFR C&C
-    //---------------------------------------------
-
-    /*
-
-    //Create histos
-    TH1F h_SF_MTpeakEstim_CC_1ltop("h_SF_MTpeakEstim_CC_1ltop","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
-    TH1F h_SF_MTtailEstim_CC_1ltop("h_SF_MTtailEstim_CC_1ltop","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
-    TH1F h_SFREstim_CC_1ltop("h_SFREstim_CC_1ltop","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
-    TH1F h_SF_MTpeakEstim_CC_wjets("h_SF_MTpeakEstim_CC_wjets","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
-    TH1F h_SF_MTtailEstim_CC_wjets("h_SF_MTtailEstim_CC_wjets","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
-    TH1F h_SFREstim_CC_wjets("h_SFREstim_CC_wjets","",listCutAndCountsRegions_MTtail.size(),0,listCutAndCountsRegions_MTtail.size());
-
-    for(unsigned int i=0;i<listCutAndCountsRegions_MTtail.size();i++)
-    {
-        cout<<"%%%%%%%%%%%%%%%%%% "<<listCutAndCountsRegions_MTtail[i]<<endl;
-
-        string label = listCutAndCountsRegions_MTtail[i].substr(15);
-        Figure SFR_1ltop;
-        Figure SFR_wjets;
-
-        //MT tail
-        setup.Reset(); conditions="sigRegionsEstim_CC_tail"; setup.region=listCutAndCountsRegions_MTtail[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
-        setup.varname=string(OBSERVABLE_FOR_FIT)+"_small";
-        res = doFit(setup,conditions); 
-        SFR_1ltop=Figure(res.SF_1ltop.first,res.SF_1ltop.second);
-        SFR_wjets=Figure(res.SF_wjets.first,res.SF_wjets.second);
-        h_SF_MTtailEstim_CC_1ltop.SetBinContent(i+1,res.SF_1ltop.first);
-        h_SF_MTtailEstim_CC_1ltop.SetBinError(i+1,res.SF_1ltop.second);
-        h_SF_MTtailEstim_CC_1ltop.GetXaxis()->SetBinLabel(i+1,label.c_str());
-        h_SF_MTtailEstim_CC_wjets.SetBinContent(i+1,res.SF_wjets.first);
-        h_SF_MTtailEstim_CC_wjets.SetBinError(i+1,res.SF_wjets.second);
-        h_SF_MTtailEstim_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
-
-        //MT peak
-        setup.Reset(); conditions="sigRegionsEstim_CC_peak"; setup.region=listCutAndCountsRegions_MTpeak[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
-        setup.varname=string(OBSERVABLE_FOR_FIT)+"_small";
-        res = doFit(setup,conditions); 
-        h_SF_MTpeakEstim_CC_1ltop.SetBinContent(i+1,res.SF_1ltop.first);
-        h_SF_MTpeakEstim_CC_1ltop.SetBinError(i+1,res.SF_1ltop.second);
-        h_SF_MTpeakEstim_CC_1ltop.GetXaxis()->SetBinLabel(i+1,label.c_str());
-        h_SF_MTpeakEstim_CC_wjets.SetBinContent(i+1,res.SF_wjets.first);
-        h_SF_MTpeakEstim_CC_wjets.SetBinError(i+1,res.SF_wjets.second);
-        h_SF_MTpeakEstim_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
-        SFR_1ltop  /= Figure(res.SF_1ltop.first,res.SF_1ltop.second);
-        SFR_wjets /= Figure(res.SF_wjets.first,res.SF_1ltop.second);
-
-        //MT peak (no btag req)
-        //setup.Reset(); conditions="sigRegions_peak_NoBtag"; setup.region=listBDTSignalRegions_MTpeak_NoBtag[i]; uncert.name = conditions; setup.varname=varname; setup.varMin=0; setup.varMax=600;
-        //res = doFit(setup,conditions); 
-
-        //SFR
-        h_SFREstim_CC_1ltop.SetBinContent(i+1,SFR_1ltop.value());
-        h_SFREstim_CC_1ltop.SetBinError(i+1,SFR_1ltop.error());
-        h_SFREstim_CC_1ltop.GetXaxis()->SetBinLabel(i+1,label.c_str());
-        h_SFREstim_CC_wjets.SetBinContent(i+1,SFR_wjets.value());
-        h_SFREstim_CC_wjets.SetBinError(i+1,SFR_wjets.error());
-        h_SFREstim_CC_wjets.GetXaxis()->SetBinLabel(i+1,label.c_str());
-
-
-        cout<<"signRegions (CC) - "<<listCutAndCountsRegions_MTpeak[i]<<": SFR_1ltop: "<<SFR_1ltop.Print()<<" SFR_wjets: "<<SFR_wjets.Print()<<endl;
-    }
-    //Save plots in roofile
-    TFile fCR1Estim_CC((string(OUTPUT_FOLDER)+"/CR1Estim_CC.root").c_str(),"RECREATE");
-    h_SF_MTpeakEstim_CC_1ltop.Write();
-    h_SF_MTpeakEstim_CC_wjets.Write();
-    h_SF_MTtailEstim_CC_1ltop.Write();
-    h_SF_MTtailEstim_CC_wjets.Write();
-    h_SFREstim_CC_1ltop.Write();
-    h_SFREstim_CC_wjets.Write();
-
-    */
-
-
-    //---------------------------------------//
-    //-- split region --//,   /* 
-    /* 
-       setup.Reset(); conditions = "split-region";
-       setup.region = "0btagLD_MTtail";
-       res = doFit(setup,conditions); 
-       setup.region = "0btagHD_MTtail";
-       res = doFit(setup,conditions); 
-
-
-
-    //---  choice of MT test cut --//
-    setup.Reset(); setup.region = "0btag_MT80"; conditions="MT80"; 
-    res = doFit(setup,conditions); 
-    setup.Reset(); setup.region = "0btag_MT90"; conditions="MT90"; 
-    res = doFit(setup,conditions); 
-    setup.Reset(); setup.region = "0btag_MT110"; conditions="M110"; 
-    res = doFit(setup,conditions); 
-    setup.Reset(); setup.region = "0btag_MT120"; conditions="MT120"; 
-    res = doFit(setup,conditions); 
-    setup.Reset(); setup.region = "0btag_MT130"; conditions="MT130"; 
-    res = doFit(setup,conditions); 
-    //setup.varname="M3b_modif";//test with that var ! -- does not work .. 
-    res = doFit(setup,conditions); 
-    setup.Reset(); setup.region = "0btag_MT140"; conditions="MT140"; setup.varname = "M3b_binningdown";
-    setup.type="GSLMultiMin"; setup.algo="steepestdescent";
-    setup.type="GSLMultiMin"; setup.algo="conjugatefr";
-    res = doFit(setup,conditions); 
-    setup.Reset(); setup.region = "0btag_MT160"; conditions="MT160"; setup.varname = "M3b_binningdown";
-    setup.type="GSLMultiMin"; setup.algo="steepestdescent";
-    res = doFit(setup,conditions); 
-    */
-    //---- choice of MT test cut with Mlb ---//
-    /*
-       setup.Reset(); setup.region = "0btag_MT80";   conditions="MT80";  setup.varname=OBSERVABLE_FOR_FIT; 
-       res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MT90";   conditions="MT90";  setup.varname=OBSERVABLE_FOR_FIT;
-       res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MTtail"; conditions="MT100"; setup.varname=OBSERVABLE_FOR_FIT;
-       res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MT110";  conditions="MT110"; setup.varname=OBSERVABLE_FOR_FIT;
-       res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MT120";  conditions="MT120"; setup.varname=OBSERVABLE_FOR_FIT;
-       res = doFit(setup,conditions); 
-       setup.Reset(); setup.region = "0btag_MT130";  conditions="MT130"; setup.varname=OBSERVABLE_FOR_FIT;
-       res = doFit(setup,conditions); 
-       */
-
+    tableSFR.Print(string(OUTPUT_FOLDER)+"/SFR.tab",4);
     summary.Print();
 }  
