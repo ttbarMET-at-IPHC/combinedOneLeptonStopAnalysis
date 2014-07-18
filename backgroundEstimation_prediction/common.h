@@ -9,10 +9,10 @@ bool disableMTCut = false;
 // #  Sonic screwdriver headers  #
 // ###############################
 
-#include "interface/Table.h" 
-#include "interface/SonicScrewdriver.h" 
-#include "interface/tables/TableBackgroundSignal.h" 
-#include "interface/tables/TableDataMC.h" 
+#include "interface/Table.h"
+#include "interface/SonicScrewdriver.h"
+#include "interface/tables/TableBackgroundSignal.h"
+#include "interface/tables/TableDataMC.h"
 using namespace theDoctor;
 
 #include <TCanvas.h>
@@ -51,7 +51,7 @@ using namespace theDoctor;
 // #  Processes list  #
 // ####################
 
-vector<string> processesTagList = 
+vector<string> processesTagList =
 {
     "1ltop",
     "ttbar_2l",
@@ -60,7 +60,7 @@ vector<string> processesTagList =
     "totalSM"
 };
 
-vector<string> processesLabelList = 
+vector<string> processesLabelList =
 {
     "1$\\ell$ top",
     "$t\\bar{t} \\rightarrow \\ell \\ell$",
@@ -73,7 +73,7 @@ vector<string> processesLabelList =
 // #  Systematics list  #
 // ######################
 
-vector<string> systematicsTagList = 
+vector<string> systematicsTagList =
 {
     "tt->ll_(CR4,CR5)",
     "tt->ll_(nJets)",
@@ -111,7 +111,7 @@ vector<string> systematicsLabelList =
 // #  Scale factors list  #
 // ########################
 
-vector<string> scaleFactorsTagList = 
+vector<string> scaleFactorsTagList =
 {
     "SF_pre",
     "SF_post",
@@ -125,7 +125,7 @@ vector<string> scaleFactorsTagList =
     "SF_vetotail"
 };
 
-vector<string> scaleFactorsLabelList = 
+vector<string> scaleFactorsLabelList =
 {
     "$SF_{pre}$",
     "$SF_{post}$",
@@ -149,31 +149,36 @@ string signalRegionLabel(string signalRegionTag, string format = "root")
     {
              if (signalRegionTag == "preselection"                          ) return "Preselection";
         else if (signalRegionTag == "crossCheck_LM150"                      ) return "Previous AN, LM150";
+
         else if (signalRegionTag == "cutAndCount_T2tt_offShellLoose"        ) return "C&C T2tt, Off-shell loose";
         else if (signalRegionTag == "cutAndCount_T2tt_offShellTight"        ) return "C&C T2tt, Off-shell tight";
         else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"            ) return "C&C T2tt, Low #Delta m";
         else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM"         ) return "C&C T2tt, Medium #Delta m";
         else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM"           ) return "C&C T2tt, High #Delta m";
         else if (signalRegionTag == "cutAndCount_T2bw025_offShell"          ) return "C&C T2bw x=0.25, Off-shell";
-        else if (signalRegionTag == "cutAndCount_T2bw025_lowDeltaM"         ) return "C&C T2bw x=0.25, Low #Delta m";
-        else if (signalRegionTag == "cutAndCount_T2bw025_highDeltaM"        ) return "C&C T2bw x=0.25, High #Delta m";
+        else if (signalRegionTag == "cutAndCount_T2bw025_lowMasses"         ) return "C&C T2bw x=0.25, Low masses";
+        else if (signalRegionTag == "cutAndCount_T2bw025_highMasses"        ) return "C&C T2bw x=0.25, High masses";
         else if (signalRegionTag == "cutAndCount_T2bw050_offShell"          ) return "C&C T2bw x=0.50, Off-shell";
         else if (signalRegionTag == "cutAndCount_T2bw050_lowMasses"         ) return "C&C T2bw x=0.50, Low masses";
         else if (signalRegionTag == "cutAndCount_T2bw050_mediumDeltaM"      ) return "C&C T2bw x=0.50, Medium #Delta m";
-        else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM"        ) return "C&C T2bw x=0.50, High #Delta m"; 
+        else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM"        ) return "C&C T2bw x=0.50, High #Delta m";
         else if (signalRegionTag == "cutAndCount_T2bw075_lowDeltaM"         ) return "C&C T2bw x=0.75, Low #Delta m";
         else if (signalRegionTag == "cutAndCount_T2bw075_mediumDeltaM"      ) return "C&C T2bw x=0.75, Medium #Delta m";
-        else if (signalRegionTag == "cutAndCount_T2bw075_highDeltaM"        ) return "C&C T2bw x=0.75, High #Delta m"; 
+        else if (signalRegionTag == "cutAndCount_T2bw075_highDeltaM"        ) return "C&C T2bw x=0.75, High #Delta m";
+
         else if (signalRegionTag == "BDT_T2tt_1"                            ) return "T2tt, BDT 1";
-        else if (signalRegionTag == "BDT_T2tt_2"                            ) return "T2tt, BDT 2";
-        else if (signalRegionTag == "BDT_T2tt_5_loose"                      ) return "T2tt, BDT 5 loose";
-        else if (signalRegionTag == "BDT_T2tt_5_tight"                      ) return "T2tt, BDT 5 tight";
+        else if (signalRegionTag == "BDT_T2tt_2_lowDM"                      ) return "T2tt, BDT 2 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2tt_2_highDM"                     ) return "T2tt, BDT 2 high-#Delta m";
+        else if (signalRegionTag == "BDT_T2tt_5_lowDM"                      ) return "T2tt, BDT 5 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2tt_5_mediumDM"                   ) return "T2tt, BDT 5 medium-#Delta m";
+        else if (signalRegionTag == "BDT_T2tt_5_highDM"                     ) return "T2tt, BDT 5 high-#Delta m";
         else if (signalRegionTag == "BDT_T2bw075_1"                         ) return "T2bw x=0.75, BDT 1";
         else if (signalRegionTag == "BDT_T2bw075_2"                         ) return "T2bw x=0.75, BDT 2";
         else if (signalRegionTag == "BDT_T2bw075_3"                         ) return "T2bw x=0.75, BDT 3";
-        else if (signalRegionTag == "BDT_T2bw075_5"                         ) return "T2bw x=0.75, BDT 5";
-        else if (signalRegionTag == "BDT_T2bw050_1_loose"                   ) return "T2bw x=0.50, BDT 1 loose";
-        else if (signalRegionTag == "BDT_T2bw050_1_tight"                   ) return "T2bw x=0.50, BDT 1 tight";
+        else if (signalRegionTag == "BDT_T2bw075_5_lowDM"                   ) return "T2bw x=0.75, BDT 5 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2bw075_5_highDM"                  ) return "T2bw x=0.75, BDT 5 high-#Delta m";
+        else if (signalRegionTag == "BDT_T2bw050_1_lowDM"                   ) return "T2bw x=0.50, BDT 1 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2bw050_1_highDM"                  ) return "T2bw x=0.50, BDT 1 high-#Delta m";
         else if (signalRegionTag == "BDT_T2bw050_3"                         ) return "T2bw x=0.50, BDT 3";
         else if (signalRegionTag == "BDT_T2bw050_4"                         ) return "T2bw x=0.50, BDT 4";
         else if (signalRegionTag == "BDT_T2bw050_5"                         ) return "T2bw x=0.50, BDT 5";
@@ -182,8 +187,8 @@ string signalRegionLabel(string signalRegionTag, string format = "root")
         else if (signalRegionTag == "BDT_T2bw025_3"                         ) return "T2bw x=0.25, BDT 3";
         else if (signalRegionTag == "BDT_T2bw025_4"                         ) return "T2bw x=0.25, BDT 4";
         else if (signalRegionTag == "BDT_T2bw025_6"                         ) return "T2bw x=0.25, BDT 6";
-        else return "";                                                                           
-    }                                                                                             
+        else return "";                                           
+    }                                                             
     else
     {
              if (signalRegionTag == "preselection"                          ) return                           "Preselection";
@@ -193,26 +198,29 @@ string signalRegionLabel(string signalRegionTag, string format = "root")
         else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM"            ) return /*"C\\&C T2tt, "+*/       "Low $\\Delta m$";
         else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM"         ) return /*"C\\&C T2tt, "+*/       "Medium $\\Delta m$";
         else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM"           ) return /*"C\\&C T2tt, "+*/       "High $\\Delta m$";
-        else if (signalRegionTag == "cutAndCount_T2bw025_offShell"          ) return /*"C\\&C T2bw x=0.25, "+*/"C&C T2bw x=0.25, Off-shell";
-        else if (signalRegionTag == "cutAndCount_T2bw025_lowDeltaM"         ) return /*"C\\&C T2bw x=0.25, "+*/"C&C T2bw x=0.25, Low $\\Delta m$";
-        else if (signalRegionTag == "cutAndCount_T2bw025_highDeltaM"        ) return /*"C\\&C T2bw x=0.25, "+*/"C&C T2bw x=0.25, High $\\Delta m$";
-        else if (signalRegionTag == "cutAndCount_T2bw050_offShell"          ) return /*"C\\&C T2bw x=0.50, "+*/"C&C T2bw x=0.50, Off-shell";
-        else if (signalRegionTag == "cutAndCount_T2bw050_lowMasses"         ) return /*"C\\&C T2bw x=0.50, "+*/"C&C T2bw x=0.50, Low masses";
-        else if (signalRegionTag == "cutAndCount_T2bw050_mediumDeltaM"      ) return /*"C\\&C T2bw x=0.50, "+*/"C&C T2bw x=0.50, Medium $\\Delta m$";
-        else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM"        ) return /*"C\\&C T2bw x=0.50, "+*/"C&C T2bw x=0.50, High $\\Delta m$"; 
-        else if (signalRegionTag == "cutAndCount_T2bw075_lowDeltaM"         ) return /*"C\\&C T2bw x=0.75, "+*/"C&C T2bw x=0.75, Low $\\Delta m$";
-        else if (signalRegionTag == "cutAndCount_T2bw075_mediumDeltaM"      ) return /*"C\\&C T2bw x=0.75, "+*/"C&C T2bw x=0.75, Medium $\\Delta$ m$";
-        else if (signalRegionTag == "cutAndCount_T2bw075_highDeltaM"        ) return /*"C\\&C T2bw x=0.75, "+*/"C&C T2bw x=0.75, High $\\Delta$ m$"; 
-        else if (signalRegionTag == "BDT_T2tt_1"                            ) return /*"T2tt, "+*/"BDT 1";
-        else if (signalRegionTag == "BDT_T2tt_2"                            ) return /*"T2tt, "+*/"BDT 2";
-        else if (signalRegionTag == "BDT_T2tt_5_loose"                      ) return /*"T2tt, "+*/"BDT 5 loose";
-        else if (signalRegionTag == "BDT_T2tt_5_tight"                      ) return /*"T2tt, "+*/"BDT 5 tight";
+        else if (signalRegionTag == "cutAndCount_T2bw025_offShell"          ) return /*"C\\&C T2bw x=0.25, "+*/"Off-shell";
+        else if (signalRegionTag == "cutAndCount_T2bw025_lowMasses"         ) return /*"C\\&C T2bw x=0.25, "+*/"Low masses";
+        else if (signalRegionTag == "cutAndCount_T2bw025_highMasses"        ) return /*"C\\&C T2bw x=0.25, "+*/"High masses";
+        else if (signalRegionTag == "cutAndCount_T2bw050_offShell"          ) return /*"C\\&C T2bw x=0.50, "+*/"Off-shell";
+        else if (signalRegionTag == "cutAndCount_T2bw050_lowMasses"         ) return /*"C\\&C T2bw x=0.50, "+*/"Low masses";
+        else if (signalRegionTag == "cutAndCount_T2bw050_mediumDeltaM"      ) return /*"C\\&C T2bw x=0.50, "+*/"Medium $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM"        ) return /*"C\\&C T2bw x=0.50, "+*/"High $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2bw075_lowDeltaM"         ) return /*"C\\&C T2bw x=0.75, "+*/"Low $\\Delta m$";
+        else if (signalRegionTag == "cutAndCount_T2bw075_mediumDeltaM"      ) return /*"C\\&C T2bw x=0.75, "+*/"Medium $\\Delta$ m$";
+        else if (signalRegionTag == "cutAndCount_T2bw075_highDeltaM"        ) return /*"C\\&C T2bw x=0.75, "+*/"High $\\Delta$ m$";
+        else if (signalRegionTag == "BDT_T2tt_1"                            ) return /*"T2tt, "+*/       "BDT 1";
+        else if (signalRegionTag == "BDT_T2tt_2_lowDM"                      ) return /*"T2tt, "+*/       "BDT 2 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2tt_2_highDM"                     ) return /*"T2tt, "+*/       "BDT 2 high-#Delta m";
+        else if (signalRegionTag == "BDT_T2tt_5_lowDM"                      ) return /*"T2tt, "+*/       "BDT 5 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2tt_5_mediumDM"                   ) return /*"T2tt, "+*/       "BDT 5 medium-#Delta m";
+        else if (signalRegionTag == "BDT_T2tt_5_highDM"                     ) return /*"T2tt, "+*/       "BDT 5 high-#Delta m";
         else if (signalRegionTag == "BDT_T2bw075_1"                         ) return /*"T2bw x=0.75, "+*/"BDT 1";
         else if (signalRegionTag == "BDT_T2bw075_2"                         ) return /*"T2bw x=0.75, "+*/"BDT 2";
         else if (signalRegionTag == "BDT_T2bw075_3"                         ) return /*"T2bw x=0.75, "+*/"BDT 3";
-        else if (signalRegionTag == "BDT_T2bw075_5"                         ) return /*"T2bw x=0.75, "+*/"BDT 5";
-        else if (signalRegionTag == "BDT_T2bw050_1_loose"                   ) return /*"T2bw x=0.50, "+*/"BDT 1 loose";
-        else if (signalRegionTag == "BDT_T2bw050_1_tight"                   ) return /*"T2bw x=0.50, "+*/"BDT 1 tight";
+        else if (signalRegionTag == "BDT_T2bw075_5_lowDM"                   ) return /*"T2bw x=0.75, "+*/"BDT 5 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2bw075_5_highDM"                  ) return /*"T2bw x=0.75, "+*/"BDT 5 high-#Delta m";
+        else if (signalRegionTag == "BDT_T2bw050_1_lowDM"                   ) return /*"T2bw x=0.50, "+*/"BDT 1 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2bw050_1_highDM"                  ) return /*"T2bw x=0.50, "+*/"BDT 1 high-#Delta m";
         else if (signalRegionTag == "BDT_T2bw050_3"                         ) return /*"T2bw x=0.50, "+*/"BDT 3";
         else if (signalRegionTag == "BDT_T2bw050_4"                         ) return /*"T2bw x=0.50, "+*/"BDT 4";
         else if (signalRegionTag == "BDT_T2bw050_5"                         ) return /*"T2bw x=0.50, "+*/"BDT 5";
@@ -221,8 +229,7 @@ string signalRegionLabel(string signalRegionTag, string format = "root")
         else if (signalRegionTag == "BDT_T2bw025_3"                         ) return /*"T2bw x=0.25, "+*/"BDT 3";
         else if (signalRegionTag == "BDT_T2bw025_4"                         ) return /*"T2bw x=0.25, "+*/"BDT 4";
         else if (signalRegionTag == "BDT_T2bw025_6"                         ) return /*"T2bw x=0.25, "+*/"BDT 6";
-        else return "";                                                                               
-        
+        else return "";                                               
     }
 }
 

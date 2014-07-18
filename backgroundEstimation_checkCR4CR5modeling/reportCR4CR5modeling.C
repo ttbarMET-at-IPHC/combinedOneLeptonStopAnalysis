@@ -176,11 +176,12 @@ int main (int argc, char *argv[])
     {
         float min = hMin->GetBinContent(j+1);
         float max = hMax->GetBinContent(j+1);
-        float uncert = min;
-        if(max>min) uncert = max;
+
+        float uncert = 1-min;
+        if ((max-1)>uncert) uncert = max-1;
         uncert*=(1+ExtrapUncert);
-        //Figure funcert(uncert,0);
-        Figure funcert(1.0,uncert-1);
+        Figure funcert(1.0,uncert);
+
         SF_tt2l.Set("value",signalRegionsTagList[j],funcert);
     }
 

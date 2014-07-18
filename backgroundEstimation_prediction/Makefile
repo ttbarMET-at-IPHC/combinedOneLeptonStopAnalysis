@@ -103,12 +103,6 @@ tables:
 	echo "Done";
 
 
-histoForSFRestimation: histoForSFRestimationProducer.$(ExeSuf)
-	./histoForSFRestimationProducer.$(ExeSuf) 
-
-SFRestimation: histoForSFRestimation SFRestimation.$(ExeSuf) 
-	./SFRestimation.$(ExeSuf) > SFRestimation.res
-
 computeBDTCuts: computeBDTCuts.$(ExeSuf)
 	./computeBDTCuts.$(ExeSuf) 
 

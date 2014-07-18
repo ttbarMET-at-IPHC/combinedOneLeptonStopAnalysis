@@ -43,7 +43,7 @@ int main (int argc, char *argv[])
         CustomJetRequirement = argv[1];
         NOMINAL_BDT_CUT = false;
         printBoxedMessage("Running with custom jet requirement : "+CustomJetRequirement);
-        LoadBDTCut(CustomJetRequirement);
+        LoadBDTCutWithCustomRequirement(CustomJetRequirement);
     }
     
     printBoxedMessage("Starting tables generation");
