@@ -1,10 +1,5 @@
 #include "common.h"
 
-#define ttbar_sample "ttbar_powheg"
-//#define ttbar_sample "ttbar_madgraph"
-
-
-
 bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
                                                                       
@@ -44,9 +39,8 @@ bool goesIn0BtagControlRegionMTinverted_6j() { return (goesIn0BtagControlRegionM
 bool goesIn0BtagControlRegionMTtail120()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 120); } 
 bool goesIn0BtagControlRegionMTtail125()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 125); } 
 bool goesIn0BtagControlRegionMTtail130()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 130); } 
+bool goesIn0BtagControlRegionMTtail135()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 135); } 
 bool goesIn0BtagControlRegionMTtail140()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 140); } 
-bool goesIn0BtagControlRegionMTtail150()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 150); } 
-bool goesIn0BtagControlRegionMTtail160()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 160); } 
 bool goesIn0BtagControlRegionMTinverted120() { return (goesIn0BtagControlRegion() && myEvent.MT <= 120); } 
 
 bool goesInPreselNoBRequirementControlRegionMTinverted()
@@ -59,118 +53,101 @@ bool goesInPreselNoBRequirementControlRegionMTinverted()
     return true; 
 }
 
-bool SR_BDT_T2tt_1   () { return goesInPreselection() &&   (BDToutput("T2tt_1"         )>BDTcut("T2tt_1"         )   ); }
-bool SR_BDT_T2tt_2   () { return goesInPreselection() &&   (BDToutput("T2tt_2"         )>BDTcut("T2tt_2"         )   ); }
-bool SR_BDT_T2tt_5   () { return goesInPreselection() &&   (BDToutput("T2tt_5_loose"   )>BDTcut("T2tt_5_loose"   )   ); }
-bool SR_BDT_T2bw075_1() { return goesInPreselection() &&   (BDToutput("T2bw075_1"      )>BDTcut("T2bw075_1"      )   ); }
-bool SR_BDT_T2bw075_2() { return goesInPreselection() &&   (BDToutput("T2bw075_2"      )>BDTcut("T2bw075_2"      )   ); }
-bool SR_BDT_T2bw075_3() { return goesInPreselection() &&   (BDToutput("T2bw075_3"      )>BDTcut("T2bw075_3"      )   ); }
-bool SR_BDT_T2bw075_5() { return goesInPreselection() &&   (BDToutput("T2bw075_5"      )>BDTcut("T2bw075_5"      )   ); }
-bool SR_BDT_T2bw050_1() { return goesInPreselection() &&   (BDToutput("T2bw050_1_loose")>BDTcut("T2bw050_1_loose")   ); }
-bool SR_BDT_T2bw050_3() { return goesInPreselection() &&   (BDToutput("T2bw050_3"      )>BDTcut("T2bw050_3"      )   ); }
-bool SR_BDT_T2bw050_4() { return goesInPreselection() &&   (BDToutput("T2bw050_4"      )>BDTcut("T2bw050_4"      )   ); }
-bool SR_BDT_T2bw050_5() { return goesInPreselection() &&   (BDToutput("T2bw050_5"      )>BDTcut("T2bw050_5"      )   ); }
-bool SR_BDT_T2bw050_6() { return goesInPreselection() &&   (BDToutput("T2bw050_6"      )>BDTcut("T2bw050_6"      )   ); }
-bool SR_BDT_T2bw025_1() { return goesInPreselection() &&   (BDToutput("T2bw025_1"      )>BDTcut("T2bw025_1"      )   ); }
-bool SR_BDT_T2bw025_3() { return goesInPreselection() &&   (BDToutput("T2bw025_3"      )>BDTcut("T2bw025_3"      )   ); }
-bool SR_BDT_T2bw025_4() { return goesInPreselection() &&   (BDToutput("T2bw025_4"      )>BDTcut("T2bw025_4"      )   ); }
-bool SR_BDT_T2bw025_6() { return goesInPreselection() &&   (BDToutput("T2bw025_6"      )>BDTcut("T2bw025_6"      )   ); }
+bool BDT_MTtail_T2tt_1   () { return goesIn0BtagControlRegionMTtail() && BDT_T2tt_1   (false); }
+bool BDT_MTtail_T2tt_2   () { return goesIn0BtagControlRegionMTtail() && BDT_T2tt_2   (false); }
+bool BDT_MTtail_T2tt_5   () { return goesIn0BtagControlRegionMTtail() && BDT_T2tt_5   (false); }
+bool BDT_MTtail_T2bw075_1() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw075_1(false); }
+bool BDT_MTtail_T2bw075_2() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw075_2(false); }
+bool BDT_MTtail_T2bw075_3() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw075_3(false); }
+bool BDT_MTtail_T2bw075_5() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw075_5(false); }
+bool BDT_MTtail_T2bw050_1() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw050_1(false); }
+bool BDT_MTtail_T2bw050_3() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw050_3(false); }
+bool BDT_MTtail_T2bw050_4() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw050_4(false); }
+bool BDT_MTtail_T2bw050_5() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw050_5(false); }
+bool BDT_MTtail_T2bw050_6() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw050_6(false); }
+bool BDT_MTtail_T2bw025_1() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw025_1(false); }
+bool BDT_MTtail_T2bw025_3() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw025_3(false); }
+bool BDT_MTtail_T2bw025_4() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw025_4(false); }
+bool BDT_MTtail_T2bw025_6() { return goesIn0BtagControlRegionMTtail() && BDT_T2bw025_6(false); }
 
-bool LowBDT_T2tt_1   () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_1"         )> -0.00  ); }
-bool LowBDT_T2tt_2   () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_2"         )> 0.01   ); }
-bool LowBDT_T2tt_5   () { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2tt_5_loose"   )> -0.06  ); }
-bool LowBDT_T2bw075_1() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_1"      )> -0.01  ); }
-bool LowBDT_T2bw075_2() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_2"      )> -0.04  ); }
-bool LowBDT_T2bw075_3() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_3"      )> -0.04  ); }
-bool LowBDT_T2bw075_5() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw075_5"      )> -0.05  ); }
-bool LowBDT_T2bw050_1() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_1_loose")> -0.00  ); }
-bool LowBDT_T2bw050_3() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_3"      )> 0.04   ); }
-bool LowBDT_T2bw050_4() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_4"      )> 0.01   ); }
-bool LowBDT_T2bw050_5() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_5"      )> 0.00   ); }
-bool LowBDT_T2bw050_6() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw050_6"      )> -0.00  ); }
-bool LowBDT_T2bw025_1() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_1"      )> 0.04   ); }
-bool LowBDT_T2bw025_3() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_3"      )> 0.05   ); }
-bool LowBDT_T2bw025_4() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_4"      )> 0.01   ); }
-bool LowBDT_T2bw025_6() { return goesIn0BtagControlRegionMTtail() &&  (BDToutput("T2bw025_6"      )> -0.01  ); }
+bool BDT_MTpeak_T2tt_1   () { return goesIn0BtagControlRegionMTpeak() && BDT_T2tt_1   (false); }
+bool BDT_MTpeak_T2tt_2   () { return goesIn0BtagControlRegionMTpeak() && BDT_T2tt_2   (false); }
+bool BDT_MTpeak_T2tt_5   () { return goesIn0BtagControlRegionMTpeak() && BDT_T2tt_5   (false); }
+bool BDT_MTpeak_T2bw075_1() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw075_1(false); }
+bool BDT_MTpeak_T2bw075_2() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw075_2(false); }
+bool BDT_MTpeak_T2bw075_3() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw075_3(false); }
+bool BDT_MTpeak_T2bw075_5() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw075_5(false); }
+bool BDT_MTpeak_T2bw050_1() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw050_1(false); }
+bool BDT_MTpeak_T2bw050_3() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw050_3(false); }
+bool BDT_MTpeak_T2bw050_4() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw050_4(false); }
+bool BDT_MTpeak_T2bw050_5() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw050_5(false); }
+bool BDT_MTpeak_T2bw050_6() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw050_6(false); }
+bool BDT_MTpeak_T2bw025_1() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw025_1(false); }
+bool BDT_MTpeak_T2bw025_3() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw025_3(false); }
+bool BDT_MTpeak_T2bw025_4() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw025_4(false); }
+bool BDT_MTpeak_T2bw025_6() { return goesIn0BtagControlRegionMTpeak() && BDT_T2bw025_6(false); }
 
-bool LowBDT_MTpeak_T2tt_1           () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2tt_1"         )> -0.00  ); }
-bool LowBDT_MTpeak_T2tt_2           () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2tt_2"         )> 0.01   ); }
-bool LowBDT_MTpeak_T2tt_5           () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2tt_5_loose"   )> -0.06  ); }
-bool LowBDT_MTpeak_T2bw075_1        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw075_1"      )> -0.01  ); }
-bool LowBDT_MTpeak_T2bw075_2        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw075_2"      )> -0.04  ); }
-bool LowBDT_MTpeak_T2bw075_3        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw075_3"      )> -0.04  ); }
-bool LowBDT_MTpeak_T2bw075_5        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw075_5"      )> -0.05  ); }
-bool LowBDT_MTpeak_T2bw050_1        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw050_1_loose")> -0.00  ); }
-bool LowBDT_MTpeak_T2bw050_3        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw050_3"      )> 0.04   ); }
-bool LowBDT_MTpeak_T2bw050_4        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw050_4"      )> 0.01   ); }
-bool LowBDT_MTpeak_T2bw050_5        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw050_5"      )> 0.00   ); }
-bool LowBDT_MTpeak_T2bw050_6        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw050_6"      )> -0.00  ); }
-bool LowBDT_MTpeak_T2bw025_1        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw025_1"      )> 0.04   ); }
-bool LowBDT_MTpeak_T2bw025_3        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw025_3"      )> 0.05   ); }
-bool LowBDT_MTpeak_T2bw025_4        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw025_4"      )> 0.01   ); }
-bool LowBDT_MTpeak_T2bw025_6        () { return goesIn0BtagControlRegionMTpeak() &&  (BDToutput("T2bw025_6"      )> -0.01  ); }
+bool BDT_MTPeakNoBtag_T2tt_1     () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2tt_1   (false); }
+bool BDT_MTPeakNoBtag_T2tt_2     () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2tt_2   (false); }
+bool BDT_MTPeakNoBtag_T2tt_5     () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2tt_5   (false); }
+bool BDT_MTPeakNoBtag_T2bw075_1  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw075_1(false); }
+bool BDT_MTPeakNoBtag_T2bw075_2  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw075_2(false); }
+bool BDT_MTPeakNoBtag_T2bw075_3  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw075_3(false); }
+bool BDT_MTPeakNoBtag_T2bw075_5  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw075_5(false); }
+bool BDT_MTPeakNoBtag_T2bw050_1  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw050_1(false); }
+bool BDT_MTPeakNoBtag_T2bw050_3  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw050_3(false); }
+bool BDT_MTPeakNoBtag_T2bw050_4  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw050_4(false); }
+bool BDT_MTPeakNoBtag_T2bw050_5  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw050_5(false); }
+bool BDT_MTPeakNoBtag_T2bw050_6  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw050_6(false); }
+bool BDT_MTPeakNoBtag_T2bw025_1  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw025_1(false); }
+bool BDT_MTPeakNoBtag_T2bw025_3  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw025_3(false); }
+bool BDT_MTPeakNoBtag_T2bw025_4  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw025_4(false); }
+bool BDT_MTPeakNoBtag_T2bw025_6  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) && BDT_T2bw025_6(false); }
 
-bool LowBDT_MTPeakNoBtag_T2tt_1     () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_1"         )> -0.00  ); }
-bool LowBDT_MTPeakNoBtag_T2tt_2     () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_2"         )> 0.01   ); }
-bool LowBDT_MTPeakNoBtag_T2tt_5     () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_5_loose"   )> -0.06  ); }
-bool LowBDT_MTPeakNoBtag_T2bw075_1  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_1"      )> -0.01  ); }
-bool LowBDT_MTPeakNoBtag_T2bw075_2  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_2"      )> -0.04  ); }
-bool LowBDT_MTPeakNoBtag_T2bw075_3  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_3"      )> -0.04  ); }
-bool LowBDT_MTPeakNoBtag_T2bw075_5  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_5"      )> -0.05  ); }
-bool LowBDT_MTPeakNoBtag_T2bw050_1  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_1_loose")> -0.00  ); }
-bool LowBDT_MTPeakNoBtag_T2bw050_3  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_3"      )> 0.04   ); }
-bool LowBDT_MTPeakNoBtag_T2bw050_4  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_4"      )> 0.01   ); }
-bool LowBDT_MTPeakNoBtag_T2bw050_5  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_5"      )> 0.00   ); }
-bool LowBDT_MTPeakNoBtag_T2bw050_6  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_6"      )> -0.00  ); }
-bool LowBDT_MTPeakNoBtag_T2bw025_1  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_1"      )> 0.04   ); }
-bool LowBDT_MTPeakNoBtag_T2bw025_3  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_3"      )> 0.05   ); }
-bool LowBDT_MTPeakNoBtag_T2bw025_4  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_4"      )> 0.01   ); }
-bool LowBDT_MTPeakNoBtag_T2bw025_6  () { return ( goesIn0BtagControlRegionMTpeak() || goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_6"      )> -0.01  ); }
-
-bool LowBDT_MTPeakOneBtag_T2tt_1    () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_1"         )> -0.00  ); }
-bool LowBDT_MTPeakOneBtag_T2tt_2    () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_2"         )> 0.01   ); }
-bool LowBDT_MTPeakOneBtag_T2tt_5    () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2tt_5_loose"   )> -0.06  ); }
-bool LowBDT_MTPeakOneBtag_T2bw075_1 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_1"      )> -0.01  ); }
-bool LowBDT_MTPeakOneBtag_T2bw075_2 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_2"      )> -0.04  ); }
-bool LowBDT_MTPeakOneBtag_T2bw075_3 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_3"      )> -0.04  ); }
-bool LowBDT_MTPeakOneBtag_T2bw075_5 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw075_5"      )> -0.05  ); }
-bool LowBDT_MTPeakOneBtag_T2bw050_1 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_1_loose")> -0.00  ); }
-bool LowBDT_MTPeakOneBtag_T2bw050_3 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_3"      )> 0.04   ); }
-bool LowBDT_MTPeakOneBtag_T2bw050_4 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_4"      )> 0.01   ); }
-bool LowBDT_MTPeakOneBtag_T2bw050_5 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_5"      )> 0.00   ); }
-bool LowBDT_MTPeakOneBtag_T2bw050_6 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw050_6"      )> -0.00  ); }
-bool LowBDT_MTPeakOneBtag_T2bw025_1 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_1"      )> 0.04   ); }
-bool LowBDT_MTPeakOneBtag_T2bw025_3 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_3"      )> 0.05   ); }
-bool LowBDT_MTPeakOneBtag_T2bw025_4 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_4"      )> 0.01   ); }
-bool LowBDT_MTPeakOneBtag_T2bw025_6 () { return (  goesInPreselectionMTpeak() ) &&  (BDToutput("T2bw025_6"      )> -0.01  ); }
+bool BDT_MTPeakOneBtag_T2tt_1    () { return (  goesInPreselectionMTpeak() ) && BDT_T2tt_1   (false); }
+bool BDT_MTPeakOneBtag_T2tt_2    () { return (  goesInPreselectionMTpeak() ) && BDT_T2tt_2   (false); }
+bool BDT_MTPeakOneBtag_T2tt_5    () { return (  goesInPreselectionMTpeak() ) && BDT_T2tt_5   (false); }
+bool BDT_MTPeakOneBtag_T2bw075_1 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw075_1(false); }
+bool BDT_MTPeakOneBtag_T2bw075_2 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw075_2(false); }
+bool BDT_MTPeakOneBtag_T2bw075_3 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw075_3(false); }
+bool BDT_MTPeakOneBtag_T2bw075_5 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw075_5(false); }
+bool BDT_MTPeakOneBtag_T2bw050_1 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw050_1(false); }
+bool BDT_MTPeakOneBtag_T2bw050_3 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw050_3(false); }
+bool BDT_MTPeakOneBtag_T2bw050_4 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw050_4(false); }
+bool BDT_MTPeakOneBtag_T2bw050_5 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw050_5(false); }
+bool BDT_MTPeakOneBtag_T2bw050_6 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw050_6(false); }
+bool BDT_MTPeakOneBtag_T2bw025_1 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw025_1(false); }
+bool BDT_MTPeakOneBtag_T2bw025_3 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw025_3(false); }
+bool BDT_MTPeakOneBtag_T2bw025_4 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw025_4(false); }
+bool BDT_MTPeakOneBtag_T2bw025_6 () { return (  goesInPreselectionMTpeak() ) && BDT_T2bw025_6(false); }
 
 
 //-- Functions for C&C  variable per variable --//
 // -- MET
-bool CR0btag_MTpeak_MET_200(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=200); }
-bool CR0btag_MTpeak_MET_250(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=250); }
-bool CR0btag_MTpeak_MET_300(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=300); }
-bool CR0btag_MTpeak_MET_320(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=320); }
+bool CR0btag_MTpeak_MET_200() { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=200); }
+bool CR0btag_MTpeak_MET_250() { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=250); }
+bool CR0btag_MTpeak_MET_300() { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=300); }
+bool CR0btag_MTpeak_MET_350() { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=350); }
 
-bool CR0btag_MTtail_MET_200(){ return (goesIn0BtagControlRegionMTtail() && myEvent.MET>=200); }
-bool CR0btag_MTtail_MET_250(){ return (goesIn0BtagControlRegionMTtail() && myEvent.MET>=250); }
-bool CR0btag_MTtail_MET_300(){ return (goesIn0BtagControlRegionMTtail() && myEvent.MET>=300); }
-bool CR0btag_MTtail_MET_320(){ return (goesIn0BtagControlRegionMTtail() && myEvent.MET>=320); }
+bool CR0btag_MTtail_MET_200() { return (goesIn0BtagControlRegionMTtail() && myEvent.MET>=200); }
+bool CR0btag_MTtail_MET_250() { return (goesIn0BtagControlRegionMTtail() && myEvent.MET>=250); }
+bool CR0btag_MTtail_MET_300() { return (goesIn0BtagControlRegionMTtail() && myEvent.MET>=300); }
+bool CR0btag_MTtail_MET_350() { return (goesIn0BtagControlRegionMTtail() && myEvent.MET>=350); }
 
 // -- METSig
-bool CR0btag_MTpeak_METoverSqrtHT_6(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=6); }
-bool CR0btag_MTpeak_METoverSqrtHT_7(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7); }
-bool CR0btag_MTpeak_METoverSqrtHT_8(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=8); }
-bool CR0btag_MTpeak_METoverSqrtHT_9(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=9); }
-bool CR0btag_MTpeak_METoverSqrtHT_10(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>10); }
-bool CR0btag_MTpeak_METoverSqrtHT_12(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=12); }
+bool CR0btag_MTpeak_METoverSqrtHT_6()  { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=6 ); }
+bool CR0btag_MTpeak_METoverSqrtHT_7()  { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 ); }
+bool CR0btag_MTpeak_METoverSqrtHT_8()  { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=8 ); }
+bool CR0btag_MTpeak_METoverSqrtHT_9()  { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=9 ); }
+bool CR0btag_MTpeak_METoverSqrtHT_10() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=10); }
+bool CR0btag_MTpeak_METoverSqrtHT_12() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=12); }
 
-bool CR0btag_MTtail_METoverSqrtHT_6(){ return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=6); }
-bool CR0btag_MTtail_METoverSqrtHT_7(){ return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=7); }
-bool CR0btag_MTtail_METoverSqrtHT_8(){ return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=8); }
-bool CR0btag_MTtail_METoverSqrtHT_9(){ return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=9); }
-bool CR0btag_MTtail_METoverSqrtHT_10(){ return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=10); }
-bool CR0btag_MTtail_METoverSqrtHT_12(){ return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=12); }
+bool CR0btag_MTtail_METoverSqrtHT_6()  { return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=6 ); }
+bool CR0btag_MTtail_METoverSqrtHT_7()  { return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=7 ); }
+bool CR0btag_MTtail_METoverSqrtHT_8()  { return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=8 ); }
+bool CR0btag_MTtail_METoverSqrtHT_9()  { return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=9 ); }
+bool CR0btag_MTtail_METoverSqrtHT_10() { return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=10); }
+bool CR0btag_MTtail_METoverSqrtHT_12() { return (goesIn0BtagControlRegionMTtail() && myEvent.METoverSqrtHT>=12); }
 
 // -- BPt
 bool CR0btag_MTpeak_BPt_100(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.leadingBPt>=100); }
@@ -178,7 +155,6 @@ bool CR0btag_MTpeak_BPt_150(){ return (goesIn0BtagControlRegionMTpeak() && myEve
 bool CR0btag_MTpeak_BPt_180(){ return (goesIn0BtagControlRegionMTpeak() && myEvent.leadingBPt>=180); }
 
 bool CR0btag_MTtail_BPt_100(){ return (goesIn0BtagControlRegionMTtail() && myEvent.leadingBPt>=100); }
-bool CR0btag_MTtail_BPt_150(){ return (goesIn0BtagControlRegionMTtail() && myEvent.leadingBPt>=150); }
 bool CR0btag_MTtail_BPt_180(){ return (goesIn0BtagControlRegionMTtail() && myEvent.leadingBPt>=180); }
 
 // -- DPhi
@@ -201,53 +177,17 @@ bool CR0btag_MTtail_MT2W_180(){ return (goesIn0BtagControlRegionMTtail() && myEv
 bool CR0btag_MTtail_MT2W_190(){ return (goesIn0BtagControlRegionMTtail() && myEvent.MT2W>=190); }
 bool CR0btag_MTtail_MT2W_200(){ return (goesIn0BtagControlRegionMTtail() && myEvent.MT2W>=200); }
 
-bool CR0bag_MTtail_T2tt_offShellLoose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//125 - 8
-bool CR0bag_MTtail_T2tt_offShellTight() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.MET>=120);}//130 - 200
-bool CR0bag_MTtail_T2tt_lowDeltaM    () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//140 - 8 
-bool CR0bag_MTtail_T2tt_mediumDeltaM () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.MET>=140 );}//140 - 200
-bool CR0bag_MTtail_T2tt_highDeltaM   () { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=130 && myEvent.MET>=100 );}//140 - 350 
-
-bool CR0bag_MTpeak_T2tt_offShellLoose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//8
-bool CR0bag_MTpeak_T2tt_offShellTight() { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=120);}//200
-bool CR0bag_MTpeak_T2tt_lowDeltaM    () { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//8
-bool CR0bag_MTpeak_T2tt_mediumDeltaM () { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=140 );}//200
-bool CR0bag_MTpeak_T2tt_highDeltaM   () { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=100 );}//350
-
-bool CR0bag_MTtail_T2bw025_veryOffShell_loose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//9
-bool CR0bag_MTtail_T2bw025_offShell_loose()     { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}
-bool CR0bag_MTtail_T2bw025_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=6 );}
-bool CR0bag_MTtail_T2bw025_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//10
-
-bool CR0bag_MTpeak_T2bw025_veryOffShell_loose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//9
-bool CR0bag_MTpeak_T2bw025_offShell_loose()     { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}
-bool CR0bag_MTpeak_T2bw025_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=6 );}
-bool CR0bag_MTpeak_T2bw025_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//10
-
-bool CR0bag_MTtail_T2bw050_offShell_loose()     { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//9
-bool CR0bag_MTtail_T2bw050_lowMass()            { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=6 );}
-bool CR0bag_MTtail_T2bw050_mediumDeltaM_loose() { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=130 && myEvent.METoverSqrtHT>=5 );}//150-7
-bool CR0bag_MTtail_T2bw050_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//160 - 10
-
-bool CR0bag_MTpeak_T2bw050_offShell_loose()     { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//9
-bool CR0bag_MTpeak_T2bw050_lowMass()            { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=6 );}
-bool CR0bag_MTpeak_T2bw050_mediumDeltaM_loose() { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=5 );}//7
-bool CR0bag_MTpeak_T2bw050_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//10
-
-bool CR0bag_MTtail_T2bw075_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//120 - 12
-bool CR0bag_MTtail_T2bw075_mediumDeltaM()       { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.METoverSqrtHT>=7 );}//140 - 10
-bool CR0bag_MTtail_T2bw075_highDeltaM()         { return (goesIn0BtagControlRegionMTtail() && myEvent.MT>=120 && myEvent.MET>=120 );}//MT>=160 - MET>=320
-
-bool CR0bag_MTpeak_T2bw075_lowDeltaM_tight()    { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7);}//12
-bool CR0bag_MTpeak_T2bw075_mediumDeltaM()       { return (goesIn0BtagControlRegionMTpeak() && myEvent.METoverSqrtHT>=7 );}//10
-bool CR0bag_MTpeak_T2bw075_highDeltaM()         { return (goesIn0BtagControlRegionMTpeak() && myEvent.MET>=120 );}//MET>=320
-
-//#endif
 // #########################################################################
 //                              Main function
 // #########################################################################
 
 int main (int argc, char *argv[])
 {
+    // Loading special BDT cut with >=25% efficiency on the background
+    // (goal is to have enough stat to perform the template fit)
+
+    NOMINAL_BDT_CUT = false;
+    LoadBDTCutWithCustomRequirement("25percentEfficiency");
 
     printBoxedMessage("Starting plot generation");
 
@@ -262,10 +202,14 @@ int main (int argc, char *argv[])
     // ##   Create Variables   ##
     // ##########################
 
-    float Mlb_customBinning[3]={0,150,600};
-    screwdriver.AddVariable("Mlb_small",     "Mlb",          "GeV",    2, Mlb_customBinning, &(myEvent.Mlb),    "");
-    screwdriver.AddVariable("M3b",           "M3b",          "GeV",    40,0,1000,            &(myEvent.M3b),    "");
+
     screwdriver.AddVariable("Mlb",           "Mlb",          "GeV",    40,0,600,             &(myEvent.Mlb),    "");
+    
+    float Mlb_customBinning[3] = {0,150,600};
+    screwdriver.AddVariable("Mlb_small",     "Mlb",          "GeV",    2, Mlb_customBinning, &(myEvent.Mlb),    "");
+    
+    screwdriver.AddVariable("M3b",           "M3b",          "GeV",    40,0,1000,            &(myEvent.M3b),    "");
+
 
     // To perform systematic study
     // (Note : JESup/down are not in skimmed babyTuples as for now)
@@ -319,7 +263,6 @@ int main (int argc, char *argv[])
     // ##    Create Regions    ##
     // ##########################
 
-
     screwdriver.AddRegion("MTpeak",              "Control Region (MT peak) - No b-tag cut", &goesInPreselNoBRequirementControlRegionMTinverted);
     screwdriver.AddRegion("presel_MTinverted",   "Preselection (MT < 100 GeV)",             &goesInPreselectionMTinverted);
     screwdriver.AddRegion("presel_MTpeak",       "Preselection (MT peak)",                  &goesInPreselectionMTpeak);
@@ -341,171 +284,118 @@ int main (int argc, char *argv[])
 
     string rebinning;
     rebinning="rebin=2";
-    screwdriver.AddRegion("LowBDT_T2tt_1",    "", &LowBDT_T2tt_1,    rebinning);
-    screwdriver.AddRegion("LowBDT_T2tt_2",    "", &LowBDT_T2tt_2,    rebinning);
-    screwdriver.AddRegion("LowBDT_T2tt_5",    "", &LowBDT_T2tt_5,    rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw075_1", "", &LowBDT_T2bw075_1, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw075_2", "", &LowBDT_T2bw075_2, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw075_3", "", &LowBDT_T2bw075_3, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw075_5", "", &LowBDT_T2bw075_5, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw050_1", "", &LowBDT_T2bw050_1, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw050_3", "", &LowBDT_T2bw050_3, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw050_4", "", &LowBDT_T2bw050_4, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw050_5", "", &LowBDT_T2bw050_5, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw050_6", "", &LowBDT_T2bw050_6, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw025_1", "", &LowBDT_T2bw025_1, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw025_3", "", &LowBDT_T2bw025_3, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw025_4", "", &LowBDT_T2bw025_4, rebinning);
-    screwdriver.AddRegion("LowBDT_T2bw025_6", "", &LowBDT_T2bw025_6, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2tt_1",    "", &BDT_MTtail_T2tt_1,    rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2tt_2",    "", &BDT_MTtail_T2tt_2,    rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2tt_5",    "", &BDT_MTtail_T2tt_5,    rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw075_1", "", &BDT_MTtail_T2bw075_1, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw075_2", "", &BDT_MTtail_T2bw075_2, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw075_3", "", &BDT_MTtail_T2bw075_3, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw075_5", "", &BDT_MTtail_T2bw075_5, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw050_1", "", &BDT_MTtail_T2bw050_1, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw050_3", "", &BDT_MTtail_T2bw050_3, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw050_4", "", &BDT_MTtail_T2bw050_4, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw050_5", "", &BDT_MTtail_T2bw050_5, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw050_6", "", &BDT_MTtail_T2bw050_6, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw025_1", "", &BDT_MTtail_T2bw025_1, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw025_3", "", &BDT_MTtail_T2bw025_3, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw025_4", "", &BDT_MTtail_T2bw025_4, rebinning);
+    screwdriver.AddRegion("BDT_MTtail_T2bw025_6", "", &BDT_MTtail_T2bw025_6, rebinning);
 
     rebinning="rebin=4";
-    screwdriver.AddRegion("LowBDT_MTpeak_T2tt_1",    "",  &LowBDT_MTpeak_T2tt_1   , rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2tt_2",    "",  &LowBDT_MTpeak_T2tt_2   , rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2tt_5",    "",  &LowBDT_MTpeak_T2tt_5   , rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw075_1", "",  &LowBDT_MTpeak_T2bw075_1, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw075_2", "",  &LowBDT_MTpeak_T2bw075_2, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw075_3", "",  &LowBDT_MTpeak_T2bw075_3, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw075_5", "",  &LowBDT_MTpeak_T2bw075_5, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw050_1", "",  &LowBDT_MTpeak_T2bw050_1, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw050_3", "",  &LowBDT_MTpeak_T2bw050_3, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw050_4", "",  &LowBDT_MTpeak_T2bw050_4, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw050_5", "",  &LowBDT_MTpeak_T2bw050_5, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw050_6", "",  &LowBDT_MTpeak_T2bw050_6, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw025_1", "",  &LowBDT_MTpeak_T2bw025_1, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw025_3", "",  &LowBDT_MTpeak_T2bw025_3, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw025_4", "",  &LowBDT_MTpeak_T2bw025_4, rebinning);
-    screwdriver.AddRegion("LowBDT_MTpeak_T2bw025_6", "",  &LowBDT_MTpeak_T2bw025_6, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2tt_1",    "",  &BDT_MTpeak_T2tt_1   , rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2tt_2",    "",  &BDT_MTpeak_T2tt_2   , rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2tt_5",    "",  &BDT_MTpeak_T2tt_5   , rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw075_1", "",  &BDT_MTpeak_T2bw075_1, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw075_2", "",  &BDT_MTpeak_T2bw075_2, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw075_3", "",  &BDT_MTpeak_T2bw075_3, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw075_5", "",  &BDT_MTpeak_T2bw075_5, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw050_1", "",  &BDT_MTpeak_T2bw050_1, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw050_3", "",  &BDT_MTpeak_T2bw050_3, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw050_4", "",  &BDT_MTpeak_T2bw050_4, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw050_5", "",  &BDT_MTpeak_T2bw050_5, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw050_6", "",  &BDT_MTpeak_T2bw050_6, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw025_1", "",  &BDT_MTpeak_T2bw025_1, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw025_3", "",  &BDT_MTpeak_T2bw025_3, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw025_4", "",  &BDT_MTpeak_T2bw025_4, rebinning);
+    screwdriver.AddRegion("BDT_MTpeak_T2bw025_6", "",  &BDT_MTpeak_T2bw025_6, rebinning);
 
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2tt_1",     "",  &LowBDT_MTPeakNoBtag_T2tt_1   , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2tt_2",     "",  &LowBDT_MTPeakNoBtag_T2tt_2   , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2tt_5",     "",  &LowBDT_MTPeakNoBtag_T2tt_5   , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw075_1",  "",  &LowBDT_MTPeakNoBtag_T2bw075_1, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw075_2",  "",  &LowBDT_MTPeakNoBtag_T2bw075_2, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw075_3",  "",  &LowBDT_MTPeakNoBtag_T2bw075_3, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw075_5",  "",  &LowBDT_MTPeakNoBtag_T2bw075_5, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw050_1",  "",  &LowBDT_MTPeakNoBtag_T2bw050_1, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw050_3",  "",  &LowBDT_MTPeakNoBtag_T2bw050_3, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw050_4",  "",  &LowBDT_MTPeakNoBtag_T2bw050_4, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw050_5",  "",  &LowBDT_MTPeakNoBtag_T2bw050_5, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw050_6",  "",  &LowBDT_MTPeakNoBtag_T2bw050_6, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw025_1",  "",  &LowBDT_MTPeakNoBtag_T2bw025_1, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw025_3",  "",  &LowBDT_MTPeakNoBtag_T2bw025_3, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw025_4",  "",  &LowBDT_MTPeakNoBtag_T2bw025_4, rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakNoBtag_T2bw025_6",  "",  &LowBDT_MTPeakNoBtag_T2bw025_6, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2tt_1",     "",  &BDT_MTPeakNoBtag_T2tt_1   , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2tt_2",     "",  &BDT_MTPeakNoBtag_T2tt_2   , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2tt_5",     "",  &BDT_MTPeakNoBtag_T2tt_5   , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw075_1",  "",  &BDT_MTPeakNoBtag_T2bw075_1, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw075_2",  "",  &BDT_MTPeakNoBtag_T2bw075_2, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw075_3",  "",  &BDT_MTPeakNoBtag_T2bw075_3, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw075_5",  "",  &BDT_MTPeakNoBtag_T2bw075_5, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw050_1",  "",  &BDT_MTPeakNoBtag_T2bw050_1, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw050_3",  "",  &BDT_MTPeakNoBtag_T2bw050_3, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw050_4",  "",  &BDT_MTPeakNoBtag_T2bw050_4, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw050_5",  "",  &BDT_MTPeakNoBtag_T2bw050_5, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw050_6",  "",  &BDT_MTPeakNoBtag_T2bw050_6, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw025_1",  "",  &BDT_MTPeakNoBtag_T2bw025_1, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw025_3",  "",  &BDT_MTPeakNoBtag_T2bw025_3, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw025_4",  "",  &BDT_MTPeakNoBtag_T2bw025_4, rebinning);
+    screwdriver.AddRegion("BDT_MTPeakNoBtag_T2bw025_6",  "",  &BDT_MTPeakNoBtag_T2bw025_6, rebinning);
 
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2tt_1",    "",  &LowBDT_MTPeakOneBtag_T2tt_1     , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2tt_2",    "",  &LowBDT_MTPeakOneBtag_T2tt_2     , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2tt_5",    "",  &LowBDT_MTPeakOneBtag_T2tt_5     , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw075_1", "",  &LowBDT_MTPeakOneBtag_T2bw075_1  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw075_2", "",  &LowBDT_MTPeakOneBtag_T2bw075_2  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw075_3", "",  &LowBDT_MTPeakOneBtag_T2bw075_3  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw075_5", "",  &LowBDT_MTPeakOneBtag_T2bw075_5  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_1", "",  &LowBDT_MTPeakOneBtag_T2bw050_1  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_3", "",  &LowBDT_MTPeakOneBtag_T2bw050_3  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_4", "",  &LowBDT_MTPeakOneBtag_T2bw050_4  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_5", "",  &LowBDT_MTPeakOneBtag_T2bw050_5  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw050_6", "",  &LowBDT_MTPeakOneBtag_T2bw050_6  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw025_1", "",  &LowBDT_MTPeakOneBtag_T2bw025_1  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw025_3", "",  &LowBDT_MTPeakOneBtag_T2bw025_3  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw025_4", "",  &LowBDT_MTPeakOneBtag_T2bw025_4  , rebinning);
-    screwdriver.AddRegion("LowBDT_MTPeakOneBtag_T2bw025_6", "",  &LowBDT_MTPeakOneBtag_T2bw025_6  , rebinning);
-
-    screwdriver.AddRegion("SR_BDT_T2tt_1",    "",  &SR_BDT_T2tt_1   );
-    screwdriver.AddRegion("SR_BDT_T2tt_2",    "",  &SR_BDT_T2tt_2   );
-    screwdriver.AddRegion("SR_BDT_T2tt_5",    "",  &SR_BDT_T2tt_5   );
-    screwdriver.AddRegion("SR_BDT_T2bw075_1", "",  &SR_BDT_T2bw075_1);
-    screwdriver.AddRegion("SR_BDT_T2bw075_2", "",  &SR_BDT_T2bw075_2);
-    screwdriver.AddRegion("SR_BDT_T2bw075_3", "",  &SR_BDT_T2bw075_3);
-    screwdriver.AddRegion("SR_BDT_T2bw075_5", "",  &SR_BDT_T2bw075_5);
-    screwdriver.AddRegion("SR_BDT_T2bw050_1", "",  &SR_BDT_T2bw050_1);
-    screwdriver.AddRegion("SR_BDT_T2bw050_3", "",  &SR_BDT_T2bw050_3);
-    screwdriver.AddRegion("SR_BDT_T2bw050_4", "",  &SR_BDT_T2bw050_4);
-    screwdriver.AddRegion("SR_BDT_T2bw050_5", "",  &SR_BDT_T2bw050_5);
-    screwdriver.AddRegion("SR_BDT_T2bw050_6", "",  &SR_BDT_T2bw050_6);
-    screwdriver.AddRegion("SR_BDT_T2bw025_1", "",  &SR_BDT_T2bw025_1);
-    screwdriver.AddRegion("SR_BDT_T2bw025_3", "",  &SR_BDT_T2bw025_3);
-    screwdriver.AddRegion("SR_BDT_T2bw025_4", "",  &SR_BDT_T2bw025_4);
-    screwdriver.AddRegion("SR_BDT_T2bw025_6", "",  &SR_BDT_T2bw025_6);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2tt_1",    "",  &BDT_MTPeakOneBtag_T2tt_1     , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2tt_2",    "",  &BDT_MTPeakOneBtag_T2tt_2     , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2tt_5",    "",  &BDT_MTPeakOneBtag_T2tt_5     , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw075_1", "",  &BDT_MTPeakOneBtag_T2bw075_1  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw075_2", "",  &BDT_MTPeakOneBtag_T2bw075_2  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw075_3", "",  &BDT_MTPeakOneBtag_T2bw075_3  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw075_5", "",  &BDT_MTPeakOneBtag_T2bw075_5  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw050_1", "",  &BDT_MTPeakOneBtag_T2bw050_1  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw050_3", "",  &BDT_MTPeakOneBtag_T2bw050_3  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw050_4", "",  &BDT_MTPeakOneBtag_T2bw050_4  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw050_5", "",  &BDT_MTPeakOneBtag_T2bw050_5  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw050_6", "",  &BDT_MTPeakOneBtag_T2bw050_6  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw025_1", "",  &BDT_MTPeakOneBtag_T2bw025_1  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw025_3", "",  &BDT_MTPeakOneBtag_T2bw025_3  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw025_4", "",  &BDT_MTPeakOneBtag_T2bw025_4  , rebinning);
+    screwdriver.AddRegion("BDT_MTPeakOneBtag_T2bw025_6", "",  &BDT_MTPeakOneBtag_T2bw025_6  , rebinning);
 
     screwdriver.AddRegion("CR0btag_MTtail_MT_120",           "",  &goesIn0BtagControlRegionMTtail120);
     screwdriver.AddRegion("CR0btag_MTtail_MT_125",           "",  &goesIn0BtagControlRegionMTtail125);
     screwdriver.AddRegion("CR0btag_MTtail_MT_130",           "",  &goesIn0BtagControlRegionMTtail130);
+    screwdriver.AddRegion("CR0btag_MTtail_MT_135",           "",  &goesIn0BtagControlRegionMTtail135);
     screwdriver.AddRegion("CR0btag_MTtail_MT_140",           "",  &goesIn0BtagControlRegionMTtail140);
-    screwdriver.AddRegion("CR0btag_MTtail_MT_150",           "",  &goesIn0BtagControlRegionMTtail150);
-    screwdriver.AddRegion("CR0btag_MTtail_MT_160",           "",  &goesIn0BtagControlRegionMTtail160);
 
-    screwdriver.AddRegion("CR0btag_MTpeak_MET_200",          "",  &CR0btag_MTpeak_MET_200           ); 
-    screwdriver.AddRegion("CR0btag_MTpeak_MET_250",          "",  &CR0btag_MTpeak_MET_250           );
-    screwdriver.AddRegion("CR0btag_MTpeak_MET_300",          "",  &CR0btag_MTpeak_MET_300           );
-    screwdriver.AddRegion("CR0btag_MTpeak_MET_320",          "",  &CR0btag_MTpeak_MET_320           );
-    screwdriver.AddRegion("CR0btag_MTtail_MET_200",          "",  &CR0btag_MTtail_MET_200           );
-    screwdriver.AddRegion("CR0btag_MTtail_MET_250",          "",  &CR0btag_MTtail_MET_250           );
-    screwdriver.AddRegion("CR0btag_MTtail_MET_300",          "",  &CR0btag_MTtail_MET_300           );
-    screwdriver.AddRegion("CR0btag_MTtail_MET_320",          "",  &CR0btag_MTtail_MET_320           );
-    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_6" , "",  &CR0btag_MTpeak_METoverSqrtHT_6   );
-    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_7" , "",  &CR0btag_MTpeak_METoverSqrtHT_7   );
-    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_8" , "",  &CR0btag_MTpeak_METoverSqrtHT_8   );
-    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_9" , "",  &CR0btag_MTpeak_METoverSqrtHT_9   );
-    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_10", "",  &CR0btag_MTpeak_METoverSqrtHT_10  );
-    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_12", "",  &CR0btag_MTpeak_METoverSqrtHT_12  );
-    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_6" , "",  &CR0btag_MTtail_METoverSqrtHT_6   );
-    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_7" , "",  &CR0btag_MTtail_METoverSqrtHT_7   );
-    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_8" , "",  &CR0btag_MTtail_METoverSqrtHT_8   ); 
-    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_9" , "",  &CR0btag_MTtail_METoverSqrtHT_9   );
-    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_10", "",  &CR0btag_MTtail_METoverSqrtHT_10  );
-    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_12", "",  &CR0btag_MTtail_METoverSqrtHT_12  );
-    screwdriver.AddRegion("CR0btag_MTpeak_BPt_100" ,         "",  &CR0btag_MTpeak_BPt_100           );
-    screwdriver.AddRegion("CR0btag_MTpeak_BPt_150" ,         "",  &CR0btag_MTpeak_BPt_150           );
-    screwdriver.AddRegion("CR0btag_MTpeak_BPt_180" ,         "",  &CR0btag_MTpeak_BPt_180           );
-    screwdriver.AddRegion("CR0btag_MTtail_BPt_100" ,         "",  &CR0btag_MTtail_BPt_100           );
-    screwdriver.AddRegion("CR0btag_MTtail_BPt_150" ,         "",  &CR0btag_MTtail_BPt_150           );
-    screwdriver.AddRegion("CR0btag_MTtail_BPt_180" ,         "",  &CR0btag_MTtail_BPt_180           );
-    screwdriver.AddRegion("CR0btag_MTpeak_DPhi_02" ,         "",  &CR0btag_MTpeak_DPhi_02           );
-    screwdriver.AddRegion("CR0btag_MTpeak_DPhi_08" ,         "",  &CR0btag_MTpeak_DPhi_08           );
-    screwdriver.AddRegion("CR0btag_MTtail_DPhi_02" ,         "",  &CR0btag_MTtail_DPhi_02           );
-    screwdriver.AddRegion("CR0btag_MTtail_DPhi_08" ,         "",  &CR0btag_MTtail_DPhi_08           );
-    screwdriver.AddRegion("CR0btag_MTpeak_ISRJet"  ,         "",  &CR0btag_MTpeak_ISRJet            );
-    screwdriver.AddRegion("CR0btag_MTtail_ISRJet"  ,         "",  &CR0btag_MTtail_ISRJet            );
-    screwdriver.AddRegion("CR0btag_MTpeak_MT2W_180",         "",  &CR0btag_MTpeak_MT2W_180          ); 
-    screwdriver.AddRegion("CR0btag_MTpeak_MT2W_190",         "",  &CR0btag_MTpeak_MT2W_190          );
-    screwdriver.AddRegion("CR0btag_MTpeak_MT2W_200",         "",  &CR0btag_MTpeak_MT2W_200          );
-    screwdriver.AddRegion("CR0btag_MTtail_MT2W_180",         "",  &CR0btag_MTtail_MT2W_180          );
-    screwdriver.AddRegion("CR0btag_MTtail_MT2W_190",         "",  &CR0btag_MTtail_MT2W_190          );
-    //screwdriver.AddRegion("CR0btag_MTtail_MT2W_200"      ,      "CR0btag_MTtail_MT2W_200"         ,  &CR0btag_MTtail_MT2W_200         );
-
-    rebinning="rebin=8";
-    screwdriver.AddRegion("CR0bag_MTtail_T2tt_offShellLoose",         "", &CR0bag_MTtail_T2tt_offShellLoose         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2tt_offShellTight",         "", &CR0bag_MTtail_T2tt_offShellTight         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2tt_lowDeltaM",             "", &CR0bag_MTtail_T2tt_lowDeltaM             ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2tt_mediumDeltaM",          "", &CR0bag_MTtail_T2tt_mediumDeltaM          ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2tt_highDeltaM",            "", &CR0bag_MTtail_T2tt_highDeltaM            ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2tt_offShellLoose",         "", &CR0bag_MTpeak_T2tt_offShellLoose         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2tt_offShellTight",         "", &CR0bag_MTpeak_T2tt_offShellTight         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2tt_lowDeltaM",             "", &CR0bag_MTpeak_T2tt_lowDeltaM             ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2tt_mediumDeltaM",          "", &CR0bag_MTpeak_T2tt_mediumDeltaM          ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2tt_highDeltaM",            "", &CR0bag_MTpeak_T2tt_highDeltaM            ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw025_veryOffShell_loose", "", &CR0bag_MTtail_T2bw025_veryOffShell_loose ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw025_offShell_loose",     "", &CR0bag_MTtail_T2bw025_offShell_loose     ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw025_lowDeltaM_tight",    "", &CR0bag_MTtail_T2bw025_lowDeltaM_tight    ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw025_highDeltaM",         "", &CR0bag_MTtail_T2bw025_highDeltaM         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw025_veryOffShell_loose", "", &CR0bag_MTpeak_T2bw025_veryOffShell_loose ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw025_offShell_loose",     "", &CR0bag_MTpeak_T2bw025_offShell_loose     ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw025_lowDeltaM_tight",    "", &CR0bag_MTpeak_T2bw025_lowDeltaM_tight    ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw025_highDeltaM",         "", &CR0bag_MTpeak_T2bw025_highDeltaM         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw050_offShell_loose",     "", &CR0bag_MTtail_T2bw050_offShell_loose     ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw050_lowMass",            "", &CR0bag_MTtail_T2bw050_lowMass            ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw050_mediumDeltaM_loose", "", &CR0bag_MTtail_T2bw050_mediumDeltaM_loose ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw050_highDeltaM",         "", &CR0bag_MTtail_T2bw050_highDeltaM         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw050_offShell_loose",     "", &CR0bag_MTpeak_T2bw050_offShell_loose     ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw050_lowMass",            "", &CR0bag_MTpeak_T2bw050_lowMass            ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw050_mediumDeltaM_loose", "", &CR0bag_MTpeak_T2bw050_mediumDeltaM_loose ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw050_highDeltaM",         "", &CR0bag_MTpeak_T2bw050_highDeltaM         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw075_lowDeltaM_tight",    "", &CR0bag_MTtail_T2bw075_lowDeltaM_tight    ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw075_mediumDeltaM",       "", &CR0bag_MTtail_T2bw075_mediumDeltaM       ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTtail_T2bw075_highDeltaM",         "", &CR0bag_MTtail_T2bw075_highDeltaM         ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw075_lowDeltaM_tight",    "", &CR0bag_MTpeak_T2bw075_lowDeltaM_tight    ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw075_mediumDeltaM",       "", &CR0bag_MTpeak_T2bw075_mediumDeltaM       ,rebinning);
-    screwdriver.AddRegion("CR0bag_MTpeak_T2bw075_highDeltaM",         "", &CR0bag_MTpeak_T2bw075_highDeltaM         );
+    screwdriver.AddRegion("CR0btag_MTpeak_MET_200",          "",  &CR0btag_MTpeak_MET_200         ); 
+    screwdriver.AddRegion("CR0btag_MTpeak_MET_250",          "",  &CR0btag_MTpeak_MET_250         );
+    screwdriver.AddRegion("CR0btag_MTpeak_MET_300",          "",  &CR0btag_MTpeak_MET_300         );
+    screwdriver.AddRegion("CR0btag_MTpeak_MET_350",          "",  &CR0btag_MTpeak_MET_350         );
+    screwdriver.AddRegion("CR0btag_MTtail_MET_200",          "",  &CR0btag_MTtail_MET_200         );
+    screwdriver.AddRegion("CR0btag_MTtail_MET_250",          "",  &CR0btag_MTtail_MET_250         );
+    screwdriver.AddRegion("CR0btag_MTtail_MET_300",          "",  &CR0btag_MTtail_MET_300         );
+    screwdriver.AddRegion("CR0btag_MTtail_MET_350",          "",  &CR0btag_MTtail_MET_350         );
+    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_6" , "",  &CR0btag_MTpeak_METoverSqrtHT_6 );
+    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_7" , "",  &CR0btag_MTpeak_METoverSqrtHT_7 );
+    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_8" , "",  &CR0btag_MTpeak_METoverSqrtHT_8 );
+    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_9" , "",  &CR0btag_MTpeak_METoverSqrtHT_9 );
+    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_10", "",  &CR0btag_MTpeak_METoverSqrtHT_10);
+    screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_12", "",  &CR0btag_MTpeak_METoverSqrtHT_12);
+    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_6" , "",  &CR0btag_MTtail_METoverSqrtHT_6 );
+    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_7" , "",  &CR0btag_MTtail_METoverSqrtHT_7 );
+    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_8" , "",  &CR0btag_MTtail_METoverSqrtHT_8 ); 
+    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_9" , "",  &CR0btag_MTtail_METoverSqrtHT_9 );
+    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_10", "",  &CR0btag_MTtail_METoverSqrtHT_10);
+    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_12", "",  &CR0btag_MTtail_METoverSqrtHT_12);
+    screwdriver.AddRegion("CR0btag_MTpeak_BPt_100" ,         "",  &CR0btag_MTpeak_BPt_100         );
+    screwdriver.AddRegion("CR0btag_MTpeak_BPt_150" ,         "",  &CR0btag_MTpeak_BPt_150         );
+    screwdriver.AddRegion("CR0btag_MTpeak_BPt_180" ,         "",  &CR0btag_MTpeak_BPt_180         );
+    screwdriver.AddRegion("CR0btag_MTtail_BPt_100" ,         "",  &CR0btag_MTtail_BPt_100         );
+    screwdriver.AddRegion("CR0btag_MTtail_BPt_180" ,         "",  &CR0btag_MTtail_BPt_180         );
+    screwdriver.AddRegion("CR0btag_MTpeak_DPhi_02" ,         "",  &CR0btag_MTpeak_DPhi_02         );
+    screwdriver.AddRegion("CR0btag_MTpeak_DPhi_08" ,         "",  &CR0btag_MTpeak_DPhi_08         );
+    screwdriver.AddRegion("CR0btag_MTtail_DPhi_02" ,         "",  &CR0btag_MTtail_DPhi_02         );
+    screwdriver.AddRegion("CR0btag_MTtail_DPhi_08" ,         "",  &CR0btag_MTtail_DPhi_08         );
+    screwdriver.AddRegion("CR0btag_MTpeak_ISRJet"  ,         "",  &CR0btag_MTpeak_ISRJet          );
+    screwdriver.AddRegion("CR0btag_MTtail_ISRJet"  ,         "",  &CR0btag_MTtail_ISRJet          );
+    screwdriver.AddRegion("CR0btag_MTpeak_MT2W_180",         "",  &CR0btag_MTpeak_MT2W_180        ); 
+    screwdriver.AddRegion("CR0btag_MTpeak_MT2W_190",         "",  &CR0btag_MTpeak_MT2W_190        );
+    screwdriver.AddRegion("CR0btag_MTpeak_MT2W_200",         "",  &CR0btag_MTpeak_MT2W_200        );
+    screwdriver.AddRegion("CR0btag_MTtail_MT2W_180",         "",  &CR0btag_MTtail_MT2W_180        );
+    screwdriver.AddRegion("CR0btag_MTtail_MT2W_190",         "",  &CR0btag_MTtail_MT2W_190        );
+    screwdriver.AddRegion("CR0btag_MTtail_MT2W_200",         "",  &CR0btag_MTtail_MT2W_200        );
 
     // ##########################                                                                                                  
     // ##   Create Channels    ##                                                                                                  
