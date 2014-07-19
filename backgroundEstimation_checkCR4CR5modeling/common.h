@@ -1,1 +1,1 @@
-../backgroundEstimation_prediction/common.h
+../backgroundEstimation_common/common.h

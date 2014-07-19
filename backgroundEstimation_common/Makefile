@@ -40,6 +40,8 @@ LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
 TARGET = yieldTableProducer
 #TARGET = backgroundEstimation
+#TARGET = controlPlotsProducer
+#TARGET = reportProducer
 #------------------------------------------------------------------------------
 
 default: compile run
@@ -100,6 +102,10 @@ tables:
 	done;								\
 	echo "Done";
 
+
+computeBDTCuts: computeBDTCuts.$(ExeSuf)
+	./computeBDTCuts.$(ExeSuf) 
+
 predictions: backgroundEstimation.$(ExeSuf)
 	@for REGION in $(SIGNAL_REGIONS);							\
 	 do															\
@@ -107,6 +113,53 @@ predictions: backgroundEstimation.$(ExeSuf)
 		   ./backgroundEstimation.$(ExeSuf) $$REGION $(ARG);	\
 	 done;
 
+controlPlots:
+	@make --no-print-directory clean;
+	@for REGION in $(SIGNAL_REGIONS);        \
+	 do                                      \
+		   echo "[Launching signal region $$REGION]";     \
+	 	   make --quiet --no-print-directory compile TARGET=controlPlotsProducer SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; \
+		   mv controlPlotsProducer.$(ExeSuf) controlPlotsProducer_$$REGION.$(ExeSuf);			\
+		   ./controlPlotsProducer_$$REGION.$(ExeSuf) > controlPlotsProducer_$$REGION.$(LogSuf) & \
+	done;
+	@for REGION in $(SIGNAL_REGIONS); 	\
+	do									\
+		echo "Waiting for $$REGION";	\
+		CHECK="nonEmpty";				\
+		while [ "$$CHECK" != "" ];		\
+		do								\
+			sleep 1;					\
+			CHECK=`ps kstart_time | grep controlPlotsProducer_$$REGION.$(ExeSuf) | grep -v grep`;	\
+		done;							\
+	done;								\
+	echo "Done";
+
+signalContamination:
+	@make --no-print-directory clean;
+	@for REGION in $(SIGNAL_REGIONS);        \
+	 do                                      \
+		   echo "[Launching signal region $$REGION]";     \
+	 	   make --quiet --no-print-directory compile TARGET=signalContamination SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; \
+		   mv signalContamination.$(ExeSuf) signalContamination_$$REGION.$(ExeSuf);			\
+		   ./signalContamination_$$REGION.$(ExeSuf) > signalContamination_$$REGION.$(LogSuf) & \
+	done;
+	@for REGION in $(SIGNAL_REGIONS); 	\
+	do									\
+		echo "Waiting for $$REGION";	\
+		CHECK="nonEmpty";				\
+		while [ "$$CHECK" != "" ];		\
+		do								\
+			sleep 1;					\
+			CHECK=`ps kstart_time | grep signalContamination_$$REGION.$(ExeSuf) | grep -v grep`;	\
+		done;							\
+	done;								\
+	echo "Done";
+
+report: reportProducer.$(ExeSuf)
+	./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf) > reports/report.tex && cd reports && pdflatex report.tex 
+
+syst: reportGenSystProducer.$(ExeSuf)
+	./reportGenSystProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportGenSystProducer.$(LogSuf) > reports/reportWithSyst.tex && cd reports && pdflatex report.tex
 
 #------------------------------------------------------------------------------
 

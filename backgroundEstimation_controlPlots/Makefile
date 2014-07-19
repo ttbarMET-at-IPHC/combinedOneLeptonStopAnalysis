@@ -40,6 +40,8 @@ LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
 TARGET = yieldTableProducer
 #TARGET = backgroundEstimation
+#TARGET = controlPlotsProducer
+#TARGET = reportProducer
 #------------------------------------------------------------------------------
 
 default: compile run
@@ -79,14 +81,14 @@ SIGNAL_REGIONS += BDT_T2tt_1
 #SIGNAL_REGIONS += LowBDT_T2bw050_1 LowBDT_T2bw050_3 LowBDT_T2bw050_4 LowBDT_T2bw050_5  LowBDT_T2bw050_6  
 #SIGNAL_REGIONS += LowBDT_T2bw075_1 LowBDT_T2bw075_2 LowBDT_T2bw075_3 LowBDT_T2bw075_5
 
-tables:
-	@make --no-print-directory clean 
-	@for REGION in $(SIGNAL_REGIONS); 		  \
-	 do									      \
-	        echo "[Lauching signal region $$REGION]";     \
-	        make --quiet --no-print-directory compile TARGET=yieldTableProducer SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; 	\
-			mv yieldTableProducer.$(ExeSuf) yieldTableProducer_$$REGION.$(ExeSuf); \
-			./yieldTableProducer_$$REGION.$(ExeSuf) ${ARG} > yieldTableProducer_$$REGION.$(LogSuf) & \
+controlPlots:
+	@make --no-print-directory clean;
+	@for REGION in $(SIGNAL_REGIONS);        \
+	 do                                      \
+		   echo "[Launching signal region $$REGION]";     \
+	 	   make --quiet --no-print-directory compile TARGET=controlPlotsProducer SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; \
+		   mv controlPlotsProducer.$(ExeSuf) controlPlotsProducer_$$REGION.$(ExeSuf);			\
+		   ./controlPlotsProducer_$$REGION.$(ExeSuf) > controlPlotsProducer_$$REGION.$(LogSuf) & \
 	done;
 	@for REGION in $(SIGNAL_REGIONS); 	\
 	do									\
@@ -95,18 +97,31 @@ tables:
 		while [ "$$CHECK" != "" ];		\
 		do								\
 			sleep 1;					\
-			CHECK=`ps kstart_time | grep yieldTableProducer_$$REGION.$(ExeSuf) | grep -v grep`;	\
+			CHECK=`ps kstart_time | grep controlPlotsProducer_$$REGION.$(ExeSuf) | grep -v grep`;	\
 		done;							\
 	done;								\
 	echo "Done";
 
-predictions: backgroundEstimation.$(ExeSuf)
-	@for REGION in $(SIGNAL_REGIONS);							\
-	 do															\
-	 	   echo "[Running on $$REGION]";			  	 		\
-		   ./backgroundEstimation.$(ExeSuf) $$REGION $(ARG);	\
-	 done;
-
+signalContamination:
+	@make --no-print-directory clean;
+	@for REGION in $(SIGNAL_REGIONS);        \
+	 do                                      \
+		   echo "[Launching signal region $$REGION]";     \
+	 	   make --quiet --no-print-directory compile TARGET=signalContamination SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; \
+		   mv signalContamination.$(ExeSuf) signalContamination_$$REGION.$(ExeSuf);			\
+		   ./signalContamination_$$REGION.$(ExeSuf) > signalContamination_$$REGION.$(LogSuf) & \
+	done;
+	@for REGION in $(SIGNAL_REGIONS); 	\
+	do									\
+		echo "Waiting for $$REGION";	\
+		CHECK="nonEmpty";				\
+		while [ "$$CHECK" != "" ];		\
+		do								\
+			sleep 1;					\
+			CHECK=`ps kstart_time | grep signalContamination_$$REGION.$(ExeSuf) | grep -v grep`;	\
+		done;							\
+	done;								\
+	echo "Done";
 
 #------------------------------------------------------------------------------
 
