@@ -466,7 +466,7 @@ int main()
     // # Prepare final SFR table #
     // ###########################
 
-    vector<string> columns = {"SFR_1ltop","SFR_wjets"};
+    vector<string> columns = {"SFR_1ltop","SFR_Wjets"};
 
     vector<string> listAllSignalRegion = listBDTSignalRegions;
                    listAllSignalRegion.insert(listAllSignalRegion.end(), listCutAndCounts.begin(), listCutAndCounts.end());
@@ -750,7 +750,7 @@ int main()
     for(unsigned int i=0;i<listBDTSignalRegions.size();i++)
     {
         tableSFR.Set("SFR_1ltop",listBDTSignalRegions[i],BDT_SF1ltop);
-        tableSFR.Set("SFR_wjets",listBDTSignalRegions[i],BDT_SFwjets);
+        tableSFR.Set("SFR_Wjets",listBDTSignalRegions[i],BDT_SFwjets);
     }
     
     // ########################
@@ -873,7 +873,7 @@ int main()
         SFR_CC_wjets *= Figure(1.0,TEMPLATE_FIT_METHOD_UNCERTAINTY);
 
         tableSFR.Set("SFR_1ltop",listCutAndCounts[r],SFR_CC_1ltop);
-        tableSFR.Set("SFR_wjets",listCutAndCounts[r],SFR_CC_wjets);
+        tableSFR.Set("SFR_Wjets",listCutAndCounts[r],SFR_CC_wjets);
     }
 
     tableSFR.Print(string(OUTPUT_FOLDER)+"/SFR.tab",4);

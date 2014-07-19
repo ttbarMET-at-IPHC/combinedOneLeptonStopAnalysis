@@ -13,13 +13,14 @@ class scaleFactorsProducer{
     public:
 
         //regions might be ordered following the convention above mentioned in the enum region
-        scaleFactorsProducer(string signalRegion, string customJetRequirement);
+        scaleFactorsProducer(string signalRegion, string customBDTRequirement);
         ~scaleFactorsProducer(){};
         void   ResetSystematics();
 
         void ComputeSFpre();
-        void ComputeSFpost();
-        void ComputeRandSFR();
+        
+        void ImportMTTailCorrection();
+        void ComputeSFR();
 
         void ComputeSF2l();
         void ComputeSF2ltail();
@@ -35,28 +36,18 @@ class scaleFactorsProducer{
     private:
        
         string signalRegionLabel;
-        string customJetRequirement;
+        string customBDTRequirement;
 
         // Scale factors
 
-        Figure SFpre;
-        Figure SFpost;
-        Figure RW_mc;
-        Figure Rlj_mc;
-        Figure SF_0btag;
-        Figure SFR_all;
-        Figure SFR_W;
-        Figure SFR_W_mean;
-        Figure SFR_lj_mean;
-        Figure RW_corrected;
-        Figure Rlj_corrected;
-        Figure Rlj_mean;
+        Figure SF_pre;
+        Figure SFR_Wjets;
+        Figure SFR_1ltop;
 
-        Figure SF2l;
-        Figure SFvetopeak;
-        Figure SF2ltail;
-        Figure SFvetotail;
-
+        Figure SF_2l;
+        Figure SF_vetopeak;
+        Figure SF_2ltail;
+        Figure SF_vetotail;
 
         // Tables 
 

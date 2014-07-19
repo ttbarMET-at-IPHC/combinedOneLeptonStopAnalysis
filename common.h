@@ -1,6 +1,9 @@
+#ifndef _COMBINED1LEPTONSTOPANALYSIS_H_
+#define _COMBINED1LEPTONSTOPANALYSIS_H_
 
 // C/C++ headers
 
+#include <fstream>
 #include <cmath>
 #include <iomanip>
 #include <time.h>
@@ -19,6 +22,10 @@ using namespace std;
 #include <TLorentzVector.h>
 #include <TMVA/Reader.h>
 #include <TROOT.h>
+#include <TCanvas.h>
+#include <TH1F.h>
+#include <TLegend.h>
+#include <TStyle.h>
 
 // Sonic Screwdriver headers
 /*
@@ -40,6 +47,14 @@ bool findSubstring(string input,string substring)
     if (input.find(substring) != string::npos) return true;
     else return false;
 }
+
+string intToString(int input)
+{
+    std::ostringstream ss;
+    ss << input;
+    return ss.str();
+}
+
 
 void printProgressBar(int current, int max, string name = "Progress")
 {
@@ -77,3 +92,5 @@ void printBoxedMessage(string message)
     cout << endl;
 
 }
+
+#endif

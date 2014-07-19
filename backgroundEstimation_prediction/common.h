@@ -25,16 +25,17 @@ using namespace theDoctor;
 #define FOLDER_BABYTUPLES "../store/babyTuples_0603_withBDT_skim/merged_1lepton4jetsMET80_or_2leptons1jetMET50/"
 #include "Reader.h"
 
-#define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
 #define BDT_OUTPUT_AVAILABLE
+#define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
 #define ISR_JET_ALREADY_COMPUTED
-#define USING_TTBAR_POWHEG
+#define LEADING_NON_B_PT_ALREADY_COMPUTED
 
 // #########################################
 // #  Background estimation configuration  #
 // #########################################
 
-#define USE_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+#define USING_TTBAR_POWHEG
+#define USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
 
 // #################################################
 // #  Analysis, cut-and-count and BDT definitions  #
