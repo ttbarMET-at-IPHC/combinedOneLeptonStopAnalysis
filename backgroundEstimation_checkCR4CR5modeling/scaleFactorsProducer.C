@@ -75,7 +75,6 @@ void scaleFactorsProducer::ComputeSFpre()
     SF_pre = (preveto_data - preveto_rare) 
           / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
     SF_pre.keepVariation(0,"noNegativeValue");
-
 }
 
 void scaleFactorsProducer::ComputeSF2l()
