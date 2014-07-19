@@ -19,8 +19,8 @@ class scaleFactorsProducer{
 
         void ComputeSFpre();
         
-        void ImportMTTailCorrection();
-        void ComputeSFR();
+        void ComputeMTTailToPeakRatioCorrectionMethod();
+        void ImportMTTailCorrectionFromTemplateFitMethod();
 
         void ComputeSF2l();
         void ComputeSF2ltail();
@@ -41,8 +41,11 @@ class scaleFactorsProducer{
         // Scale factors
 
         Figure SF_pre;
+
         Figure SFR_Wjets;
         Figure SFR_1ltop;
+        Figure SF_MTtail_Wjets;
+        Figure SF_MTtail_1ltop;
 
         Figure SF_2l;
         Figure SF_vetopeak;

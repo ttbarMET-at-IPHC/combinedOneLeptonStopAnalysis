@@ -15,23 +15,24 @@ class backgroundEstimation{
         //regions might be ordered following the convention above mentioned in the enum region
         backgroundEstimation(string signalRegion);
         ~backgroundEstimation(){};
-        void   ResetSystematics();
 
+        void  ComputeSFpre();
+        void  ComputeSFpost();
         float ComputeSecondLeptonVetoUncertainty();
-        void ComputeSFpre();
-        void ComputeSFpost();
-        void ComputeRandSFR();
-        void FillPredictionTable();
         
-        void PrintReport();
+        #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+            void  ImportMTTailCorrectionFromTemplateFitMethod();
+        #else
+            void  ComputeMTTailToPeakRatioCorrectionMethod();
+        #endif
         
+        void   Run();
         Figure ComputePrediction();
+        void   FillPredictionTable();
+        
+        void   ResetSystematics();
         void   ComputePredictionWithSystematics();
         
-        Table GetPredictionTable() { return predictionTable; };
-        Table GetUncertaintyTable()   { return systematicsUncertainties;  };
-
-        void Run(string CR = "");
 
     private:
        
@@ -39,35 +40,54 @@ class backgroundEstimation{
 
         // Scale factors
 
-        Figure SFpre;
-        Figure SFpost;
-        Figure RW_mc;
-        Figure Rlj_mc;
-        Figure SF_0btag;
-        Figure SFR_all;
-        Figure SFR_W;
-        Figure SFR_W_mean;
-        Figure SFR_lj_mean;
-        Figure RW_corrected;
-        Figure Rlj_corrected;
-        Figure Rlj_mean;
+        Figure SF_pre;
+        Figure SF_post;
+
+        #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+            Figure SF_MTtail_Wjets;
+            Figure SF_MTtail_1ltop;
+        #else
+            Figure SF_0btag;
+            Figure R_Wjets_mc;
+            Figure R_1ltop_mc;
+            Figure R_1ltop_mean;
+            Figure SFR_all;
+            Figure SFR_Wonly;
+            Figure SFR_Wjets_mean;
+            Figure SFR_1ltop_mean;
+            Figure R_Wjets_corrected;
+            Figure R_1ltop_corrected;
+        #endif
+
+        // Uncertainties
+
+        float ttll_CR4CR5ModelingUncertainty;
+        float ttll_nJetsModelingUncertainty;
 
         // Tables 
 
-        Table  rawYieldTable;
-        Table  scaleFactorTable;
-        Table  predictionTable;
-        Table  systematicsUncertainties;
+        Table rawYieldTable;
+        Table scaleFactorTable;
+        Table predictionTable;
+        Table systematicsUncertainties;
 
         // Systematic flags / value
-        float ttll_CR4and5_uncert;
+        //
         float ttll_CR4and5_rescale;   
         float ttll_nJets_rescale;     
         float ttll_2ndlepVeto_rescale;
         float WjetCrossSection_rescale;
         float rareCrossSection_rescale;
-        int   tailToPeakRatio_1lTop_variation;
-        int   SFR_Wjets_variation;
+        
+        #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+            float oneLepTopCrossSection_rescale;
+            int   SF_MTtail_Wjets_variation;
+            int   SF_MTtail_1ltop_variation;
+        #else
+            int   SFR_Wjets_variation;
+            int   tailToPeakRatio_1lTop_variation;
+        #endif
+
         int   MTpeakStat_variation;
         int   WjetsStat_variation;
         int   top1lStat_variation;

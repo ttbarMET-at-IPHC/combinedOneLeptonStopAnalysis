@@ -80,9 +80,17 @@ vector<string> systematicsTagList =
     "tt->ll_(CR4,CR5)",
     "tt->ll_(nJets)",
     "tt->ll_(veto)",
+    #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+    "SF_MTtail_Wjets",
+    "SF_MTtail_1ltop",
+    #else
     "SFR_Wjets",
     "1ltop_tailToPeak",
+    #endif
     "MTpeak" ,
+    #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+    "1ltop_(cross_section)",
+    #endif
     "W+jets_(cross_section)",
     "Rare_(cross_section)",
     "tt->ll_(MCstat)",
@@ -97,9 +105,17 @@ vector<string> systematicsLabelList =
     "$t\\bar{t} \\rightarrow \\ell \\ell$ (CR4 \\& CR5 tests)",
     "$t\\bar{t} \\rightarrow \\ell \\ell$ (jets modeling)",
     "$t\\bar{t} \\rightarrow \\ell \\ell$ (2nd lepton veto)",
+    #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+    "$SF^{M_T \\text{tail}}_{\\text{W+jets}}$ uncertainty",
+    "$SF^{M_T \\text{tail}}_{\\text{1$\\ell$ top}}$ uncertainty",
+    #else
     "$SFR_{\\text{W+jets}}$ uncertainty",
     "1$\\ell$ top tail-to-peak ratio",
+    #endif
     "$M_T$ peak (data and MC stat)" ,
+    #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+    "1$\\ell$ top (cross section)",
+    #endif
     "$W$+jets (cross section)",
     "rare (cross section)",
     "$t\\bar{t} \\rightarrow \\ell \\ell$ (MC stat)",
@@ -117,24 +133,42 @@ vector<string> scaleFactorsTagList =
 {
     "SF_pre",
     "SF_post",
-    "SF_0btag",
-    "SFR_W+jets",
-    "R_W+jets",
-    "R_1ltop",
-    "SF_2l",
-    "SF_2ltail",
-    "SF_vetopeak",
-    "SF_vetotail"
+    #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+    "SF_MTtail_Wjets",
+    "SF_MTtail_1ltop",
+    #else
+        "SF_0btag",
+        "SFR_W+jets",
+        "R_W+jets",
+        "R_1ltop",
+    #endif
 };
 
 vector<string> scaleFactorsLabelList =
 {
     "$SF_{pre}$",
     "$SF_{post}$",
-    "$SF_{\\text{0 $b$-tag}}$",
-    "$SFR_{\\text{$W$+jets}}$",
-    "$R_{\\text{$W$+jets}}$",
-    "$R_{\\text{1$\\ell$top}}$",
+    #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+    "$SF^{M_T \\text{tail}}_{\\text{W+jets}}$",
+    "$SF^{M_T \\text{tail}}_{\\text{1$\\ell$ top}}$",
+    #else
+        "$SF_{\\text{0 $b$-tag}}$",
+        "$SFR_{\\text{$W$+jets}}$",
+        "$R_{\\text{$W$+jets}}$",
+        "$R_{\\text{1$\\ell$top}}$",
+    #endif
+};
+
+vector<string> scaleFactorsTagList_CR4CR5modelingChecks =
+{
+    "SF_2l",
+    "SF_2ltail",
+    "SF_vetopeak",
+    "SF_vetotail"
+};
+
+vector<string> scaleFactorsLabelList_CR4CR5modelingChecks =
+{
     "$SF_{2l}$",
     "$SF_{2ltail}$",
     "$SF_{vetopeak}$",

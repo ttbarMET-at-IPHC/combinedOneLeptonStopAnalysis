@@ -31,7 +31,7 @@ scaleFactorsProducer::scaleFactorsProducer(string signalRegionLabel_, string cus
     // ######################################################
     
     vector<string> dummy = { "value" };
-    scaleFactorTable = Table(dummy,scaleFactorsTagList);
+    scaleFactorTable = Table(dummy,scaleFactorsTagList_CR4CR5modelingChecks);
 }
 
 void scaleFactorsProducer::Run()
@@ -53,9 +53,9 @@ void scaleFactorsProducer::ComputePrediction()
     ComputeSFpre();
 
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
-        ImportMTTailCorrection();
+        ImportMTTailCorrectionFromTemplateFitMethod();
     #else
-        ComputeRandSFR();
+        ComputeMTTailToPeakRatioCorrectionMethod();
     #endif
     
     ComputeSF2l();
@@ -74,7 +74,7 @@ void scaleFactorsProducer::ComputeSFpre()
 
     SF_pre = (preveto_data - preveto_rare) 
           / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
-    SF_pre.keepVariation(0);
+    SF_pre.keepVariation(0,"noNegativeValue");
 
 }
 
@@ -86,6 +86,7 @@ void scaleFactorsProducer::ComputeSF2l()
     Figure yield2l_rare     = rawYieldTable.Get("2leptons","rare"     );
     Figure yield2l_data     = rawYieldTable.Get("2leptons","data"     );
 
+    // FIXME What should happen if the data yield is null .. ?
     if (yield2l_data.value() > 0) 
         SF_2l = (yield2l_data - yield2l_rare) 
              / (yield2l_1ltop + yield2l_Wjets + yield2l_ttbar_2l);
@@ -99,6 +100,7 @@ void scaleFactorsProducer::ComputeSF2ltail()
     Figure tail2l_rare     = rawYieldTable.Get("2leptons_MTtail","rare"    );
     Figure tail2l_data     = rawYieldTable.Get("2leptons_MTtail","data"    );
 
+    // FIXME What should happen if the data yield is null .. ?
     if (tail2l_data.value() > 0)
         SF_2ltail = (tail2l_data - tail2l_rare - SF_2l* tail2l_1ltop - SF_2l* tail2l_Wjets) 
                  / (SF_2l* tail2l_ttbar_2l);
@@ -113,6 +115,7 @@ void scaleFactorsProducer::ComputeSFvetopeak()
     Figure peakveto_rare     = rawYieldTable.Get("reversedVeto_MTpeak","rare"    );
     Figure peakveto_data     = rawYieldTable.Get("reversedVeto_MTpeak","data"    );
 
+    // FIXME What should happen if the data yield is null .. ?
     if (peakveto_data.value() > 0) 
         SF_vetopeak = (peakveto_data - peakveto_rare - SF_pre * peakveto_ttbar_2l) 
                    / (peakveto_1ltop + peakveto_Wjets);
@@ -126,14 +129,21 @@ void scaleFactorsProducer::ComputeSFvetotail()
     Figure tailveto_rare     = rawYieldTable.Get("reversedVeto_MTtail","rare"    );
     Figure tailveto_data     = rawYieldTable.Get("reversedVeto_MTtail","data"    );
 
+    // FIXME What should happen if the data yield is null .. ?
     if (tailveto_data.value() > 0) 
     {
+    #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
+        SF_vetotail = (tailveto_data - tailveto_rare - SF_vetopeak*SF_MTtail_1ltop* tailveto_1ltop - SF_vetopeak*SF_MTtail_Wjets* tailveto_Wjets)
+                   / (SF_pre* tailveto_ttbar_2l);
+    #else
         SF_vetotail = (tailveto_data - tailveto_rare - SF_vetopeak*SFR_1ltop* tailveto_1ltop - SF_vetopeak*SFR_Wjets* tailveto_Wjets)
                    / (SF_pre* tailveto_ttbar_2l);
+    #endif
     }
+
 }
 
-void scaleFactorsProducer::ComputeSFR()
+void scaleFactorsProducer::ComputeMTTailToPeakRatioCorrectionMethod()
 {
     Figure signalRegionPeak_1ltop    = rawYieldTable.Get("signalRegion_MTpeak","1ltop"   );
     Figure signalRegionPeak_ttbar_2l = rawYieldTable.Get("signalRegion_MTpeak","ttbar_2l");
@@ -170,13 +180,13 @@ void scaleFactorsProducer::ComputeSFR()
     SFR_Wjets = Figure((SFR_all.value()+SFR_Wonly.value())/2.0 , (SFR_all.error() + SFR_Wonly.error())/2.0);
     SFR_1ltop = SFR_Wjets;
     
-    SFR_Wjets.keepVariation(0);
-    SFR_1ltop.keepVariation(0);
+    SFR_Wjets.keepVariation(0,"noNegativeValue");
+    SFR_1ltop.keepVariation(0,"noNegativeValue");
 }
 
-void scaleFactorsProducer::ImportMTTailCorrection()
+void scaleFactorsProducer::ImportMTTailCorrectionFromTemplateFitMethod()
 {
-    Table SFR_table = Table("../backgroundEstimation_MTtailCorrection/results/SFR.tab");
+    Table table = Table("../backgroundEstimation_MTtailCorrection/results/SFR.tab");
 
     // Remove low/medium/highDM suffix in label for BDT's
     string signalRegionLabel_ = signalRegionLabel;
@@ -197,9 +207,9 @@ void scaleFactorsProducer::ImportMTTailCorrection()
         if (pos != string::npos) signalRegionLabel_ = signalRegionLabel.substr(0,pos);
     }
 
-    SFR_Wjets = SFR_table.Get("SFR_Wjets",signalRegionLabel_);
-    SFR_1ltop = SFR_table.Get("SFR_1ltop",signalRegionLabel_);
+    SF_MTtail_Wjets = table.Get("SFR_Wjets",signalRegionLabel_);
+    SF_MTtail_1ltop = table.Get("SFR_1ltop",signalRegionLabel_);
     
-    SFR_Wjets.keepVariation(0);
-    SFR_1ltop.keepVariation(0);
+    SF_MTtail_Wjets.keepVariation(0,"noNegativeValue");
+    SF_MTtail_1ltop.keepVariation(0,"noNegativeValue");
 }
