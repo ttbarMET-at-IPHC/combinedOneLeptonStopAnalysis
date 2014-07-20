@@ -333,7 +333,7 @@ void backgroundEstimation::ComputeSFpost()
 #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
 void backgroundEstimation::ImportMTTailCorrectionFromTemplateFitMethod()
 {
-    Table SFR_table = Table("../backgroundEstimation_MTtailCorrection/results/SFR.tab");
+    Table SFR_table = Table("../backgroundEstimation_MTtailCorrection/results/SF_MTtail.tab");
 
     // Remove low/medium/highDM suffix in label for BDT's
     string signalRegionLabel_ = signalRegionLabel;

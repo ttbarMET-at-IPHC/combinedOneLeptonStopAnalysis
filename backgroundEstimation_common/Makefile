@@ -38,13 +38,50 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 #------------------------------------------------------------------------------
-TARGET = yieldTableProducer
+#TARGET = yieldTableProducer
 #TARGET = backgroundEstimation
 #TARGET = controlPlotsProducer
 #TARGET = reportProducer
 #------------------------------------------------------------------------------
 
-default: compile run
+everything: MTtailCorrection checkCR4CR5modeling backgroundPrediction report
+
+#------------------------------------------------------------------------------
+
+MTtailCorrection:
+	@make -C ../backgroundEstimation_MTtailCorrection 	 default
+
+checkCR4CR5modeling:
+	@make -C ../backgroundEstimation_checkCR4CR5modeling default
+
+backgroundPrediction:
+	@make -C ../backgroundEstimation_prediction 		 default
+
+report:
+	@DATE=$(shell date +%Y_%m_%d_%H:%M:%S);			\
+	 mkdir -p ./results/$$DATE/;					\
+	 cp -r ../backgroundEstimation_MTtailCorrection/results    			./results/$$DATE/MTtailCorrection/;						\
+	 cp -r ../backgroundEstimation_MTtailCorrection/inputPlots 			./results/$$DATE/MTtailCorrection/inputPlots/;			\
+	 cp -r ../backgroundEstimation_checkCR4CR5modeling/results			./results/$$DATE/checkCR4CR5modeling/;					\
+	 cp -r ../backgroundEstimation_checkCR4CR5modeling/rawYieldTables	./results/$$DATE/checkCR4CR5modeling/rawYieldTables/;	\
+	 cp -r ../backgroundEstimation_checkCR4CR5modeling/scaleFactors		./results/$$DATE/checkCR4CR5modeling/scaleFactors/;		\
+	 cp -r ../backgroundEstimation_prediction/prediction				./results/$$DATE/prediction/;							\
+	 cp -r ../backgroundEstimation_prediction/rawYieldTables			./results/$$DATE/prediction/rawYieldTables/;			\
+	 cp -r ../backgroundEstimation_prediction/scaleFactors				./results/$$DATE/prediction/scaleFactors/;				\
+	 cp -r ../backgroundEstimation_prediction/systematics				./results/$$DATE/prediction/systematics/;				\
+	 rm -f ./results/latest; cd results; ln -s ./$$DATE/ ./latest
+
+#./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf) > reports/report.tex && cd reports && pdflatex report.tex 
+
+
+
+#computeBDTCuts: computeBDTCuts.$(ExeSuf)
+#	./computeBDTCuts.$(ExeSuf) 
+
+#syst: reportGenSystProducer.$(ExeSuf)
+#	./reportGenSystProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportGenSystProducer.$(LogSuf) > reports/reportWithSyst.tex && cd reports && pdflatex report.tex
+
+#------------------------------------------------------------------------------
 
 compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
@@ -58,110 +95,11 @@ clean:
 	@echo "Cleaning..."
 	@rm -f *.$(ObjSuf) *.$(ExeSuf) *.$(LogSuf)
 
-#------------------------------------------------------------------------------
-
-# Running the background estimation on every signal regions
-
-SIGNAL_REGIONS = 
-SIGNAL_REGIONS += preselection
-SIGNAL_REGIONS += BDT_T2tt_1
-
-#SIGNAL_REGIONS += cutAndCount_T2tt_offShellLoose         cutAndCount_T2tt_offShellTight     cutAndCount_T2tt_lowDeltaM             cutAndCount_T2tt_mediumDeltaM   cutAndCount_T2tt_highDeltaM
-#SIGNAL_REGIONS += cutAndCount_T2bw025_offShell  cutAndCount_T2bw025_lowDeltaM    cutAndCount_T2bw025_highDeltaM
-#SIGNAL_REGIONS += cutAndCount_T2bw050_offShell  cutAndCount_T2bw050_lowMasses    cutAndCount_T2bw050_mediumDeltaM cutAndCount_T2bw050_highDeltaM
-#SIGNAL_REGIONS += cutAndCount_T2bw075_lowDeltaM cutAndCount_T2bw075_mediumDeltaM cutAndCount_T2bw075_highDeltaM
-
-#SIGNAL_REGIONS += BDT_T2tt_1  BDT_T2tt_2  BDT_T2tt_5_loose  BDT_T2tt_5_tight 
-#SIGNAL_REGIONS += BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4  BDT_T2bw025_6       
-#SIGNAL_REGIONS += BDT_T2bw050_1_loose BDT_T2bw050_1_tight BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5  BDT_T2bw050_6  
-#SIGNAL_REGIONS += BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5
-
-#SIGNAL_REGIONS += LowBDT_T2tt_1    LowBDT_T2tt_2  LowBDT_T2tt_5
-#SIGNAL_REGIONS += LowBDT_T2bw025_1 LowBDT_T2bw025_3 LowBDT_T2bw025_4  LowBDT_T2bw025_6       
-#SIGNAL_REGIONS += LowBDT_T2bw050_1 LowBDT_T2bw050_3 LowBDT_T2bw050_4 LowBDT_T2bw050_5  LowBDT_T2bw050_6  
-#SIGNAL_REGIONS += LowBDT_T2bw075_1 LowBDT_T2bw075_2 LowBDT_T2bw075_3 LowBDT_T2bw075_5
-
-tables:
-	@make --no-print-directory clean 
-	@for REGION in $(SIGNAL_REGIONS); 		  \
-	 do									      \
-	        echo "[Lauching signal region $$REGION]";     \
-	        make --quiet --no-print-directory compile TARGET=yieldTableProducer SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; 	\
-			mv yieldTableProducer.$(ExeSuf) yieldTableProducer_$$REGION.$(ExeSuf); \
-			./yieldTableProducer_$$REGION.$(ExeSuf) ${ARG} > yieldTableProducer_$$REGION.$(LogSuf) & \
-	done;
-	@for REGION in $(SIGNAL_REGIONS); 	\
-	do									\
-		echo "Waiting for $$REGION";	\
-		CHECK="nonEmpty";				\
-		while [ "$$CHECK" != "" ];		\
-		do								\
-			sleep 1;					\
-			CHECK=`ps kstart_time | grep yieldTableProducer_$$REGION.$(ExeSuf) | grep -v grep`;	\
-		done;							\
-	done;								\
-	echo "Done";
-
-
-computeBDTCuts: computeBDTCuts.$(ExeSuf)
-	./computeBDTCuts.$(ExeSuf) 
-
-predictions: backgroundEstimation.$(ExeSuf)
-	@for REGION in $(SIGNAL_REGIONS);							\
-	 do															\
-	 	   echo "[Running on $$REGION]";			  	 		\
-		   ./backgroundEstimation.$(ExeSuf) $$REGION $(ARG);	\
-	 done;
-
-controlPlots:
-	@make --no-print-directory clean;
-	@for REGION in $(SIGNAL_REGIONS);        \
-	 do                                      \
-		   echo "[Launching signal region $$REGION]";     \
-	 	   make --quiet --no-print-directory compile TARGET=controlPlotsProducer SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; \
-		   mv controlPlotsProducer.$(ExeSuf) controlPlotsProducer_$$REGION.$(ExeSuf);			\
-		   ./controlPlotsProducer_$$REGION.$(ExeSuf) > controlPlotsProducer_$$REGION.$(LogSuf) & \
-	done;
-	@for REGION in $(SIGNAL_REGIONS); 	\
-	do									\
-		echo "Waiting for $$REGION";	\
-		CHECK="nonEmpty";				\
-		while [ "$$CHECK" != "" ];		\
-		do								\
-			sleep 1;					\
-			CHECK=`ps kstart_time | grep controlPlotsProducer_$$REGION.$(ExeSuf) | grep -v grep`;	\
-		done;							\
-	done;								\
-	echo "Done";
-
-signalContamination:
-	@make --no-print-directory clean;
-	@for REGION in $(SIGNAL_REGIONS);        \
-	 do                                      \
-		   echo "[Launching signal region $$REGION]";     \
-	 	   make --quiet --no-print-directory compile TARGET=signalContamination SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; \
-		   mv signalContamination.$(ExeSuf) signalContamination_$$REGION.$(ExeSuf);			\
-		   ./signalContamination_$$REGION.$(ExeSuf) > signalContamination_$$REGION.$(LogSuf) & \
-	done;
-	@for REGION in $(SIGNAL_REGIONS); 	\
-	do									\
-		echo "Waiting for $$REGION";	\
-		CHECK="nonEmpty";				\
-		while [ "$$CHECK" != "" ];		\
-		do								\
-			sleep 1;					\
-			CHECK=`ps kstart_time | grep signalContamination_$$REGION.$(ExeSuf) | grep -v grep`;	\
-		done;							\
-	done;								\
-	echo "Done";
-
-report: reportProducer.$(ExeSuf)
-	./reportProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportProducer.$(LogSuf) > reports/report.tex && cd reports && pdflatex report.tex 
-
-syst: reportGenSystProducer.$(ExeSuf)
-	./reportGenSystProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportGenSystProducer.$(LogSuf) > reports/reportWithSyst.tex && cd reports && pdflatex report.tex
-
-#------------------------------------------------------------------------------
+cleanAll:
+	@make -C ../backgroundEstimation_MTtailCorrection 	 clean
+	@make -C ../backgroundEstimation_checkCR4CR5modeling clean
+	@make -C ../backgroundEstimation_prediction 		 clean
+	@make -C ./ 										 clean
 
 ../.vectorDictionnary_C.so: ../.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+

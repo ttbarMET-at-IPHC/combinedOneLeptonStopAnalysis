@@ -421,7 +421,7 @@ int main (int argc, char *argv[])
     screwdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
     screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 19.5 fb^{-1}");
 
-    screwdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
+    screwdriver.SetGlobalBoolOption("Plot", "exportPdf", false);
     screwdriver.SetGlobalBoolOption("Plot", "exportEps", false);
     screwdriver.SetGlobalBoolOption("Plot", "exportPng", false);
 

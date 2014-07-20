@@ -55,7 +55,7 @@ MTTailCorrection: MTTailCorrectionProducer
 	@echo " [Producing scale factors to correct MT tail...]"
 	@echo ""
 	@LD_LIBRARY_PATH="$(shell /opt/sbg/data/safe1/cms/echabert/root_v5.34.05/bin/root-config --libdir):$$LD_LIBRARY_PATH" ./MTTailCorrectionProducer.$(ExeSuf) > MTTailCorrectionProducer.$(LogSuf)
-	@cat results/SFR.tab
+	@cat results/SF_MTtail.tab
 
 clean:
 	@echo "Cleaning..."

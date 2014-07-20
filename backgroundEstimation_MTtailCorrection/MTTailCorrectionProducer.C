@@ -876,6 +876,6 @@ int main()
         tableSFR.Set("SFR_Wjets",listCutAndCounts[r],SFR_CC_wjets);
     }
 
-    tableSFR.Print(string(OUTPUT_FOLDER)+"/SFR.tab",4);
+    tableSFR.Print(string(OUTPUT_FOLDER)+"/SF_MTtail.tab",4);
     summary.Print();
 }  
