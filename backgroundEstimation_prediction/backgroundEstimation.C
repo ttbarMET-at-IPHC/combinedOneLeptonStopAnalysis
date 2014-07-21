@@ -445,8 +445,8 @@ void backgroundEstimation::FillPredictionTable()
 
     // Prediction
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
-        Figure N1ltop_prediction  = N1ltop_tail  * SF_post * SF_MTtail_Wjets;
-        Figure Nwjets_prediction  = Nwjets_tail  * SF_post * SF_MTtail_1ltop;
+        Figure N1ltop_prediction  = N1ltop_tail  * SF_post * SF_MTtail_1ltop;
+        Figure Nwjets_prediction  = Nwjets_tail  * SF_post * SF_MTtail_Wjets;
     #else
         Figure N1ltop_prediction  = N1ltop_peak  * SF_post * R_1ltop_mean; 
         Figure Nwjets_prediction  = Nwjets_peak  * SF_post * R_Wjets_corrected;

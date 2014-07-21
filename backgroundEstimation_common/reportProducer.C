@@ -3,12 +3,21 @@
 int main (int argc, char *argv[])
 {
 
-    if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
+    if (argc <= 3) 
+    { 
+        WARNING_MSG << "Arguments : [report_tag] [report_label] [list of regions]" << endl;
+        return -1; 
+    }
+
+    // Read tag and label
+    
+    string reportTag   = argv[1];
+    string reportLabel = argv[2];
 
     // Read list of signal regions to consider
    
     vector<string> signalRegionsTagList;
-    for (int i = 1 ; i < argc ; i++) 
+    for (int i = 3 ; i < argc ; i++) 
         signalRegionsTagList.push_back(argv[i]);
 
     // Create list of label for each region
@@ -27,21 +36,18 @@ int main (int argc, char *argv[])
 
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
-        predictions .push_back(Table("prediction/" +signalRegionsTagList[i]+".tab"));
-        scaleFactors.push_back(Table("scaleFactors/"+signalRegionsTagList[i]+".tab"));
-        systematics .push_back(Table("systematics/" +signalRegionsTagList[i]+".tab"));
+        predictions .push_back(Table("results/latest/prediction/"             +signalRegionsTagList[i]+".tab"));
+        scaleFactors.push_back(Table("results/latest/prediction/scaleFactors/"+signalRegionsTagList[i]+".tab"));
+        systematics .push_back(Table("results/latest/prediction/systematics/" +signalRegionsTagList[i]+".tab"));
     }
-
-    // Read tables for ttbar dilepton SF
-    //Table SF_tt2l("/opt/sbg/data/safe1/cms/echabert/StopCaro/combinedOneLeptonStopAnalysis/backgroundEstimationBDT/SF_tt2l.tab");
 
     // Fill summary tables
 
-    Table rawYieldSummary           (signalRegionsTagList,  processesTagList,     signalRegionsLabelList,   processesLabelList   );
-    Table predictionSummary         (signalRegionsTagList,  processesTagList,     signalRegionsLabelList,   processesLabelList   );
-    Table scaleFactorsSummary       (signalRegionsTagList,  scaleFactorsTagList,  signalRegionsLabelList,   scaleFactorsLabelList);
-    Table absoluteSystematicsSummary(signalRegionsTagList,  systematicsTagList,   signalRegionsLabelList,   systematicsLabelList );
-    Table relativeSystematicsSummary(signalRegionsTagList,  systematicsTagList,   signalRegionsLabelList,   systematicsLabelList );
+    Table rawYieldSummary           (signalRegionsTagList,  processesTagList,    signalRegionsLabelList,  processesLabelList   );
+    Table predictionSummary         (signalRegionsTagList,  processesTagList,    signalRegionsLabelList,  processesLabelList   );
+    Table scaleFactorsSummary       (signalRegionsTagList,  scaleFactorsTagList, signalRegionsLabelList,  scaleFactorsLabelList);
+    Table absoluteSystematicsSummary(signalRegionsTagList,  systematicsTagList,  signalRegionsLabelList,  systematicsLabelList );
+    Table relativeSystematicsSummary(signalRegionsTagList,  systematicsTagList,  signalRegionsLabelList,  systematicsLabelList );
 
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
@@ -56,21 +62,6 @@ int main (int argc, char *argv[])
 
             Figure pred = predictions[i].Get("prediction",processTag);
 
-            // extract additionnal info for ttbar dilepton
-            /*
-            if (processTag == "ttbar_2l")
-            {
-                string SR = signalRegion;
-
-                // ?????????? WTF ?????????????
-                if (SR.find("tight") != string::npos) SR=SR.substr(0,SR.find("tight"))+"loose";
-
-                float SF = SF_tt2l.Get(SR,"value").value();
-
-                // Add an uncertainty equal to prediction * SF             (not sure about the justificiation behind this)
-                pred = pred * Figure(1.0,pred.value()*SF);
-            }
-            */
             predictionSummary.Set(signalRegion,processTag,pred); 
         }
 
@@ -99,6 +90,10 @@ int main (int argc, char *argv[])
     cout << "\\begin{document}" << endl;
     cout << "\\begin{center}" << endl;
 
+    cout << "{\\Huge " << reportLabel << "}\\\\" << endl;
+    cout << "     \\bigskip" << endl;
+    cout << "     \\bigskip" << endl;
+
     cout << "{\\Large Raw yields}\\\\" << endl;
     rawYieldSummary.PrintLatex(2);
     cout << "\\\\ \\bigskip" << endl;
@@ -110,6 +105,8 @@ int main (int argc, char *argv[])
     cout << "{\\Large Absolute uncertainties}\\\\" << endl;
     absoluteSystematicsSummary.PrintLatex(1,"noError");
     cout << "\\\\ \\bigskip" << endl;
+    
+    cout << "   \\newpage" << endl;
 
     cout << "{\\Large Relative uncertainties (in percents)}\\\\" << endl;
     relativeSystematicsSummary.PrintLatex(1,"noError");

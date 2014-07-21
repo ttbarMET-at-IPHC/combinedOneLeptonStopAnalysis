@@ -51,7 +51,7 @@ int main (int argc, char *argv[])
   }
  
   // Special region for 2, 3 or 4 jets with 50, 100 or 150 minimum events
-
+  /*
   string ControlRegion; 
   if (argc == 2) 
   { 
@@ -61,13 +61,10 @@ int main (int argc, char *argv[])
       LoadBDTCut(ControlRegion);
   }
   if (argc >= 3) { WARNING_MSG << "Too many argument specified" << endl; return -1; }
-  
+  */
 
-  // Check if we're running on a BDT region
-
-  bool runningOnBDTRegion = false;
+  bool runningOnBDTRegion = false; 
   if (findSubstring(SIGNAL_REGION_TAG,"BDT")) runningOnBDTRegion = true;
-
 
   printBoxedMessage("Starting plot generation");
 
@@ -145,13 +142,28 @@ int main (int argc, char *argv[])
      // ##   Create ProcessClasses (and associated datasets)   ##
      // #########################################################
 
-     screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
-            //screwdriver.AddDataset("ttbar_powheg",   "1ltop",  0, 0);
-            screwdriver.AddDataset("ttbar_madgraph_1l",   "1ltop",  0, 0);
-            screwdriver.AddDataset("singleTop_st",        "1ltop",  0, 0);
-     
+        screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
+            #ifdef USING_TTBAR_POWHEG
+                screwdriver.AddDataset("ttbar_powheg",                "1ltop",  0, 0);
+            #endif
+            #ifdef USING_TTBAR_MADGRAPH
+                screwdriver.AddDataset("ttbar_madgraph_1l",             "1ltop",  0, 0);
+            #endif
+            //screwdriver.AddDataset("ttbar_madgraph_scaledown",    "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_scaleup",      "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_matchingdown", "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_matchingup",   "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_mass166-5",    "1ltop",  0, 0);
+            //screwdriver.AddDataset("ttbar_madgraph_mass178-5",    "1ltop",  0, 0);
+
+            screwdriver.AddDataset("singleTop_st",                  "1ltop",  0, 0);
+
+
      screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
-            screwdriver.AddDataset("ttbar_madgraph_2l",   "1ltop",  0, 0);
+            #ifdef USING_TTBAR_MADGRAPH
+                screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
+            #endif
+
      
      screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
              screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
@@ -165,14 +177,6 @@ int main (int argc, char *argv[])
              screwdriver.AddDataset("DoubleElec",   "data", 0, 0);
              screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
              screwdriver.AddDataset("MuEl",   "data", 0, 0);
-
-     screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",kViolet-1,"no1Dplots");
-             screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
-
-     screwdriver.AddProcessClass("signal_250_100",  "T2tt (250/100)",      "signal", COLORPLOT_BLUE  );
-     screwdriver.AddProcessClass("signal_350_100",  "T2tt (350/100)",      "signal", COLORPLOT_BLACK );
-     screwdriver.AddProcessClass("signal_450_100",  "T2tt (450/100)",      "signal", COLORPLOT_GREEN );
-     screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",      "signal", COLORPLOT_GREEN2);
 
      // ##########################
      // ##    Create Regions    ##
@@ -276,6 +280,7 @@ int main (int argc, char *argv[])
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
 
+          /*
           if (ControlRegion != "")
           {
               if (ControlRegion == "CR4_2j")         if (myEvent.nJets < 2) continue;
@@ -285,26 +290,17 @@ int main (int argc, char *argv[])
                || ControlRegion == "CR4_4j_100evts" 
                || ControlRegion == "CR4_4j_150evts") if (myEvent.nJets < 4) continue; 
           }
+          */
 
           #ifdef BDT_OUTPUT_AVAILABLE
              // Keep BDT tag by keepting substr after "BDT_" in SIGNAL_REGION_TAG
-             // This is dirty..
-             BDToutputValue = BDToutput(string(SIGNAL_REGION_TAG).substr(4));
+             if (runningOnBDTRegion) BDToutputValue = BDToutput(string(SIGNAL_REGION_TAG).substr(4));
           #endif
 
           nJets = myEvent.nJets;
           nBtag = myEvent.nBTag;
 
           float weight = getWeight();
-          if ((runningOnBDTRegion) && (ttbarDatasetToBeSplitted))
-          {
-              // Here we should at some point ignore the part of ttbar events used in the training
-              // but at this point all ttbar madgraph was used...
-
-              // Ignore event with id%2 == 0 TODO : check this is the correct thing
-              //if (myEvent.event % 2 == 0) continue;
-              //else  weight *= 2; 
-          }
 
           // Split 1-lepton ttbar and 2-lepton ttbar
           string currentProcessClass_ = currentProcessClass;
@@ -324,25 +320,29 @@ int main (int argc, char *argv[])
     // ##   Apply scale factors   ##
     // #############################
 
-    Table scaleFactors = Table(string("scaleFactors/")+SIGNAL_REGION_TAG+".tab");
+    Table scaleFactors = Table(string("../backgroundEstimation_prediction/scaleFactors/")+SIGNAL_REGION_TAG+".tab");
 
-    Figure SF_pre       = scaleFactors.Get("value","SF_pre");
-    Figure SF_post      = scaleFactors.Get("value","SF_post");
+    Figure SF_pre           = scaleFactors.Get("value","SF_pre");
+    Figure SF_post          = scaleFactors.Get("value","SF_post");
+    Figure SF_MTtail_1ltop  = scaleFactors.Get("value","SF_MTtail_1ltop");
+    Figure SF_MTtail_Wjets  = scaleFactors.Get("value","SF_MTtail_Wjets");
+    /*
     Figure SF_0btag     = scaleFactors.Get("value","SF_0btag");
     Figure SFR_Wjets    = scaleFactors.Get("value","SFR_W+jets");
     Figure SF_2l        = scaleFactors.Get("value","SF_2l");
     Figure SF_2ltail    = scaleFactors.Get("value","SF_2ltail");
     Figure SF_vetotail  = scaleFactors.Get("value","SF_vetotail");
     Figure SF_vetopeak  = scaleFactors.Get("value","SF_vetopeak");
+    */
 
     screwdriver.ApplyScaleFactor("ttbar_2l",    "MTpeak",               "singleLepton",SF_pre);
     screwdriver.ApplyScaleFactor("1ltop",       "MTpeak",               "singleLepton",SF_post);
     screwdriver.ApplyScaleFactor("W+jets",      "MTpeak",               "singleLepton",SF_post);
 
-    screwdriver.ApplyScaleFactor("W+jets",      "0btag",                "singleLepton",SF_0btag);
-    screwdriver.ApplyScaleFactor("1ltop",       "0btag",                "singleLepton",SF_0btag);
-    screwdriver.ApplyScaleFactor("W+jets",      "0btag",                "singleLepton",SFR_Wjets);
-    //screwdriver.ApplyScaleFactor("1ltop",       "0btag",                "singleLepton",SFR_Wjets);
+    //screwdriver.ApplyScaleFactor("W+jets",      "0btag",                "singleLepton",SF_0btag);
+    //screwdriver.ApplyScaleFactor("1ltop",       "0btag",                "singleLepton",SF_0btag);
+    screwdriver.ApplyScaleFactor("W+jets",      "0btag",                "singleLepton",SF_MTtail_Wjets);
+    screwdriver.ApplyScaleFactor("1ltop",       "0btag",                "singleLepton",SF_MTtail_1ltop);
 
     //screwdriver.ApplyScaleFactor("ttbar_2l","signalRegion_noMTCut", "singleLepton",SF_pre);
     //screwdriver.ApplyScaleFactor("1ltop",   "signalRegion_noMTCut", "singleLepton",SF_post);
@@ -351,6 +351,7 @@ int main (int argc, char *argv[])
     //screwdriver.ApplyScaleFactor("W+jets",  "0btag_noMTCut",        "singleLepton",SF_0btag);
     //screwdriver.ApplyScaleFactor("1ltop",   "0btag_noMTCut",        "singleLepton",SF_0btag);
 
+    /*
     screwdriver.ApplyScaleFactor("ttbar_2l",    "2leptons",             "doubleLepton", SF_2l);
     screwdriver.ApplyScaleFactor("1ltop",       "2leptons",             "doubleLepton", SF_2l);
     screwdriver.ApplyScaleFactor("W+jets",      "2leptons",             "doubleLepton", SF_2l);
@@ -358,14 +359,17 @@ int main (int argc, char *argv[])
     screwdriver.ApplyScaleFactor("ttbar_2l",    "2leptons_noMTCut",     "doubleLepton", SF_2l);
     screwdriver.ApplyScaleFactor("1ltop",       "2leptons_noMTCut",     "doubleLepton", SF_2l);
     screwdriver.ApplyScaleFactor("W+jets",      "2leptons_noMTCut",     "doubleLepton", SF_2l);
+    */
 
     screwdriver.ApplyScaleFactor("ttbar_2l",    "reversedVeto",         "singleLepton", SF_pre);
-    screwdriver.ApplyScaleFactor("1ltop",       "reversedVeto",         "singleLepton", SF_vetopeak);
-    screwdriver.ApplyScaleFactor("W+jets",      "reversedVeto",         "singleLepton", SF_vetopeak);
+    screwdriver.ApplyScaleFactor("1ltop",       "reversedVeto",         "singleLepton", SF_MTtail_1ltop);
+    screwdriver.ApplyScaleFactor("W+jets",      "reversedVeto",         "singleLepton", SF_MTtail_Wjets);
 
+    /*
     screwdriver.ApplyScaleFactor("ttbar_2l",    "reversedVeto_noMTCut", "singleLepton", SF_pre);
     screwdriver.ApplyScaleFactor("1ltop",       "reversedVeto_noMTCut", "singleLepton", SF_vetopeak);
     screwdriver.ApplyScaleFactor("W+jets",      "reversedVeto_noMTCut", "singleLepton", SF_vetopeak);
+    */
 
   // ###################################
   // ##   Make plots and write them   ##
@@ -375,7 +379,9 @@ int main (int argc, char *argv[])
   cout << "   > Making plots..." << endl;
   screwdriver.MakePlots();
   cout << "   > Saving plots..." << endl;
-  screwdriver.WritePlots(string("./controlPlotsDataMC/")+SIGNAL_REGION_TAG);
+            
+  system((string("mkdir -p ./plots/")+SIGNAL_REGION_TAG).c_str());
+  screwdriver.WritePlots(string("./plots/")+SIGNAL_REGION_TAG);
 
   printBoxedMessage("Plot generation completed");
 

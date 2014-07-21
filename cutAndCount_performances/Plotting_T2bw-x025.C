@@ -12,18 +12,19 @@ bool Selector_cutAndCount(float cutMET, float cutMETsig, float cutMT, float cutM
     if (myEvent.METoverSqrtHT < cutMETsig)     return false;
     if (myEvent.MT < cutMT)                    return false;
     if (myEvent.MT2W < cutMT2W)                return false;
+    if ((cutMT2W > 0)  && (myEvent.MT2W>99990))         return false;
     if (myEvent.leadingBPt < cutBPt)           return false;
     if (myEvent.deltaPhiMETJets < cutDeltaPhi) return false;
     if ((enableISRJetRequirement) && (!myEvent.ISRJet))     return false;
     
     return goesInPreselectionMTtail();
 }
-
+/*
 bool Selector_veryOffShell_loose() { return Selector_cutAndCount(-1,  9,    120, -1,  -1,  0.2, true ); }
 bool Selector_offShell_loose()     { return Selector_cutAndCount(-1,  7,    120, 200, 150, 0.8, false); }
 bool Selector_lowDeltaM_tight()    { return Selector_cutAndCount(-1,  6,    120, 200, 180, 0.8, false); }
 bool Selector_highDeltaM()         { return Selector_cutAndCount(-1,  10,   150, 200, 180, 0.8, false); }
-
+*/
 /*
 bool Selector_veryOffShell_loose() { return Selector_cutAndCount(-1,  8,    140, 170, 200, 0.2, false); }
 bool Selector_offShell_loose()     { return Selector_cutAndCount(300, -1,   120, 190, 100, 0.8, false); }
@@ -32,11 +33,10 @@ bool Selector_highDeltaM()         { return Selector_cutAndCount(300, -1,   120,
 */
 
                                                             // MET METsig MT   MT2W BPt dPhi ISRjet
-/*
+
 bool Selector_offShell()    { return Selector_cutAndCount(-1,   9,   120,   -1, - 1, 0.2, true ); }
 bool Selector_lowMasses()   { return Selector_cutAndCount(-1,   6,   120,  200, 180, 0.8, false); }
-bool Selector_highMasses()  { return Selector_cutAndCount(300, -1,   120,  200, 100, 0.8, false); }
-*/
+bool Selector_highMasses()  { return Selector_cutAndCount(300, -1,   120,  200, 180, 0.8, false); }
 
 // #########################################################################
 //                              Main function
@@ -63,6 +63,7 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("METoverSqrtHT",  "MET / #sqrt{H_{T}}",      "",       32,0,32,         &(myEvent.METoverSqrtHT),       "");
      screwdriver.AddVariable("MET",            "MET",                     "GeV",    15,50,500,       &(myEvent.MET),                 "logY=true");
      screwdriver.AddVariable("MT",             "MT",                      "GeV",    20,0,400,        &(myEvent.MT),                  "logY=true");
+     screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b jet)",    "GeV",    20,0,200,        &(myEvent.leadingBPt),          "logY=true");
      
      screwdriver.AddVariable("mStop",          "m_{#tilde{t}}",           "GeV",    28,112.5,812.5,  &(myEvent.mStop),               "");
      screwdriver.AddVariable("mNeutralino",    "m_{#chi^{0}}",            "GeV",    16,-12.5,387.5,  &(myEvent.mNeutralino),         "noOverflowInLastBin");
@@ -97,6 +98,7 @@ int main (int argc, char *argv[])
 
      screwdriver.AddProcessClass("signal_250_100",  signalCategory+" (250/100)",      "signal",COLORPLOT_BLUE   );
      screwdriver.AddProcessClass("signal_450_100",  signalCategory+" (450/100)",      "signal",COLORPLOT_GREEN2 ); 
+     screwdriver.AddProcessClass("signal_400_175",  signalCategory+" (400/175)",      "signal",COLORPLOT_GREEN2 ); 
      screwdriver.AddProcessClass("signal_650_100",  signalCategory+" (650/100)",      "signal",COLORPLOT_GREEN  );
 
   // ##########################
@@ -104,17 +106,17 @@ int main (int argc, char *argv[])
   // ##########################
 
      screwdriver.AddRegion("presel",             "Preselection",                          &goesInPreselectionMTtail);
-
+/*
      screwdriver.AddRegion("veryOffShell_loose", "Cut-and-count;Very off-shell (loose)",  &Selector_veryOffShell_loose);
      screwdriver.AddRegion("offShell_loose",     "Cut-and-count;Off-shell (loose)",       &Selector_offShell_loose );
      screwdriver.AddRegion("lowDeltaM_tight",    "Cut-and-count;Low #DeltaM (tight)",     &Selector_lowDeltaM_tight );
      screwdriver.AddRegion("highDeltaM",         "Cut-and-count;High #DeltaM",            &Selector_highDeltaM );
-
-     /*
+*/
+     
      screwdriver.AddRegion("offshell",           "Cut-and-count;Off-shell",              &Selector_offShell);
      screwdriver.AddRegion("lowMasses",          "Cut-and-count;Low masses",             &Selector_lowMasses);
      screwdriver.AddRegion("highMasses",         "Cut-and-count;High masses",            &Selector_highMasses);
-     */
+     
 
   // ##########################
   // ##   Create Channels    ##
@@ -177,6 +179,9 @@ int main (int argc, char *argv[])
      intermediatePointers pointers;
      InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
+     sampleName = currentDataset;
+     sampleType = screwdriver.GetProcessClassType(currentProcessClass);
+    
      if (currentDataset == signalCategory)
      {
          theTree->SetBranchAddress("mStop",       &(myEvent.mStop));
@@ -213,6 +218,8 @@ int main (int argc, char *argv[])
               screwdriver.AutoFillProcessClass("signal_250_100",getWeight());
           if ((myEvent.mStop == 450) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_450_100",getWeight());
+          if ((myEvent.mStop == 400) && (myEvent.mNeutralino == 175))
+              screwdriver.AutoFillProcessClass("signal_400_175",getWeight());
           if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 100))
               screwdriver.AutoFillProcessClass("signal_650_100",getWeight());
       }
@@ -241,7 +248,7 @@ int main (int argc, char *argv[])
   
   printBoxedMessage("Now computing misc tests ... ");
   
-  
+  /*
   vector<string> cutAndCountRegions =
   {
       "veryOffShell_loose",
@@ -260,10 +267,11 @@ int main (int argc, char *argv[])
       0.2,
       0.4
   };
+  */
   
-  /*
   vector<string> cutAndCountRegions =
   {
+    "presel",
     "offshell",
     "lowMasses",
     "highMasses"
@@ -278,7 +286,7 @@ int main (int argc, char *argv[])
       0.2,
       0.2
   };
-  */
+  
   TableBackgroundSignal(&screwdriver,cutAndCountRegions,"singleLepton").Print();
   TableBackgroundSignal(&screwdriver,cutAndCountRegions,"singleLepton").PrintLatex();
 
@@ -309,14 +317,14 @@ int main (int argc, char *argv[])
       signalMaps.push_back(screwdriver.get2DHistoClone("mStop","mNeutralino",signalCategory,cutAndCountRegions[i],"singleLepton"));
       signalMaps[i]->SetName((string("signalMap_")+cutAndCountRegions[i]).c_str());
 
-      float B =   screwdriver.GetYieldAndError("1ltop",    cutAndCountRegions[i],"singleLepton").value() //  * SF_1ltop_and_Wjets
-                + screwdriver.GetYieldAndError("ttbar_2l", cutAndCountRegions[i],"singleLepton").value() //  * SF_allOthers
-                + screwdriver.GetYieldAndError("W+jets",   cutAndCountRegions[i],"singleLepton").value() //  * SF_1ltop_and_Wjets
-                + screwdriver.GetYieldAndError("rare",     cutAndCountRegions[i],"singleLepton").value(); //  * SF_allOthers;
+      float B =   screwdriver.GetYieldAndError("1ltop",    cutAndCountRegions[i],"singleLepton").value()  * SF_1ltop_and_Wjets
+                + screwdriver.GetYieldAndError("ttbar_2l", cutAndCountRegions[i],"singleLepton").value()  * SF_allOthers
+                + screwdriver.GetYieldAndError("W+jets",   cutAndCountRegions[i],"singleLepton").value()  * SF_1ltop_and_Wjets
+                + screwdriver.GetYieldAndError("rare",     cutAndCountRegions[i],"singleLepton").value()  * SF_allOthers;
 
       // Apply scale factor from background prediction
-      //float f_B = globalBackgroundUncertainty[i];
-      float f_B = 0.15;
+      float f_B = globalBackgroundUncertainty[i];
+      //float f_B = 0.15;
 
       if (B < 1.0) B = 1.0;
  

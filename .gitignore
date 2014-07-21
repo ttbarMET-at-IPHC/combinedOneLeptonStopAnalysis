@@ -46,4 +46,4 @@ analysisNote/
 stopBabiesToMicroTuples/dump.dat
 synchronization/synchroBabyTuples
 babyValidation/Validation_signal
-backgroundEstimation/controlPlotsDataMC/
+backgroundEstimation_common/results/

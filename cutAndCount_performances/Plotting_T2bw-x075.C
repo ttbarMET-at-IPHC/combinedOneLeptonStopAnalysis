@@ -161,6 +161,9 @@ int main (int argc, char *argv[])
      intermediatePointers pointers;
      InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
+     sampleName = currentDataset;
+     sampleType = screwdriver.GetProcessClassType(currentProcessClass);
+
      if (currentDataset == signalCategory)
      {
          theTree->SetBranchAddress("mStop",       &(myEvent.mStop));
