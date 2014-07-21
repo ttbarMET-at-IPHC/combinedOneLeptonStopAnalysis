@@ -133,11 +133,11 @@ vector<string> scaleFactorsTagList =
 {
     "SF_pre",
     "SF_post",
+    "SF_0btag",
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
     "SF_MTtail_Wjets",
     "SF_MTtail_1ltop",
     #else
-        "SF_0btag",
         "SFR_W+jets",
         "R_W+jets",
         "R_1ltop",
@@ -148,11 +148,11 @@ vector<string> scaleFactorsLabelList =
 {
     "$SF_{pre}$",
     "$SF_{post}$",
+    "$SF_{\\text{0 $b$-tag}}$",
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
     "$SF^{M_T \\text{tail}}_{\\text{W+jets}}$",
     "$SF^{M_T \\text{tail}}_{\\text{1$\\ell$ top}}$",
     #else
-        "$SF_{\\text{0 $b$-tag}}$",
         "$SFR_{\\text{$W$+jets}}$",
         "$R_{\\text{$W$+jets}}$",
         "$R_{\\text{1$\\ell$top}}$",

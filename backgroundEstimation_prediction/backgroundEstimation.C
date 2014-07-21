@@ -279,11 +279,11 @@ void backgroundEstimation::ComputePredictionWithSystematics()
    
     scaleFactorTable.Set("value","SF_pre",     SF_pre);
     scaleFactorTable.Set("value","SF_post",    SF_post);
+    scaleFactorTable.Set("value","SF_0btag",   SF_0btag);
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
     scaleFactorTable.Set("value","SF_MTtail_Wjets", SF_MTtail_Wjets);
     scaleFactorTable.Set("value","SF_MTtail_1ltop", SF_MTtail_1ltop);
     #else
-    scaleFactorTable.Set("value","SF_0btag",   SF_0btag);
     scaleFactorTable.Set("value","SFR_W+jets", SFR_Wjets_mean);
     scaleFactorTable.Set("value","R_W+jets",   R_Wjets_corrected);
     scaleFactorTable.Set("value","R_1ltop",    R_1ltop_mean);
@@ -353,6 +353,14 @@ void backgroundEstimation::ImportMTTailCorrectionFromTemplateFitMethod()
     
     if (SF_MTtail_Wjets_variation) SF_MTtail_Wjets.keepVariation(SF_MTtail_Wjets_variation,"noNegativeValue");
     if (SF_MTtail_1ltop_variation) SF_MTtail_1ltop.keepVariation(SF_MTtail_1ltop_variation,"noNegativeValue");
+
+    Figure noBTagPeak_1ltop          = rawYieldTable.Get("0btag_MTpeak","1ltop"   );
+    Figure noBTagPeak_ttbar_2l       = rawYieldTable.Get("0btag_MTpeak","ttbar_2l");
+    Figure noBTagPeak_Wjets          = rawYieldTable.Get("0btag_MTpeak","W+jets"  ) * WjetCrossSection_rescale;
+    Figure noBTagPeak_rare           = rawYieldTable.Get("0btag_MTpeak","rare"    ) * rareCrossSection_rescale;
+    Figure noBTagPeak_data           = rawYieldTable.Get("0btag_MTpeak","data"    );
+
+    SF_0btag   = (noBTagPeak_data - noBTagPeak_ttbar_2l - noBTagPeak_rare) / (noBTagPeak_1ltop + noBTagPeak_Wjets);
 }
 #else
 void backgroundEstimation::ComputeMTTailToPeakRatioCorrectionMethod()

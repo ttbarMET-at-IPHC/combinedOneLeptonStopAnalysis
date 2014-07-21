@@ -2,6 +2,8 @@ default: controlPlots
 
 include ../backgroundEstimation_common/common.make
 
+SIGNAL_REGIONS = preselection
+
 controlPlots:
 	@make --no-print-directory clean;
 	@for REGION in $(SIGNAL_REGIONS);        \

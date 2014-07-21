@@ -42,12 +42,12 @@ class backgroundEstimation{
 
         Figure SF_pre;
         Figure SF_post;
+        Figure SF_0btag;
 
         #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
             Figure SF_MTtail_Wjets;
             Figure SF_MTtail_1ltop;
         #else
-            Figure SF_0btag;
             Figure R_Wjets_mc;
             Figure R_1ltop_mc;
             Figure R_1ltop_mean;
