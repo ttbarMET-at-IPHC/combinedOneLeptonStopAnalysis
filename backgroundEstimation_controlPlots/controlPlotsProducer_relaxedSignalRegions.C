@@ -348,17 +348,43 @@ int main (int argc, char *argv[])
 
   }
 
-    // #############################
-    // ##   Apply scale factors   ##
-    // #############################
+    // ############################
+    // ##   Read scale factors   ##
+    // ############################
 
     Table scaleFactors = Table(string("../backgroundEstimation_checkCR4CR5modeling/scaleFactors/")+SIGNAL_REGION_TAG+".tab");
 
     Figure SF_pre           = scaleFactors.Get("value","SF_pre");
     Figure SF_vetopeak      = scaleFactors.Get("value","SF_vetopeak");
-    Figure SF_MTtail_1ltop  = scaleFactors.Get("value","SF_MTtail_1ltop");
-    Figure SF_MTtail_Wjets  = scaleFactors.Get("value","SF_MTtail_Wjets");
     
+    Table tableMTtailCorrection = Table("../backgroundEstimation_MTtailCorrection/results/SF_MTtail.tab");
+
+    // Remove low/medium/highDM suffix in label for BDT's
+    string signalRegionTag_ = SIGNAL_REGION_TAG;
+    if (findSubstring(SIGNAL_REGION_TAG,"BDT"))
+    {
+        size_t pos;
+        pos = signalRegionTag_.find("_lowDM");
+        if (pos != string::npos) signalRegionTag_ = signalRegionTag_.substr(0,pos);
+        pos = signalRegionTag_.find("_mediumDM");
+        if (pos != string::npos) signalRegionTag_ = signalRegionTag_.substr(0,pos);
+        pos = signalRegionTag_.find("_highDM");
+        if (pos != string::npos) signalRegionTag_ = signalRegionTag_.substr(0,pos);
+    }
+    // Remove cutsLoosenedForCR4CR5 suffix
+    else
+    {
+        size_t pos = signalRegionTag_.find("_cutsLoosenedForCR4CR5_");
+        if (pos != string::npos) signalRegionTag_ = signalRegionTag_.substr(0,pos);
+    }
+
+    Figure SF_MTtail_Wjets = tableMTtailCorrection.Get("SFR_Wjets",signalRegionTag_);
+    Figure SF_MTtail_1ltop = tableMTtailCorrection.Get("SFR_1ltop",signalRegionTag_);
+
+    // #############################
+    // ##   Apply scale factors   ##
+    // #############################
+
     vector<string> channelsOnWhichToApplyScaleFactors = { "singleLepton", "allChannels" };
     for (unsigned int c = 0 ; c < channelsOnWhichToApplyScaleFactors.size() ; c++)
     {
