@@ -109,15 +109,7 @@ int main (int argc, char *argv[])
         screwdriver.AddRegion("0btag_MTpeak",            "0 b-tag (MT peak)",           &goesIn0BtagControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("0btag_MTtail",            "0 b-tag (MT tail)",           &goesIn0BtagControlRegionMTtail_withSRCuts);
 
-        screwdriver.AddRegion("2leptons",                "2 leptons",                   &goesInDileptonControlRegion_withSRCuts);
-        screwdriver.AddRegion("2leptons_MTpeak",         "2 leptons (MT peak)",         &goesInDileptonControlRegionMTpeak_withSRCuts);
-        screwdriver.AddRegion("2leptons_MTtail",         "2 leptons (MT tail)",         &goesInDileptonControlRegionMTtail_withSRCuts);
-        screwdriver.AddRegion("2leptons_1or2jets",       "2 leptons (1 or 2 jets)",     &goesInDileptonControlRegion1or2jets_withSRCuts);
-        screwdriver.AddRegion("2leptons_3jets",          "2 leptons (3 jets)",          &goesInDileptonControlRegion3jets_withSRCuts);
-        screwdriver.AddRegion("2leptons_atLeast4jets",   "2 leptons (at least 4 jets)", &goesInDileptonControlRegionAtLeast4jets_withSRCuts);
-        
         screwdriver.AddRegion("reversedVeto_MTpeak",     "Reversed veto (MT peak)",     &goesInVetoControlRegionMTpeak_withSRCuts);
-        screwdriver.AddRegion("reversedVeto_MTtail",     "Reversed veto (MT tail)",     &goesInVetoControlRegionMTtail_withSRCuts);
         
         screwdriver.AddRegion("signalRegion_MTtail_secondLeptonInAcceptance",     
                               "Preselection (MT tail);2nd lepton in acceptance",        &goesInPreselectionMTtail_withSRCuts_2ndLepInAcceptance, "blinded");
@@ -216,9 +208,7 @@ int main (int argc, char *argv[])
         vector<string> regions  = { "preveto_MTpeak",      "preveto_MTtail",      
                                     "signalRegion_MTpeak", "signalRegion_MTtail", 
                                     "0btag_MTpeak",        "0btag_MTtail",  
-                                    "reversedVeto_MTpeak", "reversedVeto_MTtail",
-                                    "2leptons",            "2leptons_MTtail",     "2leptons_MTpeak",
-                                    "2leptons_1or2jets",   "2leptons_3jets",      "2leptons_atLeast4jets",
+                                    "reversedVeto_MTpeak",
                                     "signalRegion_MTtail_secondLeptonInAcceptance"      
                                   };
 

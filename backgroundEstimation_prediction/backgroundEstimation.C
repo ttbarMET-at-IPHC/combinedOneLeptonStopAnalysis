@@ -2,12 +2,8 @@
 
 #define PLACEHOLDER_CR4_CR5_MODELING_UNCERTAINTY             0.1
 
-
 // From Lara/Pedrame
 #define DILEPTON_TTBAR_JET_MULTIPLICITY_MODELING_UNCERTAINTY 0.05
-
-bool ReadSF_tt2l = true;
-bool ReadSF_SFR = true;
 
 int main (int argc, char *argv[])
 {
@@ -124,6 +120,8 @@ Figure backgroundEstimation::ComputePrediction()
 {
     ComputeSFpre();
     ComputeSFpost();
+    ComputeSF0btag();
+    ComputeSFvetopeak();
 
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
         ImportMTTailCorrectionFromTemplateFitMethod();
@@ -280,6 +278,7 @@ void backgroundEstimation::ComputePredictionWithSystematics()
     scaleFactorTable.Set("value","SF_pre",     SF_pre);
     scaleFactorTable.Set("value","SF_post",    SF_post);
     scaleFactorTable.Set("value","SF_0btag",   SF_0btag);
+    scaleFactorTable.Set("value","SF_vetopeak",SF_vetopeak);
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
     scaleFactorTable.Set("value","SF_MTtail_Wjets", SF_MTtail_Wjets);
     scaleFactorTable.Set("value","SF_MTtail_1ltop", SF_MTtail_1ltop);
@@ -330,6 +329,36 @@ void backgroundEstimation::ComputeSFpost()
     if (MTpeakStat_variation) SF_post.keepVariation(MTpeakStat_variation,"noNegativeValue");
 }
 
+void backgroundEstimation::ComputeSF0btag()
+{
+    // NB : SF_0btag is used only in the control plots, not in the background prediction iteself
+
+    Figure noBTagPeak_1ltop    = rawYieldTable.Get("0btag_MTpeak","1ltop"   );
+    Figure noBTagPeak_ttbar_2l = rawYieldTable.Get("0btag_MTpeak","ttbar_2l");
+    Figure noBTagPeak_Wjets    = rawYieldTable.Get("0btag_MTpeak","W+jets"  ) * WjetCrossSection_rescale;
+    Figure noBTagPeak_rare     = rawYieldTable.Get("0btag_MTpeak","rare"    ) * rareCrossSection_rescale;
+    Figure noBTagPeak_data     = rawYieldTable.Get("0btag_MTpeak","data"    );
+
+    // FIXME shoudln't we apply SF_pre to dilepton here ?
+    SF_0btag = (noBTagPeak_data  - noBTagPeak_rare - noBTagPeak_ttbar_2l) 
+             / (noBTagPeak_1ltop + noBTagPeak_Wjets);
+}
+
+void backgroundEstimation::ComputeSFvetopeak()
+{
+    // NB : SF_vetopeak is used only in the control plots, not in the background prediction iteself
+    
+    Figure peakveto_1ltop    = rawYieldTable.Get("reversedVeto_MTpeak","1ltop"   );
+    Figure peakveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTpeak","ttbar_2l");
+    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTpeak","W+jets"  ); 
+    Figure peakveto_rare     = rawYieldTable.Get("reversedVeto_MTpeak","rare"    );
+    Figure peakveto_data     = rawYieldTable.Get("reversedVeto_MTpeak","data"    );
+
+    SF_vetopeak = (peakveto_data  - peakveto_rare - SF_pre * peakveto_ttbar_2l) 
+                / (peakveto_1ltop + peakveto_Wjets);
+}
+
+
 #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
 void backgroundEstimation::ImportMTTailCorrectionFromTemplateFitMethod()
 {
@@ -353,14 +382,6 @@ void backgroundEstimation::ImportMTTailCorrectionFromTemplateFitMethod()
     
     if (SF_MTtail_Wjets_variation) SF_MTtail_Wjets.keepVariation(SF_MTtail_Wjets_variation,"noNegativeValue");
     if (SF_MTtail_1ltop_variation) SF_MTtail_1ltop.keepVariation(SF_MTtail_1ltop_variation,"noNegativeValue");
-
-    Figure noBTagPeak_1ltop          = rawYieldTable.Get("0btag_MTpeak","1ltop"   );
-    Figure noBTagPeak_ttbar_2l       = rawYieldTable.Get("0btag_MTpeak","ttbar_2l");
-    Figure noBTagPeak_Wjets          = rawYieldTable.Get("0btag_MTpeak","W+jets"  ) * WjetCrossSection_rescale;
-    Figure noBTagPeak_rare           = rawYieldTable.Get("0btag_MTpeak","rare"    ) * rareCrossSection_rescale;
-    Figure noBTagPeak_data           = rawYieldTable.Get("0btag_MTpeak","data"    );
-
-    SF_0btag   = (noBTagPeak_data - noBTagPeak_ttbar_2l - noBTagPeak_rare) / (noBTagPeak_1ltop + noBTagPeak_Wjets);
 }
 #else
 void backgroundEstimation::ComputeMTTailToPeakRatioCorrectionMethod()
@@ -377,12 +398,6 @@ void backgroundEstimation::ComputeMTTailToPeakRatioCorrectionMethod()
     Figure signalRegionTail_rare     = rawYieldTable.Get("signalRegion_MTtail","rare"    ) * rareCrossSection_rescale;
     Figure signalRegionTail_data     = rawYieldTable.Get("signalRegion_MTtail","data"    );
 
-    Figure noBTagPeak_1ltop          = rawYieldTable.Get("0btag_MTpeak","1ltop"   );
-    Figure noBTagPeak_ttbar_2l       = rawYieldTable.Get("0btag_MTpeak","ttbar_2l");
-    Figure noBTagPeak_Wjets          = rawYieldTable.Get("0btag_MTpeak","W+jets"  ) * WjetCrossSection_rescale;
-    Figure noBTagPeak_rare           = rawYieldTable.Get("0btag_MTpeak","rare"    ) * rareCrossSection_rescale;
-    Figure noBTagPeak_data           = rawYieldTable.Get("0btag_MTpeak","data"    );
-
     Figure noBTagTail_1ltop          = rawYieldTable.Get("0btag_MTtail","1ltop"   );
     Figure noBTagTail_ttbar_2l       = rawYieldTable.Get("0btag_MTtail","ttbar_2l");
     Figure noBTagTail_Wjets          = rawYieldTable.Get("0btag_MTtail","W+jets"  ) * WjetCrossSection_rescale;
@@ -391,8 +406,6 @@ void backgroundEstimation::ComputeMTTailToPeakRatioCorrectionMethod()
 
     R_Wjets_mc = (noBTagTail_Wjets + signalRegionTail_Wjets) / (noBTagPeak_Wjets + signalRegionPeak_Wjets);
     R_1ltop_mc = (noBTagTail_1ltop + signalRegionTail_1ltop) / (noBTagPeak_1ltop + signalRegionPeak_1ltop);
-
-    SF_0btag   = (noBTagPeak_data - noBTagPeak_ttbar_2l - noBTagPeak_rare) / (noBTagPeak_1ltop + noBTagPeak_Wjets);
 
     SFR_all    = noBTagTail_data / ((noBTagTail_Wjets + noBTagTail_1ltop)*SF_0btag + noBTagTail_ttbar_2l + noBTagTail_rare);
     SFR_Wonly  = (noBTagTail_data - noBTagTail_1ltop*SF_0btag - noBTagTail_ttbar_2l - noBTagTail_rare) / (noBTagTail_Wjets*SF_0btag);

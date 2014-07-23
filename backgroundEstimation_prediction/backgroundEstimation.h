@@ -18,6 +18,8 @@ class backgroundEstimation{
 
         void  ComputeSFpre();
         void  ComputeSFpost();
+        void  ComputeSF0btag();
+        void  ComputeSFvetopeak();
         float ComputeSecondLeptonVetoUncertainty();
         
         #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
@@ -43,6 +45,7 @@ class backgroundEstimation{
         Figure SF_pre;
         Figure SF_post;
         Figure SF_0btag;
+        Figure SF_vetopeak;
 
         #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
             Figure SF_MTtail_Wjets;

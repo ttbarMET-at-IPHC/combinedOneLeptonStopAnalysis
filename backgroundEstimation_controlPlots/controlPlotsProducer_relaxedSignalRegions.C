@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include "../backgroundEstimation_checkCR4CR5modeling/cutAndCountDefinitions_cutsLoosenedForCR4CR5.h"
+
 #ifndef SIGNAL_REGION_CUTS
     #error SIGNAL_REGION_CUTS need to be defined.
 #endif
@@ -7,66 +9,100 @@
     #error SIGNAL_REGION_TAG need to be defined.
 #endif
 
-bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
-                                                                      
-bool goesInPreselectionMTpeak_withSRCuts()       { return (goesInPreselectionMTpeak()       && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInPreselectionMTtail_withSRCuts()       { return (goesInPreselectionMTtail()       && SIGNAL_REGION_CUTS(enableMTCut) ); }
-
-bool goesInPreselectionNoMT_withSRCuts()       
-{ 
-    bool iok = goesInPreselection()       && SIGNAL_REGION_CUTS(disableMTCut);
-    if (myEvent.MT>MT_CUT && (sampleType == "data") )  iok=0;
-    return iok;
-}
-
-
-bool goesIn0BtagControlRegionMTpeak_withSRCuts() { return (goesIn0BtagControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesIn0BtagControlRegionMTtail_withSRCuts() { return (goesIn0BtagControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
-bool goesIn0BtagControlRegionNoMT_withSRCuts()   { return (goesIn0BtagControlRegion()       && SIGNAL_REGION_CUTS(disableMTCut) ); }
 
 bool goesInDileptonControlRegionMTpeak_withSRCuts() { return (goesInDileptonControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInDileptonControlRegionMTtail_withSRCuts() { return (goesInDileptonControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
 bool goesInDileptonControlRegionNoMT_withSRCuts()   { return (goesInDileptonControlRegion()       && SIGNAL_REGION_CUTS(disableMTCut)); }
 
-bool goesInVetoControlRegionMTpeak_withSRCuts() { return (goesInVetoControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInVetoControlRegionMTtail_withSRCuts() { return (goesInVetoControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
-bool goesInVetoControlRegionNoMT_withSRCuts()   { return (goesInVetosControlRegion()      && SIGNAL_REGION_CUTS(disableMTCut)); }
+bool goesInVetoControlRegionMTpeak_withSRCuts()     { return (goesInVetoControlRegionMTpeak()     && SIGNAL_REGION_CUTS(disableMTCut)); }
+bool goesInVetoControlRegionMTtail_withSRCuts()     { return (goesInVetoControlRegionMTtail()     && SIGNAL_REGION_CUTS(enableMTCut) ); }
+bool goesInVetoControlRegionNoMT_withSRCuts()       { return (goesInVetosControlRegion()          && SIGNAL_REGION_CUTS(disableMTCut)); }
 
-bool goesInAnyChannel()                             { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
+bool goesInAnyChannel()                             { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());              }
 
 // #########################################################################
 //                              Main function
 // #########################################################################
 
+
+string signalRegionLabel_relaxedCuts(string signalRegionTag, string customBDTRequirement)
+{
+         if (signalRegionTag == "cutAndCount_T2tt_offShellLoose_cutsLoosenedForCR4CR5_1"    ) return "C&C T2tt, Off-shell loose, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2tt_offShellTight_cutsLoosenedForCR4CR5_1"    ) return "C&C T2tt, Off-shell tight, relaxed cuts v1";
+    else if (signalRegionTag == "cutAndCount_T2tt_offShellTight_cutsLoosenedForCR4CR5_2"    ) return "C&C T2tt, Off-shell tight, relaxed cuts v2";
+    else if (signalRegionTag == "cutAndCount_T2tt_lowDeltaM_cutsLoosenedForCR4CR5_1"        ) return "C&C T2tt, Low #Delta m, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2tt_mediumDeltaM_cutsLoosenedForCR4CR5_1"     ) return "C&C T2tt, Medium #Delta m, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM_cutsLoosenedForCR4CR5_1"       ) return "C&C T2tt, High #Delta m, relaxed cuts v1";
+    else if (signalRegionTag == "cutAndCount_T2tt_highDeltaM_cutsLoosenedForCR4CR5_2"       ) return "C&C T2tt, High #Delta m, relaxed cuts v2";
+    else if (signalRegionTag == "cutAndCount_T2bw025_offShell_cutsLoosenedForCR4CR5_1"      ) return "C&C T2bw x=0.25, Off-shell, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2bw025_lowMasses_cutsLoosenedForCR4CR5_1"     ) return "C&C T2bw x=0.25, Low masse, relaxed cutss v1";
+    else if (signalRegionTag == "cutAndCount_T2bw025_lowMasses_cutsLoosenedForCR4CR5_2"     ) return "C&C T2bw x=0.25, Low masses, relaxed cuts v2";
+    else if (signalRegionTag == "cutAndCount_T2bw025_lowMasses_cutsLoosenedForCR4CR5_3"     ) return "C&C T2bw x=0.25, Low masses, relaxed cuts v3";
+    else if (signalRegionTag == "cutAndCount_T2bw025_highMasses_cutsLoosenedForCR4CR5_1"    ) return "C&C T2bw x=0.25, High masses, relaxed cuts v1";
+    else if (signalRegionTag == "cutAndCount_T2bw025_highMasses_cutsLoosenedForCR4CR5_2"    ) return "C&C T2bw x=0.25, High masses, relaxed cuts v2";
+    else if (signalRegionTag == "cutAndCount_T2bw025_highMasses_cutsLoosenedForCR4CR5_3"    ) return "C&C T2bw x=0.25, High masses, relaxed cuts v3";
+    else if (signalRegionTag == "cutAndCount_T2bw050_offShell_cutsLoosenedForCR4CR5_1"      ) return "C&C T2bw x=0.50, Off-shell, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2bw050_lowMasses_cutsLoosenedForCR4CR5_1"     ) return "C&C T2bw x=0.50, Low masses, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2bw050_mediumDeltaM_cutsLoosenedForCR4CR5_1"  ) return "C&C T2bw x=0.50, Medium #Delta m, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM_cutsLoosenedForCR4CR5_1"    ) return "C&C T2bw x=0.50, High #Delta m, relaxed cuts v1";
+    else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM_cutsLoosenedForCR4CR5_2"    ) return "C&C T2bw x=0.50, High #Delta m, relaxed cuts v2";
+    else if (signalRegionTag == "cutAndCount_T2bw050_highDeltaM_cutsLoosenedForCR4CR5_3"    ) return "C&C T2bw x=0.50, High #Delta m, relaxed cuts v3";
+    else if (signalRegionTag == "cutAndCount_T2bw075_lowDeltaM_cutsLoosenedForCR4CR5_1"     ) return "C&C T2bw x=0.75, Low #Delta m, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2bw075_mediumDeltaM_cutsLoosenedForCR4CR5_1"  ) return "C&C T2bw x=0.75, Medium #Delta m, relaxed cuts";
+    else if (signalRegionTag == "cutAndCount_T2bw075_highDeltaM_cutsLoosenedForCR4CR5_1"    ) return "C&C T2bw x=0.75, High #Delta m, relaxed cuts v1";
+    else if (signalRegionTag == "cutAndCount_T2bw075_highDeltaM_cutsLoosenedForCR4CR5_2"    ) return "C&C T2bw x=0.75, High #Delta m, relaxed cuts v2";
+
+    else if (signalRegionTag == "BDT_T2tt_1"                            ) return string("")+"T2tt, BDT 1 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2tt_2_lowDM"                      ) return string("")+"T2tt, BDT 2 low-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2tt_2_highDM"                     ) return string("")+"T2tt, BDT 2 high-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2tt_5_lowDM"                      ) return string("")+"T2tt, BDT 5 low-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2tt_5_mediumDM"                   ) return string("")+"T2tt, BDT 5 medium-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2tt_5_highDM"                     ) return string("")+"T2tt, BDT 5 high-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw075_1"                         ) return string("")+"T2bw x=0.75, BDT 1 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw075_2"                         ) return string("")+"T2bw x=0.75, BDT 2 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw075_3"                         ) return string("")+"T2bw x=0.75, BDT 3 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw075_5_lowDM"                   ) return string("")+"T2bw x=0.75, BDT 5 low-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw075_5_highDM"                  ) return string("")+"T2bw x=0.75, BDT 5 high-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw050_1_lowDM"                   ) return string("")+"T2bw x=0.50, BDT 1 low-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw050_1_highDM"                  ) return string("")+"T2bw x=0.50, BDT 1 high-#Delta m "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw050_3"                         ) return string("")+"T2bw x=0.50, BDT 3 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw050_4"                         ) return string("")+"T2bw x=0.50, BDT 4 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw050_5"                         ) return string("")+"T2bw x=0.50, BDT 5 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw050_6"                         ) return string("")+"T2bw x=0.50, BDT 6 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw025_1"                         ) return string("")+"T2bw x=0.25, BDT 1 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw025_3"                         ) return string("")+"T2bw x=0.25, BDT 3 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw025_4"                         ) return string("")+"T2bw x=0.25, BDT 4 "+customBDTRequirement;
+    else if (signalRegionTag == "BDT_T2bw025_6"                         ) return string("")+"T2bw x=0.25, BDT 6 "+customBDTRequirement;
+    else return "";                                           
+}
+
 int main (int argc, char *argv[])
 {
-  // Check the label of the signal region is defined
-  
-  string signalRegionLabel_ = signalRegionLabel(SIGNAL_REGION_TAG);
-  if (signalRegionLabel_ == "") 
-  { 
-      DEBUG_MSG << "Please define the signal region label associated to tag '" << SIGNAL_REGION_TAG << "'" << endl; 
-      return -1; 
-  }
- 
-  // Special region for 2, 3 or 4 jets with 50, 100 or 150 minimum events
-  /*
-  string ControlRegion; 
-  if (argc == 2) 
-  { 
-      ControlRegion = argv[1];
-      NOMINAL_BDT_CUT = false;
-      printBoxedMessage("Running on CR = "+ControlRegion);
-      LoadBDTCut(ControlRegion);
-  }
-  if (argc >= 3) { WARNING_MSG << "Too many argument specified" << endl; return -1; }
-  */
 
-  bool runningOnBDTRegion = false; 
-  if (findSubstring(SIGNAL_REGION_TAG,"BDT")) runningOnBDTRegion = true;
 
-  printBoxedMessage("Starting plot generation");
+    // Special region for 2, 3 or 4 jets with 50, 100 or 150 minimum events
+    string customBDTRequirement; 
+    if (argc == 2) 
+    { 
+        customBDTRequirement = argv[1];
+        NOMINAL_BDT_CUT = false;
+        printBoxedMessage("Running on CR = "+customBDTRequirement);
+        LoadBDTCutWithCustomRequirement(customBDTRequirement);
+    }
+    if (argc >= 3) { WARNING_MSG << "Too many argument specified" << endl; return -1; }
+
+    // Check the label of the signal region is defined
+    string signalRegionLabel_ = signalRegionLabel_relaxedCuts(SIGNAL_REGION_TAG, customBDTRequirement);
+    if (signalRegionLabel_ == "") 
+    { 
+        DEBUG_MSG << "Please define the signal region label associated to tag '" << SIGNAL_REGION_TAG << "'" << endl; 
+        return -1; 
+    }
+
+    bool runningOnBDTRegion = false; 
+    if (findSubstring(SIGNAL_REGION_TAG,"BDT")) runningOnBDTRegion = true;
+
+    printBoxedMessage("Starting plot generation");
 
   // ####################
   // ##   Init tools   ##
@@ -186,17 +222,15 @@ int main (int argc, char *argv[])
      if (string(SIGNAL_REGION_TAG) == "preselection") rebinning="rebin=1";
      else                                             rebinning="rebin=2";
 
-     screwdriver.AddRegion("signalRegion",         signalRegionLabel_,                                            &goesInPreselectionMTtail_withSRCuts,"blinded");
-     screwdriver.AddRegion("MTpeak",               signalRegionLabel_+";MT peak Control Region",                  &goesInPreselectionMTpeak_withSRCuts);
-     screwdriver.AddRegion("0btag",                signalRegionLabel_+";0 b-tag Control Region",                  &goesIn0BtagControlRegionMTtail_withSRCuts,    rebinning);
-     screwdriver.AddRegion("2leptons",             signalRegionLabel_+";2 leptons Control Region",                &goesInDileptonControlRegionMTtail_withSRCuts, rebinning);
-     screwdriver.AddRegion("reversedVeto",         signalRegionLabel_+";Reversed 2nd lepton veto Control Region", &goesInVetoControlRegionMTtail_withSRCuts,     rebinning);
+     screwdriver.AddRegion("2leptons_MTpeak",      signalRegionLabel_+";2 leptons Control Region (MT peak)",                &goesInDileptonControlRegionMTpeak_withSRCuts, rebinning);
+     screwdriver.AddRegion("reversedVeto_MTpeak",  signalRegionLabel_+";Reversed 2nd lepton veto Control Region (MT peak)", &goesInVetoControlRegionMTpeak_withSRCuts,     rebinning);
      
-     screwdriver.AddRegion("signalRegion_noMTCut", signalRegionLabel_+"; (no MT cut)",                            &goesInPreselectionNoMT_withSRCuts);
-     screwdriver.AddRegion("0btag_noMTCut",        signalRegionLabel_+";0 b-tag (no MT cut)",                     &goesIn0BtagControlRegionNoMT_withSRCuts,    rebinning);
-     screwdriver.AddRegion("2leptons_noMTCut",     signalRegionLabel_+";2 leptons (no MT cut)",                   &goesInDileptonControlRegionNoMT_withSRCuts, rebinning);
-     screwdriver.AddRegion("reversedVeto_noMTCut", signalRegionLabel_+";Reversed 2nd lepton veto (no MT cut)",    &goesInVetoControlRegionNoMT_withSRCuts,     rebinning);
-
+     screwdriver.AddRegion("2leptons_MTtail",      signalRegionLabel_+";2 leptons Control Region (MT tail)",                &goesInDileptonControlRegionMTtail_withSRCuts, rebinning);
+     screwdriver.AddRegion("reversedVeto_MTtail",  signalRegionLabel_+";Reversed 2nd lepton veto Control Region (MT tail)", &goesInVetoControlRegionMTtail_withSRCuts,     rebinning);
+     
+     screwdriver.AddRegion("2leptons_noMTCut",     signalRegionLabel_+";2 leptons (no MT cut)",                   &goesInDileptonControlRegionNoMT_withSRCuts,   rebinning);
+     screwdriver.AddRegion("reversedVeto_noMTCut", signalRegionLabel_+";Reversed 2nd lepton veto (no MT cut)",    &goesInVetoControlRegionNoMT_withSRCuts,       rebinning);
+     
      // ##########################
      // ##   Create Channels    ##
      // ##########################
@@ -280,17 +314,15 @@ int main (int argc, char *argv[])
           // Get the i-th entry
           ReadEvent(theTree,i,&pointers,&myEvent);
 
-          /*
-          if (ControlRegion != "")
+          if (customBDTRequirement != "")
           {
-              if (ControlRegion == "CR4_2j")         if (myEvent.nJets < 2) continue;
-              if (ControlRegion == "CR4_3j")         if (myEvent.nJets < 3) continue;
-              if (ControlRegion == "CR4_4j"
-               || ControlRegion == "CR4_4j_50evts" 
-               || ControlRegion == "CR4_4j_100evts" 
-               || ControlRegion == "CR4_4j_150evts") if (myEvent.nJets < 4) continue; 
+              if (customBDTRequirement == "CR4_2j")         if (myEvent.nJets < 2) continue;
+              if (customBDTRequirement == "CR4_3j")         if (myEvent.nJets < 3) continue;
+              if (customBDTRequirement == "CR4_4j"
+               || customBDTRequirement == "CR4_4j_50evts" 
+               || customBDTRequirement == "CR4_4j_100evts" 
+               || customBDTRequirement == "CR4_4j_150evts") if (myEvent.nJets < 4) continue; 
           }
-          */
 
           #ifdef BDT_OUTPUT_AVAILABLE
              // Keep BDT tag by keepting substr after "BDT_" in SIGNAL_REGION_TAG
@@ -320,41 +352,29 @@ int main (int argc, char *argv[])
     // ##   Apply scale factors   ##
     // #############################
 
-    Table scaleFactors = Table(string("../backgroundEstimation_prediction/scaleFactors/")+SIGNAL_REGION_TAG+".tab");
+    Table scaleFactors = Table(string("../backgroundEstimation_checkCR4CR5modeling/scaleFactors/")+SIGNAL_REGION_TAG+".tab");
 
     Figure SF_pre           = scaleFactors.Get("value","SF_pre");
-    Figure SF_post          = scaleFactors.Get("value","SF_post");
-    Figure SF_0btag         = scaleFactors.Get("value","SF_0btag");
     Figure SF_vetopeak      = scaleFactors.Get("value","SF_vetopeak");
     Figure SF_MTtail_1ltop  = scaleFactors.Get("value","SF_MTtail_1ltop");
     Figure SF_MTtail_Wjets  = scaleFactors.Get("value","SF_MTtail_Wjets");
     
     vector<string> channelsOnWhichToApplyScaleFactors = { "singleLepton", "allChannels" };
-    for (for c = 0 ; c < channelsOnWhichToApplyScaleFactors.size() ; c++)
+    for (unsigned int c = 0 ; c < channelsOnWhichToApplyScaleFactors.size() ; c++)
     {
         string channel = channelsOnWhichToApplyScaleFactors[c];
-
-        screwdriver.ApplyScaleFactor("ttbar_2l",  "SR_preselection", channel, SF_pre);
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_preselection", channel, SF_post * SF_MTtail_1ltop);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_preselection", channel, SF_post * SF_MTtail_Wjets);
-
-        screwdriver.ApplyScaleFactor("ttbar_2l",  "SR_MTpeak",       channel, SF_pre);
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_MTpeak",       channel, SF_post);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_MTpeak",       channel, SF_post);
-                                                                     
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_0btag_MTpeak", channel, SF_0btag);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_0btag_MTpeak", channel, SF_0btag);
-
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_0btag_MTtail", channel, SF_0btag * SF_MTtail_1ltop);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_0btag_MTtail", channel, SF_0btag * SF_MTtail_Wjets);
                                                                     
-        screwdriver.ApplyScaleFactor("ttbar_2l",  "SR_reversedVeto_MTpeak", channel, SF_pre);
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_reversedVeto_MTpeak", channel, SF_vetopeak);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_reversedVeto_MTpeak", channel, SF_vetopeak);
+        screwdriver.ApplyScaleFactor("ttbar_2l",  "reversedVeto_MTpeak", channel, SF_pre);
+        screwdriver.ApplyScaleFactor("1ltop",     "reversedVeto_MTpeak", channel, SF_vetopeak);
+        screwdriver.ApplyScaleFactor("W+jets",    "reversedVeto_MTpeak", channel, SF_vetopeak);
+        
+        screwdriver.ApplyScaleFactor("ttbar_2l",  "reversedVeto_noMTCut", channel, SF_pre);
+        screwdriver.ApplyScaleFactor("1ltop",     "reversedVeto_noMTCut", channel, SF_vetopeak);
+        screwdriver.ApplyScaleFactor("W+jets",    "reversedVeto_noMTCut", channel, SF_vetopeak);
 
-        screwdriver.ApplyScaleFactor("ttbar_2l",  "SR_reversedVeto_MTtail", channel, SF_pre);
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_reversedVeto_MTtail", channel, SF_vetopeak * SF_MTtail_1ltop);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_reversedVeto_MTtail", channel, SF_vetopeak * SF_MTtail_Wjets);
+        screwdriver.ApplyScaleFactor("ttbar_2l",  "reversedVeto_MTtail", channel, SF_pre);
+        screwdriver.ApplyScaleFactor("1ltop",     "reversedVeto_MTtail", channel, SF_vetopeak * SF_MTtail_1ltop);
+        screwdriver.ApplyScaleFactor("W+jets",    "reversedVeto_MTtail", channel, SF_vetopeak * SF_MTtail_Wjets);
     }
 
   // ###################################
@@ -366,8 +386,8 @@ int main (int argc, char *argv[])
   screwdriver.MakePlots();
   cout << "   > Saving plots..." << endl;
             
-  system((string("mkdir -p ./plots/")+SIGNAL_REGION_TAG).c_str());
-  screwdriver.WritePlots(string("./plots/")+SIGNAL_REGION_TAG);
+  system((string("mkdir -p ./plots/")+customBDTRequirement+"/"+SIGNAL_REGION_TAG).c_str());
+  screwdriver.WritePlots(string("./plots/")+customBDTRequirement+"/"+SIGNAL_REGION_TAG);
 
   printBoxedMessage("Plot generation completed");
 

@@ -40,6 +40,7 @@ void scaleFactorsProducer::Run()
     ComputePrediction();
 
     // Fill scale factor table
+    scaleFactorTable.Set("value","SF_pre",      SF_pre);
     scaleFactorTable.Set("value","SF_2l",       SF_2l);
     scaleFactorTable.Set("value","SF_2ltail",   SF_2ltail);
     scaleFactorTable.Set("value","SF_vetopeak", SF_vetopeak);

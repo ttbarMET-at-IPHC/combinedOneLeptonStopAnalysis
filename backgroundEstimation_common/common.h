@@ -134,6 +134,7 @@ vector<string> scaleFactorsTagList =
     "SF_pre",
     "SF_post",
     "SF_0btag",
+    "SF_vetopeak",
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
     "SF_MTtail_Wjets",
     "SF_MTtail_1ltop",
@@ -146,9 +147,10 @@ vector<string> scaleFactorsTagList =
 
 vector<string> scaleFactorsLabelList =
 {
-    "$SF_{pre}$",
-    "$SF_{post}$",
-    "$SF_{\\text{0 $b$-tag}}$",
+    "$SF^{M_T \\text{peak}}_{\\text{presel, pre-veto}}$",
+    "$SF^{M_T \\text{peak}}_{\\text{presel, post-veto}}$",
+    "$SF^{M_T \\text{peak}}_{\\text{0 $b$-tag}}$",
+    "$SF^{M_T \\text{peak}}_{\\text{reversed veto}}$",
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
     "$SF^{M_T \\text{tail}}_{\\text{W+jets}}$",
     "$SF^{M_T \\text{tail}}_{\\text{1$\\ell$ top}}$",
@@ -161,6 +163,7 @@ vector<string> scaleFactorsLabelList =
 
 vector<string> scaleFactorsTagList_CR4CR5modelingChecks =
 {
+    "SF_pre",
     "SF_2l",
     "SF_2ltail",
     "SF_vetopeak",
@@ -169,10 +172,11 @@ vector<string> scaleFactorsTagList_CR4CR5modelingChecks =
 
 vector<string> scaleFactorsLabelList_CR4CR5modelingChecks =
 {
-    "$SF_{2l}$",
-    "$SF_{2ltail}$",
-    "$SF_{vetopeak}$",
-    "$SF_{vetotail}$"
+    "$SF^{M_T \\text{peak}}_{\\text{presel, pre-veto}}$",
+    "$SF^{M_T \\text{peak+tail}}_{\\text{2 leptons}}$",
+    "$SF^{M_T \\text{tail}}_{\\text{2 leptons}}$",
+    "$SF^{M_T \\text{peak}}_{\\text{reversed veto}}$",
+    "$SF^{M_T \\text{tail}}_{\\text{reversed veto}}$",
 };
 
 // ########################
