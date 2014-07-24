@@ -110,7 +110,12 @@ int main (int argc, char *argv[])
         screwdriver.AddRegion("0btag_MTtail",            "0 b-tag (MT tail)",           &goesIn0BtagControlRegionMTtail_withSRCuts);
 
         screwdriver.AddRegion("reversedVeto_MTpeak",     "Reversed veto (MT peak)",     &goesInVetoControlRegionMTpeak_withSRCuts);
-        
+        screwdriver.AddRegion("reversedVeto_MTtail",     "Reversed veto (MT tail)",     &goesInVetoControlRegionMTtail_withSRCuts);
+       
+        screwdriver.AddRegion("2leptons",                "2 leptons",                   &goesInDileptonControlRegion_withSRCuts);
+        screwdriver.AddRegion("2leptons_MTpeak",         "2 leptons (MT peak)",         &goesInDileptonControlRegionMTpeak_withSRCuts);
+        screwdriver.AddRegion("2leptons_MTtail",         "2 leptons (MT tail)",         &goesInDileptonControlRegionMTtail_withSRCuts);
+
         screwdriver.AddRegion("signalRegion_MTtail_secondLeptonInAcceptance",     
                               "Preselection (MT tail);2nd lepton in acceptance",        &goesInPreselectionMTtail_withSRCuts_2ndLepInAcceptance, "blinded");
 
@@ -208,7 +213,8 @@ int main (int argc, char *argv[])
         vector<string> regions  = { "preveto_MTpeak",      "preveto_MTtail",      
                                     "signalRegion_MTpeak", "signalRegion_MTtail", 
                                     "0btag_MTpeak",        "0btag_MTtail",  
-                                    "reversedVeto_MTpeak",
+                                    "reversedVeto_MTpeak", "reversedVeto_MTtail",
+                                    "2leptons", "2leptons_MTpeak", "2leptons_MTtail",
                                     "signalRegion_MTtail_secondLeptonInAcceptance"      
                                   };
 

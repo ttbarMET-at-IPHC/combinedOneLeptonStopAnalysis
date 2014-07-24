@@ -2,11 +2,13 @@
 #------------------------------------------------------------------------------
 
 #everything: MTtailCorrection checkCR4CR5modeling backgroundPrediction copyResults reports
-everything: backgroundPrediction copyResults reports
+everything: backgroundPrediction copyResults summaryPlots reports
 
 #------------------------------------------------------------------------------
 
 include common.make
+
+.PHONY:MTtailCorrection checkCR4CR5modeling backgroundPrediction summaryPlots
 
 MTtailCorrection:
 	@make -C ../backgroundEstimation_MTtailCorrection 	 default
@@ -46,6 +48,20 @@ copyResults:
 	 cp -r ../backgroundEstimation_prediction/scaleFactors				./results/$$DATE/prediction/scaleFactors/;				\
 	 cp -r ../backgroundEstimation_prediction/systematics				./results/$$DATE/prediction/systematics/;				\
 	 rm -f ./results/latest; cd results; ln -s ./$$DATE/ ./latest
+
+summaryPlots:
+	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(CnC_T2tt)"    TAG="CnC_T2tt"    LABEL="Cut & count, T2tt"
+	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(CnC_T2bw025)" TAG="CnC_T2bw025" LABEL="Cut & count, T2bw, x=0.25"
+	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(CnC_T2bw050)" TAG="CnC_T2bw050" LABEL="Cut & count, T2bw, x=0.50"
+	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(CnC_T2bw075)" TAG="CnC_T2bw075" LABEL="Cut & count, T2bw, x=0.75"
+	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(BDT_T2tt)"    TAG="BDT_T2tt"    LABEL="BDT, T2tt"
+	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(BDT_T2bw025)" TAG="BDT_T2bw025" LABEL="BDT, T2bw, x=0.25"
+	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(BDT_T2bw050)" TAG="BDT_T2bw050" LABEL="BDT, T2bw, x=0.50"
+	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(BDT_T2bw075)" TAG="BDT_T2bw075" LABEL="BDT, T2bw, x=0.75"
+
+produceSummaryPlots: yieldsSummaryProducer.$(ExeSuf) scaleFactorsSummaryProducer.$(ExeSuf)
+	./yieldsSummaryProducer.$(ExeSuf) 		"$(TAG)" "$(LABEL)" $(SIGNAL_REGIONS)
+	./scaleFactorsSummaryProducer.$(ExeSuf) "$(TAG)" "$(LABEL)" $(SIGNAL_REGIONS)
 
 cleanAll:
 	@make -C ../backgroundEstimation_MTtailCorrection 	 clean
