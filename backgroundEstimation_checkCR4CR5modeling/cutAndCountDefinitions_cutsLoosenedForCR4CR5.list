@@ -2,7 +2,7 @@ preselection
 
 cutAndCount_T2tt_offShellLoose_cutsLoosenedForCR4CR5_1   
 cutAndCount_T2tt_offShellTight_cutsLoosenedForCR4CR5_1   
-cutAndCount_T2tt_offShellTight_cutsLoosenedForCR4CR5_2   
+cutAndCount_T2tt_offShellTight_cutsLoosenedForCR4CR5_2
 cutAndCount_T2tt_lowDeltaM_cutsLoosenedForCR4CR5_1       
 cutAndCount_T2tt_mediumDeltaM_cutsLoosenedForCR4CR5_1    
 cutAndCount_T2tt_highDeltaM_cutsLoosenedForCR4CR5_1      
@@ -10,8 +10,6 @@ cutAndCount_T2tt_highDeltaM_cutsLoosenedForCR4CR5_2
 
 cutAndCount_T2bw025_offShell_cutsLoosenedForCR4CR5_1     
 cutAndCount_T2bw025_lowMasses_cutsLoosenedForCR4CR5_1    
-cutAndCount_T2bw025_lowMasses_cutsLoosenedForCR4CR5_2    
-cutAndCount_T2bw025_lowMasses_cutsLoosenedForCR4CR5_3    
 cutAndCount_T2bw025_highMasses_cutsLoosenedForCR4CR5_1   
 cutAndCount_T2bw025_highMasses_cutsLoosenedForCR4CR5_2   
 cutAndCount_T2bw025_highMasses_cutsLoosenedForCR4CR5_3   
@@ -27,4 +25,3 @@ cutAndCount_T2bw075_lowDeltaM_cutsLoosenedForCR4CR5_1
 cutAndCount_T2bw075_mediumDeltaM_cutsLoosenedForCR4CR5_1 
 cutAndCount_T2bw075_highDeltaM_cutsLoosenedForCR4CR5_1   
 cutAndCount_T2bw075_highDeltaM_cutsLoosenedForCR4CR5_2   
-

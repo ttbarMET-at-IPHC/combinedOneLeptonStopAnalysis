@@ -42,7 +42,6 @@ void GetEnveloppe(float * SFval,float * SFerr, float tabSize, float & min, float
 int main (int argc, char *argv[])
 {
 
-
     //TStyle* gStyle;
     gStyle->SetOptStat(0);
     gStyle->SetLegendFillColor();//kRed);
@@ -99,11 +98,11 @@ int main (int argc, char *argv[])
     // Set custom labels in histogram
     for(unsigned int j=0;j<signalRegionsTagList.size();j++)
     {
-        string sr = signalRegionLabel(signalRegionsTagList[j],"root");
+        string sr = signalRegionLabel(signalRegionsTagList[j],"root","long");
         if (signalRegionsTagList[j] == "preselection") 
             SF_tt2l_CR4[0]->GetXaxis()->SetBinLabel(j+1, sr.c_str());
         else 
-            SF_tt2l_CR4[0]->GetXaxis()->SetBinLabel(j+1, (sr.substr(sr.find("T"))).c_str());
+            SF_tt2l_CR4[0]->GetXaxis()->SetBinLabel(j+1, sr.c_str());
     }
 
 

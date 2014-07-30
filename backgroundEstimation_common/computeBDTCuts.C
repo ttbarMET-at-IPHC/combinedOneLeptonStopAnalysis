@@ -265,7 +265,7 @@ int main (int argc, char *argv[])
   vector<string> dummy = {"30","50","100","150","200"};
   vector<int> MinNofEvts = {30,50,100,150,200};
   
-  string output_prefix = "BDTCuts/BDTCuts_";
+  string output_prefix = "BDTCuts_";
 
   //CR4 BDT cuts
   Table tableCR4(dummy, vars, dummy, vars);

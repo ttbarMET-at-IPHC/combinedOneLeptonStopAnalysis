@@ -24,10 +24,6 @@ bool goesInDileptonControlRegionMTtail_withSRCuts() { return (goesInDileptonCont
 bool goesInVetoControlRegionMTpeak_withSRCuts()     { return (goesInVetoControlRegionMTpeak()         && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInVetoControlRegionMTtail_withSRCuts()     { return (goesInVetoControlRegionMTtail()         && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
-bool goesInDileptonControlRegion1or2jets_withSRCuts()     { return (goesInDileptonControlRegion(2)    && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInDileptonControlRegion3jets_withSRCuts()        { return (goesInDileptonControlRegion(3)    && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInDileptonControlRegionAtLeast4jets_withSRCuts() { return (goesInDileptonControlRegion(4)    && SIGNAL_REGION_CUTS(disableMTCut)); }
-
 bool goesInAnyChannel()                             { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
 
 // #########################################################################
@@ -111,9 +107,6 @@ int main (int argc, char *argv[])
         screwdriver.AddRegion("2leptons",                "2 leptons",                   &goesInDileptonControlRegion_withSRCuts);
         screwdriver.AddRegion("2leptons_MTpeak",         "2 leptons (MT peak)",         &goesInDileptonControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("2leptons_MTtail",         "2 leptons (MT tail)",         &goesInDileptonControlRegionMTtail_withSRCuts);
-        screwdriver.AddRegion("2leptons_1or2jets",       "2 leptons (1 or 2 jets)",     &goesInDileptonControlRegion1or2jets_withSRCuts);
-        screwdriver.AddRegion("2leptons_3jets",          "2 leptons (3 jets)",          &goesInDileptonControlRegion3jets_withSRCuts);
-        screwdriver.AddRegion("2leptons_atLeast4jets",   "2 leptons (at least 4 jets)", &goesInDileptonControlRegionAtLeast4jets_withSRCuts);
         
         screwdriver.AddRegion("reversedVeto_MTpeak",     "Reversed veto (MT peak)",     &goesInVetoControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("reversedVeto_MTtail",     "Reversed veto (MT tail)",     &goesInVetoControlRegionMTtail_withSRCuts);
@@ -224,7 +217,6 @@ int main (int argc, char *argv[])
                                     "0btag_MTpeak",        "0btag_MTtail",  
                                     "reversedVeto_MTpeak", "reversedVeto_MTtail",
                                     "2leptons",            "2leptons_MTtail",     "2leptons_MTpeak",
-                                    "2leptons_1or2jets",   "2leptons_3jets",      "2leptons_atLeast4jets",
                                   };
 
         string exportFile;

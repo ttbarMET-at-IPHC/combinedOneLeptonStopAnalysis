@@ -88,8 +88,8 @@ int main (int argc, char *argv[])
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++) 
     {
         // Read input tables
-        Table scaleFactors = Table(string("../backgroundEstimation_prediction/scaleFactors/")  +signalRegionsTagList[i]+".tab");
-        Table tableMTtailCorrection = Table("../backgroundEstimation_MTtailCorrection/results/SF_MTtail.tab");
+        Table scaleFactors = Table(string("./results/latest/prediction/scaleFactors/") +signalRegionsTagList[i]+".tab");
+        Table tableMTtailCorrection = Table("./results/latest/MTtailCorrection/SF_MTtail.tab");
 
         string signalRegionTag_ = signalRegionsTagList[i];
         if (findSubstring(signalRegionTag_,"BDT"))
@@ -126,7 +126,7 @@ int main (int argc, char *argv[])
     cout << "   > Making plots..." << endl;
     screwdriver.MakePlots();
     cout << "   > Saving plots..." << endl;
-    screwdriver.WritePlots("./summaryPlots/scaleFactors/"+globalTag+"/");
+    screwdriver.WritePlots("./results/latest/summaryPlots/scaleFactors/"+globalTag+"/");
 
     printBoxedMessage("Plot generation completed");
 

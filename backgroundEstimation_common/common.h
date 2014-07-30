@@ -224,7 +224,8 @@ string signalRegionLabel(string signalRegionTag, string format = "root", string 
         else if (signalRegionTag == "BDT_T2bw050_5"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.50, ")+"BDT 5";
         else if (signalRegionTag == "BDT_T2bw050_6"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.50, ")+"BDT 6";
         else if (signalRegionTag == "BDT_T2bw025_1"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, ")+"BDT 1";
-        else if (signalRegionTag == "BDT_T2bw025_3"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, ")+"BDT 3";
+        else if (signalRegionTag == "BDT_T2bw025_3_lowDM"                   ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, ")+"BDT 3 low-#Delta m";
+        else if (signalRegionTag == "BDT_T2bw025_3_highDM"                  ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, ")+"BDT 3 high-#Delta m";
         else if (signalRegionTag == "BDT_T2bw025_4"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, ")+"BDT 4";
         else if (signalRegionTag == "BDT_T2bw025_6"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, ")+"BDT 6";
         else return "";                                           
@@ -268,7 +269,8 @@ string signalRegionLabel(string signalRegionTag, string format = "root", string 
         else if (signalRegionTag == "BDT_T2bw050_5"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.50, "  )+"BDT 5";
         else if (signalRegionTag == "BDT_T2bw050_6"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.50, "  )+"BDT 6";
         else if (signalRegionTag == "BDT_T2bw025_1"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, "  )+"BDT 1";
-        else if (signalRegionTag == "BDT_T2bw025_3"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, "  )+"BDT 3";
+        else if (signalRegionTag == "BDT_T2bw025_3_lowDM"                   ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, "  )+"BDT 3 low $\\Delta m$";
+        else if (signalRegionTag == "BDT_T2bw025_3_highDM"                  ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, "  )+"BDT 3 high $\\Delta m$";
         else if (signalRegionTag == "BDT_T2bw025_4"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, "  )+"BDT 4";
         else if (signalRegionTag == "BDT_T2bw025_6"                         ) return string("")+(formatSize == "short" ? "" : "BDT T2bw x=0.25, "  )+"BDT 6";
         else return "";                                               

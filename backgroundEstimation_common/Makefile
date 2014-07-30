@@ -1,8 +1,7 @@
 
 #------------------------------------------------------------------------------
 
-#everything: MTtailCorrection checkCR4CR5modeling backgroundPrediction copyResults reports
-everything: backgroundPrediction copyResults summaryPlots reports
+everything: MTtailCorrection checkCR4CR5modeling backgroundPrediction copyResults summaryPlots reports
 
 #------------------------------------------------------------------------------
 

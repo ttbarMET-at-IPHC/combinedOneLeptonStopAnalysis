@@ -99,9 +99,9 @@ int main (int argc, char *argv[])
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++) 
     {
         // Read input tables
-        Table rawYields    = Table(string("../backgroundEstimation_prediction/rawYieldTables/")+signalRegionsTagList[i]+".tab");
-        Table scaleFactors = Table(string("../backgroundEstimation_prediction/scaleFactors/")  +signalRegionsTagList[i]+".tab");
-        Table tableMTtailCorrection = Table("../backgroundEstimation_MTtailCorrection/results/SF_MTtail.tab");
+        Table rawYields    = Table(string("./results/latest/prediction/rawYieldTables/")+signalRegionsTagList[i]+".tab");
+        Table scaleFactors = Table(string("./results/latest/prediction/scaleFactors/")  +signalRegionsTagList[i]+".tab");
+        Table tableMTtailCorrection = Table("./results/latest/MTtailCorrection/SF_MTtail.tab");
 
         Figure SF_pre           = scaleFactors.Get("value","SF_pre");
         Figure SF_post          = scaleFactors.Get("value","SF_post");
@@ -185,7 +185,7 @@ int main (int argc, char *argv[])
     cout << "   > Making plots..." << endl;
     screwdriver.MakePlots();
     cout << "   > Saving plots..." << endl;
-    screwdriver.WritePlots("./summaryPlots/yields/"+globalTag+"/");
+    screwdriver.WritePlots("./results/latest/summaryPlots/yields/"+globalTag+"/");
 
     printBoxedMessage("Plot generation completed");
 

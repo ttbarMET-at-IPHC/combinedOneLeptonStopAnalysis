@@ -37,7 +37,7 @@ using namespace theDoctor;
 */
 
 // Debugging macro
-#define DEBUG_MSG cout << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
+#define DEBUG_MSG cerr << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
 
 // Used to print info
 #define INFO_MSG cout << "     > "

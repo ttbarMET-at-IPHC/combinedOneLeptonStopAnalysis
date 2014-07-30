@@ -30,15 +30,15 @@ LIBS          =
 
 #------------------------------------------------------------------------------
 
-CnC_T2tt 	= cutAndCount_T2tt_offShellLoose    cutAndCount_T2tt_offShellTight   cutAndCount_T2tt_lowDeltaM         cutAndCount_T2tt_mediumDeltaM   cutAndCount_T2tt_highDeltaM
-CnC_T2bw025 = cutAndCount_T2bw025_offShell  	cutAndCount_T2bw025_lowMasses    cutAndCount_T2bw025_highMasses
-CnC_T2bw050 = cutAndCount_T2bw050_offShell  	cutAndCount_T2bw050_lowMasses    cutAndCount_T2bw050_mediumDeltaM 	cutAndCount_T2bw050_highDeltaM
-CnC_T2bw075 = cutAndCount_T2bw075_lowDeltaM 	cutAndCount_T2bw075_mediumDeltaM cutAndCount_T2bw075_highDeltaM
+CnC_T2tt 	= cutAndCount_T2tt_offShellLoose    cutAndCount_T2tt_offShellTight      cutAndCount_T2tt_lowDeltaM         cutAndCount_T2tt_mediumDeltaM   cutAndCount_T2tt_highDeltaM
+CnC_T2bw025 = cutAndCount_T2bw025_offShell  	cutAndCount_T2bw025_lowMasses       cutAndCount_T2bw025_highMasses
+CnC_T2bw050 = cutAndCount_T2bw050_offShell  	cutAndCount_T2bw050_lowMasses       cutAndCount_T2bw050_mediumDeltaM 	cutAndCount_T2bw050_highDeltaM
+CnC_T2bw075 = cutAndCount_T2bw075_lowDeltaM 	cutAndCount_T2bw075_mediumDeltaM    cutAndCount_T2bw075_highDeltaM
 
-BDT_T2tt 	= BDT_T2tt_1			BDT_T2tt_2_lowDM		BDT_T2tt_2_highDM	BDT_T2tt_5_lowDM	BDT_T2tt_5_mediumDM		BDT_T2tt_5_highDM
-BDT_T2bw025 = BDT_T2bw075_1			BDT_T2bw075_2			BDT_T2bw075_3		BDT_T2bw075_5_lowDM	BDT_T2bw075_5_highDM
-BDT_T2bw050 = BDT_T2bw050_1_lowDM	BDT_T2bw050_1_highDM	BDT_T2bw050_3		BDT_T2bw050_4		BDT_T2bw050_5			BDT_T2bw050_6
-BDT_T2bw075 = BDT_T2bw025_1			BDT_T2bw025_3			BDT_T2bw025_4		BDT_T2bw025_6
+BDT_T2tt 	= BDT_T2tt_1			BDT_T2tt_2_lowDM		BDT_T2tt_2_highDM	    BDT_T2tt_5_lowDM	    BDT_T2tt_5_mediumDM		BDT_T2tt_5_highDM
+BDT_T2bw025 = BDT_T2bw025_1			BDT_T2bw025_3_lowDM 	BDT_T2bw025_3_highDM	BDT_T2bw025_4		    BDT_T2bw025_6
+BDT_T2bw050 = BDT_T2bw050_1_lowDM	BDT_T2bw050_1_highDM	BDT_T2bw050_3		    BDT_T2bw050_4		    BDT_T2bw050_5			BDT_T2bw050_6
+BDT_T2bw075 = BDT_T2bw075_1			BDT_T2bw075_2			BDT_T2bw075_3		    BDT_T2bw075_5_lowDM	    BDT_T2bw075_5_highDM
 
 CnC_REGIONS  = preselection 
 CnC_REGIONS += $(CnC_T2tt) $(CnC_T2bw025) $(CnC_T2bw050) $(CnC_T2bw075)
