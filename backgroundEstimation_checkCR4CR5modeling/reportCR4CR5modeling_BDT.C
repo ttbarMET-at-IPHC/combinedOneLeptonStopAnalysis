@@ -46,6 +46,16 @@ int main (int argc, char *argv[])
         "CR5_3j",
         "CR5_4j"
     };
+    vector<string> CRTagLabel =
+    {
+        //"CR4_1j",
+        "CR 2-leptons (Njets#geq2)",
+        "CR 2-leptons (Njets#geq3)",
+        "CR 2-leptons (Njets#geq4)",
+        "CR antiveto (CR 2-leptons Njets#geq2)",
+        "CR antiveto (CR 2-leptons Njets#geq3)",
+        "CR antiveto (CR 2-leptons Njets#geq4)",
+    };
 
     vector<Color_t> CRColorList = {kRed,kOrange-1,kBlue-1,kGreen-1,kOrange+1,kBlue+1,kGreen+1};
 
@@ -79,6 +89,11 @@ int main (int argc, char *argv[])
         CRplots[i]->SetMarkerColor(CRColorList[i]);
         CRplots[i]->SetMarkerSize(1.5);
     }
+    TH1F* h_cr4_4j_noncorr = new TH1F("h_cr4_4j_noncorr","",signalRegionsTagList.size(),0,signalRegionsTagList.size());
+    for(unsigned int j=0;j<signalRegionsTagList.size();j++){
+        h_cr4_4j_noncorr->GetXaxis()->SetBinLabel(j+1,signalRegionsTagList[j].c_str());
+    }
+
 
     //Fill the histo
     for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
@@ -95,6 +110,10 @@ int main (int argc, char *argv[])
             if(CRTagList[i].find("CR4")!=std::string::npos){
                 CRplots[i]->SetBinContent(j+1,CR4.value());
                 CRplots[i]->SetBinError(j+1,sqrt(pow(CR4.error(),2.)+pow(CR4.value()*CR4MTtailUncert,2)));
+                if(CRTagList[i].find("CR4_4j")!=std::string::npos){
+                 h_cr4_4j_noncorr->SetBinContent(j+1,CR4.value());
+                 h_cr4_4j_noncorr->SetBinError(j+1,CR4.error());
+                }
             }
             else{
                 CRplots[i]->SetBinContent(j+1,CR5.value());
@@ -104,12 +123,16 @@ int main (int argc, char *argv[])
     }
 
     TCanvas c1;
-    TLegend legCR(0.65,0.65,0.88,0.88);
+    TLegend legCR(0.65,0.78,0.99,0.99);
     for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
     {
-        if(i==0) CRplots[i]->Draw();
+        if(i==0) {
+            CRplots[i]->SetMinimum(-0.5);
+            CRplots[i]->SetMaximum(2.5);
+            CRplots[i]->Draw();
+        }
         else     CRplots[i]->Draw("same");
-        legCR.AddEntry(CRplots[i],CRTagList[i].c_str(),"lp");
+        legCR.AddEntry(CRplots[i],CRTagLabel[i].c_str(),"lp");
     }
 
     //determine the enveloppe
@@ -161,8 +184,9 @@ int main (int argc, char *argv[])
 
     //Plots CR4
     TCanvas cR4;
-    TLegend legCR4(0.65,0.65,0.88,0.88);
-    legCR4.Draw("same");
+    h_cr4_4j_noncorr->SetMinimum(0.);
+    h_cr4_4j_noncorr->SetMaximum(2.);
+    h_cr4_4j_noncorr->Draw();
     cR4.Write();
 
 
@@ -202,9 +226,10 @@ int main (int argc, char *argv[])
     vector<string> labels = {"100 evts","50 evts","30 evts"};
 
     CRColorList.clear();
-    CRColorList = {kRed-1,kRed,kRed+1,kBlue-2,kBlue-1,kBlue,kBlue+1,kPink-2,kPink-1,kPink,kPink+1,kPink+2,kBlack-3,kBlack-2,kBlack-1,kBlack};
-    //vector<int> CRMarkerStyle = {28,22,20,23,24}; 
-
+    //CRColorList = {kRed-2,kRed-1,kRed,kRed+1,kRed+2,kBlue-2,kBlue-1,kBlue,kBlue+1,kBlue+2,kPink-2,kPink-1,kPink,kPink+1,kPink+2,kPink+3,kBlack-4,kBlack-3,kBlack-2,kBlack-1,kBlack};
+    CRColorList = {2,42,43,44,45,46,4,36,38,40,9,20,22,24,26,27,28,8,29, 30,33,34};
+    //vector<int> CRMarkerStyle = {28,22,20,23,24};
+    
     // Read tables for each CR
     SF_est.clear();
     for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
@@ -236,9 +261,9 @@ int main (int argc, char *argv[])
     }
 
     //Fill the histo
-
+    
     for (unsigned int i = 1 ; i < CRTagList.size() ; i++)
-    {
+        {
         for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
         {
 
@@ -263,11 +288,18 @@ int main (int argc, char *argv[])
     }
 
     TCanvas c2;
-    TLegend legSR(0.65,0.65,0.88,0.88);
+    TLegend legSR(0.73,0.1,0.97,0.9);
+    c2.SetRightMargin(0.26);
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
-        if(i==0) SRplots[i]->Draw();
-        else     SRplots[i]->Draw("same");
+        if(i==0) {
+	   SRplots[i]->SetMinimum(0.);
+	   SRplots[i]->SetMaximum(2.5);
+	   SRplots[i]->Draw();
+        }
+        else    {
+            SRplots[i]->Draw("same");
+        }
         legSR.AddEntry(SRplots[i],signalRegionsTagList[i].c_str(),"lp");
     }
     legSR.Draw("same");
@@ -275,6 +307,7 @@ int main (int argc, char *argv[])
 
 
     fout.Close();
+
 
 
 

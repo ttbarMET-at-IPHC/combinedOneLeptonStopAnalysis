@@ -98,8 +98,8 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("leadingBPt",     "p_{T}(leading b-jet)",    "GeV",    20,0,400,       &(myEvent.leadingBPt),           "");
      screwdriver.AddVariable("leadingJetPt",   "p_{T}(leading jet)",      "GeV",    20,0,600,       &(myEvent.leadingJetPt),         "");
      screwdriver.AddVariable("leptonPt",       "p_{T}(lepton)",           "GeV",    28,20,300,      &(myEvent.leadingLeptonPt),      "");
-     screwdriver.AddVariable("Mlb",            "M_{lb}",                  "GeV",    26,0,520,       &(myEvent.Mlb),                  "");
-     screwdriver.AddVariable("Mlb_hemi",       "M_{lb}_hemi",             "GeV",    26,0,520,       &(myEvent.Mlb_hemi),             "");
+     screwdriver.AddVariable("Mlb",            "M'(lb)",                  "GeV",    26,0,520,       &(myEvent.Mlb),                  "");
+     screwdriver.AddVariable("Mlb_hemi",       "M(lb)",                  "GeV",    26,0,520,       &(myEvent.Mlb_hemi),             "");
      screwdriver.AddVariable("M3b",            "M3b",                     "GeV",    20,50,750,      &(myEvent.M3b),                  "");
      screwdriver.AddVariable("deltaRLeptonB",  "#DeltaR(l,leading b)",    "",       20,0,5,         &(myEvent.deltaRLeptonLeadingB), "");
      screwdriver.AddVariable("HTLeptonPtMET",  "HT + MET + p_{T}(lepton)","GeV",    20,100,2100,    &(myEvent.HTPlusLeptonPtPlusMET),"");
@@ -110,31 +110,50 @@ int main (int argc, char *argv[])
      screwdriver.AddVariable("nJets",          "Number of selected jets",           "",       11,0,10,        &(nJets),              "");
      screwdriver.AddVariable("nBtag",          "Number of selected b-tagged jets",  "",       5, 0,4,         &(nBtag),              "");
 
+     float leadingNonBPtN4;
+     screwdriver.AddVariable("leadingNonBPt",     "p_{T}(leading nonb-jet)",    "GeV",    20,0,500,       &(leadingNonBPtN4),           "");
+     float leadingNonBPtN5;
+     screwdriver.AddVariable("leadingNonBPtN5",     "p_{T}(leading nonb-jet) (Njet>4)",    "GeV",    20,0,500,       &(leadingNonBPtN5),           "noUnderflowInFirstBin");
+
+     float leadingLeptonEta;
+     float secondLeptonEta;
+     float secondLeptonPt;
+     screwdriver.AddVariable("2ndleptonPt",    "p_{T}(2nd lepton)",       "GeV",    28,20,300,      &(secondLeptonPt),      "noUnderflowInFirstBin");
+     screwdriver.AddVariable("leptonEta",       "#eta(lepton)",       "",       25,-2.5,2.5,        &(leadingLeptonEta),      "");
+     screwdriver.AddVariable("2ndleptonEta",    "#eta(2nd lepton)",   "",       25,-2.5,2.5,        &(secondLeptonEta),      "noUnderflowInFirstBin");
+     float pdgchannel;
+     screwdriver.AddVariable("channelID",       "channelID",         "",       5,0.5,5.5,      &(pdgchannel),      "");
+     float dilepmass;
+     screwdriver.AddVariable("dilepM",          "M_{ll}",             "GeV",    28,1.,211.,         &(dilepmass),      "noUnderflowInFirstBin");
+
+
+
+
      #ifdef BDT_OUTPUT_AVAILABLE
          float BDToutputValue;
 
          if (string(SIGNAL_REGION_TAG) == "preselection")
          {
-             screwdriver.AddVariable("BDT_T2tt-1",      "BDT output T2tt-1",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R1   ), "");
-             screwdriver.AddVariable("BDT_T2tt-2",      "BDT output T2tt-2",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R2   ), "");
-             screwdriver.AddVariable("BDT_T2tt-5",      "BDT output T2tt-5",     "",   100,-0.5,0.5, &(myEvent.BDT_output_t2tt_R5   ), "");
-             screwdriver.AddVariable("BDT_T2bw075-1",   "BDT output T2bw075-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R1), "");
-             screwdriver.AddVariable("BDT_T2bw075-2",   "BDT output T2bw075-2",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R2), "");
-             screwdriver.AddVariable("BDT_T2bw075-3",   "BDT output T2bw075-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R3), "");
-             screwdriver.AddVariable("BDT_T2bw075-5",   "BDT output T2bw075-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R5), "");
-             screwdriver.AddVariable("BDT_T2bw050-1",   "BDT output T2bw050-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R1), "");
-             screwdriver.AddVariable("BDT_T2bw050-3",   "BDT output T2bw050-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R3), "");
-             screwdriver.AddVariable("BDT_T2bw050-4",   "BDT output T2bw050-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R4), "");
-             screwdriver.AddVariable("BDT_T2bw050-5",   "BDT output T2bw050-5",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R5), "");
-             screwdriver.AddVariable("BDT_T2bw050-6",   "BDT output T2bw050-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R6), "");
-             screwdriver.AddVariable("BDT_T2bw025-1",   "BDT output T2bw025-1",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R1), "");
-             screwdriver.AddVariable("BDT_T2bw025-3",   "BDT output T2bw025-3",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R3), "");
-             screwdriver.AddVariable("BDT_T2bw025-4",   "BDT output T2bw025-4",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R4), "");
-             screwdriver.AddVariable("BDT_T2bw025-6",   "BDT output T2bw025-6",  "",   100,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R6), "");
+             screwdriver.AddVariable("BDT_T2tt-1",      "BDT output T2tt-1",     "",   20,-0.5,0.5, &(myEvent.BDT_output_t2tt_R1   ), "");
+             screwdriver.AddVariable("BDT_T2tt-2",      "BDT output T2tt-2",     "",   20,-0.5,0.5, &(myEvent.BDT_output_t2tt_R2   ), "");
+             screwdriver.AddVariable("BDT_T2tt-5",      "BDT output T2tt-5",     "",   20,-0.5,0.5, &(myEvent.BDT_output_t2tt_R5   ), "");
+             screwdriver.AddVariable("BDT_T2bw075-1",   "BDT output T2bw075-1",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R1), "");
+             screwdriver.AddVariable("BDT_T2bw075-2",   "BDT output T2bw075-2",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R2), "");
+             screwdriver.AddVariable("BDT_T2bw075-3",   "BDT output T2bw075-3",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R3), "");
+             screwdriver.AddVariable("BDT_T2bw075-5",   "BDT output T2bw075-5",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw075_R5), "");
+             screwdriver.AddVariable("BDT_T2bw050-1",   "BDT output T2bw050-1",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R1), "");
+             screwdriver.AddVariable("BDT_T2bw050-3",   "BDT output T2bw050-3",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R3), "");
+             screwdriver.AddVariable("BDT_T2bw050-4",   "BDT output T2bw050-4",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R4), "");
+             screwdriver.AddVariable("BDT_T2bw050-5",   "BDT output T2bw050-5",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R5), "");
+             screwdriver.AddVariable("BDT_T2bw050-6",   "BDT output T2bw050-6",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw050_R6), "");
+             screwdriver.AddVariable("BDT_T2bw025-1",   "BDT output T2bw025-1",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R1), "");
+             screwdriver.AddVariable("BDT_T2bw025-3",   "BDT output T2bw025-3",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R3), "");
+             screwdriver.AddVariable("BDT_T2bw025-4",   "BDT output T2bw025-4",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R4), "");
+             screwdriver.AddVariable("BDT_T2bw025-6",   "BDT output T2bw025-6",  "",   20,-0.5,0.5, &(myEvent.BDT_output_t2bw025_R6), "");
          }
          else if (runningOnBDTRegion)
          {
-             screwdriver.AddVariable(SIGNAL_REGION_TAG, SIGNAL_REGION_TAG,       "",   100,-0.5,0.5, &BDToutputValue,                  "");
+             screwdriver.AddVariable(SIGNAL_REGION_TAG, SIGNAL_REGION_TAG,       "",   20,-0.5,0.5, &BDToutputValue,                  "");
          }
      #endif
 
@@ -186,8 +205,10 @@ int main (int argc, char *argv[])
      if (string(SIGNAL_REGION_TAG) == "preselection") rebinning="rebin=1";
      else                                             rebinning="rebin=2";
 
-     screwdriver.AddRegion("signalRegion",         signalRegionLabel_,                                            &goesInPreselectionMTtail_withSRCuts,"blinded");
      screwdriver.AddRegion("MTpeak",               signalRegionLabel_+";MT peak Control Region",                  &goesInPreselectionMTpeak_withSRCuts);
+     
+
+     screwdriver.AddRegion("signalRegion",         signalRegionLabel_,                                            &goesInPreselectionMTtail_withSRCuts,"blinded");
      screwdriver.AddRegion("0btag",                signalRegionLabel_+";0 b-tag Control Region",                  &goesIn0BtagControlRegionMTtail_withSRCuts,    rebinning);
      screwdriver.AddRegion("2leptons",             signalRegionLabel_+";2 leptons Control Region",                &goesInDileptonControlRegionMTtail_withSRCuts, rebinning);
      screwdriver.AddRegion("reversedVeto",         signalRegionLabel_+";Reversed 2nd lepton veto Control Region", &goesInVetoControlRegionMTtail_withSRCuts,     rebinning);
@@ -300,6 +321,36 @@ int main (int argc, char *argv[])
           nJets = myEvent.nJets;
           nBtag = myEvent.nBTag;
 
+
+          #ifdef LEADING_NON_B_PT_ALREADY_COMPUTED
+          leadingNonBPtN4= myEvent.leadingNonBPt;
+          #else
+          leadingNonBPtN4= leadingNonBPt();
+          #endif
+          leadingNonBPtN5=-1;
+          if (nJets>4) leadingNonBPtN5= leadingNonBPtN4;
+
+          leadingLeptonEta = (myEvent.leadingLepton).Eta();
+          secondLeptonEta = -1000.;
+          secondLeptonPt = -1000.;
+          dilepmass = -1.;
+          if (myEvent.numberOfLepton==2) {
+           secondLeptonEta = (myEvent.secondLepton).Eta();
+           secondLeptonPt = (myEvent.secondLepton).Pt();
+           dilepmass = (myEvent.leadingLepton + myEvent.secondLepton).M();
+          }
+          pdgchannel=0;
+          if (myEvent.numberOfLepton==1) {
+            if (abs(myEvent.leadingLeptonPDGId) == 11) pdgchannel=1;
+            else if (abs(myEvent.leadingLeptonPDGId) == 13) pdgchannel=2;
+          }
+          else if (myEvent.numberOfLepton==2) {
+            if (abs(myEvent.leadingLeptonPDGId) == 11 && abs(myEvent.secondLeptonPDGId) == 11) pdgchannel=3;
+            else if (abs(myEvent.leadingLeptonPDGId) == 13 && abs(myEvent.secondLeptonPDGId) == 13) pdgchannel=4;
+            else pdgchannel=5;
+          }
+
+
           float weight = getWeight();
 
           // Split 1-lepton ttbar and 2-lepton ttbar
@@ -330,31 +381,36 @@ int main (int argc, char *argv[])
     Figure SF_MTtail_Wjets  = scaleFactors.Get("value","SF_MTtail_Wjets");
     
     vector<string> channelsOnWhichToApplyScaleFactors = { "singleLepton", "allChannels" };
-    for (for c = 0 ; c < channelsOnWhichToApplyScaleFactors.size() ; c++)
+    for (unsigned int c = 0 ; c < channelsOnWhichToApplyScaleFactors.size() ; c++)
     {
         string channel = channelsOnWhichToApplyScaleFactors[c];
 
-        screwdriver.ApplyScaleFactor("ttbar_2l",  "SR_preselection", channel, SF_pre);
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_preselection", channel, SF_post * SF_MTtail_1ltop);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_preselection", channel, SF_post * SF_MTtail_Wjets);
+        // MT peak
+        screwdriver.ApplyScaleFactor("ttbar_2l",  "MTpeak",       channel, SF_pre);
+        screwdriver.ApplyScaleFactor("1ltop",     "MTpeak",       channel, SF_post);
+        screwdriver.ApplyScaleFactor("W+jets",    "MTpeak",       channel, SF_post);
 
-        screwdriver.ApplyScaleFactor("ttbar_2l",  "SR_MTpeak",       channel, SF_pre);
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_MTpeak",       channel, SF_post);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_MTpeak",       channel, SF_post);
-                                                                     
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_0btag_MTpeak", channel, SF_0btag);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_0btag_MTpeak", channel, SF_0btag);
 
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_0btag_MTtail", channel, SF_0btag * SF_MTtail_1ltop);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_0btag_MTtail", channel, SF_0btag * SF_MTtail_Wjets);
-                                                                    
-        screwdriver.ApplyScaleFactor("ttbar_2l",  "SR_reversedVeto_MTpeak", channel, SF_pre);
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_reversedVeto_MTpeak", channel, SF_vetopeak);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_reversedVeto_MTpeak", channel, SF_vetopeak);
+        // MT tail
+        screwdriver.ApplyScaleFactor("ttbar_2l",  "signalRegion", channel, SF_pre);
+        screwdriver.ApplyScaleFactor("1ltop",     "signalRegion", channel, SF_post * SF_MTtail_1ltop);
+        screwdriver.ApplyScaleFactor("W+jets",    "signalRegion", channel, SF_post * SF_MTtail_Wjets);
 
-        screwdriver.ApplyScaleFactor("ttbar_2l",  "SR_reversedVeto_MTtail", channel, SF_pre);
-        screwdriver.ApplyScaleFactor("1ltop",     "SR_reversedVeto_MTtail", channel, SF_vetopeak * SF_MTtail_1ltop);
-        screwdriver.ApplyScaleFactor("W+jets",    "SR_reversedVeto_MTtail", channel, SF_vetopeak * SF_MTtail_Wjets);
+        screwdriver.ApplyScaleFactor("1ltop",     "0btag", channel, SF_0btag * SF_MTtail_1ltop);
+        screwdriver.ApplyScaleFactor("W+jets",    "0btag", channel, SF_0btag * SF_MTtail_Wjets);
+
+        screwdriver.ApplyScaleFactor("ttbar_2l",  "reversedVeto", channel, SF_pre);
+        screwdriver.ApplyScaleFactor("1ltop",     "reversedVeto", channel, SF_vetopeak * SF_MTtail_1ltop);
+        screwdriver.ApplyScaleFactor("W+jets",    "reversedVeto", channel, SF_vetopeak * SF_MTtail_Wjets);
+
+        // no correction
+        screwdriver.ApplyScaleFactor("1ltop",     "0btag_noMTCut", channel, SF_0btag);
+        screwdriver.ApplyScaleFactor("W+jets",    "0btag_noMTCut", channel, SF_0btag);
+
+        screwdriver.ApplyScaleFactor("ttbar_2l",  "reversedVeto_noMTCut", channel, SF_pre);
+        screwdriver.ApplyScaleFactor("1ltop",     "reversedVeto_noMTCut", channel, SF_vetopeak);
+        screwdriver.ApplyScaleFactor("W+jets",    "reversedVeto_noMTCut", channel, SF_vetopeak);
+
     }
 
   // ###################################
