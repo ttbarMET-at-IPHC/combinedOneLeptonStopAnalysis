@@ -21,15 +21,17 @@ string sampleType;
 // Define input and output folders
 
     // Standard babyTuples
+#define USE_ONE_LEPTON_SKIM
 #define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/"
 #define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim/1lepton4jetsMET80/"
     
     // Fix for dilepton channels with 1 and 2 jets bins
-//#define FOLDER_INPUT  "../store/babyTuples_0603_fix2leptonAtLeast1jet_withBDT/"
-//#define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim/2leptons1jetMET50/"
+//#define USE_TWO_LEPTONS_SKIM
+//#define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/"
+//#define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim2/2leptons1jetMET50/"
 
 // Files needed to compute on-fly variables
-#include "../AN-14-067/SecondLeptonInAcceptance.h"
+#include "../AN-14-067/secondGeneratedLeptonType.h"
 #include "../AN-14-067/cutAndCountDefinitions.h"
 
 // ###################
@@ -75,16 +77,17 @@ int main (int argc, char *argv[])
         ReadEvent(theInputTree,i,&pointers,&myEvent);
 
         // Apply selection
-        if (myEvent.numberOfLepton != 1) continue;
-        if (myEvent.nJets < 4)           continue;
-        if (myEvent.MET < 80)            continue;
-        
-        /*  
+        #ifdef USE_ONE_LEPTON_SKIM
+            if (myEvent.numberOfLepton != 1) continue;
+            if (myEvent.nJets < 4)           continue;
+            if (myEvent.MET < 80)            continue;
+        #else
+        #ifdef USE_TWO_LEPTONS_SKIM
         if (myEvent.numberOfLepton != 2) continue;
         if (myEvent.nJets < 1)           continue;
         if (myEvent.MET < 50)            continue;
-        */
-        
+        #endif
+        #endif
 
         if ((dataset == "DoubleMuon") 
          || (dataset == "DoubleElec") 
@@ -94,9 +97,10 @@ int main (int argc, char *argv[])
             sampleType = "data";
 
         // Compute some variables before storing them
-        myEvent.secondLeptonInAcceptance = EventHasSecondGeneratedLeptonInAcceptance();
-        myEvent.ISRJet                   = findISRJet();
-        myEvent.leadingNonBPt            = leadingNonBPt();
+
+        myEvent.secondGeneratedLeptonType = secondGeneratedLeptonType();
+        myEvent.ISRJet                    = findISRJet();
+        myEvent.leadingNonBPt             = leadingNonBPt();
 
         // Fill tree
 

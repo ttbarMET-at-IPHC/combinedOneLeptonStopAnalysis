@@ -235,8 +235,8 @@ typedef struct
     Double_t BDT_output_t2tt_R5;
 
     // Additional info to not recompute them on the fly each time
-    Bool_t secondLeptonInAcceptance;
-    Bool_t ISRJet;
+    Short_t secondGeneratedLeptonType;
+    Bool_t  ISRJet;
     Float_t leadingNonBPt;
 
 } babyEvent;
@@ -675,7 +675,7 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("BDT_output_t2tt_R2",           &(myEvent->BDT_output_t2tt_R2   ));
     theTree->Branch("BDT_output_t2tt_R5",           &(myEvent->BDT_output_t2tt_R5   ));
                                                     
-    theTree->Branch("secondLeptonInAcceptance",     &(myEvent->secondLeptonInAcceptance ));
+    theTree->Branch("secondGeneratedLeptonType",    &(myEvent->secondGeneratedLeptonType));
     theTree->Branch("ISRJet",                       &(myEvent->ISRJet                   ));
     theTree->Branch("leadingNonBPt",                &(myEvent->leadingNonBPt            ));
 }

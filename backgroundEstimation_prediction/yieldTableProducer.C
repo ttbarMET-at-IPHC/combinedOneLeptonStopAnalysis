@@ -1,4 +1,4 @@
-#include "common.h"
+#include "../backgroundEstimation_common/common.h"
 
 #ifndef SIGNAL_REGION_CUTS
     #error SIGNAL_REGION_CUTS need to be defined.
@@ -13,17 +13,28 @@ bool goesInPreVetoSelectionMTtail_withSRCuts()      { return (goesInPreVetoSelec
 bool goesInPreselectionMTpeak_withSRCuts()          { return (goesInPreselectionMTpeak()              && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreselectionMTtail_withSRCuts()          { return (goesInPreselectionMTtail()              && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
-bool goesInPreselectionMTtail_withSRCuts_2ndLepInAcceptance()  
-{ 
-    return (goesInPreselectionMTtail()       
-         && SIGNAL_REGION_CUTS(enableMTCut) 
 #ifdef SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
-         && myEvent.secondLeptonInAcceptance
-#else
-         && EventHasSecondGeneratedLeptonInAcceptance()
-#endif
-         );
+bool secondLeptonInAcceptance()  
+{ 
+    if ((myEvent.secondGeneratedLeptonType != UNKNOWN) 
+    &&  (myEvent.secondGeneratedLeptonType != NO_SECOND_LEPTON)
+    &&  (myEvent.secondGeneratedLeptonType != NOT_IN_ACCEPTANCE)) return true;
+    else return false;
 }
+
+bool secondLeptonInAcceptance_singleTrack()  
+{ 
+    return  (myEvent.secondGeneratedLeptonType == ELEC_OR_MUON)
+         || (myEvent.secondGeneratedLeptonType == TAU_TO_ELEC_OR_MUON);
+}
+
+bool secondLeptonInAcceptance_hadronicTau()  
+{ 
+    return  (myEvent.secondGeneratedLeptonType == TAU_TO_ONE_PRONG)
+         || (myEvent.secondGeneratedLeptonType == TAU_TO_MORE_THAN_ONE_PRONG);
+}
+// TODO : define case were second lepton type is not already computed
+#endif
                                                                       
 bool goesIn0BtagControlRegionMTpeak_withSRCuts()    { return (goesIn0BtagControlRegionMTpeak()        && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesIn0BtagControlRegionMTtail_withSRCuts()    { return (goesIn0BtagControlRegionMTtail()        && SIGNAL_REGION_CUTS(enableMTCut) ); }
@@ -47,7 +58,6 @@ bool goesInAnyChannel()                             { return (goesInSingleLepton
 
 int main (int argc, char *argv[])
 {
-  
     printBoxedMessage("Starting tables generation");
 
     // ####################
@@ -116,8 +126,10 @@ int main (int argc, char *argv[])
         screwdriver.AddRegion("2leptons_MTpeak",         "2 leptons (MT peak)",         &goesInDileptonControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("2leptons_MTtail",         "2 leptons (MT tail)",         &goesInDileptonControlRegionMTtail_withSRCuts);
 
-        screwdriver.AddRegion("signalRegion_MTtail_secondLeptonInAcceptance",     
-                              "Preselection (MT tail);2nd lepton in acceptance",        &goesInPreselectionMTtail_withSRCuts_2ndLepInAcceptance, "blinded");
+        // Second lepton in acceptance (for tt->ll)
+        screwdriver.AddRegion("secondLeptonInAcceptance",    "",        "signalRegion_MTtail", &secondLeptonInAcceptance,             "blinded");
+        screwdriver.AddRegion("singleTrack",                 "",        "signalRegion_MTtail", &secondLeptonInAcceptance_singleTrack, "blinded");
+        screwdriver.AddRegion("hadronicTau",                 "",        "signalRegion_MTtail", &secondLeptonInAcceptance_hadronicTau, "blinded");
 
     // ##########################
     // ##   Create Channels    ##
@@ -215,11 +227,21 @@ int main (int argc, char *argv[])
                                     "0btag_MTpeak",        "0btag_MTtail",  
                                     "reversedVeto_MTpeak", "reversedVeto_MTtail",
                                     "2leptons", "2leptons_MTpeak", "2leptons_MTtail",
-                                    "signalRegion_MTtail_secondLeptonInAcceptance"      
                                   };
 
         string exportFile = "rawYieldTables/"+string(SIGNAL_REGION_TAG)+".tab";
         TableDataMC(&screwdriver,regions,"allChannels").Print(exportFile,4);
+
+
+        vector<string> secondLeptonInAcceptanceRegions  = {
+                                                              "signalRegion_MTtail",        
+                                                              "secondLeptonInAcceptance",
+                                                              "singleTrack",             
+                                                              "hadronicTau" 
+                                                          };
+
+        string exportFile2 = "secondLeptonInAcceptance/"+string(SIGNAL_REGION_TAG)+".tab";
+        TableDataMC(&screwdriver,secondLeptonInAcceptanceRegions,"allChannels").Print(exportFile2,4);
 
         printBoxedMessage("Table generation completed");
 

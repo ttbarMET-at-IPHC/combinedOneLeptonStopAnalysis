@@ -3,7 +3,7 @@
 
 #include "interface/tables/TableDataMC.h"
 #include "interface/Figure.h"
-#include "common.h"
+#include "../backgroundEstimation_common/common.h"
 
 using namespace std;
 using namespace theDoctor;
@@ -69,10 +69,14 @@ class backgroundEstimation{
 
         // Tables 
 
-        Table rawYieldTable;
-        Table scaleFactorTable;
-        Table predictionTable;
-        Table systematicsUncertainties;
+            // Inputs
+        Table  rawYieldTable;
+        Table  secondLeptonInAcceptanceYieldTable;
+            
+            // Outputs
+        Table  scaleFactorTable;
+        Table  predictionTable;
+        Table  systematicsUncertainties;
 
         // Systematic flags / value
         //

@@ -1,9 +1,9 @@
 #include "backgroundEstimation.h"
 
-#define PLACEHOLDER_CR4_CR5_MODELING_UNCERTAINTY             0.1
-
-// From Lara/Pedrame
-#define DILEPTON_TTBAR_JET_MULTIPLICITY_MODELING_UNCERTAINTY 0.05
+#define PLACEHOLDER_CR4_CR5_MODELING_UNCERTAINTY             0.1  // In case CR4/CR5 modeling checks are not available
+#define DILEPTON_TTBAR_JET_MULTIPLICITY_MODELING_UNCERTAINTY 0.05 // From Lara/Pedrame// From Lara/Pedrame
+#define ISOLATED_TRACK_VETO_UNCERTAINTY                      0.06 // From tag and probe studies
+#define TAU_VETO_UNCERTAINTY                                 0.07 // From tau POG
 
 int main (int argc, char *argv[])
 {
@@ -24,6 +24,7 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     // ########################
 
     rawYieldTable = Table("rawYieldTables/"+signalRegionLabel+".tab");
+    secondLeptonInAcceptanceYieldTable = Table("secondLeptonInAcceptance/"+signalRegionLabel+".tab");
 
     // ###################################################################
     // #  Initialize the table containing the raw mc and the prediction  #
@@ -293,13 +294,22 @@ void backgroundEstimation::ComputePredictionWithSystematics()
 
 float backgroundEstimation::ComputeSecondLeptonVetoUncertainty()
 {
-    Figure SR_ttbar_2l         = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l");
-    Figure SR_2ndLept_ttbar_2l = rawYieldTable.Get("signalRegion_MTtail_secondLeptonInAcceptance","ttbar_2l");
+    Figure ttbar_2l_all                     = secondLeptonInAcceptanceYieldTable.Get("signalRegion_MTtail", "ttbar_2l");
+    Figure ttbar_2l_withTrackInAcceptance   = secondLeptonInAcceptanceYieldTable.Get("singleTrack",         "ttbar_2l");
+    Figure ttbar_2l_withHadrTauInAcceptance = secondLeptonInAcceptanceYieldTable.Get("hadronicTau",         "ttbar_2l");
 
-    float fraction = 0;
-    if (SR_ttbar_2l.value() != 0) fraction = SR_2ndLept_ttbar_2l.value()/SR_ttbar_2l.value();
-    if (fraction < 0.02) fraction = 0.02;
-    return fraction*0.07;
+    if (ttbar_2l_all.value() == 0) return 0.0;
+    
+    Figure fraction_track = ttbar_2l_withTrackInAcceptance   / ttbar_2l_all;
+    Figure fraction_tau   = ttbar_2l_withHadrTauInAcceptance / ttbar_2l_all;
+
+    if (fraction_track.value() < 0.02) fraction_track = Figure(0.02,0);
+    if (fraction_tau.value()   < 0.02) fraction_tau   = Figure(0.02,0);
+
+    float uncertainty = fraction_track.value() * ISOLATED_TRACK_VETO_UNCERTAINTY
+                      + fraction_tau.value()   * TAU_VETO_UNCERTAINTY;
+
+    return uncertainty;
 }
 
 void backgroundEstimation::ComputeSFpre()

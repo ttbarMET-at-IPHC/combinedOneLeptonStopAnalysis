@@ -44,6 +44,7 @@ copyResults:
 	 cp -r ../backgroundEstimation_checkCR4CR5modeling/scaleFactors		./results/$$DATE/checkCR4CR5modeling/scaleFactors/;		\
 	 cp -r ../backgroundEstimation_prediction/prediction				./results/$$DATE/prediction/;							\
 	 cp -r ../backgroundEstimation_prediction/rawYieldTables			./results/$$DATE/prediction/rawYieldTables/;			\
+	 cp -r ../backgroundEstimation_prediction/secondLeptonInAcceptance	./results/$$DATE/prediction/secondLeptonInAcceptance/;	\
 	 cp -r ../backgroundEstimation_prediction/scaleFactors				./results/$$DATE/prediction/scaleFactors/;				\
 	 cp -r ../backgroundEstimation_prediction/systematics				./results/$$DATE/prediction/systematics/;				\
 	 rm -f ./results/latest; cd results; ln -s ./$$DATE/ ./latest

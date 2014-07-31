@@ -42,12 +42,10 @@ using namespace theDoctor;
 // #  Analysis, cut-and-count and BDT definitions  #
 // #################################################
 
-#ifndef SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
-    #include "../AN-14-067/SecondLeptonInAcceptance.h"
-#endif
 #include "../AN-14-067/selectionDefinitions.h"
 #include "../AN-14-067/cutAndCountDefinitions.h"
 #include "../AN-14-067/signalRegionDefinitions.h"
+#include "../AN-14-067/secondGeneratedLeptonType.h"
 
 // ####################
 // #  Processes list  #
