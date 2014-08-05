@@ -38,7 +38,6 @@ int main (int argc, char *argv[])
     // List of CR
     vector<string> CRTagList =
     {
-        //"CR4_1j",
         "CR4_2j",
         "CR4_3j",
         "CR4_4j",
@@ -48,13 +47,12 @@ int main (int argc, char *argv[])
     };
     vector<string> CRTagLabel =
     {
-        //"CR4_1j",
-        "CR 2-leptons (Njets#geq2)",
-        "CR 2-leptons (Njets#geq3)",
-        "CR 2-leptons (Njets#geq4)",
-        "CR antiveto (CR 2-leptons Njets#geq2)",
-        "CR antiveto (CR 2-leptons Njets#geq3)",
-        "CR antiveto (CR 2-leptons Njets#geq4)",
+        "CR 2leptons, Njets#geq2 (using loosened cut 2 jets)",
+        "CR 2leptons, Njets#geq3 (using loosened cut 3 jets)",
+        "CR 2leptons, Njets#geq4 (using loosened cut 4 jets)",
+        "CR antiveto (using loosened cut 2 jets)",
+        "CR antiveto (using loosened cut 3 jets)",
+        "CR antiveto (using loosened cut 4 jets)",
     };
 
     vector<Color_t> CRColorList = {kRed,kOrange-1,kBlue-1,kGreen-1,kOrange+1,kBlue+1,kGreen+1};
@@ -123,7 +121,7 @@ int main (int argc, char *argv[])
     }
 
     TCanvas c1;
-    TLegend legCR(0.65,0.78,0.99,0.99);
+    TLegend legCR(0.55,0.78,0.99,0.99);
     for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
     {
         if(i==0) {
@@ -176,6 +174,7 @@ int main (int argc, char *argv[])
     }
     hMin->Draw("histsame");
     hMax->Draw("histsame");
+    legCR.SetFillColor(kWhite);
     legCR.Draw("same");
 
     TFile fout("results/plots_BDT.root","RECREATE");
