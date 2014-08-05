@@ -127,9 +127,9 @@ int main (int argc, char *argv[])
         screwdriver.AddRegion("2leptons_MTtail",         "2 leptons (MT tail)",         &goesInDileptonControlRegionMTtail_withSRCuts);
 
         // Second lepton in acceptance (for tt->ll)
-        screwdriver.AddRegion("secondLeptonInAcceptance",    "",        "signalRegion_MTtail", &secondLeptonInAcceptance,             "blinded");
-        screwdriver.AddRegion("singleTrack",                 "",        "signalRegion_MTtail", &secondLeptonInAcceptance_singleTrack, "blinded");
-        screwdriver.AddRegion("hadronicTau",                 "",        "signalRegion_MTtail", &secondLeptonInAcceptance_hadronicTau, "blinded");
+        screwdriver.AddRegion("secondLeptonInAcceptance",    "",        "preveto_MTtail", &secondLeptonInAcceptance,             "blinded");
+        screwdriver.AddRegion("singleTrack",                 "",        "preveto_MTtail", &secondLeptonInAcceptance_singleTrack, "blinded");
+        screwdriver.AddRegion("hadronicTau",                 "",        "preveto_MTtail", &secondLeptonInAcceptance_hadronicTau, "blinded");
 
     // ##########################
     // ##   Create Channels    ##
@@ -234,7 +234,7 @@ int main (int argc, char *argv[])
 
 
         vector<string> secondLeptonInAcceptanceRegions  = {
-                                                              "signalRegion_MTtail",        
+                                                              "preveto_MTtail",        
                                                               "secondLeptonInAcceptance",
                                                               "singleTrack",             
                                                               "hadronicTau" 

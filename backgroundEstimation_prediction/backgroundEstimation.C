@@ -294,7 +294,7 @@ void backgroundEstimation::ComputePredictionWithSystematics()
 
 float backgroundEstimation::ComputeSecondLeptonVetoUncertainty()
 {
-    Figure ttbar_2l_all                     = secondLeptonInAcceptanceYieldTable.Get("signalRegion_MTtail", "ttbar_2l");
+    Figure ttbar_2l_all                     = secondLeptonInAcceptanceYieldTable.Get("preveto_MTtail", "ttbar_2l");
     Figure ttbar_2l_withTrackInAcceptance   = secondLeptonInAcceptanceYieldTable.Get("singleTrack",         "ttbar_2l");
     Figure ttbar_2l_withHadrTauInAcceptance = secondLeptonInAcceptanceYieldTable.Get("hadronicTau",         "ttbar_2l");
 
