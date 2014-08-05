@@ -32,8 +32,25 @@ reports:
 
 report: reportProducer.$(ExeSuf) 
 	./reportProducer.$(ExeSuf) $(REPORT_TAG) "$(REPORT_LABEL)" $(SIGNAL_REGIONS) > results/latest/report/$(REPORT_TAG).tex;
-	cd results/latest/report/ && pdflatex $(REPORT_TAG).tex 
-	
+	#cd results/latest/report/ && pdflatex $(REPORT_TAG).tex 
+
+reports_secondLep:
+	@mkdir -p ./results/latest/reportSecondLep/
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="preselection"    REPORT_TAG="preselection" REPORT_LABEL="Preselection"
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="$(CnC_T2tt)"     REPORT_TAG="CnC_T2tt"     REPORT_LABEL="Cut \& count, T2tt"
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="$(CnC_T2bw025)"  REPORT_TAG="CnC_T2bw025"  REPORT_LABEL="Cut \& count, T2bw, x=0.25"
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="$(CnC_T2bw050)"  REPORT_TAG="CnC_T2bw050"  REPORT_LABEL="Cut \& count, T2bw, x=0.50"
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="$(CnC_T2bw075)"  REPORT_TAG="CnC_T2bw075"  REPORT_LABEL="Cut \& count, T2bw, x=0.75"
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="$(BDT_T2tt)"     REPORT_TAG="BDT_T2tt"     REPORT_LABEL="BDT, T2tt"
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="$(BDT_T2bw025)"  REPORT_TAG="BDT_T2bw025"  REPORT_LABEL="BDT, T2bw, x=0.25"
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="$(BDT_T2bw050)"  REPORT_TAG="BDT_T2bw050"  REPORT_LABEL="BDT, T2bw, x=0.50"
+	@make --no-print-directory report_secondLep SIGNAL_REGIONS="$(BDT_T2bw075)"  REPORT_TAG="BDT_T2bw075"  REPORT_LABEL="BDT, T2bw, x=0.75"
+
+report_secondLep: reportProducer_secondLep.$(ExeSuf) 
+	./reportProducer_secondLep.$(ExeSuf) $(REPORT_TAG) "$(REPORT_LABEL)" $(SIGNAL_REGIONS) > results/latest/reportSecondLep/$(REPORT_TAG).tex;
+	#cd results/latest/report/ && pdflatex $(REPORT_TAG).tex 
+
+
 copyResults:
 	@DATE=$(shell date +%Y_%m_%d_%H:%M:%S);			\
 	 mkdir -p ./results/$$DATE/;					\

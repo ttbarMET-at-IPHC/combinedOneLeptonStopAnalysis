@@ -104,8 +104,8 @@ vector<string> systematicsLabelList =
     "$t\\bar{t} \\rightarrow \\ell \\ell$ (jets modeling)",
     "$t\\bar{t} \\rightarrow \\ell \\ell$ (2nd lepton veto)",
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
-    "$SF^{M_T \\text{tail}}_{\\text{W+jets}}$ uncertainty",
-    "$SF^{M_T \\text{tail}}_{\\text{1$\\ell$ top}}$ uncertainty",
+    "$SFR_{\\text{W+jets}}$ uncertainty",
+    "$SFR_{\\text{1$\\ell$ top}}$ uncertainty",
     #else
     "$SFR_{\\text{W+jets}}$ uncertainty",
     "1$\\ell$ top tail-to-peak ratio",
@@ -145,13 +145,13 @@ vector<string> scaleFactorsTagList =
 
 vector<string> scaleFactorsLabelList =
 {
-    "$SF^{M_T \\text{peak}}_{\\text{presel, pre-veto}}$",
-    "$SF^{M_T \\text{peak}}_{\\text{presel, post-veto}}$",
-    "$SF^{M_T \\text{peak}}_{\\text{0 $b$-tag}}$",
-    "$SF^{M_T \\text{peak}}_{\\text{reversed veto}}$",
+    "$SF_{\\text{pre}}$",
+    "$SF_{\\text{post}}$",
+    "$SF_{\\text{0 $b$-tag}}$",
+    "$SF_{\\text{veto}}$",
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
-    "$SF^{M_T \\text{tail}}_{\\text{W+jets}}$",
-    "$SF^{M_T \\text{tail}}_{\\text{1$\\ell$ top}}$",
+    "$SFR_{\\text{W+jets}}$",
+    "$SFR_{\\text{1$\\ell$ top}}$",
     #else
         "$SFR_{\\text{$W$+jets}}$",
         "$R_{\\text{$W$+jets}}$",
