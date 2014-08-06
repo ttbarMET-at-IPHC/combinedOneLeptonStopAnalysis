@@ -6,6 +6,8 @@
 
 int main (int argc, char *argv[])
 {
+    loadBDTSignalRegions();
+    loadCnCSignalRegions();
 
     printBoxedMessage("Starting plot generation");
 
@@ -112,11 +114,11 @@ int main (int argc, char *argv[])
         if (findSubstring(signalRegionTag_,"BDT"))
         {
             size_t pos;
-            pos = signalRegionTag_.find("_lowDM");
+            pos = signalRegionTag_.find("_low");
             if (pos != string::npos) signalRegionTag_ = signalRegionTag_.substr(0,pos);
-            pos = signalRegionTag_.find("_mediumDM");
+            pos = signalRegionTag_.find("_medium");
             if (pos != string::npos) signalRegionTag_ = signalRegionTag_.substr(0,pos);
-            pos = signalRegionTag_.find("_highDM");
+            pos = signalRegionTag_.find("_high");
             if (pos != string::npos) signalRegionTag_ = signalRegionTag_.substr(0,pos);
         }
         Figure SF_MTtail_Wjets = tableMTtailCorrection.Get("SFR_Wjets",signalRegionTag_);

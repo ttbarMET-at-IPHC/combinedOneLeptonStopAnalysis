@@ -1,5 +1,6 @@
-#include "common.h"
+#include "../backgroundEstimation_common/common.h"
 #include "cutAndCountDefinitions_cutsLoosenedForCR4CR5.h"
+#include "../AN-14-067/BDTcutsWithCustomRequirements.h"
 
 #ifndef SIGNAL_REGION_CUTS
     #error SIGNAL_REGION_CUTS need to be defined.
@@ -37,10 +38,14 @@ int main (int argc, char *argv[])
     string CustomJetRequirement; 
     if (argc == 2) 
     { 
+        // Loading standard BDT cuts
+        loadBDTSignalRegions();
+
+        // Replacing standard BDT cuts with custom ones
+        // (goal is to have enough stat to perform the check)
         CustomJetRequirement = argv[1];
-        NOMINAL_BDT_CUT = false;
         printBoxedMessage("Running with custom jet requirement : "+CustomJetRequirement);
-        LoadBDTCutWithCustomRequirement(CustomJetRequirement);
+        loadBDTCutsWithCustomRequirement(CustomJetRequirement);
     }
     
     printBoxedMessage("Starting tables generation");

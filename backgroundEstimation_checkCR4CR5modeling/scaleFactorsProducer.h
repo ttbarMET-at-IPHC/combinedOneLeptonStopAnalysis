@@ -3,7 +3,7 @@
 
 #include "interface/tables/TableDataMC.h"
 #include "interface/Figure.h"
-#include "common.h"
+#include "../backgroundEstimation_common/common.h"
 
 using namespace std;
 using namespace theDoctor;

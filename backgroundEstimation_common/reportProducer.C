@@ -2,6 +2,8 @@
 
 int main (int argc, char *argv[])
 {
+    loadBDTSignalRegions();
+    loadCnCSignalRegions();
 
     if (argc <= 3) 
     { 
@@ -43,11 +45,11 @@ int main (int argc, char *argv[])
 
     // Fill summary tables
 
-    Table rawYieldSummary           (signalRegionsTagList,  processesTagList,    signalRegionsLabelList,  processesLabelList   );
-    Table predictionSummary         (signalRegionsTagList,  processesTagList,    signalRegionsLabelList,  processesLabelList   );
-    Table scaleFactorsSummary       (signalRegionsTagList,  scaleFactorsTagList, signalRegionsLabelList,  scaleFactorsLabelList);
-    Table absoluteSystematicsSummary(signalRegionsTagList,  systematicsTagList,  signalRegionsLabelList,  systematicsLabelList );
-    Table relativeSystematicsSummary(signalRegionsTagList,  systematicsTagList,  signalRegionsLabelList,  systematicsLabelList );
+    Table rawYieldSummary           (signalRegionsTagList, processesTagList,    signalRegionsLabelList,  processesLabelList   );
+    Table predictionSummary         (signalRegionsTagList, processesTagList,    signalRegionsLabelList,  processesLabelList   );
+    Table scaleFactorsSummary       (signalRegionsTagList, scaleFactorsTagList, signalRegionsLabelList,  scaleFactorsLabelList);
+    Table absoluteSystematicsSummary(signalRegionsTagList, systematicsTagList,  signalRegionsLabelList,  systematicsLabelList );
+    Table relativeSystematicsSummary(signalRegionsTagList, systematicsTagList,  signalRegionsLabelList,  systematicsLabelList );
 
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {

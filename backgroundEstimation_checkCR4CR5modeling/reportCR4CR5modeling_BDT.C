@@ -7,7 +7,7 @@
 #include "interface/SonicScrewdriver.h" 
 using namespace theDoctor;
 
-#include "common.h"
+#include "../backgroundEstimation_common/common.h"
 
 #include <string>
 
@@ -22,6 +22,7 @@ using namespace theDoctor;
 
 int main (int argc, char *argv[])
 {
+    loadBDTSignalRegions();
 
     //TStyle* gStyle;
     gStyle->SetOptStat(0);
@@ -79,7 +80,8 @@ int main (int argc, char *argv[])
         string hname = "h_"+CRTagList[i];
         CRplots[i] = new TH1F(hname.c_str(),"",signalRegionsTagList.size(),0,signalRegionsTagList.size());
         for(unsigned int j=0;j<signalRegionsTagList.size();j++){
-            CRplots[i]->GetXaxis()->SetBinLabel(j+1,signalRegionsTagList[j].c_str());
+            CRplots[i]->GetXaxis()->SetBinLabel(j+1, ("BDT " + BDTlabel(signalRegionsTagList[j], "root")).c_str());
+
         }
         CRplots[i]->SetLineColor(CRColorList[i]);
         CRplots[i]->SetLineWidth(2);
@@ -89,7 +91,7 @@ int main (int argc, char *argv[])
     }
     TH1F* h_cr4_4j_noncorr = new TH1F("h_cr4_4j_noncorr","",signalRegionsTagList.size(),0,signalRegionsTagList.size());
     for(unsigned int j=0;j<signalRegionsTagList.size();j++){
-        h_cr4_4j_noncorr->GetXaxis()->SetBinLabel(j+1,signalRegionsTagList[j].c_str());
+        h_cr4_4j_noncorr->GetXaxis()->SetBinLabel(j+1, ("BDT " + BDTlabel(signalRegionsTagList[j], "root")).c_str());
     }
 
 
@@ -105,12 +107,14 @@ int main (int argc, char *argv[])
 
             Figure CR4 = SF_CR4;//*SF_CR4_tail;
             Figure CR5 = SF_CR5_tail;
-            if(CRTagList[i].find("CR4")!=std::string::npos){
+            if(CRTagList[i].find("CR4")!=std::string::npos)
+            {
                 CRplots[i]->SetBinContent(j+1,CR4.value());
                 CRplots[i]->SetBinError(j+1,sqrt(pow(CR4.error(),2.)+pow(CR4.value()*CR4MTtailUncert,2)));
-                if(CRTagList[i].find("CR4_4j")!=std::string::npos){
-                 h_cr4_4j_noncorr->SetBinContent(j+1,CR4.value());
-                 h_cr4_4j_noncorr->SetBinError(j+1,CR4.error());
+                if(CRTagList[i].find("CR4_4j")!=std::string::npos)
+                {
+                    h_cr4_4j_noncorr->SetBinContent(j+1,SF_CR4_tail.value());
+                    h_cr4_4j_noncorr->SetBinError(j+1,SF_CR4_tail.error());
                 }
             }
             else{
@@ -150,6 +154,7 @@ int main (int argc, char *argv[])
         {
             float value = CRplots[i]->GetBinContent(j+1);
             float error = CRplots[i]->GetBinError(j+1);
+            
             if((value-error)<=1 && (value+error)>=1){ 
                 if(error<minError){
                     minError = error;
@@ -292,14 +297,14 @@ int main (int argc, char *argv[])
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
         if(i==0) {
-	   SRplots[i]->SetMinimum(0.);
-	   SRplots[i]->SetMaximum(2.5);
-	   SRplots[i]->Draw();
+            SRplots[i]->SetMinimum(0.);
+            SRplots[i]->SetMaximum(2.5);
+            SRplots[i]->Draw();
         }
         else    {
             SRplots[i]->Draw("same");
         }
-        legSR.AddEntry(SRplots[i],signalRegionsTagList[i].c_str(),"lp");
+        legSR.AddEntry(SRplots[i],("BDT " + BDTlabel(signalRegionsTagList[i], "root")).c_str(),"lp");
     }
     legSR.Draw("same");
     c2.Write();

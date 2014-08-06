@@ -193,11 +193,11 @@ void scaleFactorsProducer::ImportMTTailCorrectionFromTemplateFitMethod()
     if (findSubstring(signalRegionLabel,"BDT"))
     {
         size_t pos;
-        pos = signalRegionLabel.find("_lowDM");
+        pos = signalRegionLabel.find("_low");
         if (pos != string::npos) signalRegionLabel_ = signalRegionLabel.substr(0,pos);
-        pos = signalRegionLabel.find("_mediumDM");
+        pos = signalRegionLabel.find("_medium");
         if (pos != string::npos) signalRegionLabel_ = signalRegionLabel.substr(0,pos);
-        pos = signalRegionLabel.find("_highDM");
+        pos = signalRegionLabel.find("_high");
         if (pos != string::npos) signalRegionLabel_ = signalRegionLabel.substr(0,pos);
     }
     // Remove cutsLoosenedForCR4CR5 suffix

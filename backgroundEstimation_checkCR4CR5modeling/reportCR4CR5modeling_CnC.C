@@ -1,4 +1,4 @@
-#include "common.h"
+#include "../backgroundEstimation_common/common.h"
 #include "cutAndCountDefinitions_cutsLoosenedForCR4CR5.h"
 
 // FIXME these are not used, is that a bug or a feature ?
@@ -41,6 +41,7 @@ void GetEnveloppe(float * SFval,float * SFerr, float tabSize, float & min, float
 
 int main (int argc, char *argv[])
 {
+    loadCnCSignalRegions();
 
     //TStyle* gStyle;
     gStyle->SetOptStat(0);
@@ -98,7 +99,7 @@ int main (int argc, char *argv[])
     // Set custom labels in histogram
     for(unsigned int j=0;j<signalRegionsTagList.size();j++)
     {
-        string sr = signalRegionLabel(signalRegionsTagList[j],"root","long");
+        string sr = signalRegionLabel(signalRegionsTagList[j],"root");
         if (signalRegionsTagList[j] == "preselection") 
             SF_tt2l_CR4[0]->GetXaxis()->SetBinLabel(j+1, sr.c_str());
         else 

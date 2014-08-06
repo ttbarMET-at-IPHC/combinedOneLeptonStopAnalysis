@@ -58,6 +58,8 @@ bool goesInAnyChannel()                             { return (goesInSingleLepton
 
 int main (int argc, char *argv[])
 {
+    loadBDTSignalRegions();
+
     printBoxedMessage("Starting tables generation");
 
     // ####################
