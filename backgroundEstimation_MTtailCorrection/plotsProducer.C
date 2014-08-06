@@ -1,4 +1,5 @@
 #include "common.h"
+#include "../AN-14-067/BDTcutsWithCustomRequirements.h"
 
 bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
@@ -26,23 +27,12 @@ bool goesInVetoControlRegionMTpeak_withSRCuts() { return (goesInVetoControlRegio
 bool goesInVetoControlRegionMTtail_withSRCuts() { return (goesInVetoControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
 bool goesInVetoControlRegionNoMT_withSRCuts()   { return (goesInVetosControlRegion()      && SIGNAL_REGION_CUTS(disableMTCut)); }
 
-bool goesIn0BtagControlRegionMTpeak_4j()     { return (goesIn0BtagControlRegionMTpeak()     && myEvent.nJets==4); }
-bool goesIn0BtagControlRegionMTpeak_5j()     { return (goesIn0BtagControlRegionMTpeak()     && myEvent.nJets==5); }
-bool goesIn0BtagControlRegionMTpeak_6j()     { return (goesIn0BtagControlRegionMTpeak()     && myEvent.nJets>=6); }
-bool goesIn0BtagControlRegionMTtail_4j()     { return (goesIn0BtagControlRegionMTtail()     && myEvent.nJets==4); }
-bool goesIn0BtagControlRegionMTtail_5j()     { return (goesIn0BtagControlRegionMTtail()     && myEvent.nJets==5); }
-bool goesIn0BtagControlRegionMTtail_6j()     { return (goesIn0BtagControlRegionMTtail()     && myEvent.nJets>=6); }
-bool goesIn0BtagControlRegionMTinverted_4j() { return (goesIn0BtagControlRegionMTinverted() && myEvent.nJets==4); }
-bool goesIn0BtagControlRegionMTinverted_5j() { return (goesIn0BtagControlRegionMTinverted() && myEvent.nJets==5); }
-bool goesIn0BtagControlRegionMTinverted_6j() { return (goesIn0BtagControlRegionMTinverted() && myEvent.nJets>=6); }
-
 bool goesIn0BtagControlRegionMTtail100()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 100); } 
 bool goesIn0BtagControlRegionMTtail120()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 120); } 
 bool goesIn0BtagControlRegionMTtail125()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 125); } 
 bool goesIn0BtagControlRegionMTtail130()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 130); } 
 bool goesIn0BtagControlRegionMTtail135()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 135); } 
 bool goesIn0BtagControlRegionMTtail140()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 140); } 
-bool goesIn0BtagControlRegionMTinverted120() { return (goesIn0BtagControlRegion() && myEvent.MT <= 120); } 
 
 bool goesInPreselNoBRequirementControlRegionMTinverted()
 {
@@ -184,11 +174,12 @@ bool CR0btag_MTtail_MT2W_200(){ return (goesIn0BtagControlRegionMTtail() && myEv
 
 int main (int argc, char *argv[])
 {
-    // Loading special BDT cut with >=25% efficiency on the background
-    // (goal is to have enough stat to perform the template fit)
+    // Loading standard BDT cuts
+    loadBDTSignalRegions();
 
-    NOMINAL_BDT_CUT = false;
-    LoadBDTCutWithCustomRequirement("25percentEfficiency");
+    // Replacing standard BDT cuts with cut allowing >=25% efficiency on the background
+    // (goal is to have enough stat to perform the template fit)
+    loadBDTCutsWithCustomRequirement("25percentEfficiency");
 
     printBoxedMessage("Starting plot generation");
 
@@ -204,12 +195,11 @@ int main (int argc, char *argv[])
     // ##########################
 
 
-    screwdriver.AddVariable("Mlb",           "Mlb",          "GeV",    40,0,600,             &(myEvent.Mlb),    "");
+    screwdriver.AddVariable("Mlb",           "M'(lb)",    "GeV",  40,0,600,             &(myEvent.Mlb),    "");
     
     float Mlb_customBinning[3] = {0,150,600};
-    screwdriver.AddVariable("Mlb_small",     "Mlb",          "GeV",    2, Mlb_customBinning, &(myEvent.Mlb),    "");
-    
-    screwdriver.AddVariable("M3b",           "M3b",          "GeV",    40,0,1000,            &(myEvent.M3b),    "");
+    screwdriver.AddVariable("Mlb_small",     "M'(lb)",    "GeV",  2, Mlb_customBinning, &(myEvent.Mlb),    "");
+    screwdriver.AddVariable("M3b",           "M3b",       "GeV",  40,0,1000,            &(myEvent.M3b),    "");
 
 
     // To perform systematic study
@@ -264,24 +254,13 @@ int main (int argc, char *argv[])
     // ##    Create Regions    ##
     // ##########################
 
-    screwdriver.AddRegion("MTpeak",              "Control Region (MT peak) - No b-tag cut", &goesInPreselNoBRequirementControlRegionMTinverted);
-    screwdriver.AddRegion("presel_MTinverted",   "Preselection (MT < 100 GeV)",             &goesInPreselectionMTinverted);
-    screwdriver.AddRegion("presel_MTpeak",       "Preselection (MT peak)",                  &goesInPreselectionMTpeak);
-    screwdriver.AddRegion("0btag",               "0 b-tag Control Region",                  &goesIn0BtagControlRegion);
-    screwdriver.AddRegion("0btag_MTpeak",        "0 b-tag (MT peak)",                       &goesIn0BtagControlRegionMTpeak);
-    screwdriver.AddRegion("0btag_MTinverted",    "0 b-tag (MT < 100 GeV)",                  &goesIn0BtagControlRegionMTinverted);
-    screwdriver.AddRegion("0btag_MTtail",        "0 b-tag (MT tail)",                       &goesIn0BtagControlRegionMTtail);
-    screwdriver.AddRegion("0btag_MTpeak_4j",     "0 b-tag (MT peak); Njets = 4",            &goesIn0BtagControlRegionMTpeak_4j);
-    screwdriver.AddRegion("0btag_MTinverted_4j", "0 b-tag (MT < 100 GeV); Njets = 4",       &goesIn0BtagControlRegionMTinverted_4j);
-    screwdriver.AddRegion("0btag_MTtail_4j",     "0 b-tag (MT tail); Njets = 4",            &goesIn0BtagControlRegionMTtail_4j);
-    screwdriver.AddRegion("0btag_MTpeak_5j",     "0 b-tag (MT peak); Njets >= 5",           &goesIn0BtagControlRegionMTpeak_5j);
-    screwdriver.AddRegion("0btag_MTinverted_5j", "0 b-tag (MT < 100 GeV); Njets >= 5",      &goesIn0BtagControlRegionMTinverted_5j);
-    screwdriver.AddRegion("0btag_MTtail_5j",     "0 b-tag (MT tail); Njets >= 5",           &goesIn0BtagControlRegionMTtail_5j);
-    screwdriver.AddRegion("0btag_MTpeak_6j",     "0 b-tag (MT peak); Njets >= 6",           &goesIn0BtagControlRegionMTpeak_6j);
-    screwdriver.AddRegion("0btag_MTinverted_6j", "0 b-tag (MT < 100 GeV); Njets >= 6",      &goesIn0BtagControlRegionMTinverted_6j);
-    screwdriver.AddRegion("0btag_MTtail_6j",     "0 b-tag (MT tail); Njets >= 6",           &goesIn0BtagControlRegionMTtail_6j);
-    screwdriver.AddRegion("0btag_MTinverted120", "0 b-tag (MT < 120 GeV)",                  &goesIn0BtagControlRegionMTinverted120);
-    screwdriver.AddRegion("0btag_MTtail120",     "0 b-tag (MT > 120 GeV)",                  &goesIn0BtagControlRegionMTtail120);
+    screwdriver.AddRegion("MTpeak",              "MT peak Control Region;No b-tag requirement",      &goesInPreselNoBRequirementControlRegionMTinverted);
+    screwdriver.AddRegion("presel_MTinverted",   "Preselection (MT < 100 GeV)",                      &goesInPreselectionMTinverted);
+    screwdriver.AddRegion("presel_MTpeak",       "Preselection (MT peak)",                           &goesInPreselectionMTpeak);
+    screwdriver.AddRegion("0btag",               "0 b-tag Control Region",                           &goesIn0BtagControlRegion);
+    screwdriver.AddRegion("0btag_MTpeak",        "0 b-tag Control Region;MT peak",                   &goesIn0BtagControlRegionMTpeak);
+    screwdriver.AddRegion("0btag_MTinverted",    "0 b-tag Control Region;MT < 100 GeV",              &goesIn0BtagControlRegionMTinverted);
+    screwdriver.AddRegion("0btag_MTtail",        "0 b-tag Control Region;MT tail",                   &goesIn0BtagControlRegionMTtail);
 
     string rebinning;
     rebinning="rebin=2";
@@ -415,13 +394,14 @@ int main (int argc, char *argv[])
 
     // Schedule plots
     screwdriver.SchedulePlots("1DDataMCComparison");
+    screwdriver.SchedulePlots("1DSuperimposed");
 
     // Config plots
 
     screwdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Internal");
     screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 19.5 fb^{-1}");
 
-    screwdriver.SetGlobalBoolOption("Plot", "exportPdf", false);
+    screwdriver.SetGlobalBoolOption("Plot", "exportPdf", true);
     screwdriver.SetGlobalBoolOption("Plot", "exportEps", false);
     screwdriver.SetGlobalBoolOption("Plot", "exportPng", false);
 
