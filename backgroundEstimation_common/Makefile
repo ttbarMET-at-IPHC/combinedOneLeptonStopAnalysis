@@ -87,8 +87,8 @@ cleanAll:
 	@make -C ./ 										 clean
 
 
-#computeBDTCuts: computeBDTCuts.$(ExeSuf)
-#	./computeBDTCuts.$(ExeSuf) 
+BDTCutsWithCustomRequirements: computeBDTCutsWithCustomRequirements.$(ExeSuf)
+	./computeBDTCutsWithCustomRequirements.$(ExeSuf) 
 
 #syst: reportGenSystProducer.$(ExeSuf)
 #	./reportGenSystProducer.$(ExeSuf) $(SIGNAL_REGIONS) | tee reportGenSystProducer.$(LogSuf) > reports/reportWithSyst.tex && cd reports && pdflatex report.tex

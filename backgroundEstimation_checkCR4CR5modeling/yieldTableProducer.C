@@ -11,7 +11,7 @@
 
 bool goesInPreVetoSelectionMTpeak_withSRCuts()      { return (goesInPreVetoSelectionMTpeak()          && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()      { return (goesInPreVetoSelectionMTtail()          && SIGNAL_REGION_CUTS(enableMTCut) ); }
-                                                                      
+
 bool goesInPreselectionMTpeak_withSRCuts()          { return (goesInPreselectionMTpeak()              && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreselectionMTtail_withSRCuts()          { return (goesInPreselectionMTtail()              && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
@@ -33,11 +33,11 @@ bool goesInAnyChannel()                             { return (goesInSingleLepton
 
 int main (int argc, char *argv[])
 {
-  
+
     // Special region for 2, 3 or 4 jets with 50, 100 or 150 minimum events
-    string CustomJetRequirement; 
-    if (argc == 2) 
-    { 
+    string CustomJetRequirement;
+    if (argc == 2)
+    {
         // Loading standard BDT cuts
         loadBDTSignalRegions();
 
@@ -47,7 +47,7 @@ int main (int argc, char *argv[])
         printBoxedMessage("Running with custom jet requirement : "+CustomJetRequirement);
         loadBDTCutsWithCustomRequirement(CustomJetRequirement);
     }
-    
+
     printBoxedMessage("Starting tables generation");
 
     // ####################
@@ -112,10 +112,10 @@ int main (int argc, char *argv[])
         screwdriver.AddRegion("2leptons",                "2 leptons",                   &goesInDileptonControlRegion_withSRCuts);
         screwdriver.AddRegion("2leptons_MTpeak",         "2 leptons (MT peak)",         &goesInDileptonControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("2leptons_MTtail",         "2 leptons (MT tail)",         &goesInDileptonControlRegionMTtail_withSRCuts);
-        
+
         screwdriver.AddRegion("reversedVeto_MTpeak",     "Reversed veto (MT peak)",     &goesInVetoControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("reversedVeto_MTtail",     "Reversed veto (MT tail)",     &goesInVetoControlRegionMTtail_withSRCuts);
-        
+
     // ##########################
     // ##   Create Channels    ##
     // ##########################
@@ -124,13 +124,13 @@ int main (int argc, char *argv[])
         screwdriver.AddChannel("singleLepton", "e/#mu-channels",  &goesInSingleLeptonChannel);
         screwdriver.AddChannel("singleElec",   "e-channel",       &goesInSingleElecChannel  );
         screwdriver.AddChannel("singleMuon",   "#mu-channel",     &goesInSingleMuonChannel  );
-        
+
         screwdriver.AddChannel("doubleLepton", "2l-channel",      &goesInDoubleLeptonChannel);
         screwdriver.AddChannel("doubleElec",   "ee-channel",      &goesInDoubleElecChannel  );
         screwdriver.AddChannel("doubleMuon",   "#mu#mu-channel",  &goesInDoubleMuonChannel  );
         screwdriver.AddChannel("emu",          "e#mu-channel",    &goesInMuonElecChannel    );
         */
-        
+
         screwdriver.AddChannel("allChannels",  "",                &goesInAnyChannel         );
 
     // ########################################
@@ -173,7 +173,7 @@ int main (int argc, char *argv[])
 
             bool ttbarDatasetToBeSplitted = false;
             if (findSubstring(currentDataset,"ttbar")
-            && (currentDataset != "ttbar_madgraph_1l") 
+            && (currentDataset != "ttbar_madgraph_1l")
             && (currentDataset != "ttbar_madgraph_2l"))
                 ttbarDatasetToBeSplitted = true;
 
@@ -181,20 +181,20 @@ int main (int argc, char *argv[])
             for (int i = 0 ; i < nEntries ; i++)
             {
                 if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
-                
+
                 // Get the i-th entry
                 ReadEvent(theTree,i,&pointers,&myEvent);
-    
+
                 if (CustomJetRequirement != "")
                 {
-                    if (CustomJetRequirement == "CR4_2j")         if (myEvent.nJets < 2) continue;
-                    if (CustomJetRequirement == "CR4_3j")         if (myEvent.nJets < 3) continue;
-                    if (CustomJetRequirement == "CR4_4j"
-                     || CustomJetRequirement == "CR4_4j_50evts" 
-                     || CustomJetRequirement == "CR4_4j_100evts" 
-                     || CustomJetRequirement == "CR4_4j_150evts") if (myEvent.nJets < 4) continue; 
+                    if (CustomJetRequirement ==  "30evts_in_CR4_2jets_MTTail") if (myEvent.nJets < 2) continue;
+                    if (CustomJetRequirement ==  "30evts_in_CR4_3jets_MTTail") if (myEvent.nJets < 3) continue;
+                    if (CustomJetRequirement ==  "30evts_in_CR4_4jets_MTTail"
+                     || CustomJetRequirement ==  "50evts_in_CR4_4jets_MTTail"
+                     || CustomJetRequirement == "100evts_in_CR4_4jets_MTTail"
+                     || CustomJetRequirement == "150evts_in_CR4_4jets_MTTail") if (myEvent.nJets < 4) continue;
                 }
-                
+
                 float weight = getWeight();
 
                 // Split 1-lepton ttbar and 2-lepton ttbar
@@ -204,7 +204,7 @@ int main (int argc, char *argv[])
 
                 screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
-            } 
+            }
             printProgressBar(nEntries,nEntries,currentDataset);
             cout << endl;
             f.Close();
@@ -217,9 +217,9 @@ int main (int argc, char *argv[])
 
         printBoxedMessage("Writing the table ... ");
 
-        vector<string> regions  = { "preveto_MTpeak",      "preveto_MTtail",      
-                                    "signalRegion_MTpeak", "signalRegion_MTtail", 
-                                    "0btag_MTpeak",        "0btag_MTtail",  
+        vector<string> regions  = { "preveto_MTpeak",      "preveto_MTtail",
+                                    "signalRegion_MTpeak", "signalRegion_MTtail",
+                                    "0btag_MTpeak",        "0btag_MTtail",
                                     "reversedVeto_MTpeak", "reversedVeto_MTtail",
                                     "2leptons",            "2leptons_MTtail",     "2leptons_MTpeak",
                                   };

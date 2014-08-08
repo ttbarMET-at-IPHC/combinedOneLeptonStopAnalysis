@@ -35,7 +35,6 @@ CnC_T2bw025 = cutAndCount_T2bw025_offShell  	cutAndCount_T2bw025_lowMasses      
 CnC_T2bw050 = cutAndCount_T2bw050_offShell  	cutAndCount_T2bw050_lowMasses       cutAndCount_T2bw050_mediumDeltaM 	cutAndCount_T2bw050_highDeltaM
 CnC_T2bw075 = cutAndCount_T2bw075_lowDeltaM 	cutAndCount_T2bw075_mediumDeltaM    cutAndCount_T2bw075_highDeltaM
 
-#BDT_T2tt 	= BDT_T2tt_1_lowLSP       BDT_T2tt_1_highLSP
 BDT_T2tt 	= BDT_T2tt_1_lowLSP       BDT_T2tt_1_highLSP      BDT_T2tt_2_lowDM      BDT_T2tt_2_highDM       BDT_T2tt_5_lowDM        BDT_T2tt_5_mediumDM     BDT_T2tt_5_highDM
 BDT_T2bw025 = BDT_T2bw025_1           BDT_T2bw025_3_lowDM     BDT_T2bw025_3_highDM  BDT_T2bw025_4           BDT_T2bw025_6
 BDT_T2bw050 = BDT_T2bw050_1_lowLSP    BDT_T2bw050_1_highLSP   BDT_T2bw050_3         BDT_T2bw050_4           BDT_T2bw050_5_lowDM     BDT_T2bw050_5_highDM    BDT_T2bw050_6

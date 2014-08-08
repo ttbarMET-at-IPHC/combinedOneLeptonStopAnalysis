@@ -105,21 +105,25 @@ int main (int argc, char *argv[])
             Figure SF_CR5_peak = SF_est[i][j].Get("value","SF_vetopeak");
             Figure SF_CR5_tail = SF_est[i][j].Get("value","SF_vetotail");
 
-            Figure CR4 = SF_CR4;//*SF_CR4_tail;
-            Figure CR5 = SF_CR5_tail;
-            if(CRTagList[i].find("CR4")!=std::string::npos)
+            if (CRTagList[i].find("CR4") != string::npos)
             {
-                CRplots[i]->SetBinContent(j+1,CR4.value());
-                CRplots[i]->SetBinError(j+1,sqrt(pow(CR4.error(),2.)+pow(CR4.value()*CR4MTtailUncert,2)));
-                if(CRTagList[i].find("CR4_4j")!=std::string::npos)
+                // "Old" version
+                //CRplots[i]->SetBinContent(j+1,SF_CR4.value());
+                //CRplots[i]->SetBinError(j+1,sqrt(pow(SF_CR4.error(),2.)+pow(SF_CR4.value()*CR4MTtailUncert,2)));
+                
+                // New version
+                CRplots[i]->SetBinContent(j+1,SF_CR4_tail.value());
+                CRplots[i]->SetBinError  (j+1,SF_CR4_tail.error());
+
+                if (CRTagList[i].find("CR4_4j") != string::npos)
                 {
                     h_cr4_4j_noncorr->SetBinContent(j+1,SF_CR4_tail.value());
-                    h_cr4_4j_noncorr->SetBinError(j+1,SF_CR4_tail.error());
+                    h_cr4_4j_noncorr->SetBinError  (j+1,SF_CR4_tail.error());
                 }
             }
             else{
-                CRplots[i]->SetBinContent(j+1,CR5.value());
-                CRplots[i]->SetBinError(j+1,CR5.error());
+                CRplots[i]->SetBinContent(j+1,SF_CR5_tail.value());
+                CRplots[i]->SetBinError  (j+1,SF_CR5_tail.error());
             }
         }
     }

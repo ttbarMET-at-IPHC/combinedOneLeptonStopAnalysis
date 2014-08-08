@@ -556,8 +556,8 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     //theTree->Branch("nWTag",                                        &(myEvent->nWTag));
     //theTree->Branch("leadingWjetPt",                                &(myEvent->leadingWjetPt));
     
-    //theTree->Branch("mStop",                                        &(myEvent->mStop));
-    //theTree->Branch("mNeutralino",                                  &(myEvent->mNeutralino));
+    theTree->Branch("mStop",                                        &(myEvent->mStop));
+    theTree->Branch("mNeutralino",                                  &(myEvent->mNeutralino));
     //theTree->Branch("mCharginoParameter",                           &(myEvent->mCharginoParameter));
     
     theTree->Branch("numberOfGenLepton",                            &(myEvent->numberOfGenLepton));

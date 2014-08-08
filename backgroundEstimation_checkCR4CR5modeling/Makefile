@@ -5,8 +5,12 @@ default: tables scaleFactors reports
 
 #------------------------------------------------------------------------------
 
-CUSTOM_BDT_CUTS_LIST  = CR4_2j CR4_3j CR4_4j
-CUSTOM_BDT_CUTS_LIST += CR4_4j_50evts CR4_4j_100evts CR4_4j_150evts
+CUSTOM_BDT_CUTS_LIST  =  30evts_in_CR4_2jets_MTTail
+CUSTOM_BDT_CUTS_LIST +=  30evts_in_CR4_3jets_MTTail
+CUSTOM_BDT_CUTS_LIST +=  30evts_in_CR4_4jets_MTTail
+CUSTOM_BDT_CUTS_LIST +=  50evts_in_CR4_4jets_MTTail
+CUSTOM_BDT_CUTS_LIST += 100evts_in_CR4_4jets_MTTail
+CUSTOM_BDT_CUTS_LIST += 150evts_in_CR4_4jets_MTTail
 
 #------------------------------------------------------------------------------
 
