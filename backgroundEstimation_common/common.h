@@ -176,13 +176,12 @@ vector<string> scaleFactorsLabelList_CR4CR5modelingChecks =
     "$SF^{M_T \\text{peak}}_{\\text{reversed veto}}$",
     "$SF^{M_T \\text{tail}}_{\\text{reversed veto}}$",
 };
-        
+
 string signalRegionLabel(string region, string mode)
 {
-         if (findSubstring(region,"BDT_"))                               return BDTlabel(region,mode); 
-    else if ((findSubstring(region,"cutAndCount_")) 
-           || region == "preselection") return CnClabel(region,mode);
-    else                                                                 return "unknown";
+         if (findSubstring(region,"BDT_"))                                        return BDTlabel(region,mode);
+    else if ((findSubstring(region,"cutAndCount_")) || region == "preselection")  return CnClabel(region,mode);
+    else                                                                          return "unknown";
 }
 
 #endif
