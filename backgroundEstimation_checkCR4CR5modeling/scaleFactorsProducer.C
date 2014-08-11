@@ -4,8 +4,8 @@ int main (int argc, char *argv[])
 {
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
 
-    string signalRegion = argv[1]; 
-    
+    string signalRegion = argv[1];
+
     string customBDTRequirement = "";
     if (argc == 3) customBDTRequirement = string(argv[2]);
 
@@ -29,7 +29,7 @@ scaleFactorsProducer::scaleFactorsProducer(string signalRegionLabel_, string cus
     // ######################################################
     // #  Initialize the table containing the scale factors #
     // ######################################################
-    
+
     vector<string> dummy = { "value" };
     scaleFactorTable = Table(dummy,scaleFactorsTagList_CR4CR5modelingChecks);
 }
@@ -46,6 +46,7 @@ void scaleFactorsProducer::Run()
     scaleFactorTable.Set("value","SF_vetopeak", SF_vetopeak);
     scaleFactorTable.Set("value","SF_vetotail", SF_vetotail);
 
+    system(("mkdir -p scaleFactors/"+customBDTRequirement).c_str());
     scaleFactorTable.Print("scaleFactors/"+customBDTRequirement+"/"+signalRegionLabel+".tab",4);
 }
 
@@ -58,7 +59,7 @@ void scaleFactorsProducer::ComputePrediction()
     #else
         ComputeMTTailToPeakRatioCorrectionMethod();
     #endif
-    
+
     ComputeSF2l();
     ComputeSFvetopeak();
     ComputeSF2ltail();
@@ -73,7 +74,7 @@ void scaleFactorsProducer::ComputeSFpre()
     Figure preveto_rare     = rawYieldTable.Get("preveto_MTpeak","rare"    );
     Figure preveto_data     = rawYieldTable.Get("preveto_MTpeak","data"    );
 
-    SF_pre = (preveto_data - preveto_rare) 
+    SF_pre = (preveto_data - preveto_rare)
           / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
     SF_pre.keepVariation(0,"noNegativeValue");
 }
@@ -87,23 +88,23 @@ void scaleFactorsProducer::ComputeSF2l()
     Figure yield2l_data     = rawYieldTable.Get("2leptons","data"     );
 
     // FIXME What should happen if the data yield is null .. ?
-    if (yield2l_data.value() > 0) 
-        SF_2l = (yield2l_data - yield2l_rare) 
-             / (yield2l_1ltop + yield2l_Wjets + yield2l_ttbar_2l);
+    if (yield2l_data.value() > 0)
+        SF_2l = (yield2l_data  - yield2l_rare)
+              / (yield2l_1ltop + yield2l_Wjets + yield2l_ttbar_2l);
 
 }
 void scaleFactorsProducer::ComputeSF2ltail()
 {
     Figure tail2l_1ltop    = rawYieldTable.Get("2leptons_MTtail","1ltop"   );
     Figure tail2l_ttbar_2l = rawYieldTable.Get("2leptons_MTtail","ttbar_2l");
-    Figure tail2l_Wjets    = rawYieldTable.Get("2leptons_MTtail","W+jets"  ); 
+    Figure tail2l_Wjets    = rawYieldTable.Get("2leptons_MTtail","W+jets"  );
     Figure tail2l_rare     = rawYieldTable.Get("2leptons_MTtail","rare"    );
     Figure tail2l_data     = rawYieldTable.Get("2leptons_MTtail","data"    );
 
     // FIXME What should happen if the data yield is null .. ?
     if (tail2l_data.value() > 0)
-        SF_2ltail = (tail2l_data - tail2l_rare - SF_2l* tail2l_1ltop - SF_2l* tail2l_Wjets) 
-                 / (SF_2l* tail2l_ttbar_2l);
+        SF_2ltail = (tail2l_data - tail2l_rare - SF_2l* tail2l_1ltop - SF_2l* tail2l_Wjets)
+                  / (SF_2l* tail2l_ttbar_2l);
 
 }
 void scaleFactorsProducer::ComputeSFvetopeak()
@@ -111,13 +112,13 @@ void scaleFactorsProducer::ComputeSFvetopeak()
 
     Figure peakveto_1ltop    = rawYieldTable.Get("reversedVeto_MTpeak","1ltop"   );
     Figure peakveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTpeak","ttbar_2l");
-    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTpeak","W+jets"  ); 
+    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTpeak","W+jets"  );
     Figure peakveto_rare     = rawYieldTable.Get("reversedVeto_MTpeak","rare"    );
     Figure peakveto_data     = rawYieldTable.Get("reversedVeto_MTpeak","data"    );
 
     // FIXME What should happen if the data yield is null .. ?
-    if (peakveto_data.value() > 0) 
-        SF_vetopeak = (peakveto_data - peakveto_rare - SF_pre * peakveto_ttbar_2l) 
+    if (peakveto_data.value() > 0)
+        SF_vetopeak = (peakveto_data - peakveto_rare - SF_pre * peakveto_ttbar_2l)
                    / (peakveto_1ltop + peakveto_Wjets);
 }
 
@@ -130,7 +131,7 @@ void scaleFactorsProducer::ComputeSFvetotail()
     Figure tailveto_data     = rawYieldTable.Get("reversedVeto_MTtail","data"    );
 
     // FIXME What should happen if the data yield is null .. ?
-    if (tailveto_data.value() > 0) 
+    if (tailveto_data.value() > 0)
     {
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
         SF_vetotail = (tailveto_data - tailveto_rare - SF_vetopeak*SF_MTtail_1ltop* tailveto_1ltop - SF_vetopeak*SF_MTtail_Wjets* tailveto_Wjets)
@@ -179,7 +180,7 @@ void scaleFactorsProducer::ComputeMTTailToPeakRatioCorrectionMethod()
 
     SFR_Wjets = Figure((SFR_all.value()+SFR_Wonly.value())/2.0 , (SFR_all.error() + SFR_Wonly.error())/2.0);
     SFR_1ltop = SFR_Wjets;
-    
+
     SFR_Wjets.keepVariation(0,"noNegativeValue");
     SFR_1ltop.keepVariation(0,"noNegativeValue");
 }
@@ -209,7 +210,7 @@ void scaleFactorsProducer::ImportMTTailCorrectionFromTemplateFitMethod()
 
     SF_MTtail_Wjets = table.Get("SFR_Wjets",signalRegionLabel_);
     SF_MTtail_1ltop = table.Get("SFR_1ltop",signalRegionLabel_);
-    
+
     SF_MTtail_Wjets.keepVariation(0,"noNegativeValue");
     SF_MTtail_1ltop.keepVariation(0,"noNegativeValue");
 }

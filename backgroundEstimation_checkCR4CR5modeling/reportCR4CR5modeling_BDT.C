@@ -3,8 +3,8 @@
 
 // Sonic screwdriver headers
 
-#include "interface/Table.h" 
-#include "interface/SonicScrewdriver.h" 
+#include "interface/Table.h"
+#include "interface/SonicScrewdriver.h"
 using namespace theDoctor;
 
 #include "../backgroundEstimation_common/common.h"
@@ -24,27 +24,23 @@ int main (int argc, char *argv[])
 {
     loadBDTSignalRegions();
 
-    //TStyle* gStyle;
     gStyle->SetOptStat(0);
-    gStyle->SetLegendFillColor();//kRed);
+    gStyle->SetLegendFillColor();
 
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
 
     // Read list of signal regions to consider
-    
+
     vector<string> signalRegionsTagList;
-    for (int i = 1 ; i < argc ; i++) 
+    for (int i = 1 ; i < argc ; i++)
         signalRegionsTagList.push_back(argv[i]);
 
     // List of CR
-    vector<string> CRTagList =
+    vector<string> customRequirementList =
     {
-        "CR4_2j",
-        "CR4_3j",
-        "CR4_4j",
-        "CR5_2j",
-        "CR5_3j",
-        "CR5_4j"
+        "30evts_in_CR4_2jets_MTTail",
+        "30evts_in_CR4_3jets_MTTail",
+        "30evts_in_CR4_4jets_MTTail"
     };
     vector<string> CRTagLabel =
     {
@@ -58,30 +54,35 @@ int main (int argc, char *argv[])
 
     vector<Color_t> CRColorList = {kRed,kOrange-1,kBlue-1,kGreen-1,kOrange+1,kBlue+1,kGreen+1};
 
-    vector<int> CRMarkerStyle = {28,22,20,25,23,24,26}; 
+    vector<int> CRMarkerStyle = {28,22,20,25,23,24,26};
 
     // Read tables for each CR
     vector<vector<Table> > SF_est;
-    for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
+    for (unsigned int i = 0 ; i < customRequirementList.size() ; i++)
     {
         vector<Table> tables;
         for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
         {
-            tables.push_back(Table("scaleFactors/"+CRTagList[i]+"/"+signalRegionsTagList[j]+".tab"));
+            tables.push_back(Table("scaleFactors/"+customRequirementList[i]+"/"+signalRegionsTagList[j]+".tab"));
         }
         SF_est.push_back(tables);
     }
     vector<vector<Table> > SF_est_CR4;
 
     // Create a plot for each CR
-    vector<TH1F*> CRplots(CRTagList.size());
-    for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
+    vector<TH1F*> CRplots(customRequirementList.size()*2);
+    for (unsigned int i = 0 ; i < customRequirementList.size() ; i++)
     {
-        string hname = "h_"+CRTagList[i];
-        CRplots[i] = new TH1F(hname.c_str(),"",signalRegionsTagList.size(),0,signalRegionsTagList.size());
-        for(unsigned int j=0;j<signalRegionsTagList.size();j++){
-            CRplots[i]->GetXaxis()->SetBinLabel(j+1, ("BDT " + BDTlabel(signalRegionsTagList[j], "root")).c_str());
+        string hname = "h_"+customRequirementList[i];
+        CRplots[i]                              = new TH1F(("CR4_with_"+hname).c_str(),"",signalRegionsTagList.size(),0,signalRegionsTagList.size());
+        CRplots[i+customRequirementList.size()] = new TH1F(("CR5_with_"+hname).c_str(),"",signalRegionsTagList.size(),0,signalRegionsTagList.size());
+    }
 
+    for (unsigned int i = 0 ; i < customRequirementList.size() * 2 ; i++)
+    {
+        for(unsigned int j=0;j<signalRegionsTagList.size();j++)
+        {
+            CRplots[i]->GetXaxis()->SetBinLabel(j+1, signalRegionLabel(signalRegionsTagList[j], "root").c_str());
         }
         CRplots[i]->SetLineColor(CRColorList[i]);
         CRplots[i]->SetLineWidth(2);
@@ -89,14 +90,16 @@ int main (int argc, char *argv[])
         CRplots[i]->SetMarkerColor(CRColorList[i]);
         CRplots[i]->SetMarkerSize(1.5);
     }
+
     TH1F* h_cr4_4j_noncorr = new TH1F("h_cr4_4j_noncorr","",signalRegionsTagList.size(),0,signalRegionsTagList.size());
-    for(unsigned int j=0;j<signalRegionsTagList.size();j++){
-        h_cr4_4j_noncorr->GetXaxis()->SetBinLabel(j+1, ("BDT " + BDTlabel(signalRegionsTagList[j], "root")).c_str());
+    for(unsigned int j=0;j<signalRegionsTagList.size();j++)
+    {
+        h_cr4_4j_noncorr->GetXaxis()->SetBinLabel(j+1, signalRegionLabel(signalRegionsTagList[j], "root").c_str());
     }
 
 
     //Fill the histo
-    for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
+    for (unsigned int i = 0 ; i < customRequirementList.size() ; i++)
     {
         for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
         {
@@ -105,39 +108,38 @@ int main (int argc, char *argv[])
             Figure SF_CR5_peak = SF_est[i][j].Get("value","SF_vetopeak");
             Figure SF_CR5_tail = SF_est[i][j].Get("value","SF_vetotail");
 
-            if (CRTagList[i].find("CR4") != string::npos)
-            {
-                // "Old" version
-                //CRplots[i]->SetBinContent(j+1,SF_CR4.value());
-                //CRplots[i]->SetBinError(j+1,sqrt(pow(SF_CR4.error(),2.)+pow(SF_CR4.value()*CR4MTtailUncert,2)));
-                
-                // New version
-                CRplots[i]->SetBinContent(j+1,SF_CR4_tail.value());
-                CRplots[i]->SetBinError  (j+1,SF_CR4_tail.error());
+            // "Old" version
+            //CRplots[i]->SetBinContent(j+1,SF_CR4.value());
+            //CRplots[i]->SetBinError(j+1,sqrt(pow(SF_CR4.error(),2.)+pow(SF_CR4.value()*CR4MTtailUncert,2)));
 
-                if (CRTagList[i].find("CR4_4j") != string::npos)
-                {
-                    h_cr4_4j_noncorr->SetBinContent(j+1,SF_CR4_tail.value());
-                    h_cr4_4j_noncorr->SetBinError  (j+1,SF_CR4_tail.error());
-                }
+            // New version
+            CRplots[i]->SetBinContent(j+1,SF_CR4_tail.value());
+            CRplots[i]->SetBinError  (j+1,SF_CR4_tail.error());
+
+            if (customRequirementList[i].find("4jets") != string::npos)
+            {
+                h_cr4_4j_noncorr->SetBinContent(j+1,SF_CR4_tail.value());
+                h_cr4_4j_noncorr->SetBinError  (j+1,SF_CR4_tail.error());
             }
-            else{
-                CRplots[i]->SetBinContent(j+1,SF_CR5_tail.value());
-                CRplots[i]->SetBinError  (j+1,SF_CR5_tail.error());
-            }
+
+            CRplots[i+customRequirementList.size()]->SetBinContent(j+1,SF_CR5_tail.value());
+            CRplots[i+customRequirementList.size()]->SetBinError  (j+1,SF_CR5_tail.error());
         }
     }
 
     TCanvas c1;
     TLegend legCR(0.55,0.78,0.99,0.99);
-    for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
+    for (unsigned int i = 0 ; i < customRequirementList.size() * 2; i++)
     {
-        if(i==0) {
+        if (i == 0)
+        {
             CRplots[i]->SetMinimum(-0.5);
             CRplots[i]->SetMaximum(2.5);
             CRplots[i]->Draw();
         }
-        else     CRplots[i]->Draw("same");
+        else
+            CRplots[i]->Draw("same");
+
         legCR.AddEntry(CRplots[i],CRTagLabel[i].c_str(),"lp");
     }
 
@@ -154,23 +156,25 @@ int main (int argc, char *argv[])
         float max = 0.;
         float minError = 10;
         //First: find the value compatible with one with the lowest uncertainty
-        for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
+        for (unsigned int i = 0 ; i < customRequirementList.size() * 2; i++)
         {
             float value = CRplots[i]->GetBinContent(j+1);
             float error = CRplots[i]->GetBinError(j+1);
-            
-            if((value-error)<=1 && (value+error)>=1){ 
-                if(error<minError){
+
+            if((value-error)<=1 && (value+error)>=1)
+            {
+                if(error<minError)
+                {
                     minError = error;
                     max = value+error;
                     min = value-error;
                 }
             }
         }
-        for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
+        for (unsigned int i = 0 ; i < customRequirementList.size() * 2 ; i++)
         {
             float value = CRplots[i]->GetBinContent(j+1);
-            //float error = CRplots[i]->GetBinError(j);
+
             //Use central value
             if(value<min) min = value;
             if(value>max) max = value;
@@ -179,7 +183,6 @@ int main (int argc, char *argv[])
         hMin->SetBinError(j+1,0);
         hMax->SetBinContent(j+1,max);
         hMax->SetBinError(j+1,0);
-        //cout<<"min: "<<min<<" max: "<<max<<endl;
     }
     hMin->Draw("histsame");
     hMax->Draw("histsame");
@@ -225,27 +228,25 @@ int main (int argc, char *argv[])
     //-------------------------------------------------------------------------------
 
     // List of CRevts
-    CRTagList.clear();
-    CRTagList.push_back("CR4_4j_150evts");
-    CRTagList.push_back("CR4_4j_100evts");
-    CRTagList.push_back("CR4_4j_50evts");
-    CRTagList.push_back("CR4_4j");
+    customRequirementList.clear();
+    customRequirementList.push_back("150evts_in_CR4_4jets_MTTail");
+    customRequirementList.push_back("100evts_in_CR4_4jets_MTTail");
+    customRequirementList.push_back("50evts_in_CR4_4jets_MTTail");
+    customRequirementList.push_back("30evts_in_CR4_4jets_MTTail");
 
-    vector<string> labels = {"100 evts","50 evts","30 evts"};
+    vector<string> labels = { "150 evts", "100 evts","50 evts","30 evts"};
 
     CRColorList.clear();
-    //CRColorList = {kRed-2,kRed-1,kRed,kRed+1,kRed+2,kBlue-2,kBlue-1,kBlue,kBlue+1,kBlue+2,kPink-2,kPink-1,kPink,kPink+1,kPink+2,kPink+3,kBlack-4,kBlack-3,kBlack-2,kBlack-1,kBlack};
     CRColorList = {2,42,43,44,45,46,4,36,38,40,9,20,22,24,26,27,28,8,29, 30,33,34};
-    //vector<int> CRMarkerStyle = {28,22,20,23,24};
-    
+
     // Read tables for each CR
     SF_est.clear();
-    for (unsigned int i = 0 ; i < CRTagList.size() ; i++)
+    for (unsigned int i = 0 ; i < customRequirementList.size() ; i++)
     {
         vector<Table> tables;
         for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
         {
-            tables.push_back(Table("scaleFactors/"+CRTagList[i]+"/"+signalRegionsTagList[j]+".tab"));
+            tables.push_back(Table("scaleFactors/"+customRequirementList[i]+"/"+signalRegionsTagList[j]+".tab"));
         }
         SF_est.push_back(tables);
     }
@@ -255,43 +256,32 @@ int main (int argc, char *argv[])
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
         string hname = "h_"+signalRegionsTagList[i];
-        SRplots[i] = new TH1F(hname.c_str(),"",CRTagList.size()-1,0,CRTagList.size()-1);
-        for(unsigned int j=0;j<CRTagList.size()-1;j++){
+        SRplots[i] = new TH1F(hname.c_str(),"",customRequirementList.size(),0,customRequirementList.size());
+        for(unsigned int j=0;j<customRequirementList.size();j++)
+        {
             SRplots[i]->GetXaxis()->SetBinLabel(j+1,labels[j].c_str());
         }
-        //cout<<i<<endl;
         SRplots[i]->SetLineColor(CRColorList[i]);
         SRplots[i]->SetLineWidth(2);
-        /*
-           CRplots[i]->SetMarkerStyle(CRMarkerStyle[i]);
-           CRplots[i]->SetMarkerSize(1.5);
-           */
     }
 
     //Fill the histo
-    
-    for (unsigned int i = 1 ; i < CRTagList.size() ; i++)
-        {
+
+    for (unsigned int i = 0 ; i < customRequirementList.size() ; i++)
+    {
         for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
         {
 
-            Figure SF_CR4_peak = SF_est[i][j].Get("value","SF_2l");
+            Figure SF_CR4      = SF_est[i][j].Get("value","SF_2l");
             Figure SF_CR4_tail = SF_est[i][j].Get("value","SF_2ltail");
             Figure SF_CR5_peak = SF_est[i][j].Get("value","SF_vetopeak");
             Figure SF_CR5_tail = SF_est[i][j].Get("value","SF_vetotail");
 
-            Figure CR4_ref = SF_est[0][j].Get("value","SF_2l");
-            Figure CR4 = SF_CR4_peak/CR4_ref;
-            Figure CR5_ref = SF_est[0][j].Get("value","SF_vetotail");
-            Figure CR5 = SF_CR5_tail/CR5_ref;
-            if(CRTagList[i].find("CR4")!=std::string::npos){
-                SRplots[j]->SetBinContent(i,CR4.value());
-                SRplots[j]->SetBinError(i,CR4.error());
-            }
-            else{
-                SRplots[j]->SetBinContent(i,CR5.value());
-                SRplots[j]->SetBinError(i,CR5.error());
-            }
+            Figure CR4_ref = SF_est[0][j].Get("value","SF_2ltail");
+            Figure CR4 = SF_CR4 / CR4_ref;
+
+            SRplots[j]->SetBinContent(i+1,CR4.value());
+            SRplots[j]->SetBinError(i+1,CR4.error());
         }
     }
 
@@ -300,15 +290,16 @@ int main (int argc, char *argv[])
     c2.SetRightMargin(0.26);
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
-        if(i==0) {
+        if (i==0)
+        {
             SRplots[i]->SetMinimum(0.);
             SRplots[i]->SetMaximum(2.5);
             SRplots[i]->Draw();
         }
-        else    {
+        else
             SRplots[i]->Draw("same");
-        }
-        legSR.AddEntry(SRplots[i],("BDT " + BDTlabel(signalRegionsTagList[i], "root")).c_str(),"lp");
+
+        legSR.AddEntry(SRplots[i],signalRegionLabel(signalRegionsTagList[i], "root").c_str(),"lp");
     }
     legSR.Draw("same");
     c2.Write();
