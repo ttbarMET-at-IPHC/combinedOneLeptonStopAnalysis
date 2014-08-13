@@ -37,13 +37,22 @@ int main (int argc, char *argv[])
 
     vector<string> signalRegionsTagList;
     vector<string> signalRegionsLabelList;
-    for (int i = 3 ; i < argc ; i++) 
+    for (int i = 3 ; i < argc ; i++)
     {
         signalRegionsTagList.push_back(argv[i]);
-        signalRegionsLabelList.push_back(signalRegionLabel(argv[i],"root"));
+        string label = signalRegionLabel(argv[i],"root");
+        replace(label, "BDT T2tt-",     "BDT ");
+        replace(label, "BDT T2bw025-",  "BDT ");
+        replace(label, "BDT T2bw050-",  "BDT ");
+        replace(label, "BDT T2bw075-",  "BDT ");
+        replace(label, "T2tt, ",        ""    );
+        replace(label, "T2bw x=0.25, ", ""    );
+        replace(label, "T2bw x=0.50, ", ""    );
+        replace(label, "T2bw x=0.75, ", ""    );
+        signalRegionsLabelList.push_back(label);
     }
 
-    for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++) 
+    for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
         screwdriver.AddRegion(signalRegionsTagList[i],
                               signalRegionsLabelList[i],
@@ -98,7 +107,7 @@ int main (int argc, char *argv[])
     // #########################
 
     // Loop on the signal regions and set the figure values...
-    for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++) 
+    for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
         // Read input tables
         Table rawYields    = Table(string("./results/latest/prediction/rawYieldTables/")+signalRegionsTagList[i]+".tab");
@@ -141,9 +150,9 @@ int main (int argc, char *argv[])
         screwdriver.SetFigure("yield", "W+jets",   signalRegionsTagList[i], "0btag_MTpeak",        rawYields.Get("0btag_MTpeak","W+jets"  ) * SF_0btag);
         screwdriver.SetFigure("yield", "rare",     signalRegionsTagList[i], "0btag_MTpeak",        rawYields.Get("0btag_MTpeak","rare"    ));
         screwdriver.SetFigure("yield", "data",     signalRegionsTagList[i], "0btag_MTpeak",        rawYields.Get("0btag_MTpeak","data"    ));
-                                                                                                               
+
         screwdriver.SetFigure("yield", "1ltop",    signalRegionsTagList[i], "0btag_MTtail",        rawYields.Get("0btag_MTtail","1ltop"   ) * SF_0btag * SF_MTtail_1ltop);
-        screwdriver.SetFigure("yield", "ttbar_2l", signalRegionsTagList[i], "0btag_MTtail",        rawYields.Get("0btag_MTtail","ttbar_2l"));                           
+        screwdriver.SetFigure("yield", "ttbar_2l", signalRegionsTagList[i], "0btag_MTtail",        rawYields.Get("0btag_MTtail","ttbar_2l"));
         screwdriver.SetFigure("yield", "W+jets",   signalRegionsTagList[i], "0btag_MTtail",        rawYields.Get("0btag_MTtail","W+jets"  ) * SF_0btag * SF_MTtail_Wjets);
         screwdriver.SetFigure("yield", "rare",     signalRegionsTagList[i], "0btag_MTtail",        rawYields.Get("0btag_MTtail","rare"    ));
         screwdriver.SetFigure("yield", "data",     signalRegionsTagList[i], "0btag_MTtail",        rawYields.Get("0btag_MTtail","data"    ));
@@ -153,7 +162,7 @@ int main (int argc, char *argv[])
         screwdriver.SetFigure("yield", "W+jets",   signalRegionsTagList[i], "reversedVeto_MTpeak", rawYields.Get("reversedVeto_MTpeak","W+jets"  ) * SF_vetopeak);
         screwdriver.SetFigure("yield", "rare",     signalRegionsTagList[i], "reversedVeto_MTpeak", rawYields.Get("reversedVeto_MTpeak","rare"    ));
         screwdriver.SetFigure("yield", "data",     signalRegionsTagList[i], "reversedVeto_MTpeak", rawYields.Get("reversedVeto_MTpeak","data"    ));
-                                                                                                                              
+
         screwdriver.SetFigure("yield", "1ltop",    signalRegionsTagList[i], "reversedVeto_MTtail", rawYields.Get("reversedVeto_MTtail","1ltop"   ) * SF_vetopeak * SF_MTtail_1ltop);
         screwdriver.SetFigure("yield", "ttbar_2l", signalRegionsTagList[i], "reversedVeto_MTtail", rawYields.Get("reversedVeto_MTtail","ttbar_2l") * SF_pre );
         screwdriver.SetFigure("yield", "W+jets",   signalRegionsTagList[i], "reversedVeto_MTtail", rawYields.Get("reversedVeto_MTtail","W+jets"  ) * SF_vetopeak * SF_MTtail_Wjets);
@@ -165,13 +174,13 @@ int main (int argc, char *argv[])
         screwdriver.SetFigure("yield", "W+jets",   signalRegionsTagList[i], "2leptons_MTpeak",     rawYields.Get("2leptons_MTpeak","W+jets"  ));
         screwdriver.SetFigure("yield", "rare",     signalRegionsTagList[i], "2leptons_MTpeak",     rawYields.Get("2leptons_MTpeak","rare"    ));
         screwdriver.SetFigure("yield", "data",     signalRegionsTagList[i], "2leptons_MTpeak",     rawYields.Get("2leptons_MTpeak","data"    ));
-                                                                                                                          
+
         screwdriver.SetFigure("yield", "1ltop",    signalRegionsTagList[i], "2leptons_MTtail",     rawYields.Get("2leptons_MTtail","1ltop"   ));
         screwdriver.SetFigure("yield", "ttbar_2l", signalRegionsTagList[i], "2leptons_MTtail",     rawYields.Get("2leptons_MTtail","ttbar_2l"));
         screwdriver.SetFigure("yield", "W+jets",   signalRegionsTagList[i], "2leptons_MTtail",     rawYields.Get("2leptons_MTtail","W+jets"  ));
         screwdriver.SetFigure("yield", "rare",     signalRegionsTagList[i], "2leptons_MTtail",     rawYields.Get("2leptons_MTtail","rare"    ));
         screwdriver.SetFigure("yield", "data",     signalRegionsTagList[i], "2leptons_MTtail",     rawYields.Get("2leptons_MTtail","data"    ));
-                                                                                                                          
+
         screwdriver.SetFigure("yield", "1ltop",    signalRegionsTagList[i], "2leptons",            rawYields.Get("2leptons","1ltop"   ));
         screwdriver.SetFigure("yield", "ttbar_2l", signalRegionsTagList[i], "2leptons",            rawYields.Get("2leptons","ttbar_2l"));
         screwdriver.SetFigure("yield", "W+jets",   signalRegionsTagList[i], "2leptons",            rawYields.Get("2leptons","W+jets"  ));

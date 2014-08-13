@@ -9,33 +9,33 @@
 
 bool goesInPreVetoSelectionMTpeak_withSRCuts()      { return (goesInPreVetoSelectionMTpeak()          && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()      { return (goesInPreVetoSelectionMTtail()          && SIGNAL_REGION_CUTS(enableMTCut) ); }
-                                                                      
+
 bool goesInPreselectionMTpeak_withSRCuts()          { return (goesInPreselectionMTpeak()              && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreselectionMTtail_withSRCuts()          { return (goesInPreselectionMTtail()              && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
 #ifdef SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
-bool secondLeptonInAcceptance()  
-{ 
-    if ((myEvent.secondGeneratedLeptonType != UNKNOWN) 
+bool secondLeptonInAcceptance()
+{
+    if ((myEvent.secondGeneratedLeptonType != UNKNOWN)
     &&  (myEvent.secondGeneratedLeptonType != NO_SECOND_LEPTON)
     &&  (myEvent.secondGeneratedLeptonType != NOT_IN_ACCEPTANCE)) return true;
     else return false;
 }
 
-bool secondLeptonInAcceptance_singleTrack()  
-{ 
+bool secondLeptonInAcceptance_singleTrack()
+{
     return  (myEvent.secondGeneratedLeptonType == ELEC_OR_MUON)
          || (myEvent.secondGeneratedLeptonType == TAU_TO_ELEC_OR_MUON);
 }
 
-bool secondLeptonInAcceptance_hadronicTau()  
-{ 
+bool secondLeptonInAcceptance_hadronicTau()
+{
     return  (myEvent.secondGeneratedLeptonType == TAU_TO_ONE_PRONG)
          || (myEvent.secondGeneratedLeptonType == TAU_TO_MORE_THAN_ONE_PRONG);
 }
 // TODO : define case were second lepton type is not already computed
 #endif
-                                                                      
+
 bool goesIn0BtagControlRegionMTpeak_withSRCuts()    { return (goesIn0BtagControlRegionMTpeak()        && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesIn0BtagControlRegionMTtail_withSRCuts()    { return (goesIn0BtagControlRegionMTtail()        && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
@@ -123,7 +123,7 @@ int main (int argc, char *argv[])
 
         screwdriver.AddRegion("reversedVeto_MTpeak",     "Reversed veto (MT peak)",     &goesInVetoControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("reversedVeto_MTtail",     "Reversed veto (MT tail)",     &goesInVetoControlRegionMTtail_withSRCuts);
-       
+
         screwdriver.AddRegion("2leptons",                "2 leptons",                   &goesInDileptonControlRegion_withSRCuts);
         screwdriver.AddRegion("2leptons_MTpeak",         "2 leptons (MT peak)",         &goesInDileptonControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("2leptons_MTtail",         "2 leptons (MT tail)",         &goesInDileptonControlRegionMTtail_withSRCuts);
@@ -137,17 +137,17 @@ int main (int argc, char *argv[])
     // ##   Create Channels    ##
     // ##########################
 
-        /*
-        screwdriver.AddChannel("singleLepton", "e/#mu-channels",  &goesInSingleLeptonChannel);
+        //screwdriver.AddChannel("singleLepton", "e/#mu-channels",  &goesInSingleLeptonChannel);
         screwdriver.AddChannel("singleElec",   "e-channel",       &goesInSingleElecChannel  );
         screwdriver.AddChannel("singleMuon",   "#mu-channel",     &goesInSingleMuonChannel  );
-        
+
+        /*
         screwdriver.AddChannel("doubleLepton", "2l-channel",      &goesInDoubleLeptonChannel);
         screwdriver.AddChannel("doubleElec",   "ee-channel",      &goesInDoubleElecChannel  );
         screwdriver.AddChannel("doubleMuon",   "#mu#mu-channel",  &goesInDoubleMuonChannel  );
         screwdriver.AddChannel("emu",          "e#mu-channel",    &goesInMuonElecChannel    );
         */
-        
+
         screwdriver.AddChannel("allChannels",  "",                &goesInAnyChannel         );
 
     // ########################################
@@ -190,7 +190,7 @@ int main (int argc, char *argv[])
 
             bool ttbarDatasetToBeSplitted = false;
             if (findSubstring(currentDataset,"ttbar")
-            && (currentDataset != "ttbar_madgraph_1l") 
+            && (currentDataset != "ttbar_madgraph_1l")
             && (currentDataset != "ttbar_madgraph_2l"))
                 ttbarDatasetToBeSplitted = true;
 
@@ -198,10 +198,10 @@ int main (int argc, char *argv[])
             for (int i = 0 ; i < nEntries ; i++)
             {
                 if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
-                
+
                 // Get the i-th entry
                 ReadEvent(theTree,i,&pointers,&myEvent);
-    
+
                 float weight = getWeight();
 
                 // Split 1-lepton ttbar and 2-lepton ttbar
@@ -211,7 +211,7 @@ int main (int argc, char *argv[])
 
                 screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
-            } 
+            }
             printProgressBar(nEntries,nEntries,currentDataset);
             cout << endl;
             f.Close();
@@ -224,9 +224,9 @@ int main (int argc, char *argv[])
 
         printBoxedMessage("Writing the table ... ");
 
-        vector<string> regions  = { "preveto_MTpeak",      "preveto_MTtail",      
-                                    "signalRegion_MTpeak", "signalRegion_MTtail", 
-                                    "0btag_MTpeak",        "0btag_MTtail",  
+        vector<string> regions  = { "preveto_MTpeak",      "preveto_MTtail",
+                                    "signalRegion_MTpeak", "signalRegion_MTtail",
+                                    "0btag_MTpeak",        "0btag_MTtail",
                                     "reversedVeto_MTpeak", "reversedVeto_MTtail",
                                     "2leptons", "2leptons_MTpeak", "2leptons_MTtail",
                                   };
@@ -234,12 +234,11 @@ int main (int argc, char *argv[])
         string exportFile = "rawYieldTables/"+string(SIGNAL_REGION_TAG)+".tab";
         TableDataMC(&screwdriver,regions,"allChannels").Print(exportFile,4);
 
-
         vector<string> secondLeptonInAcceptanceRegions  = {
-                                                              "preveto_MTtail",        
+                                                              "preveto_MTtail",
                                                               "secondLeptonInAcceptance",
-                                                              "singleTrack",             
-                                                              "hadronicTau" 
+                                                              "singleTrack",
+                                                              "hadronicTau"
                                                           };
 
         string exportFile2 = "secondLeptonInAcceptance/"+string(SIGNAL_REGION_TAG)+".tab";

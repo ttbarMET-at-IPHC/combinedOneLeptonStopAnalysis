@@ -237,7 +237,7 @@ int main (int argc, char *argv[])
     vector<string> labels = { "150 evts", "100 evts","50 evts","30 evts"};
 
     CRColorList.clear();
-    CRColorList = {2,42,43,44,45,46,4,36,38,40,9,20,22,24,26,27,28,8,29, 30,33,34};
+    CRColorList = {1,2,3,4,5,6,7,8,9,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49};
 
     // Read tables for each CR
     SF_est.clear();
@@ -271,17 +271,13 @@ int main (int argc, char *argv[])
     {
         for (unsigned int j = 0 ; j < signalRegionsTagList.size() ; j++)
         {
-
-            Figure SF_CR4      = SF_est[i][j].Get("value","SF_2l");
             Figure SF_CR4_tail = SF_est[i][j].Get("value","SF_2ltail");
-            Figure SF_CR5_peak = SF_est[i][j].Get("value","SF_vetopeak");
-            Figure SF_CR5_tail = SF_est[i][j].Get("value","SF_vetotail");
+            Figure SF_ref = SF_est[0][j].Get("value","SF_2ltail");
 
-            Figure CR4_ref = SF_est[0][j].Get("value","SF_2ltail");
-            Figure CR4 = SF_CR4 / CR4_ref;
+            Figure SFratio = SF_CR4_tail / SF_ref;
 
-            SRplots[j]->SetBinContent(i+1,CR4.value());
-            SRplots[j]->SetBinError(i+1,CR4.error());
+            SRplots[j]->SetBinContent(i+1,SFratio.value());
+            SRplots[j]->SetBinError(i+1,SFratio.error());
         }
     }
 

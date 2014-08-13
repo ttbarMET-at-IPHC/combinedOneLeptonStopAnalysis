@@ -285,6 +285,7 @@ int main()
                    listAllSignalRegion.insert(listAllSignalRegion.end(), listCutAndCounts.begin(), listCutAndCounts.end());
 
     vector<string> listRawRegion = listBDTSignalRegions;
+                   listRawRegion.push_back("BDT_average");
                    listRawRegion.insert(listRawRegion.end(), listIndividualCuts.begin(), listIndividualCuts.end());
 
     Table tableSFRToBeUsed(columns,listAllSignalRegion);
@@ -458,6 +459,8 @@ int main()
                                               +pow(TEMPLATE_FIT_METHOD_UNCERTAINTY*mean_SFWjets_value,2)));
     //---------------------------------------//
 
+    tableRawSFR.Set("SFR_1ltop","BDT_average",BDT_SF1ltop);
+    tableRawSFR.Set("SFR_Wjets","BDT_average",BDT_SFWjets);
     for(unsigned int i=0;i<listBDTSignalRegions.size();i++)
     {
         tableSFRToBeUsed.Set("SFR_1ltop",listBDTSignalRegions[i],BDT_SF1ltop);

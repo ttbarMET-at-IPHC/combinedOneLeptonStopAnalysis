@@ -31,13 +31,22 @@ int main (int argc, char *argv[])
 
     vector<string> signalRegionsTagList;
     vector<string> signalRegionsLabelList;
-    for (int i = 3 ; i < argc ; i++) 
+    for (int i = 3 ; i < argc ; i++)
     {
         signalRegionsTagList.push_back(argv[i]);
-        signalRegionsLabelList.push_back(signalRegionLabel(argv[i],"root"));
+        string label = signalRegionLabel(argv[i],"root");
+        replace(label, "BDT T2tt-",     "BDT ");
+        replace(label, "BDT T2bw025-",  "BDT ");
+        replace(label, "BDT T2bw050-",  "BDT ");
+        replace(label, "BDT T2bw075-",  "BDT ");
+        replace(label, "T2tt, ",        ""    );
+        replace(label, "T2bw x=0.25, ", ""    );
+        replace(label, "T2bw x=0.50, ", ""    );
+        replace(label, "T2bw x=0.75, ", ""    );
+        signalRegionsLabelList.push_back(label);
     }
 
-    for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++) 
+    for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
         screwdriver.AddRegion(signalRegionsTagList[i],
                               signalRegionsLabelList[i],
@@ -55,12 +64,12 @@ int main (int argc, char *argv[])
     // ##   Create Figures   ##
     // ########################
 
-    screwdriver.AddFigure("SF_peak_pre",    "pre-veto",     "onlyData");
-    screwdriver.AddFigure("SF_peak_post",   "post-veto",    "onlyData");
-    screwdriver.AddFigure("SF_peak_0btag",  "0 btag",       "onlyData");
-    screwdriver.AddFigure("SF_peak_veto",   "reversed-veto","onlyData");
-    screwdriver.AddFigure("SF_tail_1ltop",  "1l top",       "onlyData");
-    screwdriver.AddFigure("SF_tail_Wjets",  "W+jets",       "onlyData");
+    screwdriver.AddFigure("SF_peak_pre",    "pre-veto",     "");
+    screwdriver.AddFigure("SF_peak_post",   "post-veto",    "");
+    screwdriver.AddFigure("SF_peak_0btag",  "0 btag",       "");
+    screwdriver.AddFigure("SF_peak_veto",   "reversed-veto","");
+    screwdriver.AddFigure("SF_tail_1ltop",  "1l top",       "");
+    screwdriver.AddFigure("SF_tail_Wjets",  "W+jets",       "");
 
     // ########################################
     // ##       Create histograms and        ##
@@ -87,7 +96,7 @@ int main (int argc, char *argv[])
     // #########################
 
     // Loop on the signal regions and set the figure values...
-    for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++) 
+    for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
         // Read input tables
         Table scaleFactors = Table(string("./results/latest/prediction/scaleFactors/") +signalRegionsTagList[i]+".tab");
@@ -111,7 +120,7 @@ int main (int argc, char *argv[])
         Figure SF_post          = scaleFactors.Get("value","SF_post");
         Figure SF_0btag         = scaleFactors.Get("value","SF_0btag");
         Figure SF_vetopeak      = scaleFactors.Get("value","SF_vetopeak");
-           
+
         screwdriver.SetFigure("SF_peak_pre",   signalRegionsTagList[i], "MTpeak",   SF_pre);
         screwdriver.SetFigure("SF_peak_post",  signalRegionsTagList[i], "MTpeak",   SF_post);
         screwdriver.SetFigure("SF_peak_0btag", signalRegionsTagList[i], "MTpeak",   SF_0btag);

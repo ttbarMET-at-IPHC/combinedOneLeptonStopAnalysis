@@ -75,10 +75,17 @@ summaryPlots:
 	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(BDT_T2bw025)" TAG="BDT_T2bw025" LABEL="BDT, T2bw, x=0.25"
 	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(BDT_T2bw050)" TAG="BDT_T2bw050" LABEL="BDT, T2bw, x=0.50"
 	@make --no-print-directory produceSummaryPlots SIGNAL_REGIONS="$(BDT_T2bw075)" TAG="BDT_T2bw075" LABEL="BDT, T2bw, x=0.75"
+	@make --no-print-directory produceSummaryPlotsMTtailCorrection SIGNAL_REGIONS="BDT_T2tt_1 BDT_T2tt_2 BDT_T2tt_5 BDT_T2bw075_1 BDT_T2bw075_2 BDT_T2bw075_3 BDT_T2bw075_5 BDT_T2bw050_1 BDT_T2bw050_3 BDT_T2bw050_4 BDT_T2bw050_5 BDT_T2bw050_6 BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4 BDT_T2bw025_6" TAG="BDT" LABEL="BDT"
+	@make --no-print-directory produceSummaryPlotsMTtailCorrection SIGNAL_REGIONS="MT_100 MT_120 MT_125 MT_130 MT_135 MT_140" TAG="individualMTcuts" LABEL="Individual MT cuts"
+	@make --no-print-directory produceSummaryPlotsMTtailCorrection SIGNAL_REGIONS="MET_200 MET_250 MET_300" TAG="individualMETcuts" LABEL="Individual MET cuts"
+	@make --no-print-directory produceSummaryPlotsMTtailCorrection SIGNAL_REGIONS="METoverSqrtHT_6 METoverSqrtHT_7 METoverSqrtHT_8 METoverSqrtHT_9 METoverSqrtHT_10 METoverSqrtHT_12" TAG="individualMETsqrtHTcuts" LABEL="Individual MET/sqrt(H_{T}) cuts"
 
 produceSummaryPlots: yieldsSummaryProducer.$(ExeSuf) scaleFactorsSummaryProducer.$(ExeSuf)
 	./yieldsSummaryProducer.$(ExeSuf) 		"$(TAG)" "$(LABEL)" $(SIGNAL_REGIONS)
 	./scaleFactorsSummaryProducer.$(ExeSuf) "$(TAG)" "$(LABEL)" $(SIGNAL_REGIONS)
+
+produceSummaryPlotsMTtailCorrection: MTtailCorrectionSummaryProducer.$(ExeSuf)
+	./MTtailCorrectionSummaryProducer.$(ExeSuf) "$(TAG)" "$(LABEL)" $(SIGNAL_REGIONS)
 
 cleanAll:
 	@make -C ../backgroundEstimation_MTtailCorrection 	 clean

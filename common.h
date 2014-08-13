@@ -29,10 +29,10 @@ using namespace std;
 
 // Sonic Screwdriver headers
 /*
-#include "interface/Table.h" 
-#include "interface/SonicScrewdriver.h" 
-#include "interface/tables/TableBackgroundSignal.h" 
-#include "interface/tables/TableDataMC.h" 
+#include "interface/Table.h"
+#include "interface/SonicScrewdriver.h"
+#include "interface/tables/TableBackgroundSignal.h"
+#include "interface/tables/TableDataMC.h"
 using namespace theDoctor;
 */
 
@@ -48,7 +48,24 @@ bool findSubstring(string input,string substring)
     else return false;
 }
 
+void replace(string& str, const string oldStr, const string newStr)
+{
+    size_t pos = 0;
+    while((pos = str.find(oldStr, pos)) != string::npos)
+    {
+        str.replace(pos, oldStr.length(), newStr);
+        pos += newStr.length();
+    }
+}
+
 string intToString(int input)
+{
+    std::ostringstream ss;
+    ss << input;
+    return ss.str();
+}
+
+string floatToString(float input)
 {
     std::ostringstream ss;
     ss << input;
@@ -84,11 +101,11 @@ void printBoxedMessage(string message)
     cout << "─┐  " << endl;
 
     cout << "   │  " << message << "  │  " << endl;
-    
+
     cout << "   └──";
     for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┘  " << endl; 
- 
+    cout << "─┘  " << endl;
+
     cout << endl;
 
 }
