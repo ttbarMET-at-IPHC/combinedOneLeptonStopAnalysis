@@ -5,21 +5,21 @@ int main (int argc, char *argv[])
     loadBDTSignalRegions();
     loadCnCSignalRegions();
 
-    if (argc <= 3) 
-    { 
+    if (argc <= 3)
+    {
         WARNING_MSG << "Arguments : [report_tag] [report_label] [list of regions]" << endl;
-        return -1; 
+        return -1;
     }
 
     // Read tag and label
-    
+
     string reportTag   = argv[1];
     string reportLabel = argv[2];
 
     // Read list of signal regions to consider
-   
+
     vector<string> signalRegionsTagList;
-    for (int i = 3 ; i < argc ; i++) 
+    for (int i = 3 ; i < argc ; i++)
         signalRegionsTagList.push_back(argv[i]);
 
     // Create list of label for each region
@@ -31,25 +31,33 @@ int main (int argc, char *argv[])
     }
 
     // Read tables for each signal regions
-    
+
     vector<Table> predictions;
     vector<Table> scaleFactors;
     vector<Table> systematics;
+    vector<Table> dataInput;
 
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
-        predictions .push_back(Table("results/latest/prediction/"             +signalRegionsTagList[i]+".tab"));
-        scaleFactors.push_back(Table("results/latest/prediction/scaleFactors/"+signalRegionsTagList[i]+".tab"));
-        systematics .push_back(Table("results/latest/prediction/systematics/" +signalRegionsTagList[i]+".tab"));
+        predictions .push_back(Table("results/latest/prediction/"               +signalRegionsTagList[i]+".tab"));
+        scaleFactors.push_back(Table("results/latest/prediction/scaleFactors/"  +signalRegionsTagList[i]+".tab"));
+        systematics .push_back(Table("results/latest/prediction/systematics/"   +signalRegionsTagList[i]+".tab"));
+        dataInput   .push_back(Table("results/latest/prediction/rawYieldTables/"+signalRegionsTagList[i]+".tab"));
     }
 
     // Fill summary tables
 
-    Table rawYieldSummary           (signalRegionsTagList, processesTagList,    signalRegionsLabelList,  processesLabelList   );
-    Table predictionSummary         (signalRegionsTagList, processesTagList,    signalRegionsLabelList,  processesLabelList   );
-    Table scaleFactorsSummary       (signalRegionsTagList, scaleFactorsTagList, signalRegionsLabelList,  scaleFactorsLabelList);
-    Table absoluteSystematicsSummary(signalRegionsTagList, systematicsTagList,  signalRegionsLabelList,  systematicsLabelList );
-    Table relativeSystematicsSummary(signalRegionsTagList, systematicsTagList,  signalRegionsLabelList,  systematicsLabelList );
+    vector<string> processesWithDataTagList   = processesTagList;
+    vector<string> processesWithDataLabelList = processesLabelList;
+
+    processesWithDataTagList  .push_back("data");
+    processesWithDataLabelList.push_back("data");
+
+    Table rawYieldSummary           (signalRegionsTagList, processesTagList,         signalRegionsLabelList,  processesLabelList         );
+    Table predictionSummary         (signalRegionsTagList, processesWithDataTagList, signalRegionsLabelList,  processesWithDataLabelList );
+    Table scaleFactorsSummary       (signalRegionsTagList, scaleFactorsTagList,      signalRegionsLabelList,  scaleFactorsLabelList      );
+    Table absoluteSystematicsSummary(signalRegionsTagList, systematicsTagList,       signalRegionsLabelList,  systematicsLabelList       );
+    Table relativeSystematicsSummary(signalRegionsTagList, systematicsTagList,       signalRegionsLabelList,  systematicsLabelList       );
 
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
@@ -60,12 +68,14 @@ int main (int argc, char *argv[])
         {
             string processTag = processesTagList[j];
 
-            rawYieldSummary.Set(signalRegion,processTag,predictions[i].Get("raw_mc",processTag)); 
+            rawYieldSummary.Set(signalRegion,processTag,predictions[i].Get("raw_mc",processTag));
 
             Figure pred = predictions[i].Get("prediction",processTag);
 
-            predictionSummary.Set(signalRegion,processTag,pred); 
+            predictionSummary.Set(signalRegion,processTag,pred);
         }
+        Figure data = dataInput[i].Get("signalRegion_MTtail","data");
+        predictionSummary.Set(signalRegion,"data",data);
 
         // Fill the scale factors table
         for (unsigned int j = 0 ; j < scaleFactorsTagList.size() ; j++)
@@ -82,7 +92,7 @@ int main (int argc, char *argv[])
             relativeSystematicsSummary.Set(signalRegion,systematicTag,systematics[i].Get("relative",systematicTag) * 100);
         }
     }
-    
+
     cout << "\\begin{table}[!ht]" << endl;
     cout << "\\begin{center}" << endl;
     rawYieldSummary.PrintLatex(2);
@@ -125,6 +135,8 @@ int main (int argc, char *argv[])
     cout << "\\caption{Relvative uncertainties for the " << reportLabel << " signal regions. \\label{tab:report_rel_" << reportTag << "}}" << endl;
     cout << "\\end{center}" << endl;
     cout << "\\end{table}" << endl;
+
+    predictionSummary.Print("tmp/"+reportTag+".tab");
 
     return (0);
 }

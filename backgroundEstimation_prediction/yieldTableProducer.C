@@ -116,7 +116,8 @@ int main (int argc, char *argv[])
         screwdriver.AddRegion("preveto_MTtail",          "Preselection (MT tail)",      &goesInPreVetoSelectionMTtail_withSRCuts);
 
         screwdriver.AddRegion("signalRegion_MTpeak",     "Preselection (MT peak)",      &goesInPreselectionMTpeak_withSRCuts);
-        screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",      &goesInPreselectionMTtail_withSRCuts, "blinded");
+        //screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",      &goesInPreselectionMTtail_withSRCuts, "blinded");
+        screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",      &goesInPreselectionMTtail_withSRCuts);
 
         screwdriver.AddRegion("0btag_MTpeak",            "0 b-tag (MT peak)",           &goesIn0BtagControlRegionMTpeak_withSRCuts);
         screwdriver.AddRegion("0btag_MTtail",            "0 b-tag (MT tail)",           &goesIn0BtagControlRegionMTtail_withSRCuts);

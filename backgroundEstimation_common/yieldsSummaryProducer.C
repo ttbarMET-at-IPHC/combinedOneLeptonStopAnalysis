@@ -64,8 +64,8 @@ int main (int argc, char *argv[])
     // ##########################
 
     screwdriver.AddChannel("signalRegion_MTpeak",   globalLabel+";Preselection;M_{T} peak",   0);
-    screwdriver.AddChannel("signalRegion_MTtail",   globalLabel+";Preselection;M_{T} tail (blinded)",   0, "blinded"); // Careful with this flag, it actually all depends of the table we read later,
-                                                                                                       // this flag does nothing by itself in the present case.
+    screwdriver.AddChannel("signalRegion_MTtail",   globalLabel+";Preselection;M_{T} tail",   0);
+
     screwdriver.AddChannel("0btag_MTpeak",          globalLabel+";0 b-tag Control Region;M_{T} peak",        0);
     screwdriver.AddChannel("0btag_MTtail",          globalLabel+";0 b-tag Control Region;M_{T} tail",        0);
 

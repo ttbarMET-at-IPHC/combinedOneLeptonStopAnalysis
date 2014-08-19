@@ -9,12 +9,12 @@
 
 bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
-                                                                      
+
 bool goesInPreselectionMTpeak_withSRCuts()       { return (goesInPreselectionMTpeak()       && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreselectionMTtail_withSRCuts()       { return (goesInPreselectionMTtail()       && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
-bool goesInPreselectionNoMT_withSRCuts()       
-{ 
+bool goesInPreselectionNoMT_withSRCuts()
+{
     bool iok = goesInPreselection()       && SIGNAL_REGION_CUTS(disableMTCut);
     if (myEvent.MT>MT_CUT && (sampleType == "data") )  iok=0;
     return iok;
@@ -41,20 +41,22 @@ bool goesInAnyChannel()                             { return (goesInSingleLepton
 
 int main (int argc, char *argv[])
 {
+  loadBDTSignalRegions();
+
   // Check the label of the signal region is defined
-  
+
   string signalRegionLabel_ = signalRegionLabel(SIGNAL_REGION_TAG);
-  if (signalRegionLabel_ == "") 
-  { 
-      DEBUG_MSG << "Please define the signal region label associated to tag '" << SIGNAL_REGION_TAG << "'" << endl; 
-      return -1; 
+  if (signalRegionLabel_ == "")
+  {
+      DEBUG_MSG << "Please define the signal region label associated to tag '" << SIGNAL_REGION_TAG << "'" << endl;
+      return -1;
   }
- 
+
   // Special region for 2, 3 or 4 jets with 50, 100 or 150 minimum events
   /*
-  string ControlRegion; 
-  if (argc == 2) 
-  { 
+  string ControlRegion;
+  if (argc == 2)
+  {
       ControlRegion = argv[1];
       NOMINAL_BDT_CUT = false;
       printBoxedMessage("Running on CR = "+ControlRegion);
@@ -63,7 +65,7 @@ int main (int argc, char *argv[])
   if (argc >= 3) { WARNING_MSG << "Too many argument specified" << endl; return -1; }
   */
 
-  bool runningOnBDTRegion = false; 
+  bool runningOnBDTRegion = false;
   if (findSubstring(SIGNAL_REGION_TAG,"BDT")) runningOnBDTRegion = true;
 
   printBoxedMessage("Starting plot generation");
@@ -71,7 +73,7 @@ int main (int argc, char *argv[])
   // ####################
   // ##   Init tools   ##
   // ####################
-  
+
      // Create a sonic Screwdriver
       SonicScrewdriver screwdriver;
 
@@ -81,7 +83,7 @@ int main (int argc, char *argv[])
 
      screwdriver.AddVariable("MET",            "MET",                     "GeV",    16,50,530,      &(myEvent.MET),                  "logY");
      screwdriver.AddVariable("METPhi",         "METPhi",                  "GeV",    16,0,3.2,       &(myEvent.METPhi),               "");
-     
+
      screwdriver.AddVariable("MT",             "M_{T}",                   "GeV",    40,0,400,       &(myEvent.MT),                   "logY");
      screwdriver.AddVariable("MT_rebin2",      "M_{T}",                   "GeV",    16,0,400,       &(myEvent.MT),                   "logY");
      screwdriver.AddVariable("MT_rebin3",      "M_{T}",                   "GeV",    8,0,400,        &(myEvent.MT),                   "logY");
@@ -183,13 +185,13 @@ int main (int argc, char *argv[])
                 screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
             #endif
 
-     
+
      screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
              screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
 
      screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
              screwdriver.AddDataset("rare",   "rare", 0, 0);
-     
+
      screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
@@ -206,13 +208,13 @@ int main (int argc, char *argv[])
      else                                             rebinning="rebin=2";
 
      screwdriver.AddRegion("MTpeak",               signalRegionLabel_+";MT peak Control Region",                  &goesInPreselectionMTpeak_withSRCuts);
-     
+
 
      screwdriver.AddRegion("signalRegion",         signalRegionLabel_,                                            &goesInPreselectionMTtail_withSRCuts,"blinded");
      screwdriver.AddRegion("0btag",                signalRegionLabel_+";0 b-tag Control Region",                  &goesIn0BtagControlRegionMTtail_withSRCuts,    rebinning);
      screwdriver.AddRegion("2leptons",             signalRegionLabel_+";2 leptons Control Region",                &goesInDileptonControlRegionMTtail_withSRCuts, rebinning);
      screwdriver.AddRegion("reversedVeto",         signalRegionLabel_+";Reversed 2nd lepton veto Control Region", &goesInVetoControlRegionMTtail_withSRCuts,     rebinning);
-     
+
      screwdriver.AddRegion("signalRegion_noMTCut", signalRegionLabel_+"; (no MT cut)",                            &goesInPreselectionNoMT_withSRCuts);
      screwdriver.AddRegion("0btag_noMTCut",        signalRegionLabel_+";0 b-tag (no MT cut)",                     &goesIn0BtagControlRegionNoMT_withSRCuts,    rebinning);
      screwdriver.AddRegion("2leptons_noMTCut",     signalRegionLabel_+";2 leptons (no MT cut)",                   &goesInDileptonControlRegionNoMT_withSRCuts, rebinning);
@@ -221,7 +223,7 @@ int main (int argc, char *argv[])
      // ##########################
      // ##   Create Channels    ##
      // ##########################
-   
+
      screwdriver.AddChannel("singleLepton", "e/#mu-channels",   &goesInSingleLeptonChannel);
      //screwdriver.AddChannel("singleElec",   "e-channel",        &goesInSingleElecChannel  );
      //screwdriver.AddChannel("singleMuon",   "#mu-channel",      &goesInSingleMuonChannel  );
@@ -271,11 +273,11 @@ int main (int argc, char *argv[])
 
      sampleName = currentDataset;
      sampleType = screwdriver.GetProcessClassType(currentProcessClass);
-    
+
      // Open the tree
      TFile f((string(FOLDER_BABYTUPLES)+currentDataset+".root").c_str());
-     TTree* theTree = (TTree*) f.Get("babyTuple"); 
-     
+     TTree* theTree = (TTree*) f.Get("babyTuple");
+
      intermediatePointers pointers;
      InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
@@ -285,10 +287,10 @@ int main (int argc, char *argv[])
   // ########################################
   // ##        Run over the events         ##
   // ########################################
-      
+
      bool ttbarDatasetToBeSplitted = false;
       if (findSubstring(currentDataset,"ttbar")
-      && (currentDataset != "ttbar_madgraph_1l") 
+      && (currentDataset != "ttbar_madgraph_1l")
       && (currentDataset != "ttbar_madgraph_2l"))
           ttbarDatasetToBeSplitted = true;
 
@@ -307,9 +309,9 @@ int main (int argc, char *argv[])
               if (ControlRegion == "CR4_2j")         if (myEvent.nJets < 2) continue;
               if (ControlRegion == "CR4_3j")         if (myEvent.nJets < 3) continue;
               if (ControlRegion == "CR4_4j"
-               || ControlRegion == "CR4_4j_50evts" 
-               || ControlRegion == "CR4_4j_100evts" 
-               || ControlRegion == "CR4_4j_150evts") if (myEvent.nJets < 4) continue; 
+               || ControlRegion == "CR4_4j_50evts"
+               || ControlRegion == "CR4_4j_100evts"
+               || ControlRegion == "CR4_4j_150evts") if (myEvent.nJets < 4) continue;
           }
           */
 
@@ -359,7 +361,7 @@ int main (int argc, char *argv[])
               currentProcessClass_ = "ttbar_2l";
 
           screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
-      } 
+      }
 
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;
@@ -379,7 +381,7 @@ int main (int argc, char *argv[])
     Figure SF_vetopeak      = scaleFactors.Get("value","SF_vetopeak");
     Figure SF_MTtail_1ltop  = scaleFactors.Get("value","SF_MTtail_1ltop");
     Figure SF_MTtail_Wjets  = scaleFactors.Get("value","SF_MTtail_Wjets");
-    
+
     vector<string> channelsOnWhichToApplyScaleFactors = { "singleLepton", "allChannels" };
     for (unsigned int c = 0 ; c < channelsOnWhichToApplyScaleFactors.size() ; c++)
     {
@@ -416,12 +418,12 @@ int main (int argc, char *argv[])
   // ###################################
   // ##   Make plots and write them   ##
   // ###################################
- 
+
   cout << endl;
   cout << "   > Making plots..." << endl;
   screwdriver.MakePlots();
   cout << "   > Saving plots..." << endl;
-            
+
   system((string("mkdir -p ./plots/")+SIGNAL_REGION_TAG).c_str());
   screwdriver.WritePlots(string("./plots/")+SIGNAL_REGION_TAG);
 
@@ -430,7 +432,7 @@ int main (int argc, char *argv[])
   // #############################
   // ##   Post-plotting tests   ##
   // #############################
-  
+
   printBoxedMessage("Program done.");
   return (0);
 }
