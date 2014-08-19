@@ -32,7 +32,7 @@ int main (int argc, char *argv[])
         signalRegionsTagList.push_back(argv[i]);
 
         string label = signalRegionLabel(argv[i],"root");
-        label = label.substr(label.find(", ")+2);
+        if (!findSubstring(label,"BDT")) label.substr(label.find(", ")+2);
         signalRegionsLabelList.push_back(label);
     }
 
@@ -53,12 +53,9 @@ int main (int argc, char *argv[])
     // ##   Create Figures   ##
     // ########################
 
-    screwdriver.AddFigure("MTpeak",               "M_{T} peak",            "");
-    screwdriver.AddFigure("0btag_MTpeak",         "0 b-tag, M_{T} peak",   "");
-    screwdriver.AddFigure("0btag_MTtail",         "0 b-tag, M_{T} tail",   "");
-    screwdriver.AddFigure("2leptons",             "2 leptons",             "");
-    screwdriver.AddFigure("reversedVeto_MTpeak",  "1l+veto, M_{T} peak",   "");
-    screwdriver.AddFigure("reversedVeto_MTtail",  "1l+veto, M_{T} tail",   "");
+    screwdriver.AddFigure("MTpeak",       "M_{T} peak",     "");
+    screwdriver.AddFigure("signalRegion", "Signal region",  "");
+    screwdriver.AddFigure("ratio",        "ratio",          "");
 
     // ########################################
     // ##       Create histograms and        ##
@@ -66,7 +63,9 @@ int main (int argc, char *argv[])
     // ########################################
 
     // Schedule plots
-    screwdriver.SchedulePlots("1DFigure","name=contamination,figures=MTpeak:0btag_MTpeak:0btag_MTtail:2leptons:reversedVeto_MTpeak:reversedVeto_MTtail,channel=contamination,min=0,max=1.2");
+    screwdriver.SchedulePlots("1DFigure","name=contamination,figures=MTpeak,channel=contamination,min=0,max=0.4");
+    screwdriver.SchedulePlots("1DFigure","name=signalRegion,figures=signalRegion,channel=contamination,min=0,max=5");
+    screwdriver.SchedulePlots("1DFigure","name=ratio,figures=ratio,channel=contamination,min=0,max=1.2");
 
     // Config plots
     screwdriver.SetGlobalStringOption("1DStackFigurePerProcess",  "includeSignal",   "stack");
@@ -92,18 +91,11 @@ int main (int argc, char *argv[])
         string signalRegionTag_ = signalRegionsTagList[i];
 
         Figure contamination_MTpeak                 = contaminationTable.Get("MTpeak",              signalRegionTag_);
-        Figure contamination_0btag_MTpeak           = contaminationTable.Get("0btag_MTpeak",        signalRegionTag_);
-        Figure contamination_0btag_MTtail           = contaminationTable.Get("0btag_MTtail",        signalRegionTag_);
-        Figure contamination_2leptons               = contaminationTable.Get("2leptons",            signalRegionTag_);
-        Figure contamination_reversedVeto_MTpeak    = contaminationTable.Get("reversedVeto_MTpeak", signalRegionTag_);
-        Figure contamination_reversedVeto_MTtail    = contaminationTable.Get("reversedVeto_MTtail", signalRegionTag_);
+        Figure contamination_signalRegion           = contaminationTable.Get("signalRegion",        signalRegionTag_);
 
-        screwdriver.SetFigure("MTpeak",              signalRegionsTagList[i], "contamination",  contamination_MTpeak             );
-        screwdriver.SetFigure("0btag_MTpeak",        signalRegionsTagList[i], "contamination",  contamination_0btag_MTpeak       );
-        screwdriver.SetFigure("0btag_MTtail",        signalRegionsTagList[i], "contamination",  contamination_0btag_MTtail       );
-        screwdriver.SetFigure("2leptons",            signalRegionsTagList[i], "contamination",  contamination_2leptons           );
-        screwdriver.SetFigure("reversedVeto_MTpeak", signalRegionsTagList[i], "contamination",  contamination_reversedVeto_MTpeak);
-        screwdriver.SetFigure("reversedVeto_MTtail", signalRegionsTagList[i], "contamination",  contamination_reversedVeto_MTtail);
+        screwdriver.SetFigure("MTpeak",        signalRegionsTagList[i], "contamination",  contamination_MTpeak);
+        screwdriver.SetFigure("signalRegion",  signalRegionsTagList[i], "contamination",  contamination_signalRegion);
+        screwdriver.SetFigure("ratio",         signalRegionsTagList[i], "contamination",  contamination_MTpeak/contamination_signalRegion);
     }
 
     // ##############################
