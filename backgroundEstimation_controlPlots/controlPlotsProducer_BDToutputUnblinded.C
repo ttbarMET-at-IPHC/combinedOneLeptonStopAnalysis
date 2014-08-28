@@ -4,6 +4,14 @@
     #error SIGNAL_REGION_TAG need to be defined.
 #endif
 
+typedef struct
+{
+    string type;
+    int stopMass;
+    int neutralinoMass;
+}
+SignalBenchmark;
+
 // #########################################################################
 //                              Main function
 // #########################################################################
@@ -20,6 +28,32 @@ int main (int argc, char *argv[])
   string BDTSignalRegionLabel = BDTlabel(BDTSignalRegionTag, "root");
   float  BDTSignalRegionCut   = BDTcut(BDTSignalRegionTag);
 
+  SignalBenchmark referenceSignal;
+
+       if (string(SIGNAL_REGION_TAG) == "BDT_T2tt_1_lowLSP"    ) referenceSignal = { "T2tt",     175, 25  };
+       if (string(SIGNAL_REGION_TAG) == "BDT_T2tt_1_mediumLSP" ) referenceSignal = { "T2tt",     250, 100 };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2tt_1_highLSP"   ) referenceSignal = { "T2tt",     300, 150 };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2tt_2"           ) referenceSignal = { "T2tt",     300, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2tt_5_lowDM"     ) referenceSignal = { "T2tt",     400, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2tt_5_highDM"    ) referenceSignal = { "T2tt",     600, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw025_1"        ) referenceSignal = { "T2bw-025", 200, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw025_3"        ) referenceSignal = { "T2bw-025", 300, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw025_4_lowLSP" ) referenceSignal = { "T2bw-025", 500, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw025_4_highLSP") referenceSignal = { "T2bw-025", 600, 150 };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw025_6"        ) referenceSignal = { "T2bw-025", 675, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw050_1_lowDM_lowLSP" ) referenceSignal = { "T2bw-050", 150, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw050_1_lowDM_highLSP") referenceSignal = { "T2bw-050", 250, 150 };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw050_1_highDM" ) referenceSignal = { "T2bw-050", 275, 100 };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw050_3"        ) referenceSignal = { "T2bw-050", 350, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw050_4"        ) referenceSignal = { "T2bw-050", 500, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw050_5"        ) referenceSignal = { "T2bw-050", 600, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw050_6"        ) referenceSignal = { "T2bw-050", 700, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw075_1"        ) referenceSignal = { "T2bw-075", 200, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw075_2"        ) referenceSignal = { "T2bw-075", 300, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw075_3"        ) referenceSignal = { "T2bw-075", 450, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw075_5_lowDM"  ) referenceSignal = { "T2bw-075", 550, 50  };
+  else if (string(SIGNAL_REGION_TAG) == "BDT_T2bw075_5_highDM" ) referenceSignal = { "T2bw-075", 650, 50  };
+
   printBoxedMessage("Starting plot generation");
 
   // ####################
@@ -33,13 +67,12 @@ int main (int argc, char *argv[])
      // ##   Create Variables   ##
      // ##########################
 
-     float numberOfBinsAfter  = 2.0;
-     float numberOfBinsBefore = 3.0;
-     float lowerBound = BDTSignalRegionCut - (0.5 - BDTSignalRegionCut) / numberOfBinsAfter * numberOfBinsBefore;
+     float min = BDTSignalRegionCut - 0.20;
+     float max = BDTSignalRegionCut + 0.10;
 
      float BDToutputValue;
      screwdriver.AddVariable("BDToutput_full", "BDT output (full)", "", 20,-0.5,       0.5, &BDToutputValue, "");
-     screwdriver.AddVariable("BDToutput",      "BDT output",        "", 5, lowerBound, 0.5, &BDToutputValue, "noUnderflowInFirstBin");
+     screwdriver.AddVariable("BDToutput",      "BDT output",        "", 9, min, max, &BDToutputValue, "noUnderflowInFirstBin,logY");
 
      // #########################################################
      // ##   Create ProcessClasses (and associated datasets)   ##
@@ -69,13 +102,10 @@ int main (int argc, char *argv[])
              screwdriver.AddDataset("SingleElec",   "data", 0, 0);
              screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
 
-     /*
-     screwdriver.AddProcessClass("T2tt",     "T2tt",                       "signal",0,  "no1DPlots");
-             screwdriver.AddDataset("T2tt",     "T2tt",   0, 0);
-     screwdriver.AddProcessClass("signal_300_100",  "T2tt (300/100)",      "signal", COLORPLOT_BLUE );
-     screwdriver.AddProcessClass("signal_650_100",  "T2tt (650/100)",      "signal", COLORPLOT_GREEN);
-     */
-
+     screwdriver.AddProcessClass(referenceSignal.type,
+                                 referenceSignal.type+" ("+intToString(referenceSignal.stopMass)+","+intToString(referenceSignal.neutralinoMass)+")",
+                                 "signal", COLORPLOT_GREEN );
+             screwdriver.AddDataset(referenceSignal.type,    referenceSignal.type,   0, 0);
 
      // ##########################
      // ##    Create Regions    ##
@@ -139,7 +169,7 @@ int main (int argc, char *argv[])
      intermediatePointers pointers;
      InitializeBranchesForReading(theTree,&myEvent,&pointers);
 
-     if (currentDataset == "T2tt")
+     if (currentDataset == referenceSignal.type)
      {
         theTree->SetBranchAddress("mStop",       &(myEvent.mStop));
         theTree->SetBranchAddress("mNeutralino", &(myEvent.mNeutralino));
@@ -153,35 +183,34 @@ int main (int argc, char *argv[])
   // ##        Run over the events         ##
   // ########################################
 
-      int nEntries = theTree->GetEntries();
-      for (int i = 0 ; i < nEntries ; i++)
-      {
-          if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
+     int nEntries = theTree->GetEntries();
+     for (int i = 0 ; i < nEntries ; i++)
+     {
+         if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
-          // Get the i-th entry
-          ReadEvent(theTree,i,&pointers,&myEvent);
+         // Get the i-th entry
+         ReadEvent(theTree,i,&pointers,&myEvent);
 
-          BDToutputValue = BDToutput(BDTSignalRegionTag);
+         BDToutputValue = BDToutput(BDTSignalRegionTag);
 
-          float weight = getWeight();
+         float weight = getWeight();
 
-          // Split 1-lepton ttbar and 2-lepton ttbar
-          string currentProcessClass_ = currentProcessClass;
-          if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2))
-              currentProcessClass_ = "ttbar_2l";
+         // Split 1-lepton ttbar and 2-lepton ttbar
+         string currentProcessClass_ = currentProcessClass;
+         if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2))
+             currentProcessClass_ = "ttbar_2l";
 
-          /*
-          if (currentDataset == "T2tt")
-          {
-              if ((myEvent.mStop == 300) && (myEvent.mNeutralino == 100)) screwdriver.AutoFillProcessClass("signal_300_100",weight);
-              if ((myEvent.mStop == 650) && (myEvent.mNeutralino == 100)) screwdriver.AutoFillProcessClass("signal_650_100",weight);
-          }
-          else
-          {
-          */
-            screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
-          //}
-      }
+         if (currentDataset == referenceSignal.type)
+         {
+             if (  (myEvent.mStop       == referenceSignal.stopMass)
+                && (myEvent.mNeutralino == referenceSignal.neutralinoMass))
+             screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+         }
+         else
+         {
+             screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
+         }
+     }
 
       printProgressBar(nEntries,nEntries,currentDataset);
       cout << endl;

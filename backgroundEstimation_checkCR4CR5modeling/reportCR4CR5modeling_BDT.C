@@ -17,7 +17,6 @@ using namespace theDoctor;
 #include <TLegend.h>
 #include <TStyle.h>
 
-#define CR4MTtailUncert 0.25
 #define ExtrapUncert 0.2
 
 int main (int argc, char *argv[])
@@ -107,10 +106,6 @@ int main (int argc, char *argv[])
             Figure SF_CR4_tail = SF_est[i][j].Get("value","SF_2ltail");
             Figure SF_CR5_peak = SF_est[i][j].Get("value","SF_vetopeak");
             Figure SF_CR5_tail = SF_est[i][j].Get("value","SF_vetotail");
-
-            // "Old" version
-            //CRplots[i]->SetBinContent(j+1,SF_CR4.value());
-            //CRplots[i]->SetBinError(j+1,sqrt(pow(SF_CR4.error(),2.)+pow(SF_CR4.value()*CR4MTtailUncert,2)));
 
             // New version
             CRplots[i]->SetBinContent(j+1,SF_CR4_tail.value());

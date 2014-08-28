@@ -9,7 +9,7 @@ int main (int argc, char *argv[])
 {
     if (argc <= 1) { WARNING_MSG << "No signal region specified" << endl; return -1; }
 
-    string signalRegion = argv[1]; 
+    string signalRegion = argv[1];
     backgroundEstimation(signalRegion).Run();
 
     return 0;
@@ -29,18 +29,18 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     // ###################################################################
     // #  Initialize the table containing the raw mc and the prediction  #
     // ###################################################################
-    
+
     vector<string> predictionTableColumns = { "raw_mc", "prediction" };
     predictionTable = Table(predictionTableColumns, processesTagList);
 
     // Raw MC
-    Figure N1ltop_mc  = rawYieldTable.Get("signalRegion_MTtail","1ltop"   ); 
+    Figure N1ltop_mc  = rawYieldTable.Get("signalRegion_MTtail","1ltop"   );
     Figure N2ltop_mc  = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l");
     Figure Nwjets_mc  = rawYieldTable.Get("signalRegion_MTtail","W+jets"  );
     Figure Nrare_mc   = rawYieldTable.Get("signalRegion_MTtail","rare"    );
     Figure NSumBkg_mc = N1ltop_mc+N2ltop_mc+Nwjets_mc+Nrare_mc;
 
-    predictionTable.Set("raw_mc","1ltop",    N1ltop_mc ); 
+    predictionTable.Set("raw_mc","1ltop",    N1ltop_mc );
     predictionTable.Set("raw_mc","ttbar_2l", N2ltop_mc );
     predictionTable.Set("raw_mc","W+jets",   Nwjets_mc );
     predictionTable.Set("raw_mc","rare",     Nrare_mc  );
@@ -49,7 +49,7 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     // ######################################################
     // #  Initialize the table containing the scale factors #
     // ######################################################
-    
+
     vector<string> dummy = { "value" };
     scaleFactorTable = Table(dummy,scaleFactorsTagList);
 
@@ -59,13 +59,13 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     // ####################################
 
     #ifdef USING_CR4_AND_CR5_CHECKS_FROM_LOOSENED_SIGNAL_REGIONS
-    	// Read the uncertainty from CR4 CR5 modeling checks 
+    	// Read the uncertainty from CR4 CR5 modeling checks
         Table temporaryTable;
-        
+
         if (findSubstring(signalRegionLabel,"BDT"))
-    	    temporaryTable = Table("../backgroundEstimation_checkCR4CR5modeling/results/uncertainties_BDT.tab"); 
+    	    temporaryTable = Table("../backgroundEstimation_checkCR4CR5modeling/results/uncertainties_BDT.tab");
         else
-    	    temporaryTable = Table("../backgroundEstimation_checkCR4CR5modeling/results/uncertainties_CnC.tab"); 
+    	    temporaryTable = Table("../backgroundEstimation_checkCR4CR5modeling/results/uncertainties_CnC.tab");
 
         ttll_CR4CR5ModelingUncertainty = temporaryTable.Get("value",signalRegionLabel).error();
     #else
@@ -77,10 +77,10 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
     // ##################################################################
     // #  Initialize the table containing the systematic uncertainties  #
     // ##################################################################
-    
-    vector<string> uncertainties = { "absolute", "relative" }; 
+
+    vector<string> uncertainties = { "absolute", "relative" };
     systematicsUncertainties = Table(uncertainties, systematicsTagList);
-    
+
     // Reset the systematics flags
     ResetSystematics();
 }
@@ -88,7 +88,7 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
 void backgroundEstimation::Run()
 {
     ComputePredictionWithSystematics();
- 
+
     scaleFactorTable.        Print("scaleFactors/"+signalRegionLabel+".tab",4);
     systematicsUncertainties.Print("systematics/" +signalRegionLabel+".tab",4);
     predictionTable.         Print("prediction/"  +signalRegionLabel+".tab",4);
@@ -129,7 +129,7 @@ Figure backgroundEstimation::ComputePrediction()
     #else
         ComputeMTTailToPeakRatioCorrectionMethod();
     #endif
-    
+
     FillPredictionTable();
     return predictionTable.Get("prediction","totalSM");
 }
@@ -143,43 +143,43 @@ void backgroundEstimation::ComputePredictionWithSystematics()
         ResetSystematics();
         string systematic = systematicsTagList[s];
         float uncertainty = 0.0;
-        
+
         if (systematic == "total") continue;
 
         else if (systematic ==  "tt->ll_(CR4,CR5)")
         {
             // Determine the uncertainty from values stored in the table
-	        ttll_CR4and5_rescale = 1-ttll_CR4CR5ModelingUncertainty; float yieldDown = ComputePrediction().value(); 
+	        ttll_CR4and5_rescale = 1-ttll_CR4CR5ModelingUncertainty; float yieldDown = ComputePrediction().value();
             ttll_CR4and5_rescale = 1+ttll_CR4CR5ModelingUncertainty; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         else if (systematic ==  "tt->ll_(nJets)")
         {
-            ttll_nJets_rescale = 1-ttll_nJetsModelingUncertainty; float yieldDown = ComputePrediction().value(); 
+            ttll_nJets_rescale = 1-ttll_nJetsModelingUncertainty; float yieldDown = ComputePrediction().value();
             ttll_nJets_rescale = 1+ttll_nJetsModelingUncertainty; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         else if (systematic ==  "tt->ll_(veto)")
         {
-            ttll_2ndlepVeto_rescale = 1-ComputeSecondLeptonVetoUncertainty(); float yieldDown = ComputePrediction().value(); 
+            ttll_2ndlepVeto_rescale = 1-ComputeSecondLeptonVetoUncertainty(); float yieldDown = ComputePrediction().value();
             ttll_2ndlepVeto_rescale = 1+ComputeSecondLeptonVetoUncertainty(); float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
-        else if (systematic == "1ltop_(cross_section)") 
+        else if (systematic == "1ltop_(cross_section)")
         {
-            oneLepTopCrossSection_rescale = 0.9; float yieldDown = ComputePrediction().value(); 
+            oneLepTopCrossSection_rescale = 0.9; float yieldDown = ComputePrediction().value();
             oneLepTopCrossSection_rescale = 1.1; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
         #endif
-        else if (systematic == "W+jets_(cross_section)") 
+        else if (systematic == "W+jets_(cross_section)")
         {
-            WjetCrossSection_rescale = 0.5; float yieldDown = ComputePrediction().value(); 
+            WjetCrossSection_rescale = 0.5; float yieldDown = ComputePrediction().value();
             WjetCrossSection_rescale = 1.5; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "Rare_(cross_section)") 
+        else if (systematic == "Rare_(cross_section)")
         {
             rareCrossSection_rescale = 0.5; float yieldDown = ComputePrediction().value();
             rareCrossSection_rescale = 1.5; float yieldUp   = ComputePrediction().value();
@@ -205,7 +205,7 @@ void backgroundEstimation::ComputePredictionWithSystematics()
             SFR_Wjets_variation =  1.0; float yieldUp   = ComputePrediction().value();
             uncertainty = fabs((yieldUp - yieldDown) / 2.0);
         }
-        else if (systematic == "1ltop_tailToPeak") 
+        else if (systematic == "1ltop_tailToPeak")
         {
             tailToPeakRatio_1lTop_variation = -1.0; float yieldDown = ComputePrediction().value();
             tailToPeakRatio_1lTop_variation =  1.0; float yieldUp   = ComputePrediction().value();
@@ -257,12 +257,12 @@ void backgroundEstimation::ComputePredictionWithSystematics()
     {
         string systematic = systematicsTagList[s];
         float u = systematicsUncertainties.Get("absolute",systematic).value();
-        totalUncertainty += u*u; 
+        totalUncertainty += u*u;
     }
     totalUncertainty = sqrt(totalUncertainty);
     systematicsUncertainties.Set("absolute","total",Figure(totalUncertainty,0.0));
 
-    predictionTable.Set("prediction", "totalSM", Figure(yieldNominal, totalUncertainty)); 
+    predictionTable.Set("prediction", "totalSM", Figure(yieldNominal, totalUncertainty));
 
     // Fill relative uncertainty from absolute
 
@@ -275,7 +275,7 @@ void backgroundEstimation::ComputePredictionWithSystematics()
     }
 
     // Fill scale factor table
-   
+
     scaleFactorTable.Set("value","SF_pre",     SF_pre);
     scaleFactorTable.Set("value","SF_post",    SF_post);
     scaleFactorTable.Set("value","SF_0btag",   SF_0btag);
@@ -299,7 +299,7 @@ float backgroundEstimation::ComputeSecondLeptonVetoUncertainty()
     Figure ttbar_2l_withHadrTauInAcceptance = secondLeptonInAcceptanceYieldTable.Get("hadronicTau",         "ttbar_2l");
 
     if (ttbar_2l_all.value() == 0) return 0.0;
-    
+
     Figure fraction_track = ttbar_2l_withTrackInAcceptance   / ttbar_2l_all;
     Figure fraction_tau   = ttbar_2l_withHadrTauInAcceptance / ttbar_2l_all;
 
@@ -320,7 +320,7 @@ void backgroundEstimation::ComputeSFpre()
     Figure preveto_rare     = rawYieldTable.Get("preveto_MTpeak","rare"    ) * rareCrossSection_rescale;
     Figure preveto_data     = rawYieldTable.Get("preveto_MTpeak","data"    );
 
-    SF_pre = (preveto_data - preveto_rare) 
+    SF_pre = (preveto_data - preveto_rare)
           / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
     if (MTpeakStat_variation) SF_pre.keepVariation(MTpeakStat_variation,"noNegativeValue");
 
@@ -333,8 +333,8 @@ void backgroundEstimation::ComputeSFpost()
     Figure postveto_Wjets    = rawYieldTable.Get("signalRegion_MTpeak","W+jets"  ) * WjetCrossSection_rescale;
     Figure postveto_rare     = rawYieldTable.Get("signalRegion_MTpeak","rare"    ) * rareCrossSection_rescale;
     Figure postveto_data     = rawYieldTable.Get("signalRegion_MTpeak","data"    );
-    
-    SF_post = (postveto_data - postveto_rare - SF_pre * postveto_ttbar_2l) 
+
+    SF_post = (postveto_data - postveto_rare - SF_pre * postveto_ttbar_2l)
            / (postveto_1ltop + postveto_Wjets);
     if (MTpeakStat_variation) SF_post.keepVariation(MTpeakStat_variation,"noNegativeValue");
 }
@@ -350,21 +350,21 @@ void backgroundEstimation::ComputeSF0btag()
     Figure noBTagPeak_data     = rawYieldTable.Get("0btag_MTpeak","data"    );
 
     // FIXME shoudln't we apply SF_pre to dilepton here ?
-    SF_0btag = (noBTagPeak_data  - noBTagPeak_rare - noBTagPeak_ttbar_2l) 
+    SF_0btag = (noBTagPeak_data  - noBTagPeak_rare - noBTagPeak_ttbar_2l)
              / (noBTagPeak_1ltop + noBTagPeak_Wjets);
 }
 
 void backgroundEstimation::ComputeSFvetopeak()
 {
     // NB : SF_vetopeak is used only in the control plots, not in the background prediction iteself
-    
+
     Figure peakveto_1ltop    = rawYieldTable.Get("reversedVeto_MTpeak","1ltop"   );
     Figure peakveto_ttbar_2l = rawYieldTable.Get("reversedVeto_MTpeak","ttbar_2l");
-    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTpeak","W+jets"  ); 
+    Figure peakveto_Wjets    = rawYieldTable.Get("reversedVeto_MTpeak","W+jets"  );
     Figure peakveto_rare     = rawYieldTable.Get("reversedVeto_MTpeak","rare"    );
     Figure peakveto_data     = rawYieldTable.Get("reversedVeto_MTpeak","data"    );
 
-    SF_vetopeak = (peakveto_data  - peakveto_rare - SF_pre * peakveto_ttbar_2l) 
+    SF_vetopeak = (peakveto_data  - peakveto_rare - SF_pre * peakveto_ttbar_2l)
                 / (peakveto_1ltop + peakveto_Wjets);
 }
 
@@ -376,20 +376,20 @@ void backgroundEstimation::ImportMTTailCorrectionFromTemplateFitMethod()
 
     // Remove low/medium/highDM suffix in label for BDT's
     string signalRegionLabel_ = signalRegionLabel;
-    if (findSubstring(signalRegionLabel,"BDT"))
+    if (findSubstring(signalRegionLabel_,"BDT"))
     {
         size_t pos;
-        pos = signalRegionLabel.find("_low");
-        if (pos != string::npos) signalRegionLabel_ = signalRegionLabel.substr(0,pos);
-        pos = signalRegionLabel.find("_med");
-        if (pos != string::npos) signalRegionLabel_ = signalRegionLabel.substr(0,pos);
-        pos = signalRegionLabel.find("_high");
-        if (pos != string::npos) signalRegionLabel_ = signalRegionLabel.substr(0,pos);
+        pos = signalRegionLabel_.find("_low");
+        if (pos != string::npos) signalRegionLabel_ = signalRegionLabel_.substr(0,pos);
+        pos = signalRegionLabel_.find("_med");
+        if (pos != string::npos) signalRegionLabel_ = signalRegionLabel_.substr(0,pos);
+        pos = signalRegionLabel_.find("_high");
+        if (pos != string::npos) signalRegionLabel_ = signalRegionLabel_.substr(0,pos);
     }
-    
+
     SF_MTtail_Wjets = SFR_table.Get("SFR_Wjets",signalRegionLabel_);
     SF_MTtail_1ltop = SFR_table.Get("SFR_1ltop",signalRegionLabel_);
-    
+
     if (SF_MTtail_Wjets_variation) SF_MTtail_Wjets.keepVariation(SF_MTtail_Wjets_variation,"noNegativeValue");
     if (SF_MTtail_1ltop_variation) SF_MTtail_1ltop.keepVariation(SF_MTtail_1ltop_variation,"noNegativeValue");
 }
@@ -419,7 +419,7 @@ void backgroundEstimation::ComputeMTTailToPeakRatioCorrectionMethod()
 
     SFR_all    = noBTagTail_data / ((noBTagTail_Wjets + noBTagTail_1ltop)*SF_0btag + noBTagTail_ttbar_2l + noBTagTail_rare);
     SFR_Wonly  = (noBTagTail_data - noBTagTail_1ltop*SF_0btag - noBTagTail_ttbar_2l - noBTagTail_rare) / (noBTagTail_Wjets*SF_0btag);
-    
+
     SFR_Wjets_mean = Figure((SFR_all.value()+SFR_Wonly.value())/2.0 , (SFR_all.error() + SFR_Wonly.error())/2.0);
 
     if (SFR_Wjets_variation) SFR_W_mean.keepVariation(SFR_Wjets_variation,"noNegativeValue");
@@ -447,7 +447,7 @@ void backgroundEstimation::FillPredictionTable()
     Figure N1ltop_peak = rawYieldTable.Get("signalRegion_MTpeak","1ltop"   );
     Figure Nwjets_peak = rawYieldTable.Get("signalRegion_MTpeak","W+jets"  ) * WjetCrossSection_rescale;
     #endif
-    Figure N2ltop_tail = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l") * ttll_CR4and5_rescale * ttll_nJets_rescale * ttll_2ndlepVeto_rescale; 
+    Figure N2ltop_tail = rawYieldTable.Get("signalRegion_MTtail","ttbar_2l") * ttll_CR4and5_rescale * ttll_nJets_rescale * ttll_2ndlepVeto_rescale;
     Figure Nrare_tail  = rawYieldTable.Get("signalRegion_MTtail","rare"    ) * rareCrossSection_rescale;
 
     // MC stat uncertainty
@@ -459,8 +459,8 @@ void backgroundEstimation::FillPredictionTable()
     if (WjetsStat_variation)   Nwjets_peak.keepVariation(WjetsStat_variation,  "noNegativeValue");
     #endif
     if (ttbar2lStat_variation) N2ltop_tail.keepVariation(ttbar2lStat_variation,"noNegativeValue");
-    if (rareStat_variation)    Nrare_tail .keepVariation(rareStat_variation,   "noNegativeValue");       
-  
+    if (rareStat_variation)    Nrare_tail .keepVariation(rareStat_variation,   "noNegativeValue");
+
     // To have cross section uncertainty in per-process prediction table
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
     Nwjets_tail *= Figure(1.0, 0.5);
@@ -470,16 +470,16 @@ void backgroundEstimation::FillPredictionTable()
     Nrare_tail  *= Figure(1.0, 0.5);
 
     // To have the (temporary and arbitrary) numbers for tt->ll systematics in the per-process prediction table
-    N2ltop_tail *= Figure(1.0,ttll_nJetsModelingUncertainty );  
-    N2ltop_tail *= Figure(1.0,ttll_CR4CR5ModelingUncertainty);  
-    N2ltop_tail *= Figure(1.0,ComputeSecondLeptonVetoUncertainty()); 
+    N2ltop_tail *= Figure(1.0,ttll_nJetsModelingUncertainty );
+    N2ltop_tail *= Figure(1.0,ttll_CR4CR5ModelingUncertainty);
+    N2ltop_tail *= Figure(1.0,ComputeSecondLeptonVetoUncertainty());
 
     // Prediction
     #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
         Figure N1ltop_prediction  = N1ltop_tail  * SF_post * SF_MTtail_1ltop;
         Figure Nwjets_prediction  = Nwjets_tail  * SF_post * SF_MTtail_Wjets;
     #else
-        Figure N1ltop_prediction  = N1ltop_peak  * SF_post * R_1ltop_mean; 
+        Figure N1ltop_prediction  = N1ltop_peak  * SF_post * R_1ltop_mean;
         Figure Nwjets_prediction  = Nwjets_peak  * SF_post * R_Wjets_corrected;
     #endif
     Figure N2ltop_prediction  = N2ltop_tail  * SF_pre;
@@ -490,7 +490,7 @@ void backgroundEstimation::FillPredictionTable()
     Figure NSumBkg_prediction = N1ltop_prediction + N2ltop_prediction + Nwjets_prediction + Nrare_prediction;
 
     // Fill table
-    predictionTable.Set("prediction","1ltop",    N1ltop_prediction  ); 
+    predictionTable.Set("prediction","1ltop",    N1ltop_prediction  );
     predictionTable.Set("prediction","ttbar_2l", N2ltop_prediction  );
     predictionTable.Set("prediction","W+jets",   Nwjets_prediction  );
     predictionTable.Set("prediction","rare",     Nrare_prediction );

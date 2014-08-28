@@ -33,23 +33,15 @@ std::pair<double,double>  GetSF(RooFitResult* res, string param)
 
 TH1F* GetHisto(TFile* fin, string region, string process, string varname, float& norm)
 {
-    bool normDistrib = false;
     string cname = "singleLepton/"+region+"/"+varname;
     TCanvas* c = (TCanvas*) fin->Get(cname.c_str());
     string hname = "v:"+varname+"|p:"+process+"|r:"+region+"|c:singleLepton|t:1DEntries";
     TH1F* h = 0;
-    if(normDistrib)
-    {
-        h = (TH1F*) c->GetPrimitive(hname.c_str());
-        norm = h->Integral();
-    }
-    else
-    {
-        TPad* pad = (TPad*) c->GetPrimitive("");
-        THStack* stack = (THStack*) pad->GetPrimitive("");
-        h = (TH1F*) stack->GetHists()->FindObject(hname.c_str());
-        norm = h->Integral();
-    }
+    TList* l = c->GetListOfPrimitives();
+    TPad* pad = (TPad*) l->At(0);
+    THStack* stack = (THStack*) pad->GetPrimitive("");
+    h = (TH1F*) stack->GetHists()->FindObject(hname.c_str());
+    norm = h->Integral();
     return (TH1F*) h->Clone();
 }
 
@@ -77,7 +69,8 @@ TH1F* GetData(TFile* fin, string region, string varname)
 {
     string cname = "singleLepton/"+region+"/"+varname;
     TCanvas* c = (TCanvas*) fin->Get(cname.c_str());
-    TPad* pad = (TPad*) c->GetPrimitive("");
+    TList* l = c->GetListOfPrimitives();
+    TPad* pad = (TPad*) l->At(0);
     string hname = "v:"+varname+"|r:"+region+"|c:singleLepton|t:1DSumData";
     TH1F* h = (TH1F*) pad->GetPrimitive(hname.c_str());
     return (TH1F*) h->Clone();
