@@ -7,7 +7,7 @@ float QuantileVariabelCut(SonicScrewdriver& sonic, float quantile, string var, v
 	TH1F* hclone = 0;
 	TH1F* hMCSum = 0; // sum of all processClasses
 	for(unsigned int i=0;i<processClass.size();i++){
-		hclone = sonic.get1DHistoClone(var, processClass[i], region, channel);
+		hclone = sonic.Get1DHistoClone(var, processClass[i], region, channel);
 		if(i==0) hMCSum = hclone;
 		else hMCSum->Add(hclone);
 	}
@@ -33,7 +33,7 @@ float MinNofEvtsVariabelCut(SonicScrewdriver& sonic, int nof, string var, vector
 	TH1F* hclone = 0;
 	TH1F* hMCSum = 0; // sum of all processClasses
 	for(unsigned int i=0;i<processClass.size();i++){
-		hclone = sonic.get1DHistoClone(var, processClass[i], region, channel);
+		hclone = sonic.Get1DHistoClone(var, processClass[i], region, channel);
 		if(i==0) hMCSum = hclone;
 		else hMCSum->Add(hclone);
 	}
@@ -59,7 +59,7 @@ vector<float> EquiStatIndepIntervalInTail(SonicScrewdriver& sonic, int nofEvts, 
 	TH1F* hclone = 0;
 	TH1F* hMCSum = 0; // sum of all processClasses
 	for(unsigned int i=0;i<processClass.size();i++){
-		hclone = sonic.get1DHistoClone(var, processClass[i], region, channel);
+		hclone = sonic.Get1DHistoClone(var, processClass[i], region, channel);
 		if(i==0) hMCSum = hclone;
 		else hMCSum->Add(hclone);
 	}
@@ -71,7 +71,7 @@ vector<float> EquiStatIndepIntervalInTail(SonicScrewdriver& sonic, int nofEvts, 
 		integral = hMCSum->Integral(i,qbin-1);
 		if(integral>=nofEvts){
 			qbin = i;
-			Bounds[iter] = hMCSum->GetBinCenter(qbin);	
+			Bounds[iter] = hMCSum->GetBinCenter(qbin);
 			iter++;
 			if(iter==nofInterval) break;
 		}

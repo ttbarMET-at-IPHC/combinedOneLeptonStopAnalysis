@@ -27,7 +27,16 @@ int main (int argc, char *argv[])
     vector<string> signalRegionsLabelList;
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
-        signalRegionsLabelList.push_back(signalRegionLabel(signalRegionsTagList[i],"latex"));
+        string label = signalRegionLabel(signalRegionsTagList[i],"latex");
+        replace(label, "BDT T2tt-",     "BDT ");
+        replace(label, "BDT T2bw025-",  "BDT ");
+        replace(label, "BDT T2bw050-",  "BDT ");
+        replace(label, "BDT T2bw075-",  "BDT ");
+        replace(label, "T2tt, ",        ""    );
+        replace(label, "T2bw x=0.25, ", ""    );
+        replace(label, "T2bw x=0.50, ", ""    );
+        replace(label, "T2bw x=0.75, ", ""    );
+        signalRegionsLabelList.push_back(label);
     }
 
     // Read tables for each signal regions
@@ -95,8 +104,10 @@ int main (int argc, char *argv[])
 
     cout << "\\begin{table}[!ht]" << endl;
     cout << "\\begin{center}" << endl;
+    cout << "{ \\footnotesize" << endl;
     rawYieldSummary.PrintLatex(2);
-    cout << "\\caption{Raw MC yields for " << reportLabel << " signal regions. \\label{tab:report_raw_" << reportTag << "}}" << endl;
+    cout << "}" << endl;
+    cout << "\\caption{Raw expected MC yields for " << reportLabel << " signal regions. \\label{tab:report_raw_" << reportTag << "}}" << endl;
     cout << "\\end{center}" << endl;
     cout << "\\end{table}" << endl;
 
@@ -104,7 +115,9 @@ int main (int argc, char *argv[])
 
     cout << "\\begin{table}[!ht]" << endl;
     cout << "\\begin{center}" << endl;
+    cout << "{ \\footnotesize" << endl;
     scaleFactorsSummary.PrintLatex(2);
+    cout << "}" << endl;
     cout << "\\caption{Scale factors derived for the " << reportLabel << " signal regions. \\label{tab:report_sf_" << reportTag << "}}" << endl;
     cout << "\\end{center}" << endl;
     cout << "\\end{table}" << endl;
@@ -113,7 +126,9 @@ int main (int argc, char *argv[])
 
     cout << "\\begin{table}[!ht]" << endl;
     cout << "\\begin{center}" << endl;
+    cout << "{ \\footnotesize" << endl;
     predictionSummary.PrintLatex(2);
+    cout << "}" << endl;
     cout << "\\caption{Background prediction for the " << reportLabel << " signal regions. \\label{tab:report_yield_" << reportTag << "}}" << endl;
     cout << "\\end{center}" << endl;
     cout << "\\end{table}" << endl;
@@ -122,7 +137,9 @@ int main (int argc, char *argv[])
 
     cout << "\\begin{table}[!ht]" << endl;
     cout << "\\begin{center}" << endl;
+    cout << "{ \\footnotesize" << endl;
     absoluteSystematicsSummary.PrintLatex(1,"noError");
+    cout << "}" << endl;
     cout << "\\caption{Absolute uncertainties for the " << reportLabel << " signal regions. \\label{tab:report_abs_" << reportTag << "}}" << endl;
     cout << "\\end{center}" << endl;
     cout << "\\end{table}" << endl;
@@ -131,12 +148,18 @@ int main (int argc, char *argv[])
 
     cout << "\\begin{table}[!ht]" << endl;
     cout << "\\begin{center}" << endl;
+    cout << "{ \\footnotesize" << endl;
     relativeSystematicsSummary.PrintLatex(1,"noError");
-    cout << "\\caption{Relvative uncertainties for the " << reportLabel << " signal regions. \\label{tab:report_rel_" << reportTag << "}}" << endl;
+    cout << "}" << endl;
+    cout << "\\caption{Relative uncertainties for the " << reportLabel << " signal regions. \\label{tab:report_rel_" << reportTag << "}}" << endl;
     cout << "\\end{center}" << endl;
     cout << "\\end{table}" << endl;
 
-    predictionSummary.Print("tmp/"+reportTag+".tab");
+    rawYieldSummary           .Print("results/latest/report/rawYieldSummary_"+reportTag+".tab",2);
+    scaleFactorsSummary       .Print("results/latest/report/scaleFactors_"+reportTag+".tab",2);
+    predictionSummary         .Print("results/latest/report/prediction_"+reportTag+".tab",2);
+    absoluteSystematicsSummary.Print("results/latest/report/absoluteUncertainties_"+reportTag+".tab",1,"noError");
+    relativeSystematicsSummary.Print("results/latest/report/relativeUncertainties_"+reportTag+".tab",1,"noError");
 
     return (0);
 }

@@ -132,9 +132,9 @@
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DoubleElec_*/*.root" />
 <d  name="DoubleMuon" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DoubleMuon_*/*.root" />
+-->
 <d  name="MuEl" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/MuEl_*/*.root" />
--->
 
 </Datasets>
 

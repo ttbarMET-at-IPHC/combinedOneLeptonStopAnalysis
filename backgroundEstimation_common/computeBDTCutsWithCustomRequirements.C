@@ -165,7 +165,7 @@ int main (int argc, char *argv[])
           if ((currentDataset == "ttbar_powheg") && (myEvent.numberOfGenLepton == 2))
               currentProcessClass_ = "ttbar_2l";
 
-          //if (myEvent.nJets < 2) continue;
+          if (myEvent.nJets < 2) continue;
           //if (myEvent.nJets < 3) continue;
           //if (myEvent.nJets < 4) continue;
 

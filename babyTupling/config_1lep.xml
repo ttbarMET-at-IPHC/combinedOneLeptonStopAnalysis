@@ -85,9 +85,9 @@
 -->
 <!-- ttbar -->
 
+<!--
 <d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="245.8"
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/ttbar-v*/*.root" />
-<!--
 -->
 <!--
 <d  name="ttbar_madgraph_1l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="108.69"
@@ -196,13 +196,11 @@
 <!--
 <d  name="DoubleElec" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/DoubleElec_*/*.root" />
--->
 <d  name="DoubleMuon" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/DoubleMuon_*/*.root" />
-<!--
+-->
 <d  name="MuEl" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/MuEl_*/*.root" />
--->
 <!-- SingleLepton Data -->
 <!--
 <d  name="SingleElec" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
