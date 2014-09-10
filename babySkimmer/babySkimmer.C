@@ -24,10 +24,10 @@ string sampleType;
 //#define USE_ONE_LEPTON_SKIM
 //#define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/"
 //#define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim/1lepton4jetsMET80/"
-    
+
     // Fix for dilepton channels with 1 and 2 jets bins
 #define USE_TWO_LEPTONS_SKIM
-#define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/"
+#define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/fix2lepton/"
 #define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim/2leptons1jetMET50/"
 
 // Files needed to compute on-fly variables
@@ -46,15 +46,15 @@ int main (int argc, char *argv[])
         return -1;
     }
 
-    string dataset = argv[1]; 
+    string dataset = argv[1];
 
     // ################################
     // ##       Open the tree        ##
     // ################################
 
-    // Input tree   
+    // Input tree
     TFile fInput((FOLDER_INPUT+dataset+".root").c_str(),"READ");
-    TTree* theInputTree = (TTree*) fInput.Get("babyTuple"); 
+    TTree* theInputTree = (TTree*) fInput.Get("babyTuple");
     intermediatePointers pointers;
     InitializeBranchesForReading(theInputTree,&myEvent,&pointers);
 
@@ -70,7 +70,7 @@ int main (int argc, char *argv[])
     for (int i = 0 ; i < theInputTree->GetEntries() ; i++)
     {
 
-        if (i % (theInputTree->GetEntries() / 100) == 0) 
+        if (i % (theInputTree->GetEntries() / 100) == 0)
             printProgressBar(i,theInputTree->GetEntries(),dataset);
 
         // Read event
@@ -83,16 +83,16 @@ int main (int argc, char *argv[])
             if (myEvent.MET < 80)            continue;
         #else
         #ifdef USE_TWO_LEPTONS_SKIM
-        if (myEvent.numberOfLepton != 2) continue;
-        if (myEvent.nJets < 1)           continue;
-        if (myEvent.MET < 50)            continue;
+            if (myEvent.numberOfLepton != 2) continue;
+            if (myEvent.nJets < 1)           continue;
+            if (myEvent.MET < 50)            continue;
         #endif
         #endif
 
-        if ((dataset == "DoubleMuon") 
-         || (dataset == "DoubleElec") 
-         || (dataset == "MuEl"      ) 
-         || (dataset == "SingleMuon") 
+        if ((dataset == "DoubleMuon")
+         || (dataset == "DoubleElec")
+         || (dataset == "MuEl"      )
+         || (dataset == "SingleMuon")
          || (dataset == "SingleElec"))
             sampleType = "data";
 
@@ -105,12 +105,12 @@ int main (int argc, char *argv[])
         // Fill tree
 
         theOutputTree->Fill();
-    }           
+    }
 
     cout << endl;
-    theOutputTree->Write(0, TObject::kOverwrite); 
+    theOutputTree->Write(0, TObject::kOverwrite);
 
-    return (0); 
-}             
+    return (0);
+}
 
 
