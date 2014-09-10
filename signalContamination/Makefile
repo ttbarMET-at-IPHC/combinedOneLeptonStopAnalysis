@@ -41,3 +41,29 @@ produceSummary: summaryProducer.$(ExeSuf)
 	./summaryProducer.$(ExeSuf) 		"$(TAG)" "$(LABEL)" $(SIGNAL_REGIONS)
 
 
+
+#SIGNAL_REGIONS=BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4_highLSP BDT_T2bw025_4_lowLSP BDT_T2bw025_6 BDT_T2bw050_5 BDT_T2bw050_6       
+SIGNAL_REGIONS=BDT_T2bw050_5_highDM
+
+syncCheck:
+	@make --no-print-directory clean;
+	@for REGION in $(SIGNAL_REGIONS);        \
+	 do                                      \
+		   echo "[Launching signal region $$REGION]";     \
+	 	   make --quiet --no-print-directory compile TARGET=syncCheck SIGNAL_REGION_CUTS=$$REGION SIGNAL_REGION_TAG=\\\"$$REGION\\\"; \
+		   mv syncCheck.$(ExeSuf) syncCheck_$$REGION.$(ExeSuf);			\
+		   ./syncCheck_$$REGION.$(ExeSuf) > syncCheck_$$REGION.$(LogSuf) & \
+	done;
+	@for REGION in $(SIGNAL_REGIONS); 	\
+	do									\
+		echo "Waiting for $$REGION";	\
+		CHECK="nonEmpty";				\
+		while [ "$$CHECK" != "" ];		\
+		do								\
+			sleep 1;					\
+			CHECK=`ps kstart_time | grep syncCheck_$$REGION.$(ExeSuf) | grep -v grep`;	\
+		done;							\
+	done;								\
+	echo "Done";
+
+

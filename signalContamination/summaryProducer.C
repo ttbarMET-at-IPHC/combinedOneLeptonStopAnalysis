@@ -25,15 +25,23 @@ int main (int argc, char *argv[])
     string globalTag = argv[1];
     string globalLabel = argv[2];
 
+    bool runningOnCnC = findSubstring(globalTag,"CnC");
+
     vector<string> signalRegionsTagList;
     vector<string> signalRegionsLabelList;
+    vector<string> signalRegionsLatexLabelList;
+
     for (int i = 3 ; i < argc ; i++)
     {
         signalRegionsTagList.push_back(argv[i]);
 
         string label = signalRegionLabel(argv[i],"root");
-        if (!findSubstring(label,"BDT")) label.substr(label.find(", ")+2);
+        if (runningOnCnC) label = label.substr(label.find(", ")+2);
+        else           {  label = label.substr(4); label = "BDT"+label.substr(label.find("-")); }
+
+        string latexLabel = signalRegionLabel(argv[i],"latex");
         signalRegionsLabelList.push_back(label);
+        signalRegionsLatexLabelList.push_back(latexLabel);
     }
 
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
@@ -53,9 +61,14 @@ int main (int argc, char *argv[])
     // ##   Create Figures   ##
     // ########################
 
-    screwdriver.AddFigure("MTpeak",       "M_{T} peak",     "");
-    screwdriver.AddFigure("signalRegion", "Signal region",  "");
-    screwdriver.AddFigure("ratio",        "ratio",          "");
+    screwdriver.AddFigure("MTpeak",        "M_{T} peak",    "");
+    screwdriver.AddFigure("signalRegion",  "Signal region", "");
+    screwdriver.AddFigure("ratioMTpeak",   "MTpeak / SR",   "");
+    if (runningOnCnC)
+    {
+        screwdriver.AddFigure("0btag",        "0 b-tag",       "");
+        screwdriver.AddFigure("ratio0btag",   "0 b-tag / SR",  "");
+    }
 
     // ########################################
     // ##       Create histograms and        ##
@@ -63,9 +76,14 @@ int main (int argc, char *argv[])
     // ########################################
 
     // Schedule plots
-    screwdriver.SchedulePlots("1DFigure","name=contamination,figures=MTpeak,channel=contamination,min=0,max=0.4");
+    screwdriver.SchedulePlots("1DFigure","name=MTpeak,figures=MTpeak,channel=contamination,min=0,max=0.4");
     screwdriver.SchedulePlots("1DFigure","name=signalRegion,figures=signalRegion,channel=contamination,min=0,max=5");
-    screwdriver.SchedulePlots("1DFigure","name=ratio,figures=ratio,channel=contamination,min=0,max=1.2");
+    screwdriver.SchedulePlots("1DFigure","name=ratioMTpeak,figures=ratioMTpeak,channel=contamination,min=0,max=1.2");
+    if (runningOnCnC)
+    {
+        screwdriver.SchedulePlots("1DFigure","name=0btag,figures=0btag,channel=contamination,min=0,max=0.4");
+        screwdriver.SchedulePlots("1DFigure","name=ratio0btag,figures=ratio0btag,channel=contamination,min=0,max=1.2");
+    }
 
     // Config plots
     screwdriver.SetGlobalStringOption("1DStackFigurePerProcess",  "includeSignal",   "stack");
@@ -82,6 +100,13 @@ int main (int argc, char *argv[])
     // ##   Set the figures   ##
     // #########################
 
+    Table contamination0btagTable = Table("./rawTables/0btag.tab");
+
+    vector<string> columns = { "MT peak" };
+    if (runningOnCnC) columns.push_back("0 b-tag");
+
+    Table summaryTable(columns, signalRegionsTagList, columns, signalRegionsLatexLabelList );
+
     // Loop on the signal regions and set the figure values...
     for (unsigned int i = 0 ; i < signalRegionsTagList.size() ; i++)
     {
@@ -90,12 +115,24 @@ int main (int argc, char *argv[])
 
         string signalRegionTag_ = signalRegionsTagList[i];
 
-        Figure contamination_MTpeak                 = contaminationTable.Get("MTpeak",              signalRegionTag_);
-        Figure contamination_signalRegion           = contaminationTable.Get("signalRegion",        signalRegionTag_);
+        Figure contamination_MTpeak                = contaminationTable.Get("MTpeak",              signalRegionTag_);
+        Figure contamination_signalRegion          = contaminationTable.Get("signalRegion",        signalRegionTag_);
 
         screwdriver.SetFigure("MTpeak",        signalRegionsTagList[i], "contamination",  contamination_MTpeak);
         screwdriver.SetFigure("signalRegion",  signalRegionsTagList[i], "contamination",  contamination_signalRegion);
-        screwdriver.SetFigure("ratio",         signalRegionsTagList[i], "contamination",  contamination_MTpeak/contamination_signalRegion);
+        screwdriver.SetFigure("ratioMTpeak",   signalRegionsTagList[i], "contamination",  contamination_MTpeak/contamination_signalRegion);
+
+        summaryTable.Set("MT peak", signalRegionsTagList[i], contamination_MTpeak/contamination_signalRegion);
+
+        if (runningOnCnC)
+        {
+            Figure contamination_0btag             = contamination0btagTable.Get("MTcut",          signalRegionTag_);
+            screwdriver.SetFigure("0btag",         signalRegionsTagList[i], "contamination",  contamination_0btag);
+            screwdriver.SetFigure("ratio0btag",    signalRegionsTagList[i], "contamination",  contamination_0btag/contamination_signalRegion);
+
+            summaryTable.Set("0 b-tag", signalRegionsTagList[i], contamination_0btag /contamination_signalRegion);
+        }
+
     }
 
     // ##############################
@@ -113,6 +150,8 @@ int main (int argc, char *argv[])
     // #############################
     // ##   Post-plotting tests   ##
     // #############################
+
+    summaryTable.PrintLatex("summary/"+globalTag+"/summary.tex");
 
     printBoxedMessage("Program done.");
     return (0);
