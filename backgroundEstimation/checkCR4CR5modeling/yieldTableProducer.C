@@ -1,6 +1,6 @@
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 #include "cutAndCountDefinitions_cutsLoosenedForCR4CR5.h"
-#include "../AN-14-067/BDTcutsWithCustomRequirements.h"
+#include "../../common/BDTcutsWithCustomRequirements.h"
 
 #ifndef SIGNAL_REGION_CUTS
     #error SIGNAL_REGION_CUTS need to be defined.

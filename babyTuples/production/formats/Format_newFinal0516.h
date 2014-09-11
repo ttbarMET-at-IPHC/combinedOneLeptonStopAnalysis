@@ -242,11 +242,10 @@ void ProofJob::LoadCorrectionFiles()
 
     sel.loadCorrections();
 
-
-    TFile* fileMapT2tt    = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2tt.root");
-    TFile* fileMapT2bw025 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-025.root");
-    TFile* fileMapT2bw050 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-050.root");
-    TFile* fileMapT2bw075 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-075.root");
+    TFile* fileMapT2tt    = new TFile("/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/signalInitialNumberOfEventsMap/mapT2tt.root");
+    TFile* fileMapT2bw025 = new TFile("/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/signalInitialNumberOfEventsMap/mapT2bw-025.root");
+    TFile* fileMapT2bw050 = new TFile("/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/signalInitialNumberOfEventsMap/mapT2bw-050.root");
+    TFile* fileMapT2bw075 = new TFile("/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/signalInitialNumberOfEventsMap/mapT2bw-075.root");
 
     fileMapT2tt   ->GetObject("mStopVSmNeutralino",mapT2tt   );
     fileMapT2bw025->GetObject("mStopVSmNeutralino",mapT2bw025);

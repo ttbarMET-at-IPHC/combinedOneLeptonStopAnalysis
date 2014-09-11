@@ -10,13 +10,13 @@ include common.make
 .PHONY:MTtailCorrection checkCR4CR5modeling backgroundPrediction summaryPlots
 
 MTtailCorrection:
-	@make -C ../backgroundEstimation_MTtailCorrection 	 default
+	@make -C ../MTtailCorrection 	 default
 
 checkCR4CR5modeling:
-	@make -C ../backgroundEstimation_checkCR4CR5modeling default
+	@make -C ../checkCR4CR5modeling default
 
 backgroundPrediction:
-	@make -C ../backgroundEstimation_prediction 		 default
+	@make -C ../prediction 		 default
 	
 reports:
 	@mkdir -p ./results/latest/report/
@@ -54,16 +54,16 @@ report_secondLep: reportProducer_secondLep.$(ExeSuf)
 copyResults:
 	@DATE=$(shell date +%Y_%m_%d_%H:%M:%S);			\
 	 mkdir -p ./results/$$DATE/;					\
-	 cp -r ../backgroundEstimation_MTtailCorrection/results    			./results/$$DATE/MTtailCorrection/;						\
-	 cp -r ../backgroundEstimation_MTtailCorrection/inputPlots 			./results/$$DATE/MTtailCorrection/inputPlots/;			\
-	 cp -r ../backgroundEstimation_checkCR4CR5modeling/results			./results/$$DATE/checkCR4CR5modeling/;					\
-	 cp -r ../backgroundEstimation_checkCR4CR5modeling/rawYieldTables	./results/$$DATE/checkCR4CR5modeling/rawYieldTables/;	\
-	 cp -r ../backgroundEstimation_checkCR4CR5modeling/scaleFactors		./results/$$DATE/checkCR4CR5modeling/scaleFactors/;		\
-	 cp -r ../backgroundEstimation_prediction/prediction				./results/$$DATE/prediction/;							\
-	 cp -r ../backgroundEstimation_prediction/rawYieldTables			./results/$$DATE/prediction/rawYieldTables/;			\
-	 cp -r ../backgroundEstimation_prediction/secondLeptonInAcceptance	./results/$$DATE/prediction/secondLeptonInAcceptance/;	\
-	 cp -r ../backgroundEstimation_prediction/scaleFactors				./results/$$DATE/prediction/scaleFactors/;				\
-	 cp -r ../backgroundEstimation_prediction/systematics				./results/$$DATE/prediction/systematics/;				\
+	 cp -r ../MTtailCorrection/results    			./results/$$DATE/MTtailCorrection/;						\
+	 cp -r ../MTtailCorrection/inputPlots 			./results/$$DATE/MTtailCorrection/inputPlots/;			\
+	 cp -r ../checkCR4CR5modeling/results			./results/$$DATE/checkCR4CR5modeling/;					\
+	 cp -r ../checkCR4CR5modeling/rawYieldTables	./results/$$DATE/checkCR4CR5modeling/rawYieldTables/;	\
+	 cp -r ../checkCR4CR5modeling/scaleFactors		./results/$$DATE/checkCR4CR5modeling/scaleFactors/;		\
+	 cp -r ../prediction/prediction					./results/$$DATE/prediction/;							\
+	 cp -r ../prediction/rawYieldTables				./results/$$DATE/prediction/rawYieldTables/;			\
+	 cp -r ../prediction/secondLeptonInAcceptance	./results/$$DATE/prediction/secondLeptonInAcceptance/;	\
+	 cp -r ../prediction/scaleFactors				./results/$$DATE/prediction/scaleFactors/;				\
+	 cp -r ../prediction/systematics				./results/$$DATE/prediction/systematics/;				\
 	 rm -f ./results/latest; cd results; ln -s ./$$DATE/ ./latest
 
 summaryPlots:
@@ -88,10 +88,10 @@ produceSummaryPlotsMTtailCorrection: MTtailCorrectionSummaryProducer.$(ExeSuf)
 	./MTtailCorrectionSummaryProducer.$(ExeSuf) "$(TAG)" "$(LABEL)" $(SIGNAL_REGIONS)
 
 cleanAll:
-	@make -C ../backgroundEstimation_MTtailCorrection 	 clean
-	@make -C ../backgroundEstimation_checkCR4CR5modeling clean
-	@make -C ../backgroundEstimation_prediction 		 clean
-	@make -C ./ 										 clean
+	@make -C ../MTtailCorrection 	 	clean
+	@make -C ../checkCR4CR5modeling 	clean
+	@make -C ../prediction 		 		clean
+	@make -C ./ 						clean
 
 
 BDTCutsWithCustomRequirements: computeBDTCutsWithCustomRequirements.$(ExeSuf)

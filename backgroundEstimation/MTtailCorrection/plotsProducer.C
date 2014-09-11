@@ -1,14 +1,14 @@
-#include "../backgroundEstimation_common/common.h"
-#include "../AN-14-067/BDTcutsWithCustomRequirements.h"
+#include "../common/common.h"
+#include "../../common/BDTcutsWithCustomRequirements.h"
 
 bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
-                                                                      
+
 bool goesInPreselectionMTpeak_withSRCuts()       { return (goesInPreselectionMTpeak()       && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreselectionMTtail_withSRCuts()       { return (goesInPreselectionMTtail()       && SIGNAL_REGION_CUTS(enableMTCut) ); }
 /*
-bool goesInPreselectionNoMT_withSRCuts()       
-{ 
+bool goesInPreselectionNoMT_withSRCuts()
+{
     bool iok = goesInPreselection()       && SIGNAL_REGION_CUTS(disableMTCut);
     if (myEvent.MT>MT_CUT && (sampleType == "data") )  iok=0;
     return iok;
@@ -27,21 +27,21 @@ bool goesInVetoControlRegionMTpeak_withSRCuts() { return (goesInVetoControlRegio
 bool goesInVetoControlRegionMTtail_withSRCuts() { return (goesInVetoControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
 bool goesInVetoControlRegionNoMT_withSRCuts()   { return (goesInVetosControlRegion()      && SIGNAL_REGION_CUTS(disableMTCut)); }
 
-bool goesIn0BtagControlRegionMTtail100()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 100); } 
-bool goesIn0BtagControlRegionMTtail120()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 120); } 
-bool goesIn0BtagControlRegionMTtail125()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 125); } 
-bool goesIn0BtagControlRegionMTtail130()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 130); } 
-bool goesIn0BtagControlRegionMTtail135()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 135); } 
-bool goesIn0BtagControlRegionMTtail140()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 140); } 
+bool goesIn0BtagControlRegionMTtail100()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 100); }
+bool goesIn0BtagControlRegionMTtail120()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 120); }
+bool goesIn0BtagControlRegionMTtail125()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 125); }
+bool goesIn0BtagControlRegionMTtail130()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 130); }
+bool goesIn0BtagControlRegionMTtail135()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 135); }
+bool goesIn0BtagControlRegionMTtail140()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 140); }
 
 bool goesInPreselNoBRequirementControlRegionMTinverted()
 {
     if (myEvent.MET < 80) return false;
     if (myEvent.numberOfLepton != 1) return false;
-    if (myEvent.nJets < 4)  return false; 
+    if (myEvent.nJets < 4)  return false;
     if ((!myEvent.isolatedTrackVeto) || (!myEvent.tauVeto)) return false;
-    if (myEvent.MT >=100)  return false; 
-    return true; 
+    if (myEvent.MT >=100)  return false;
+    return true;
 }
 
 bool BDT_MTtail_T2tt_1   () { return goesIn0BtagControlRegionMTtail() && BDT_T2tt_1   (false); }
@@ -196,7 +196,7 @@ int main (int argc, char *argv[])
 
 
     screwdriver.AddVariable("Mlb",           "M'(lb)",    "GeV",  40,0,600,             &(myEvent.Mlb),    "");
-    
+
     float Mlb_customBinning[3] = {0,150,600};
     screwdriver.AddVariable("Mlb_small",     "M'(lb)",    "GeV",  2, Mlb_customBinning, &(myEvent.Mlb),    "");
     screwdriver.AddVariable("M3b",           "M3b",       "GeV",  40,0,1000,            &(myEvent.M3b),    "");
@@ -340,7 +340,7 @@ int main (int argc, char *argv[])
     screwdriver.AddRegion("CR0btag_MTtail_MT_135",           "",  &goesIn0BtagControlRegionMTtail135);
     screwdriver.AddRegion("CR0btag_MTtail_MT_140",           "",  &goesIn0BtagControlRegionMTtail140);
 
-    screwdriver.AddRegion("CR0btag_MTpeak_MET_200",          "",  &CR0btag_MTpeak_MET_200         ); 
+    screwdriver.AddRegion("CR0btag_MTpeak_MET_200",          "",  &CR0btag_MTpeak_MET_200         );
     screwdriver.AddRegion("CR0btag_MTpeak_MET_250",          "",  &CR0btag_MTpeak_MET_250         );
     screwdriver.AddRegion("CR0btag_MTpeak_MET_300",          "",  &CR0btag_MTpeak_MET_300         );
     screwdriver.AddRegion("CR0btag_MTpeak_MET_350",          "",  &CR0btag_MTpeak_MET_350         );
@@ -356,7 +356,7 @@ int main (int argc, char *argv[])
     screwdriver.AddRegion("CR0btag_MTpeak_METoverSqrtHT_12", "",  &CR0btag_MTpeak_METoverSqrtHT_12);
     screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_6" , "",  &CR0btag_MTtail_METoverSqrtHT_6 );
     screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_7" , "",  &CR0btag_MTtail_METoverSqrtHT_7 );
-    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_8" , "",  &CR0btag_MTtail_METoverSqrtHT_8 ); 
+    screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_8" , "",  &CR0btag_MTtail_METoverSqrtHT_8 );
     screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_9" , "",  &CR0btag_MTtail_METoverSqrtHT_9 );
     screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_10", "",  &CR0btag_MTtail_METoverSqrtHT_10);
     screwdriver.AddRegion("CR0btag_MTtail_METoverSqrtHT_12", "",  &CR0btag_MTtail_METoverSqrtHT_12);
@@ -371,25 +371,25 @@ int main (int argc, char *argv[])
     screwdriver.AddRegion("CR0btag_MTtail_DPhi_08" ,         "",  &CR0btag_MTtail_DPhi_08         );
     screwdriver.AddRegion("CR0btag_MTpeak_ISRJet"  ,         "",  &CR0btag_MTpeak_ISRJet          );
     screwdriver.AddRegion("CR0btag_MTtail_ISRJet"  ,         "",  &CR0btag_MTtail_ISRJet          );
-    screwdriver.AddRegion("CR0btag_MTpeak_MT2W_180",         "",  &CR0btag_MTpeak_MT2W_180        ); 
+    screwdriver.AddRegion("CR0btag_MTpeak_MT2W_180",         "",  &CR0btag_MTpeak_MT2W_180        );
     screwdriver.AddRegion("CR0btag_MTpeak_MT2W_190",         "",  &CR0btag_MTpeak_MT2W_190        );
     screwdriver.AddRegion("CR0btag_MTpeak_MT2W_200",         "",  &CR0btag_MTpeak_MT2W_200        );
     screwdriver.AddRegion("CR0btag_MTtail_MT2W_180",         "",  &CR0btag_MTtail_MT2W_180        );
     screwdriver.AddRegion("CR0btag_MTtail_MT2W_190",         "",  &CR0btag_MTtail_MT2W_190        );
     screwdriver.AddRegion("CR0btag_MTtail_MT2W_200",         "",  &CR0btag_MTtail_MT2W_200        );
 
-    // ##########################                                                                                                  
-    // ##   Create Channels    ##                                                                                                  
-    // ##########################                                                                                                  
+    // ##########################
+    // ##   Create Channels    ##
+    // ##########################
 
-    screwdriver.AddChannel("singleLepton", "e/#mu-channels",   &goesInSingleLeptonChannel);                                        
+    screwdriver.AddChannel("singleLepton", "e/#mu-channels",   &goesInSingleLeptonChannel);
 
-    // ########################################                                                                                       
-    // ##       Create histograms and        ##                                                                                       
-    // ##  schedule type of plots to produce ##                                                                                       
-    // ########################################                                                                                       
+    // ########################################
+    // ##       Create histograms and        ##
+    // ##  schedule type of plots to produce ##
+    // ########################################
 
-    // Create histograms                                                                                                           
+    // Create histograms
     screwdriver.Create1DHistos();
 
     // Schedule plots
@@ -425,7 +425,7 @@ int main (int argc, char *argv[])
 
         // Open the tree
         TFile f((string(FOLDER_BABYTUPLES)+currentDataset+".root").c_str());
-        TTree* theTree = (TTree*) f.Get("babyTuple"); 
+        TTree* theTree = (TTree*) f.Get("babyTuple");
 
         intermediatePointers pointers;
         InitializeBranchesForReading(theTree,&myEvent,&pointers);
@@ -436,7 +436,7 @@ int main (int argc, char *argv[])
 
         bool ttbarDatasetToBeSplitted = false;
         if (findSubstring(currentDataset,"ttbar")
-                && (currentDataset != "ttbar_madgraph_1l") 
+                && (currentDataset != "ttbar_madgraph_1l")
                 && (currentDataset != "ttbar_madgraph_2l"))
             ttbarDatasetToBeSplitted = true;
 
@@ -455,14 +455,14 @@ int main (int argc, char *argv[])
             if (ttbarDatasetToBeSplitted && (myEvent.numberOfGenLepton == 2))
                 currentProcessClass_ = "ttbar_2l";
 
-            // FIXME Why managing overflow this way ? 
+            // FIXME Why managing overflow this way ?
             // It's already done on the plot automatically...
             nJets = myEvent.nJets;
             if(myEvent.nJets >6 ) nJets = 6;
 
             screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
-        } 
+        }
         printProgressBar(nEntries,nEntries,currentDataset);
         cout << endl;
         f.Close();
@@ -477,8 +477,8 @@ int main (int argc, char *argv[])
     cout << "   > Making plots..." << endl;
     screwdriver.MakePlots();
     cout << "   > Saving plots..." << endl;
-    // TODO : if we need to redo tests for different ttbar sample, 
-    // move the plots to a separate folder with the name of the alternative sample 
+    // TODO : if we need to redo tests for different ttbar sample,
+    // move the plots to a separate folder with the name of the alternative sample
     screwdriver.WritePlots(string("./inputPlots/"));
 
     printBoxedMessage("Plot generation completed");

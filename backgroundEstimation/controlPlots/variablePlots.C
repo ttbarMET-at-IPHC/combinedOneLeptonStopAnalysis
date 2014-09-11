@@ -1,4 +1,4 @@
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 
 bool goesInDileptonControlRegion_() { return goesInDileptonControlRegion(); }
 
@@ -230,7 +230,7 @@ int main (int argc, char *argv[])
   // ##   Apply scale factors   ##
   // #############################
 
-    Table scaleFactors = Table("../backgroundEstimation_prediction/scaleFactors/preselection.tab");
+    Table scaleFactors = Table("../prediction/scaleFactors/preselection.tab");
 
     Figure SF_pre           = scaleFactors.Get("value","SF_pre");
     Figure SF_post          = scaleFactors.Get("value","SF_post");

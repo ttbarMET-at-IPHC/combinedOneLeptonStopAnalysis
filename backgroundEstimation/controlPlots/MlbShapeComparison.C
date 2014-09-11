@@ -1,4 +1,4 @@
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 
 bool goesInAnyChannel()                          { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
 

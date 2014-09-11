@@ -3,7 +3,7 @@
 
 #include "interface/tables/TableDataMC.h"
 #include "interface/Figure.h"
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 
 using namespace std;
 using namespace theDoctor;
@@ -21,23 +21,23 @@ class backgroundEstimation{
         void  ComputeSF0btag();
         void  ComputeSFvetopeak();
         float ComputeSecondLeptonVetoUncertainty();
-        
+
         #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
             void  ImportMTTailCorrectionFromTemplateFitMethod();
         #else
             void  ComputeMTTailToPeakRatioCorrectionMethod();
         #endif
-        
+
         void   Run();
         Figure ComputePrediction();
         void   FillPredictionTable();
-        
+
         void   ResetSystematics();
         void   ComputePredictionWithSystematics();
-        
+
 
     private:
-       
+
         string signalRegionLabel;
 
         // Scale factors
@@ -67,12 +67,12 @@ class backgroundEstimation{
         float ttll_CR4CR5ModelingUncertainty;
         float ttll_nJetsModelingUncertainty;
 
-        // Tables 
+        // Tables
 
             // Inputs
         Table  rawYieldTable;
         Table  secondLeptonInAcceptanceYieldTable;
-            
+
             // Outputs
         Table  scaleFactorTable;
         Table  predictionTable;
@@ -80,12 +80,12 @@ class backgroundEstimation{
 
         // Systematic flags / value
         //
-        float ttll_CR4and5_rescale;   
-        float ttll_nJets_rescale;     
+        float ttll_CR4and5_rescale;
+        float ttll_nJets_rescale;
         float ttll_2ndlepVeto_rescale;
         float WjetCrossSection_rescale;
         float rareCrossSection_rescale;
-        
+
         #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
             float oneLepTopCrossSection_rescale;
             int   SF_MTtail_Wjets_variation;

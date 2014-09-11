@@ -11,7 +11,7 @@ using namespace std;
 #include <TBranch.h>
 #include <TLorentzVector.h>
 
-#include "../common.h"
+#include "../../common.h"
 
 // Define format
 #include "Format.h"
@@ -22,17 +22,24 @@ string sampleType;
 
     // Standard babyTuples
 //#define USE_ONE_LEPTON_SKIM
-//#define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/"
-//#define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim/1lepton4jetsMET80/"
+//#define FOLDER_INPUT  "../../store/babyTuples_0603_withBDT/"
+//#define FOLDER_OUTPUT "../../store/babyTuples_0603_withBDT_skim/1lepton4jetsMET80/"
 
     // Fix for dilepton channels with 1 and 2 jets bins
-#define USE_TWO_LEPTONS_SKIM
-#define FOLDER_INPUT  "../store/babyTuples_0603_withBDT/fix2lepton/"
-#define FOLDER_OUTPUT "../store/babyTuples_0603_withBDT_skim/2leptons1jetMET50/"
+//#define USE_TWO_LEPTONS_SKIM
+//#define FOLDER_INPUT  "../../store/babyTuples_0603_withBDT/fix2lepton/"
+//#define FOLDER_OUTPUT "../../store/babyTuples_0603_withBDT_skim/2leptons1jetMET50/"
+
+    // Skimming to extract one given benchmark of signal
+#define USE_SIGNAL_SKIMMING
+#define FOLDER_INPUT    "../../store/babyTuples_0603_withBDT/"
+#define FOLDER_OUTPUT   "./"
+#define MASS_STOP       250
+#define MASS_NEUTRALINO 100
 
 // Files needed to compute on-fly variables
-#include "../AN-14-067/secondGeneratedLeptonType.h"
-#include "../AN-14-067/cutAndCountDefinitions.h"
+#include "../../common/secondGeneratedLeptonType.h"
+#include "../../common/cutAndCountDefinitions.h"
 
 // ###################
 // #  Main function  #
@@ -86,6 +93,11 @@ int main (int argc, char *argv[])
             if (myEvent.numberOfLepton != 2) continue;
             if (myEvent.nJets < 1)           continue;
             if (myEvent.MET < 50)            continue;
+        #else
+        #ifdef USE_SIGNAL_SKIMMING
+            if (myEvent.mStop       != MASS_STOP      ) continue;
+            if (myEvent.mNeutralino != MASS_NEUTRALINO) continue;
+        #endif
         #endif
         #endif
 

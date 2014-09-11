@@ -13,13 +13,13 @@ CXX           = g++
 CXXFLAGS      = -std=c++0x
 CXXFLAGS     += -O -Wall -fPIC $(DEFINES) -Wno-unused-result -Wshadow
 CXXFLAGS     += $(ROOTCFLAGS) -I./
-CXXFLAGS     += -I../sonicScrewdriver/
+CXXFLAGS     += -I../../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA 
-LDFLAGS      += -l:`pwd`/../.vectorDictionnary_C.so 
-LDFLAGS      += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
+LDFLAGS      += -l:`pwd`/../../.vectorDictionnary_C.so 
+LDFLAGS      += -l:`pwd`/../../sonicScrewdriver/libSonicScrewdriver.so
 
 SOFLAGS       = -shared
 LIBS          =  
@@ -53,7 +53,7 @@ EXECUTABLES   = $(SOURCES:.$(SrcSuf)=.$(ExeSuf))
 LOGS          = $(SOURCES:.$(SrcSuf)=.$(LogSuf))
 
 #------------------------------------------------------------------------------
-compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
+compile: ../../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
 run:
 	./$(TARGET).$(ExeSuf) | tee $(TARGET).$(LogSuf)
@@ -67,8 +67,8 @@ clean:
 
 #------------------------------------------------------------------------------
 
-../.vectorDictionnary_C.so: ../.vectorDictionnary.C
-	cd ..; root -q -l -L .vectorDictionnary.C+
+../../.vectorDictionnary_C.so: ../../.vectorDictionnary.C
+	cd ../../; root -q -l -L .vectorDictionnary.C+
 
-%.$(ExeSuf): %.$(SrcSuf) ../.vectorDictionnary_C.so
+%.$(ExeSuf): %.$(SrcSuf) ../../.vectorDictionnary_C.so
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)

@@ -7,7 +7,7 @@
 #include "interface/SonicScrewdriver.h"
 using namespace theDoctor;
 
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 
 #include <string>
 

@@ -1,4 +1,4 @@
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 
 #ifndef SIGNAL_REGION_CUTS
     #error SIGNAL_REGION_CUTS need to be defined.

@@ -22,7 +22,7 @@ reports: reportBDT reportCnC
 
 #------------------------------------------------------------------------------
 
-include ../backgroundEstimation_common/common.make
+include ../common/common.make
 
 tablesBDT:
 	@make --no-print-directory clean

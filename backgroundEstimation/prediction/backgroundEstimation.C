@@ -63,9 +63,9 @@ backgroundEstimation::backgroundEstimation(string signalRegionLabel_)
         Table temporaryTable;
 
         if (findSubstring(signalRegionLabel,"BDT"))
-    	    temporaryTable = Table("../backgroundEstimation_checkCR4CR5modeling/results/uncertainties_BDT.tab");
+    	    temporaryTable = Table("../checkCR4CR5modeling/results/uncertainties_BDT.tab");
         else
-    	    temporaryTable = Table("../backgroundEstimation_checkCR4CR5modeling/results/uncertainties_CnC.tab");
+    	    temporaryTable = Table("../checkCR4CR5modeling/results/uncertainties_CnC.tab");
 
         ttll_CR4CR5ModelingUncertainty = temporaryTable.Get("value",signalRegionLabel).error();
     #else
@@ -372,7 +372,7 @@ void backgroundEstimation::ComputeSFvetopeak()
 #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
 void backgroundEstimation::ImportMTTailCorrectionFromTemplateFitMethod()
 {
-    Table SFR_table = Table("../backgroundEstimation_MTtailCorrection/results/SF_MTtail.tab");
+    Table SFR_table = Table("../MTtailCorrection/results/SF_MTtail.tab");
 
     // Remove low/medium/highDM suffix in label for BDT's
     string signalRegionLabel_ = signalRegionLabel;

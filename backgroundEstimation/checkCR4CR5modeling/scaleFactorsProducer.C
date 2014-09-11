@@ -187,7 +187,7 @@ void scaleFactorsProducer::ComputeMTTailToPeakRatioCorrectionMethod()
 
 void scaleFactorsProducer::ImportMTTailCorrectionFromTemplateFitMethod()
 {
-    Table table = Table("../backgroundEstimation_MTtailCorrection/results/SF_MTtail.tab");
+    Table table = Table("../MTtailCorrection/results/SF_MTtail.tab");
 
     // Remove low/medium/highDM suffix in label for BDT's
     string signalRegionLabel_ = signalRegionLabel;

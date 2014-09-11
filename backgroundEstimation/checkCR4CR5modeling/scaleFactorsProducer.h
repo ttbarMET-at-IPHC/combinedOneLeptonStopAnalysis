@@ -3,7 +3,7 @@
 
 #include "interface/tables/TableDataMC.h"
 #include "interface/Figure.h"
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 
 using namespace std;
 using namespace theDoctor;
@@ -18,7 +18,7 @@ class scaleFactorsProducer{
         void   ResetSystematics();
 
         void ComputeSFpre();
-        
+
         void ComputeMTTailToPeakRatioCorrectionMethod();
         void ImportMTTailCorrectionFromTemplateFitMethod();
 
@@ -26,15 +26,15 @@ class scaleFactorsProducer{
         void ComputeSF2ltail();
         void ComputeSFvetopeak();
         void ComputeSFvetotail();
-        
+
         void PrintReport();
-        
+
         void ComputePrediction();
-        
+
         void Run();
 
     private:
-       
+
         string signalRegionLabel;
         string customBDTRequirement;
 
@@ -52,7 +52,7 @@ class scaleFactorsProducer{
         Figure SF_2ltail;
         Figure SF_vetotail;
 
-        // Tables 
+        // Tables
 
         Table  rawYieldTable;
         Table  scaleFactorTable;

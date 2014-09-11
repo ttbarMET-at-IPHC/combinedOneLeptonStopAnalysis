@@ -16,7 +16,7 @@ CXXFLAGS      += $(ROOTCFLAGS) -I./
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
-LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
+LDFLAGS       += -l:`pwd`/../../.vectorDictionnary_C.so 
 
 SOFLAGS       = -shared
 LIBS          = 
@@ -36,7 +36,7 @@ TARGET = babySkimmer
 
 default: compile
 	
-compile: ../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
+compile: ../../.vectorDictionnary_C.so $(TARGET).$(ExeSuf)
 
 skim: $(TARGET).$(ExeSuf)
 	@for DATASET in `cat list`;							\
@@ -50,8 +50,8 @@ clean:
 
 #------------------------------------------------------------------------------
 
-../.vectorDictionnary_C.so: ../.vectorDictionnary.C
-	cd ..; root -q -l -L .vectorDictionnary.C+
+../../.vectorDictionnary_C.so: ../../.vectorDictionnary.C
+	cd ../..; root -q -l -L .vectorDictionnary.C+
 
 %.$(ExeSuf): %.$(SrcSuf)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)

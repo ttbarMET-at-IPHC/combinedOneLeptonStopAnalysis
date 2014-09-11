@@ -4,7 +4,7 @@ default: plots MTTailCorrection
 
 #------------------------------------------------------------------------------
 
-include ../backgroundEstimation_common/common.make
+include ../common/common.make
 
 plots: plotsProducer.$(ExeSuf)
 	./plotsProducer.$(ExeSuf)

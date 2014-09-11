@@ -1,4 +1,4 @@
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 #include "cutAndCountDefinitions_cutsLoosenedForCR4CR5.h"
 
 // FIXME these are not used, is that a bug or a feature ?
@@ -15,7 +15,7 @@ void GetEnveloppe(float * SFval,float * SFerr, float tabSize, float & min, float
     float value=0;
     float error=0;
     // First: find the value compatible with one with the lowest uncertainty
-    for (int i=0; i<tabSize; i++) 
+    for (int i=0; i<tabSize; i++)
     {
         value = SFval[i];
         error = SFerr[i];
@@ -27,10 +27,10 @@ void GetEnveloppe(float * SFval,float * SFerr, float tabSize, float & min, float
                 max = value+error;
                 min = value-error;
             }
-        }  
+        }
     }
     // Second : enlarge for value non-compatible with 1.
-    for (int i=0; i<tabSize; i++) 
+    for (int i=0; i<tabSize; i++)
     {
         value = SFval[i];
         if(value<min) min = value;
@@ -51,13 +51,13 @@ int main (int argc, char *argv[])
 
     //
     // Read list of signal regions to consider
-    // 
+    //
     vector<string> signalRegionsTagList;
-    for (int i = 1 ; i < argc ; i++) 
+    for (int i = 1 ; i < argc ; i++)
     {
         signalRegionsTagList.push_back(argv[i]);
     }
-    
+
     init_cutsLoosenedForCR4CR5_numbersOfRegions();
     int maxNumberOfAlternativeLoosenedRegions = 1;
     for (unsigned int r = 0 ; r < signalRegionsTagList.size() ; r++)
@@ -100,9 +100,9 @@ int main (int argc, char *argv[])
     for(unsigned int j=0;j<signalRegionsTagList.size();j++)
     {
         string sr = signalRegionLabel(signalRegionsTagList[j],"root");
-        if (signalRegionsTagList[j] == "preselection") 
+        if (signalRegionsTagList[j] == "preselection")
             SF_tt2l_CR4[0]->GetXaxis()->SetBinLabel(j+1, sr.c_str());
-        else 
+        else
             SF_tt2l_CR4[0]->GetXaxis()->SetBinLabel(j+1, sr.c_str());
     }
 
@@ -115,9 +115,9 @@ int main (int argc, char *argv[])
         string signalRegionTag = signalRegionsTagList[j];
         int numberOfAlternativeLoosenedRegions = cutAndCount_numbersOfAlternativeLoosenedRegions[signalRegionTag];
 
-        float SFval[numberOfAlternativeLoosenedRegions*2]; 
+        float SFval[numberOfAlternativeLoosenedRegions*2];
         float SFerr[numberOfAlternativeLoosenedRegions*2];
-        for (int i=0 ; i< numberOfAlternativeLoosenedRegions*2 ; i++) 
+        for (int i=0 ; i< numberOfAlternativeLoosenedRegions*2 ; i++)
         {
             SFval[i] = 1.;
             SFerr[i] = -0.01; // negative to not be part of the enveloppe, if initial value
@@ -126,9 +126,9 @@ int main (int argc, char *argv[])
         for (int altR = 0 ; altR < numberOfAlternativeLoosenedRegions ; altR++)
         {
             Table sigR;
-            if (signalRegionTag == "preselection") 
+            if (signalRegionTag == "preselection")
                 sigR  = Table("scaleFactors/"+signalRegionTag+".tab");
-            else 
+            else
                 sigR  = Table("scaleFactors/"+signalRegionTag+"_cutsLoosenedForCR4CR5_"+intToString(altR+1)+".tab");
 
             Figure SF_2ltail   = sigR.Get("value","SF_2ltail");
@@ -144,7 +144,7 @@ int main (int argc, char *argv[])
             SFval[2*altR+1] = SF_vetotail.value();
             SFerr[2*altR+1] = SF_vetotail.error();
         }
-        
+
         float min =0;
         float max =10;
         GetEnveloppe(SFval, SFerr, numberOfAlternativeLoosenedRegions*2, min, max);

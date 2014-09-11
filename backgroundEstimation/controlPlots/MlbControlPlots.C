@@ -1,4 +1,4 @@
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 
 bool goesInAnyChannel()                          { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
 
@@ -161,7 +161,7 @@ int main (int argc, char *argv[])
     // ##   Apply scale factors   ##
     // #############################
 
-    Table scaleFactors = Table(string("../backgroundEstimation_prediction/scaleFactors/")+"preselection.tab");
+    Table scaleFactors = Table(string("../prediction/scaleFactors/")+"preselection.tab");
 
     Figure SF_pre           = scaleFactors.Get("value","SF_pre");
     Figure SF_post          = scaleFactors.Get("value","SF_post");

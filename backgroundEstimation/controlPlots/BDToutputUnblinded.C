@@ -1,4 +1,4 @@
-#include "../backgroundEstimation_common/common.h"
+#include "../common/common.h"
 
 #ifndef SIGNAL_REGION_TAG
     #error SIGNAL_REGION_TAG need to be defined.
@@ -275,7 +275,7 @@ int main (int argc, char *argv[])
     // ##   Apply scale factors   ##
     // #############################
 
-    Table scaleFactors = Table(string("../backgroundEstimation_prediction/scaleFactors/BDT_")+BDTSignalRegionTag+".tab");
+    Table scaleFactors = Table(string("../prediction/scaleFactors/BDT_")+BDTSignalRegionTag+".tab");
 
     Figure SF_pre           = scaleFactors.Get("value","SF_pre");
     Figure SF_post          = scaleFactors.Get("value","SF_post");

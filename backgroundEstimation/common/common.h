@@ -1,7 +1,7 @@
 #ifndef BACKGROUNDESTIMATION_COMMON
 #define BACKGROUNDESTIMATION_COMMON
 
-#include "../common.h"
+#include "../../common.h"
 bool enableMTCut = true;
 bool disableMTCut = false;
 
@@ -22,7 +22,7 @@ using namespace theDoctor;
 // #  BabyTuple format and location  #
 // ###################################
 
-#define FOLDER_BABYTUPLES "../store/babyTuples_0603_withBDT_skim/merged_1lepton4jetsMET80_or_2leptons1jetMET50/"
+#define FOLDER_BABYTUPLES "../../store/babyTuples_0603_withBDT_skim/merged_1lepton4jetsMET80_or_2leptons1jetMET50/"
 #include "Reader.h"
 
 #define BDT_OUTPUT_AVAILABLE
@@ -42,10 +42,10 @@ using namespace theDoctor;
 // #  Analysis, cut-and-count and BDT definitions  #
 // #################################################
 
-#include "../AN-14-067/selectionDefinitions.h"
-#include "../AN-14-067/cutAndCountDefinitions.h"
-#include "../AN-14-067/signalRegionDefinitions.h"
-#include "../AN-14-067/secondGeneratedLeptonType.h"
+#include "../../common/selectionDefinitions.h"
+#include "../../common/cutAndCountDefinitions.h"
+#include "../../common/signalRegionDefinitions.h"
+#include "../../common/secondGeneratedLeptonType.h"
 
 // ####################
 // #  Processes list  #
