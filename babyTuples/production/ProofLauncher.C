@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   // #   Load XML configuration   #
   // ##############################
 
-  string xmlFileName = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/")+XML_CONFIG;
+  string xmlFileName = XML_CONFIG;
   AnalysisEnvironmentLoader anaEL(xmlFileName);
 
   vector<Dataset> datasets;

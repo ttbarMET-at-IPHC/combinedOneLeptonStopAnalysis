@@ -18,22 +18,17 @@
 *.png
 plots/
 
-# Log files
+# Log/tab/dump files
 *.log
+*.dump
 *.tab
 
 # Executables
 *.run
 
 # Non versionned folders and links
-microTupling/
-WTagTMVATraining/weights_*
-WTagTMVATraining/trainMVA_AdaBoost
-WTagTMVATraining/trainMVA_GradBoost
-oldFiles/
-babyTupling/proofBox
-analysisNote/
-
+documentation/
+backgroundEstimation/common/results/
 
 # Various backup/crap
 *.d
@@ -43,7 +38,3 @@ analysisNote/
 .list*
 */backup*
 */list
-stopBabiesToMicroTuples/dump.dat
-synchronization/synchroBabyTuples
-babyValidation/Validation_signal
-backgroundEstimation_common/results/

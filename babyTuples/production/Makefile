@@ -5,12 +5,10 @@ ExeSuf        = run
 LogSuf        = log
 
 # IPHC paths
-
-IPHCDATAFORMAT_NTUPLE = `pwd`/../../../../../../IPHCDataFormat/
-IPHCANALYSIS_NTUPLE   = `pwd`/../../../../
+IPHCDATAFORMAT_NTUPLE = /opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/IPHCDataFormat
+IPHCANALYSIS_NTUPLE   = /opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis
 
 # Root flags
-
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
 
@@ -59,7 +57,7 @@ job: $(PROOF_JOB)_C.so
 
 clean:
 	@echo "Cleaning..."
-	@rm -rf $(OBJECTS) $(EXECUTABLES) $(LOGS) $(ROOTMESS1) $(ROOTMESS2) backup_outputProof* NTAna
+	@rm -rf $(OBJECTS) $(EXECUTABLES) $(LOGS) $(ROOTMESS1) $(ROOTMESS2) backup_outputProof* NTupleAnalysisPackage
 
 #------------------------------------------------------------------------------
 
