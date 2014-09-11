@@ -39,7 +39,7 @@ void combined1LeptonStopSelection::loadCorrections()
 }
 
 
-void combined1LeptonStopSelection::doObjectSelection(bool runningOnData, short int JESvariation)
+void combined1LeptonStopSelection::DoObjectSelection(bool runningOnData, short int JESvariation)
 {
 
     // Clear selected object collections
@@ -56,13 +56,13 @@ void combined1LeptonStopSelection::doObjectSelection(bool runningOnData, short i
 
     rawJets           = *GetPointer2Jets();
     rawMET            = GetSelectedMET(false,1.0,false,1.0);
-    goodMuons         = GetSUSYstopGoodMuons();
-    goodElectrons     = GetSUSYstopGoodElectrons();
-    goodJets          = GetSUSYstopGoodJets(runningOnData);
+    goodMuons         = Get1LeptonStopGoodMuons();
+    goodElectrons     = Get1LeptonStopGoodElectrons();
+    goodJets          = Get1LeptonStopGoodJets(runningOnData);
 
 
     // MET
-    NTMET tmpMET      = GetSUSYstopType1PhiMET(runningOnData);
+    NTMET tmpMET      = Get1LeptonStopType1PhiMET(runningOnData);
     theMET            = TLorentzVector(tmpMET.p2.Px(),tmpMET.p2.Py(),0.,tmpMET.p2.Mod());
 
     // JES variations if asked
@@ -71,21 +71,21 @@ void combined1LeptonStopSelection::doObjectSelection(bool runningOnData, short i
 
     // Selected objects
 
-    selectedMuons     = GetSUSYstopSelectedMuons();
-    selectedElectrons = GetSUSYstopSelectedElectrons();
-    selectedJets      = GetSUSYstopSelectedJets (runningOnData);
-    selectedBJets     = GetSUSYstopSelectedBJets(runningOnData);
+    selectedMuons     = Get1LeptonStopSelectedMuons();
+    selectedElectrons = Get1LeptonStopSelectedElectrons();
+    selectedJets      = Get1LeptonStopSelectedJets (runningOnData);
+    selectedBJets     = Get1LeptonStopSelectedBJets(runningOnData);
 
 }
 
-bool combined1LeptonStopSelection::passEventSelection(bool runningOnData)
+bool combined1LeptonStopSelection::PassEventSelection(bool runningOnData)
 {
 
     // #####################
     // #  Object selection #
     // #####################
 
-    doObjectSelection(runningOnData);
+    DoObjectSelection(runningOnData);
 
     // ##########################
     // #  Step 0        Filters #
@@ -97,12 +97,12 @@ bool combined1LeptonStopSelection::passEventSelection(bool runningOnData)
     // #  Step 1        Trigger #
     // ##########################
 
-    bool trigger_singleElec = passTrigger("singleElec");
-    bool trigger_singleMuon = passTrigger("singleMuon");
-    bool trigger_crossMuon  = passTrigger("crossMuon");
-    bool trigger_doubleElec = passTrigger("doubleElec");
-    bool trigger_doubleMuon = passTrigger("doubleMuon");
-    bool trigger_elecMuon   = passTrigger("muonElec");
+    bool trigger_singleElec = PassTrigger("singleElec");
+    bool trigger_singleMuon = PassTrigger("singleMuon");
+    bool trigger_crossMuon  = PassTrigger("crossMuon");
+    bool trigger_doubleElec = PassTrigger("doubleElec");
+    bool trigger_doubleMuon = PassTrigger("doubleMuon");
+    bool trigger_elecMuon   = PassTrigger("muonElec");
 
     if (
             ((runningOnData) && (trigger_singleElec || trigger_singleMuon || trigger_crossMuon 
@@ -120,6 +120,8 @@ bool combined1LeptonStopSelection::passEventSelection(bool runningOnData)
         {
             numberOfSelectedLeptons = selectedElectrons.size() + selectedMuons.size();
 
+            FillLeadingLeptonsInfo();
+
             // ##########################
             // #  Step 3       3 jets   #
             // ##########################
@@ -127,7 +129,6 @@ bool combined1LeptonStopSelection::passEventSelection(bool runningOnData)
             if (selectedJets.size() >= 3) 
             //if (selectedJets.size() >= 1) 
             {
-                FillKinematicP4();
                 return true;
             }
         } 
@@ -146,7 +147,7 @@ bool combined1LeptonStopSelection::passEventSelection(bool runningOnData)
 // #                                                                                           #
 // #############################################################################################
 
-bool combined1LeptonStopSelection::GetSUSYstopIsolatedTrackVeto(TLorentzVector lepton_p, float lepton_charge) const
+bool combined1LeptonStopSelection::Get1LeptonStopIsolatedTrackVeto(TLorentzVector lepton_p, float lepton_charge) const
 {
     // Input vector
     std::vector<IPHCTree::NTPFCandidate> vetotracks = GetPFCandidates();
@@ -167,7 +168,6 @@ bool combined1LeptonStopSelection::GetSUSYstopIsolatedTrackVeto(TLorentzVector l
         {
             if ((vetotracks[i].others["gsfPt"] > 5)
                     && (fabs(vetotracks[i].others["gsfdz"]) < 0.05)
-                    //&& (vetotracks[i].trackIso / vetotracks[i].p4.Pt() < 0.2))    
                     && (vetotracks[i].trackIso / vetotracks[i].others["gsfPt"] < 0.2))
                 passCuts = true;
         }
@@ -205,21 +205,11 @@ bool combined1LeptonStopSelection::GetSUSYstopIsolatedTrackVeto(TLorentzVector l
 // #                                          #
 // ############################################
 
-bool combined1LeptonStopSelection::GetSUSYstopTauVeto(TLorentzVector lepton_p, float lepton_charge) const
+bool combined1LeptonStopSelection::Get1LeptonStopTauVeto(TLorentzVector lepton_p, float lepton_charge) const
 {
     std::vector<IPHCTree::NTTau> localTaus = (*GetPointer2Taus());
     for (unsigned int i = 0 ; i < localTaus.size() ; i++)
     {
-        /*
-        DEBUG_MSG << "tau i = " << i
-                  << " ; Pt = " << localTaus[i].p4.Pt()
-                  << " ; charge = " << localTaus[i].charge * lepton_charge
-                  << " ; decayMode finding = " << localTaus[i].ID["decayModeFinding"]
-                  << " ; delta R = " <<  localTaus[i].p4.DeltaR(lepton_p)
-                  << " ; ID = " << localTaus[i].ID["byMediumIsolationMVA2"]
-                  << endl;
-        */
-
         // Reject tau candidates with pT < 20 GeV
         if (localTaus[i].p4.Pt() < 20) continue;
         // Reject tau candidates with same charge than selected lepton
@@ -237,92 +227,62 @@ bool combined1LeptonStopSelection::GetSUSYstopTauVeto(TLorentzVector lepton_p, f
     return true;
 }
 
-
-void combined1LeptonStopSelection::FillKinematicP4()
+void combined1LeptonStopSelection::FillLeadingLeptonsInfo()
 {
+    // Reset
 
-    // 0. Reset
-    TLorentzVector resetvector(0.,0.,0.,0.);
-    theLeadingLepton=resetvector;
-    theSecondLepton=resetvector;
-    all_hadronic=resetvector;
-    top_hadronic=resetvector;
-    the_4thjet=resetvector;
-    w_leptonic=resetvector;
-    top_leptonic=resetvector;
+    theLeadingLepton *= 0;
+    theSecondLepton  *= 0;
 
-    theLeadingLepton_pdgid=-9999;
-    theSecondLepton_pdgid=-9999;
+    theLeadingLepton_pdgid = -9999;
+    theSecondLepton_pdgid  = -9999;
+    
+    theLeadingLepton_isolation = -1;
+    theSecondLepton_isolation  = -1;
 
-    // 1. The Leptons
+    // Fill the values
+    
+        // First, check muons
     for (unsigned int i = 0 ; i < selectedMuons.size() ; i++)
     {
         if (theLeadingLepton.Pt()  < selectedMuons[i].p4.Pt()) 
         {
-            theSecondLepton        = theLeadingLepton;
-            theSecondLepton_pdgid  = theLeadingLepton_pdgid;
-            theLeadingLepton       = selectedMuons[i].p4;
-            theLeadingLepton_pdgid = selectedMuons[i].charge * (-13);
+            theSecondLepton            = theLeadingLepton;
+            theSecondLepton_pdgid      = theLeadingLepton_pdgid;
+            theSecondLepton_isolation  = theLeadingLepton_isolation;
+
+            theLeadingLepton           = selectedMuons[i].p4;
+            theLeadingLepton_pdgid     = selectedMuons[i].charge * (-13);
+            theLeadingLepton_isolation = Get1LeptonStopIsolation(selectedMuons[i]);
         }
         else if (theSecondLepton.Pt()  < selectedMuons[i].p4.Pt())
         {
-            theSecondLepton       = selectedMuons[i].p4;
-            theSecondLepton_pdgid = selectedMuons[i].charge * (-13);
+            theSecondLepton           = selectedMuons[i].p4;
+            theSecondLepton_pdgid     = selectedMuons[i].charge * (-13);
+            theSecondLepton_isolation = Get1LeptonStopIsolation(selectedMuons[i]);
         }
     }
+
+        // Second, check electrons
     for (unsigned int i = 0 ; i < selectedElectrons.size() ; i++)
     {
         if (theLeadingLepton.Pt()  < selectedElectrons[i].p4.Pt()) 
         {
-            theSecondLepton        = theLeadingLepton;
-            theSecondLepton_pdgid  = theLeadingLepton_pdgid;
-            theLeadingLepton       = selectedElectrons[i].p4;
-            theLeadingLepton_pdgid = selectedElectrons[i].charge * (-11);
+            theSecondLepton            = theLeadingLepton;
+            theSecondLepton_pdgid      = theLeadingLepton_pdgid;
+            theSecondLepton_isolation  = theLeadingLepton_isolation;
+            
+            theLeadingLepton           = selectedElectrons[i].p4;
+            theLeadingLepton_pdgid     = selectedElectrons[i].charge * (-11);
+            theLeadingLepton_isolation = Get1LeptonStopIsolation(selectedElectrons[i]);
         }
         else if (theSecondLepton.Pt() < selectedElectrons[i].p4.Pt())
         {
-            theSecondLepton       = selectedElectrons[i].p4;
-            theSecondLepton_pdgid = selectedElectrons[i].charge * (-11);
+            theSecondLepton           = selectedElectrons[i].p4;
+            theSecondLepton_pdgid     = selectedElectrons[i].charge * (-11);
+            theSecondLepton_isolation = Get1LeptonStopIsolation(selectedElectrons[i]);
         }
     }
-
-    // 2. The leptonic W
-    w_leptonic = theLeadingLepton + theMET;
-
-    // 3. Total hadronic activity
-    for (UInt_t ind=0;ind<selectedJets.size();ind++) all_hadronic+=selectedJets[ind].p4;
-
-    // 4. The hadronic Top (from M3)
-    // 5. The 4th jet (after M3)
-
-    float test_pt=0;
-    float test_pt_2=0;
-
-    for (UInt_t ind=0;       ind <selectedJets.size(); ind++ )
-        for (UInt_t ind1=ind+1;  ind1<selectedJets.size(); ind1++)
-            for (UInt_t ind2=ind1+1; ind2<selectedJets.size(); ind2++) 
-            {
-                TLorentzVector combi_test;
-                combi_test =  selectedJets[ind].p4;
-                combi_test += selectedJets[ind1].p4;
-                combi_test += selectedJets[ind2].p4;
-                if (combi_test.Pt()>test_pt) 
-                {
-                    test_pt=combi_test.Pt();
-                    top_hadronic=combi_test;
-                    for (UInt_t ind3=0; ind3<selectedJets.size();ind3++) 
-                    {
-                        if (ind3!=ind && ind3!=ind1 && ind3!=ind2 && selectedJets[ind3].p4.Pt()>test_pt_2) 
-                        {
-                            test_pt_2=selectedJets[ind3].p4.Pt();
-                            the_4thjet=selectedJets[ind3].p4;
-                        }
-                    }
-                }
-            }
-
-    //5. The leptonic Top
-    top_leptonic = w_leptonic + the_4thjet;
 
 }
 
@@ -338,7 +298,7 @@ void combined1LeptonStopSelection::FillKinematicP4()
 // #                                          #
 // ############################################
 
-bool combined1LeptonStopSelection::passTrigger(string channel)
+bool combined1LeptonStopSelection::PassTrigger(string channel)
 {
     vector<string> path;
 
@@ -373,14 +333,14 @@ bool combined1LeptonStopSelection::passTrigger(string channel)
 
     for (unsigned int i = 0 ; i < path.size() ; i++)
     {
-        if (checkPathHasBeenFired(path[i])) return true;
+        if (CheckPathHasBeenFired(path[i])) return true;
     }
 
     return false;
 
 }
 
-bool combined1LeptonStopSelection::checkPathHasBeenFired(string path)
+bool combined1LeptonStopSelection::CheckPathHasBeenFired(string path)
 {
     std::vector<IPHCTree::NTTriggerPathType> myPaths;
     GetPointer2Trigger()->GetSubTable(path.c_str(),myPaths);
@@ -412,7 +372,20 @@ bool combined1LeptonStopSelection::checkPathHasBeenFired(string path)
 // #################################################################
 
 
-std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::GetSUSYstopGoodMuons() const
+float combined1LeptonStopSelection::Get1LeptonStopIsolation(IPHCTree::NTMuon muon) const
+{
+    float Charged = muon.isolation["PF03Char"];
+    float Neutral = muon.isolation["PF03Neut"];
+    float Photon  = muon.isolation["PF03Phot"];
+    float PU      = muon.isolation["PF03PU"];
+    float absIso  =  ( Charged 
+                       + max( (float) 0.0,
+                              (float) (Neutral + Photon- 0.5*PU ) ) );
+    
+    return absIso;
+}
+
+std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::Get1LeptonStopGoodMuons() const
 {
 
     // Container for output 
@@ -431,11 +404,8 @@ std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::GetSUSYstopGoodMuons
         if (localMuons[i].p4.Pt()        < 10)     continue;
         if (fabs(localMuons[i].p4.Eta()) > 2.4)    continue;
 
-        float pfIsoCharged = localMuons[i].isolation["PF03Char"];
-        float pfIsoNeutral = localMuons[i].isolation["PF03Neut"];
-        float pfIsoPhoton  = localMuons[i].isolation["PF03Phot"];
-        float pfIsoPU      = localMuons[i].isolation["PF03PU"];
-        float relIso =  ( pfIsoCharged + max((float) 0.0,(float) (pfIsoNeutral + pfIsoPhoton- 0.5*pfIsoPU )) ) / localMuons[i].p4.Pt(); 
+        float relIso = Get1LeptonStopIsolation(localMuons[i]) 
+                     / localMuons[i].p4.Pt(); 
         if (relIso >= 0.15)                        continue;
 
         if (localMuons[i].Chi2 > 10)               continue;
@@ -464,7 +434,7 @@ std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::GetSUSYstopGoodMuons
 // #                                                                            # 
 // ##############################################################################
 
-std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::GetSUSYstopSelectedMuons() const
+std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::Get1LeptonStopSelectedMuons() const
 {
 
     // Container for output
@@ -485,12 +455,8 @@ std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::GetSUSYstopSelectedM
         if (fabs(muons[i].bestMatch_pT - muons[i].p4.Pt()) >= 10) continue;
 
         // Absolute isolation
-        float pfIsoCharged = muons[i].isolation["PF03Char"];
-        float pfIsoNeutral = muons[i].isolation["PF03Neut"];
-        float pfIsoPhoton  = muons[i].isolation["PF03Phot"];
-        float pfIsoPU      = muons[i].isolation["PF03PU"];
-        float absIso       = pfIsoCharged + max(0., pfIsoNeutral + pfIsoPhoton- 0.5*pfIsoPU); 
-        if (absIso > 5) continue;
+        //float absIso = Get1LeptonStopIsolation(muons[i]);
+        //if (absIso > 5) continue;
 
         outputVector.push_back(muons[i]);
     }
@@ -508,7 +474,20 @@ std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::GetSUSYstopSelectedM
 // #   \____/\___/ \___/ \__,_|  \___|_|\___|\___|\__|_|  \___/|_| |_|___/  #
 // #                                                                        #
 // ##########################################################################
-std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::GetSUSYstopGoodElectrons() const
+
+float combined1LeptonStopSelection::Get1LeptonStopIsolation(IPHCTree::NTElectron electron) const
+{
+    float chargedIso  = electron.isolation["RA4Charg"];
+    float photonIso   = electron.isolation["RA4Photo"];
+    float neutralIso  = electron.isolation["RA4Neutr"];
+    float rho         = electron.isolation["rho"];
+    float Aeff        = electron.isolation["Aeff"];
+    float absIso = (chargedIso + max((float) 0.0, (float) (photonIso + neutralIso - rho * Aeff)));
+
+    return absIso;
+}
+
+std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::Get1LeptonStopGoodElectrons() const
 {
 
     // Output vector
@@ -561,12 +540,8 @@ std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::GetSUSYstopGoodE
         if (overE_m_overPin >= 0.05) continue;
 
         // Rel Iso
-        float chargedIso  = localElectrons[i].isolation["RA4Charg"];
-        float photonIso   = localElectrons[i].isolation["RA4Photo"];
-        float neutralIso  = localElectrons[i].isolation["RA4Neutr"];
-        float rho_relIso  = localElectrons[i].isolation["rho"];
-        float Aeff_relIso = localElectrons[i].isolation["Aeff"];
-        float relIso = (chargedIso + max((float) 0.0, (float) (photonIso + neutralIso - rho_relIso * Aeff_relIso)))/localElectrons[i].p4.Pt();
+        float relIso = Get1LeptonStopIsolation(localElectrons[i]) 
+                     / localElectrons[i].p4.Pt();
 
         if (localElectrons[i].isEB)
             if (relIso > 0.15) continue;
@@ -599,7 +574,7 @@ std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::GetSUSYstopGoodE
 // #  \____/ \___|_|\___|\___|\__\___|\__,_|  \___|_|\___|\___|\__|_|  \___/|_| |_|___/  #
 // #                                                                                     #
 // #######################################################################################
-std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::GetSUSYstopSelectedElectrons() const
+std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::Get1LeptonStopSelectedElectrons() const
 {
     std::vector<IPHCTree::NTElectron> outputVector;
 
@@ -613,13 +588,8 @@ std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::GetSUSYstopSelec
         if (fabs(electrons[i].etaSuperCluster) >= 1.4442)     continue;
 
         // Absolute isolation
-        float chargedIso = electrons[i].isolation["RA4Charg"];
-        float photonIso = electrons[i].isolation["RA4Photo"];
-        float neutralIso = electrons[i].isolation["RA4Neutr"];
-        float rho_relIso = electrons[i].isolation["rho"];
-        float Aeff_relIso = electrons[i].isolation["Aeff"];
-        float absIso = chargedIso + max((float) 0.0,(float) (photonIso + neutralIso - rho_relIso * Aeff_relIso));
-        if (absIso > 5) continue;
+        //float absIso = Get1LeptonStopIsolation(electrons[i]);
+        //if (absIso > 5) continue;
 
         // E/Pin
         if (electrons[i].eSuperClusterOverP > 4) continue;
@@ -724,7 +694,7 @@ void combined1LeptonStopSelection::ApplyJESVariation(bool runningOnData, bool up
 // #                            |__/                #
 // ##################################################
 
-std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::GetSUSYstopGoodJets(
+std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::Get1LeptonStopGoodJets(
         int DataType) const
 {
     // Container for output
@@ -805,7 +775,7 @@ std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::GetSUSYstopGoodJets(
 // #                                         |__/                #
 // ###############################################################
 
-std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::GetSUSYstopSelectedJets(
+std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::Get1LeptonStopSelectedJets(
         int DataType) const
 {
     // Container for output
@@ -837,7 +807,7 @@ std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::GetSUSYstopSelectedJe
 // #                                                  _/ |               #
 // #                                                 |__/                #
 // #######################################################################
-std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::GetSUSYstopSelectedBJets(
+std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::Get1LeptonStopSelectedBJets(
         int DataType) const
 {
     std::vector<IPHCTree::NTJet> bJets;
@@ -869,7 +839,7 @@ std::vector<IPHCTree::NTJet> combined1LeptonStopSelection::GetSUSYstopSelectedBJ
 // ###########################
 
 
-IPHCTree::NTMET combined1LeptonStopSelection::GetSUSYstopType1MET(
+IPHCTree::NTMET combined1LeptonStopSelection::Get1LeptonStopType1MET(
         int DataType) const
 {
 
@@ -901,10 +871,10 @@ IPHCTree::NTMET combined1LeptonStopSelection::GetSUSYstopType1MET(
     return rawPfMET;
 }
 
-IPHCTree::NTMET combined1LeptonStopSelection::GetSUSYstopType1PhiMET(
+IPHCTree::NTMET combined1LeptonStopSelection::Get1LeptonStopType1PhiMET(
         int DataType) const
 {
-    NTMET the_type1met_ = GetSUSYstopType1MET(DataType);
+    NTMET the_type1met_    = Get1LeptonStopType1MET(DataType);
     NTMET the_type1phimet_ = the_type1met_;
 
     int Nvtx = GetVertex().size();

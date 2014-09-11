@@ -7,25 +7,25 @@ void printBoxedMessage(string message);
 
 int main(int argc, char* argv[])
 {
-  
+
   printBoxedMessage("Launching PROOF");
 
   // #######################################
   // #   Cleaning existing/previous jobs   #
   // #######################################
- 
+
   cout << "  > Cleaning existing workers..." << endl << endl;
   system("pkill -9 proofserv.exe 2>/dev/null");
   system("sleep 1");
   cout << "  > Cleaning proof box ..." << endl << endl;
-  system((string("rm -r ")+OUTPUT_BOX).c_str());  
+  system((string("rm -r ")+PROOF_SANDBOX).c_str());
 
   // ################################################
   // #   Setting up proofbox and cCreating workers  #
   // ################################################
-  
-  gEnv->SetValue("ProofLite.Sandbox",OUTPUT_BOX);
-  
+
+  gEnv->SetValue("ProofLite.Sandbox",PROOF_SANDBOX);
+
   cout << "  > Starting PROOF with " << NUMBER_OF_NODES << " workers " << endl << endl;
   TProof *proof = TProof::Open("");
   proof->SetParallel(NUMBER_OF_NODES);
@@ -36,21 +36,21 @@ int main(int argc, char* argv[])
   // #####################
   // #   Load packages   #
   // #####################
- 
+
   cout << "  > Loading NTuple Analysis package (don't worry about the symlink error)" << endl;
-  proof->UploadPackage("../../NTAna.par");
-  proof->EnablePackage("NTAna");
-  
+  proof->UploadPackage("./NTupleAnalysisPackage.par");
+  proof->EnablePackage("NTupleAnalysisPackage");
+
   // ##############################
   // #   Load XML configuration   #
   // ##############################
-  
+
   string xmlFileName = getenv( "CMSSW_BASE" )+string("/src/NTuple/NTupleAnalysis/")+XML_CONFIG;
   AnalysisEnvironmentLoader anaEL(xmlFileName);
-  
+
   vector<Dataset> datasets;
   anaEL.LoadSamples(datasets);
- 
+
   // #######################################
   // #   Create datasets in proof format   #
   // #######################################
@@ -73,9 +73,9 @@ int main(int argc, char* argv[])
   // ############################
   // #   Process the datasets   #
   // ############################
-  
+
   system("mkdir -p proofOutput");
-  
+
   for(unsigned int i=0;i<datasets.size();i++)
   {
       printBoxedMessage("Processing "+datasets[i].Name());
@@ -93,15 +93,15 @@ int main(int argc, char* argv[])
       system(command.c_str());
       proof->ClearInput();
   }
- 
+
   // ##################
   // #   Show stats   #
   // ##################
- 
+
   printBoxedMessage("Job done, here are a few stats");
 
   proof->Print();
-    
+
   printBoxedMessage("May your job live long and prosper");
   cout << "                                                 " << endl;
   cout << "                   _                             " << endl;
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
   cout << "                  |     |                        " << endl;
   cout << "                                                 " << endl;
   cout << "                                                 " << endl;
-  
+
   return (0);
 }
 
@@ -129,11 +129,11 @@ void printBoxedMessage(string message)
     cout << "─┐  " << endl;
 
     cout << "   │  " << message << "  │  " << endl;
-    
+
     cout << "   └──";
     for(unsigned int i = 0 ; i <= message.size() ; i++) cout << "─";
-    cout << "─┘  " << endl; 
- 
+    cout << "─┘  " << endl;
+
     cout << endl;
 
 }

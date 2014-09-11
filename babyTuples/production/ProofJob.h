@@ -13,7 +13,7 @@
 #include <TProofOutputFile.h>
 #include <TRandom.h>
 #include <TH1.h>
-#include <TH2.h> 
+#include <TH2.h>
 #include <TH3.h>
 #include <TLorentzVector.h>
 
@@ -24,7 +24,7 @@
 #include "Tools/interface/AnalysisEnvironmentLoader.h"
 
 // Stop-analysis specific headers
-#include "../inputs/objectAndEventSelection/combined1LeptonStopSelection.h"
+#include "./inputs/objectAndEventSelection/combined1LeptonStopSelection.h"
 #include "Selection/interface/StopMCinfo.h"
 #include "Plots/interface/StopMCCharacterization.h"
 #include "EventReco/interface/StopAnaReco.h"
@@ -37,17 +37,17 @@
 
 #define SELECTION_TYPE combined1LeptonStopSelection
 
-class ProofJob : public TSelector 
+class ProofJob : public TSelector
 {
 
  public :
-  
+
   TTree* fChain;
   TBranch* branch;
   IPHCTree::NTEvent* event;
   TFile            *fFile;
-  TProofOutputFile *fProofFile; 
-  AnalysisEnvironmentLoader* anaEL; 
+  TProofOutputFile *fProofFile;
+  AnalysisEnvironmentLoader* anaEL;
   vector<Dataset> datasets;
   Dataset* dataset;
   vector<string> CutName;
@@ -56,12 +56,12 @@ class ProofJob : public TSelector
   float Luminosity;
   int verbosity;
   int DataType;
-  
+
   float LumiError ;
   string PUWeightFileName;
-  
+
   string datasetName ;
-  
+
   //------------------------------------
   // Additionnal info for Stop
   //------------------------------------
@@ -91,9 +91,9 @@ class ProofJob : public TSelector
   virtual void    Terminate();
 
   virtual void InitializeBranches(TTree* theTree, babyEvent* pointerToEvent);
-  virtual void LoadCorrectionFiles(); 
+  virtual void LoadCorrectionFiles();
 
-  
+
   ClassDef(ProofJob,0);
 };
 

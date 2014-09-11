@@ -25,23 +25,24 @@ using namespace std;
 // ###################
 
 // Number of nodes to be used
-#define NUMBER_OF_NODES 8
+#define NUMBER_OF_NODES 16
 
 // Name of the file describing what each worker have to do
 #define JOB_DESCRIPTION "ProofJob.C+"
 
 // XML configuration to load
-#define XML_CONFIG "macros/stopAnalysis/babyTupling/config_1lep.xml"
+#define XML_CONFIG "macros/stopAnalysis/babyTuples/production/config_1lep.xml"
 
 // Sandbox for PROOF
 // NB : the content of this folder will be deleted each time you launch proof !
-#define OUTPUT_BOX "/opt/sbg/data/data4/cms/aaubin/proofBox/"
+//#define PROOF_SANDBOX "/opt/sbg/data/data4/cms/aaubin/proofBox/"
+#define PROOF_SANDBOX "/opt/sbg/data/sbgse24/data1/cms/aaubin/proofBox/"
 
 // Name for the final output
 #define OUTPUT_NAME "babyTuple.root"
 
 // Format definition of the babytuples
-#define BABYTUPLE_FORMAT "formats/Format_newFinal0516.h"
+#define BABYTUPLE_FORMAT "formats/Format_newFinal0516_isolationTests.h"
 //#define BABYTUPLE_FORMAT "formats/Format_genJetsEric0613.h"
 
 #endif

@@ -18,10 +18,10 @@
 <!-- WARNING WARNING WARNING - Don't forget to use the good PU file !! S7 for signal (fastim), S10 for background (fullsim) ! -->
 <a
     type="Corrections"
-    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/pileUp/puWeights_S10.root"
-    bTagReshaping="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/bTagReshaping/bTagReshaping.root"
-    jetEnergyCorrectionMC="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/JEC/Fall12_Uncertainty_MC_AK5PF.txt"
-    jetEnergyCorrectionData="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/inputs/JEC/Fall12_Uncertainty_Data_AK5PF.txt"
+    pileUp="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTuples/production/inputs/pileUp/puWeights_S10.root"
+    bTagReshaping="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTuples/production/inputs/bTagReshaping/bTagReshaping.root"
+    jetEnergyCorrectionMC="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTuples/production/inputs/JEC/Fall12_Uncertainty_MC_AK5PF.txt"
+    jetEnergyCorrectionData="/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTuples/production/inputs/JEC/Fall12_Uncertainty_Data_AK5PF.txt"
 />
 
 </Analysis>
@@ -74,20 +74,20 @@
 <d  name="T2bw-075_mLSP1" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/T2bw_mLSP1/T2bw_x-075_*/*.root" />
 -->
+<!-- ttbar -->
 
+<d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="245.8"
+    filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/ttbar-v*/*.root" />
 <!--
+-->
+
 <d  name="T2tt_withLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/T2tt_withLSP0/*/*.root" />
 <d  name="T2tt_noLSP0" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/T2tt_noLSP0/*/*.root" />
+<!--
 <d  name="T2tt_mLSP1" add="1" isData="0" NofEvts="-1" normf="1" xsection="1."
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/T2tt_mLSP1/*/*.root" />
--->
-<!-- ttbar -->
-
-<!--
-<d  name="ttbar" add="1" isData="0" NofEvts="-1" normf="1" xsection="245.8"
-    filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/ttbar-v*/*.root" />
 -->
 <!--
 <d  name="ttbar_madgraph_1l"           add="1" isData="0" NofEvts="-1" normf="1" xsection="108.69"
@@ -198,9 +198,9 @@
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/DoubleElec_*/*.root" />
 <d  name="DoubleMuon" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/DoubleMuon_*/*.root" />
--->
 <d  name="MuEl" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data4/cms/aaubin/store/nTuples/MuEl_*/*.root" />
+-->
 <!-- SingleLepton Data -->
 <!--
 <d  name="SingleElec" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"

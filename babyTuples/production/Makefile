@@ -6,8 +6,8 @@ LogSuf        = log
 
 # IPHC paths
 
-IPHCDATAFORMAT_NTUPLE = `pwd`/../../../../../IPHCDataFormat/
-IPHCANALYSIS_NTUPLE   = `pwd`/../../../
+IPHCDATAFORMAT_NTUPLE = `pwd`/../../../../../../IPHCDataFormat/
+IPHCANALYSIS_NTUPLE   = `pwd`/../../../../
 
 # Root flags
 

@@ -1,7 +1,7 @@
 #ifndef babyFormat
 #define babyFormat
 
-typedef struct 
+typedef struct
 {
     // ------------
     // General info
@@ -14,11 +14,11 @@ typedef struct
     // ------------
     // Trigger info
     // ------------
-    
+
     Bool_t triggerMuon;                         // Single-Muon trigger has been fired
     Bool_t xtriggerMuon;                        // Muon cross-trigger  has been fired
     Bool_t triggerElec;                         // Single-Elec trigger has been fired
-    
+
     Bool_t triggerDoubleElec;                   // Double-Elec trigger has been fired
     Bool_t triggerDoubleMuon;                   // Double-Muon trigger has been fired
     Bool_t triggerMuonElec;                     // Muon-Elec   trigger has been fired
@@ -41,7 +41,7 @@ typedef struct
 
     Bool_t         isolatedTrackVeto;           // Event pass/fail the isolated track veto
     Bool_t         tauVeto;                     // Event pass/fail the tau veto
-    
+
     // ------------
     // Jets info
     // ------------
@@ -49,7 +49,7 @@ typedef struct
     Short_t                nJets;               // Number of selected jets
     Short_t                nBTag;               // Number of selected jets b-tagged
     vector<TLorentzVector> jets;                // p4 of the selected jets
-    vector<Float_t>        jets_CSV_raw;        // CSV value of the selected jets, before reshaping 
+    vector<Float_t>        jets_CSV_raw;        // CSV value of the selected jets, before reshaping
     vector<Float_t>        jets_CSV_reshaped;   // CSV value of the selected jets, after reshaping
     vector<Int_t>          jets_partonFlav;     // Parton flavour of the selected jets
 
@@ -88,11 +88,11 @@ typedef struct
     Float_t mStop;                              // Stop mass
     Float_t mNeutralino;                        // Neutralino mass
     Float_t mCharginoParameter;                 // Chargino mass parameter for T2bw (0.25, 0.5 or 0.75)
- 
+
     // ------------
     // Generator-level infos
     // ------------
-   
+
     Int_t   numberOfGenLepton;                  // Number of MC leptons (e/mu/tau, leptons from tau decay are not taken into account)
 
     vector<TLorentzVector> genParticles;        // p4 of status=3 particles
@@ -180,7 +180,7 @@ typedef struct
     vector<Float_t>        jets_CSV_reshaped_JESdown;   // CSV value of the selected jets, after reshaping    (-1sigma JES applied)
 
         // CSV reshaping variations
-        
+
     vector<Float_t> jets_CSV_reshapedUpBC;
     vector<Float_t> jets_CSV_reshapedDownBC;
     vector<Float_t> jets_CSV_reshapedUpLight;
@@ -189,25 +189,25 @@ typedef struct
         // Non-selected jets (with pT > 10, eta < 4.7)
 
     vector<TLorentzVector> nonSelectedJets;              // p4 of the non selected jets (with pT > 10, eta < 4.7)
-    vector<Float_t>        nonSelectedJets_CSV_raw;      // CSV value of the non selected jets, before reshaping 
+    vector<Float_t>        nonSelectedJets_CSV_raw;      // CSV value of the non selected jets, before reshaping
     vector<Float_t>        nonSelectedJets_CSV_reshaped; // CSV value of the non selected jets, after reshaping
     vector<Int_t>          nonSelectedJets_partonFlav;   // Parton flavour of the non selected jets
 
         // Non selected leptons (with pT > 10, eta < 2.4, and electron/muon ID applied)
 
     vector<TLorentzVector> nonSelectedLeptons;              // p4 of the non selected leptons
-    vector<Short_t>        nonSelectedLeptonsPDGId;         // pdgid of the non selected leptons 
+    vector<Short_t>        nonSelectedLeptonsPDGId;         // pdgid of the non selected leptons
 
         // Raw MET (used as a cross check for when applying MET filters after production)
 
-    Float_t rawPFMET;                           // Raw MET from PF-based algorithm 
-    
+    Float_t rawPFMET;                           // Raw MET from PF-based algorithm
+
         // Phi of the (corrected) MET
 
     Float_t METPhi;                             // Type-1 + phi-corrected PF MET
 
         // Infos for PDF uncertainties
-   
+
     Float_t x_firstIncomingParton;              // Momentum fraction carried by the first incoming parton
     Float_t x_secondIncomingParton;             // Momentum fraction carried by the second incoming parton
     Int_t   flavor_firstIncomingParton;         // PDGId of the first incoming parton
@@ -218,7 +218,7 @@ typedef struct
 } babyEvent;
 
 #endif
-  
+
 
 
 // ###################################################
@@ -241,7 +241,7 @@ void ProofJob::LoadCorrectionFiles()
     sel.setPileUpReweightingInput( anaEL->GetInfo("Analysis","Corrections","pileUp")                 );
 
     sel.loadCorrections();
-    
+
 
     TFile* fileMapT2tt    = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2tt.root");
     TFile* fileMapT2bw025 = new TFile("/opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis/macros/stopAnalysis/babyTupling/../inputs/signalInitialNumberOfEventsMap/mapT2bw-025.root");
@@ -259,14 +259,14 @@ void ProofJob::InitializeBranches(TTree* theTree_, babyEvent* myEvent_)
     theTree_->Branch("run",                                          &(myEvent_->run));
     theTree_->Branch("lumi",                                         &(myEvent_->lumi));
     theTree_->Branch("event",                                        &(myEvent_->event));
-    
+
     theTree_->Branch("triggerMuon",                                  &(myEvent_->triggerMuon));
     theTree_->Branch("xtriggerMuon",                                 &(myEvent_->xtriggerMuon));
     theTree_->Branch("triggerElec",                                  &(myEvent_->triggerElec));
     theTree_->Branch("triggerDoubleElec",                            &(myEvent_->triggerDoubleElec));
     theTree_->Branch("triggerDoubleMuon",                            &(myEvent_->triggerDoubleMuon));
     theTree_->Branch("triggerMuonElec",                              &(myEvent_->triggerMuonElec));
-    
+
     theTree_->Branch("numberOfLepton",                               &(myEvent_->numberOfLepton));
     theTree_->Branch("leadingLepton","TLorentzVector",               &(myEvent_->leadingLepton));
     theTree_->Branch("leadingLeptonPDGId",                           &(myEvent_->leadingLeptonPDGId));
@@ -278,7 +278,7 @@ void ProofJob::InitializeBranches(TTree* theTree_, babyEvent* myEvent_)
     theTree_->Branch("secondLeptonIsoScaleFactor",                   &(myEvent_->secondLeptonIsoScaleFactor));
     theTree_->Branch("isolatedTrackVeto",                            &(myEvent_->isolatedTrackVeto));
     theTree_->Branch("tauVeto",                                      &(myEvent_->tauVeto));
-   
+
     theTree_->Branch("nJets",                                        &(myEvent_->nJets));
     theTree_->Branch("nBTag",                                        &(myEvent_->nBTag));
     theTree_->Branch("jets","std::vector<TLorentzVector>",           &(myEvent_->jets));
@@ -302,19 +302,19 @@ void ProofJob::InitializeBranches(TTree* theTree_, babyEvent* myEvent_)
     theTree_->Branch("deltaRLeptonLeadingB",                         &(myEvent_->deltaRLeptonLeadingB));
     theTree_->Branch("METoverSqrtHT",                                &(myEvent_->METoverSqrtHT));
     theTree_->Branch("HTPlusLeptonPtPlusMET",                        &(myEvent_->HTPlusLeptonPtPlusMET));
-    
+
     theTree_->Branch("nWTag",                                        &(myEvent_->nWTag));
     theTree_->Branch("leadingWjetPt",                                &(myEvent_->leadingWjetPt));
-    
+
     theTree_->Branch("mStop",                                        &(myEvent_->mStop));
     theTree_->Branch("mNeutralino",                                  &(myEvent_->mNeutralino));
     theTree_->Branch("mCharginoParameter",                           &(myEvent_->mCharginoParameter));
-    
+
     theTree_->Branch("numberOfGenLepton",                            &(myEvent_->numberOfGenLepton));
     theTree_->Branch("genParticles","std::vector<TLorentzVector>",   &(myEvent_->genParticles));
     theTree_->Branch("genParticlesPDGId","std::vector<Int_t>",       &(myEvent_->genParticlesPDGId));
     theTree_->Branch("genParticlesMother","std::vector<Int_t>",      &(myEvent_->genParticlesMother));
-    
+
     theTree_->Branch("numberOfInitialEvents",                        &(myEvent_->numberOfInitialEvents));
     theTree_->Branch("crossSection",                                 &(myEvent_->crossSection));
     theTree_->Branch("numberOfTruePU",                               &(myEvent_->numberOfTruePU));
@@ -335,7 +335,7 @@ void ProofJob::InitializeBranches(TTree* theTree_, babyEvent* myEvent_)
     theTree_->Branch("weightT2bwPolarization_lr",                    &(myEvent_->weightT2bwPolarization_lr));
     theTree_->Branch("weightT2bwPolarization_rl",                    &(myEvent_->weightT2bwPolarization_rl));
     theTree_->Branch("weightT2bwPolarization_rr",                    &(myEvent_->weightT2bwPolarization_rr));
-   
+
     theTree_->Branch("MET_JESup",                                    &(myEvent_->MET_JESup));
     theTree_->Branch("MT_JESup",                                     &(myEvent_->MT_JESup));
     theTree_->Branch("deltaPhiMETJets_JESup",                        &(myEvent_->deltaPhiMETJets_JESup));
@@ -353,12 +353,12 @@ void ProofJob::InitializeBranches(TTree* theTree_, babyEvent* myEvent_)
     theTree_->Branch("HTPlusLeptonPtPlusMET_JESup",                  &(myEvent_->HTPlusLeptonPtPlusMET_JESup));
     theTree_->Branch("nJets_JESup",                                  &(myEvent_->nJets_JESup));
     theTree_->Branch("weightTriggerEfficiency_JESup",                &(myEvent_->weightTriggerEfficiency_JESup));
-    
+
     theTree_->Branch("nBTag_JESup",                                  &(myEvent_->nBTag_JESup));
     theTree_->Branch("jets_JESup",                                   &(myEvent_->jets_JESup));
     theTree_->Branch("jets_CSV_raw_JESup",                           &(myEvent_->jets_CSV_raw_JESup));
     theTree_->Branch("jets_CSV_reshaped_JESup",                      &(myEvent_->jets_CSV_reshaped_JESup));
-   
+
     theTree_->Branch("MET_JESdown",                                  &(myEvent_->MET_JESdown));
     theTree_->Branch("MT_JESdown",                                   &(myEvent_->MT_JESdown));
     theTree_->Branch("deltaPhiMETJets_JESdown",                      &(myEvent_->deltaPhiMETJets_JESdown));
@@ -391,18 +391,18 @@ void ProofJob::InitializeBranches(TTree* theTree_, babyEvent* myEvent_)
     theTree_->Branch("nonSelectedJets_CSV_raw",     "std::vector<Float_t>",          &(myEvent_->nonSelectedJets_CSV_raw));
     theTree_->Branch("nonSelectedJets_CSV_reshaped","std::vector<Float_t>",          &(myEvent_->nonSelectedJets_CSV_reshaped));
     theTree_->Branch("nonSelectedJets_partonFlav",  "std::vector<Int_t>",            &(myEvent_->nonSelectedJets_partonFlav));
-    
+
     theTree_->Branch("nonSelectedLeptons",          "std::vector<TLorentzVector>",   &(myEvent_->nonSelectedLeptons));
     theTree_->Branch("nonSelectedLeptonsPDGId",     "std::vector<Short_t>",          &(myEvent_->nonSelectedLeptonsPDGId));
-    
+
     theTree_->Branch("rawPFMET",                     &(myEvent_->rawPFMET));
     theTree_->Branch("METPhi",                       &(myEvent_->METPhi));
 
-    theTree_->Branch("x_firstIncomingParton",        &(myEvent_->x_firstIncomingParton));       
-    theTree_->Branch("x_secondIncomingParton",       &(myEvent_->x_secondIncomingParton));      
-    theTree_->Branch("flavor_firstIncomingParton",   &(myEvent_->flavor_firstIncomingParton));  
-    theTree_->Branch("flavor_secondIncomingParton",  &(myEvent_->flavor_secondIncomingParton)); 
-    theTree_->Branch("scalePDF",                     &(myEvent_->scalePDF));                   
+    theTree_->Branch("x_firstIncomingParton",        &(myEvent_->x_firstIncomingParton));
+    theTree_->Branch("x_secondIncomingParton",       &(myEvent_->x_secondIncomingParton));
+    theTree_->Branch("flavor_firstIncomingParton",   &(myEvent_->flavor_firstIncomingParton));
+    theTree_->Branch("flavor_secondIncomingParton",  &(myEvent_->flavor_secondIncomingParton));
+    theTree_->Branch("scalePDF",                     &(myEvent_->scalePDF));
 
 }
 
@@ -421,7 +421,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     // #  Load the event from the input tree  #
     // ########################################
 
-    fChain->GetTree()->GetEntry(entry); 
+    fChain->GetTree()->GetEntry(entry);
     branch->GetEntry(entry);
     IPHCTree::NTTransient::InitializeAfterReading(event);
     sel.LoadEvent(event);
@@ -437,7 +437,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     vector<IPHCTree::NTGenParticle> MCParticles;
     if (!runningOnData)
     {
-        mcInfo = *((sel).GetPointer2MC());    
+        mcInfo = *((sel).GetPointer2MC());
         MCParticles = mcInfo.genParticles;
         stopMCinfo->LoadEvent(event);
     }
@@ -445,20 +445,20 @@ Bool_t ProofJob::Process(Long64_t entry)
     // ###############################
     // #  Filter bad signal events   #
     // ###############################
-  
+
     if (badSignalEventFilter(datasetName_,stopMCinfo) == false) return false;
 
     // ######################
     // #  Apply selection   #
     // ######################
-    
-    if (sel.passEventSelection(runningOnData) == false) return false;
+
+    if (sel.PassEventSelection(runningOnData) == false) return false;
 
     // #####################
     // #   General infos   #
     // #####################
 
-    myEvent.run   = event->general.runNb;  
+    myEvent.run   = event->general.runNb;
     myEvent.lumi  = event->general.lumiblock;
     myEvent.event = event->general.eventNb;
 
@@ -466,26 +466,26 @@ Bool_t ProofJob::Process(Long64_t entry)
     // #   Trigger infos   #
     // #####################
 
-    myEvent.triggerMuon       = sel.passTrigger("singleMuon");
-    myEvent.triggerElec       = sel.passTrigger("singleElec");
-    myEvent.xtriggerMuon      = sel.passTrigger("crossMuon" );
-    myEvent.triggerDoubleMuon = sel.passTrigger("doubleMuon");
-    myEvent.triggerDoubleElec = sel.passTrigger("doubleElec");
-    myEvent.triggerMuonElec   = sel.passTrigger("muonElec"  );  
+    myEvent.triggerMuon       = sel.PassTrigger("singleMuon");
+    myEvent.triggerElec       = sel.PassTrigger("singleElec");
+    myEvent.xtriggerMuon      = sel.PassTrigger("crossMuon" );
+    myEvent.triggerDoubleMuon = sel.PassTrigger("doubleMuon");
+    myEvent.triggerDoubleElec = sel.PassTrigger("doubleElec");
+    myEvent.triggerMuonElec   = sel.PassTrigger("muonElec"  );
 
     // #####################
     // #   Leptons infos   #
     // #####################
 
     myEvent.numberOfLepton              = sel.getTheNumberOfSelectedLeptons();
-    
-    myEvent.leadingLepton               = sel.getTheLeadingLepton();
-    myEvent.leadingLeptonPDGId          = sel.getTheLeadingLeptonPDGId();
+
+    myEvent.leadingLepton               = sel.GetTheLeadingLepton();
+    myEvent.leadingLeptonPDGId          = sel.GetTheLeadingLeptonPDGId();
     myEvent.leadingLeptonIdEfficiency   = leptonIDEfficiency(myEvent.leadingLeptonPDGId,myEvent.leadingLepton.Pt(),myEvent.leadingLepton.Eta()).first;
     myEvent.leadingLeptonIsoScaleFactor = leptonIsoScaleFactor(myEvent.leadingLeptonPDGId,myEvent.leadingLepton.Pt(),myEvent.leadingLepton.Eta()).first;
 
-    myEvent.secondLepton                = sel.getTheSecondLepton();
-    myEvent.secondLeptonPDGId           = sel.getTheSecondLeptonPDGId();
+    myEvent.secondLepton                = sel.GetTheSecondLepton();
+    myEvent.secondLeptonPDGId           = sel.GetTheSecondLeptonPDGId();
     if (myEvent.numberOfLepton >= 2)
     {
         myEvent.secondLeptonIdEfficiency    = leptonIDEfficiency(myEvent.secondLeptonPDGId,myEvent.secondLepton.Pt(),myEvent.secondLepton.Eta()).first;
@@ -499,16 +499,16 @@ Bool_t ProofJob::Process(Long64_t entry)
 
     float leptonCharge;
     if (myEvent.leadingLeptonPDGId > 0) leptonCharge = -1.0;
-    else                                leptonCharge = +1.0; 
-    myEvent.isolatedTrackVeto           = sel.GetSUSYstopIsolatedTrackVeto(myEvent.leadingLepton,leptonCharge);
-    myEvent.tauVeto                     = sel.GetSUSYstopTauVeto(myEvent.leadingLepton,leptonCharge);
+    else                                leptonCharge = +1.0;
+    myEvent.isolatedTrackVeto           = sel.Get1LeptonStopIsolatedTrackVeto(myEvent.leadingLepton,leptonCharge);
+    myEvent.tauVeto                     = sel.Get1LeptonStopTauVeto(myEvent.leadingLepton,leptonCharge);
 
     // ####################
     // #  Fill jets info  #
     // ####################
 
-    myEvent.nJets        = sel.GetJetsForAna().size();
-    myEvent.nBTag        = sel.GetBJetsForAna().size();
+    myEvent.nJets        = sel.GetSelectedJets().size();
+    myEvent.nBTag        = sel.GetSelectedBJets().size();
 
     myEvent.jets.clear();
     myEvent.jets_partonFlav.clear();
@@ -519,7 +519,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.jets_CSV_reshapedUpLight.clear();
     myEvent.jets_CSV_reshapedDownLight.clear();
 
-    std::vector<IPHCTree::NTJet> jets = sel.GetJetsForAna();
+    std::vector<IPHCTree::NTJet> jets = sel.GetSelectedJets();
     for (unsigned int i = 0 ; i < jets.size() ; i++)
     {
         myEvent.jets.push_back(jets[i].p4);
@@ -559,15 +559,15 @@ Bool_t ProofJob::Process(Long64_t entry)
     // #   Signal infos   #
     // ####################
 
-    if ((datasetName_.find("T2tt") != string::npos) 
-    ||  (datasetName_.find("T2bw")  != string::npos)) 
+    if ((datasetName_.find("T2tt") != string::npos)
+    ||  (datasetName_.find("T2bw")  != string::npos))
     {
         myEvent.mStop       = stopMCinfo->GetStopMass();
         myEvent.mNeutralino = stopMCinfo->GetNeutralinoMass();
 
         if (datasetName_.find("T2tt") != string::npos)           myEvent.mCharginoParameter = -1.0;
         else if (datasetName_.find("T2bw-025") != string::npos)  myEvent.mCharginoParameter = 0.25;
-        else if (datasetName_.find("T2bw-050") != string::npos)  myEvent.mCharginoParameter = 0.50; 
+        else if (datasetName_.find("T2bw-050") != string::npos)  myEvent.mCharginoParameter = 0.50;
         else if (datasetName_.find("T2bw-075") != string::npos)  myEvent.mCharginoParameter = 0.75;
     }
     else
@@ -583,18 +583,18 @@ Bool_t ProofJob::Process(Long64_t entry)
 
     // Cross section
 
-    if ((datasetName_.find("T2tt") != string::npos) 
+    if ((datasetName_.find("T2tt") != string::npos)
      || (datasetName_.find("T2bw") != string::npos))
     {
         myEvent.crossSection          = stopCrossSection(myEvent.mStop).first;
 
         TH2F* signalMap = 0;
 
-        if (datasetName_.find("T2tt") != string::npos)          signalMap = mapT2tt; 
+        if (datasetName_.find("T2tt") != string::npos)          signalMap = mapT2tt;
         else if (datasetName_.find("T2bw-025") != string::npos) signalMap = mapT2bw025;
         else if (datasetName_.find("T2bw-050") != string::npos) signalMap = mapT2bw050;
         else if (datasetName_.find("T2bw-075") != string::npos) signalMap = mapT2bw075;
-       
+
         myEvent.numberOfInitialEvents = signalMap->GetBinContent(signalMap->FindBin(myEvent.mStop,myEvent.mNeutralino));
     }
     else
@@ -602,7 +602,7 @@ Bool_t ProofJob::Process(Long64_t entry)
         myEvent.crossSection          = dataset->Xsection();
         myEvent.numberOfInitialEvents = dataset->getNumberOfEventsBeforeMTSkimmer();
     }
-    
+
     myEvent.weightCrossSection = myEvent.crossSection / myEvent.numberOfInitialEvents;
 
     // Pile-up
@@ -625,11 +625,11 @@ Bool_t ProofJob::Process(Long64_t entry)
     // ISR
 
     float ISRboost = 0.0;
-    if ((datasetName_.find("T2tt") != string::npos) 
+    if ((datasetName_.find("T2tt") != string::npos)
      || (datasetName_.find("T2bw") != string::npos))
     {
         TLorentzVector StopStopBar;
-        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
+        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)
             if (abs(MCParticles[i].id) == 1000006) StopStopBar += MCParticles[i].p4;
         ISRboost = StopStopBar.Pt();
     }
@@ -644,7 +644,7 @@ Bool_t ProofJob::Process(Long64_t entry)
           || (datasetName_ == "ttbar_madgraph_scaleup"     ))
     {
         TLorentzVector TopTopBar;
-        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
+        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)
             if (abs(MCParticles[i].id) == 6) TopTopBar += MCParticles[i].p4;
         ISRboost = TopTopBar.Pt();
     }
@@ -655,7 +655,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     if  (ISRboost > 250.0)                        myEvent.weightISRmodeling = 0.80;
 
     // Top Pt weight
-    
+
     myEvent.weightTopPt = 1.0;
     if ((datasetName_ == "ttbar"                      )
      || (datasetName_ == "ttbar_madgraph_1l"          )
@@ -668,15 +668,15 @@ Bool_t ProofJob::Process(Long64_t entry)
      || (datasetName_ == "ttbar_madgraph_scaleup"     ))
     {
         float TopPt = 0.0;
-        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
+        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)
             if (MCParticles[i].id == 6) { TopPt = MCParticles[i].p4.Pt(); break; }
 
-        myEvent.weightTopPt = exp(0.156 - 0.00137 * TopPt); 
+        myEvent.weightTopPt = exp(0.156 - 0.00137 * TopPt);
     }
-    
+
     // Trigger efficiency weight
 
-    if (abs(myEvent.leadingLeptonPDGId) == 11) 
+    if (abs(myEvent.leadingLeptonPDGId) == 11)
         myEvent.weightTriggerEfficiency = singleLeptonTriggerWeight(11,myEvent.leadingLepton.Pt(),
                                                                        myEvent.leadingLepton.Eta());
     else if ((abs(myEvent.leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() > 26))
@@ -691,7 +691,7 @@ Bool_t ProofJob::Process(Long64_t entry)
 
     // Signal polarization
 
-    if (datasetName_.find("T2tt") != string::npos) 
+    if (datasetName_.find("T2tt") != string::npos)
     {
         myEvent.weightT2ttLeftHanded  = Reweight_Stop_to_TopChi0(MCParticles, 0., -1);
         myEvent.weightT2ttRightHanded = Reweight_Stop_to_TopChi0(MCParticles, 0.,  1);
@@ -699,7 +699,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     else
     {
         myEvent.weightT2ttLeftHanded  = 1.0;
-        myEvent.weightT2ttRightHanded = 1.0; 
+        myEvent.weightT2ttRightHanded = 1.0;
     }
 
     if (datasetName_.find("T2bw") != string::npos)
@@ -716,7 +716,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     }
     else
     {
-        myEvent.weightT2bwPolarization_lr = 1.0; 
+        myEvent.weightT2bwPolarization_lr = 1.0;
         myEvent.weightT2bwPolarization_ls = 1.0;
         myEvent.weightT2bwPolarization_ll = 1.0;
         myEvent.weightT2bwPolarization_sr = 1.0;
@@ -743,15 +743,15 @@ Bool_t ProofJob::Process(Long64_t entry)
     {
 
         // TMEME decoding
-        int TMEME = mcInfo.TMEME; 
-        int  MEME = TMEME % 10000; 
-        int   EME =  MEME % 1000; 
-        int    ME =   EME % 100; 
+        int TMEME = mcInfo.TMEME;
+        int  MEME = TMEME % 10000;
+        int   EME =  MEME % 1000;
+        int    ME =   EME % 100;
         int     E =    ME % 10;
 
         myEvent.numberOfGenLepton = TMEME/10000 + ME/10 + E/1;
 
-        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)  
+        for (unsigned int i = 0 ; i < MCParticles.size() ; i++)
         {
             myEvent.genParticles.push_back(MCParticles[i].p4);
             myEvent.genParticlesPDGId.push_back(MCParticles[i].id);
@@ -761,7 +761,7 @@ Bool_t ProofJob::Process(Long64_t entry)
 
     // ################
     // #  Fill W-tag  #
-    // ################         
+    // ################
 
     myEvent.nWTag = 0;
     myEvent.leadingWjetPt = -1.0;
@@ -775,14 +775,14 @@ Bool_t ProofJob::Process(Long64_t entry)
         if ((WCand[i].p4.M() < 60) || (WCand[i].p4.M() > 100)) continue;
 
         // Lepton overlap removal
-        if (WCand[i].p4.DeltaR(myEvent.leadingLepton) < 0.6) continue; 
+        if (WCand[i].p4.DeltaR(myEvent.leadingLepton) < 0.6) continue;
 
         // B-jet overlap removal
         float minDeltaRBJet = 99.0;
         for (int j = 0 ; j < myEvent.nBTag ; j++)
         {
-            if (minDeltaRBJet > WCand[i].p4.DeltaR(sel.GetBJetsForAna()[j].p4))
-                minDeltaRBJet = WCand[i].p4.DeltaR(sel.GetBJetsForAna()[j].p4);
+            if (minDeltaRBJet > WCand[i].p4.DeltaR(sel.GetSelectedBJets()[j].p4))
+                minDeltaRBJet = WCand[i].p4.DeltaR(sel.GetSelectedBJets()[j].p4);
         }
         if (minDeltaRBJet > 0.6)
         {
@@ -798,9 +798,9 @@ Bool_t ProofJob::Process(Long64_t entry)
 
         // Non selected jets
 
-    myEvent.nonSelectedJets.clear();     
-    myEvent.nonSelectedJets_CSV_raw.clear();    
-    myEvent.nonSelectedJets_CSV_reshaped.clear(); 
+    myEvent.nonSelectedJets.clear();
+    myEvent.nonSelectedJets_CSV_raw.clear();
+    myEvent.nonSelectedJets_CSV_reshaped.clear();
     myEvent.nonSelectedJets_partonFlav.clear();
 
     std::vector<IPHCTree::NTJet> goodJets = sel.GetGoodJets();
@@ -816,7 +816,7 @@ Bool_t ProofJob::Process(Long64_t entry)
 
         myEvent.nonSelectedJets.push_back(goodJets[i].p4);
         myEvent.nonSelectedJets_CSV_raw.push_back(goodJets[i].bTag["combinedSecondaryVertexBJetTags"]);
-        myEvent.nonSelectedJets_CSV_reshaped.push_back(goodJets[i].bTag["zz1combinedSecondaryVertexBJetTagsReshapeNominal"]); 
+        myEvent.nonSelectedJets_CSV_reshaped.push_back(goodJets[i].bTag["zz1combinedSecondaryVertexBJetTagsReshapeNominal"]);
         myEvent.nonSelectedJets_partonFlav.push_back(goodJets[i].partonFlavour);
     }
 
@@ -830,7 +830,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     for (unsigned i = 0 ; i < goodElectrons.size() ; i++)
     {
         bool goodElectronIsSelected = false;
-        if (goodElectrons[i].p4.Pt() == myEvent.leadingLepton.Pt()) goodElectronIsSelected = true; 
+        if (goodElectrons[i].p4.Pt() == myEvent.leadingLepton.Pt()) goodElectronIsSelected = true;
         if (goodElectrons[i].p4.Pt() == myEvent.secondLepton.Pt()) goodElectronIsSelected = true;
 
         if (goodElectronIsSelected) continue;
@@ -842,7 +842,7 @@ Bool_t ProofJob::Process(Long64_t entry)
     for (unsigned i = 0 ; i < goodMuons.size() ; i++)
     {
         bool goodMuonIsSelected = false;
-        if (goodMuons[i].p4.Pt() == myEvent.leadingLepton.Pt()) goodMuonIsSelected = true; 
+        if (goodMuons[i].p4.Pt() == myEvent.leadingLepton.Pt()) goodMuonIsSelected = true;
         if (goodMuons[i].p4.Pt() == myEvent.secondLepton.Pt()) goodMuonIsSelected = true;
 
         if (goodMuonIsSelected) continue;
@@ -852,9 +852,9 @@ Bool_t ProofJob::Process(Long64_t entry)
     }
 
         // Raw MET
-        
+
     myEvent.rawPFMET = sel.rawMet();
-    
+
         // MET Phi
 
     myEvent.METPhi   = sel.MetPhi();
@@ -870,9 +870,9 @@ Bool_t ProofJob::Process(Long64_t entry)
         myEvent.scalePDF                    = mcInfo.Q_scale;
     }
 
-    sel.doObjectSelection(runningOnData,1);
-    sel.FillKinematicP4();
-   
+    sel.DoObjectSelection(runningOnData,1);
+    sel.FillLeadingLeptonsInfo();
+
     myEvent.MET_JESup                       = sel.Met();
     myEvent.MT_JESup                        = sel.MT_wleptonic();
     myEvent.deltaPhiMETJets_JESup           = sel.DPhi_MET_leadingJets();
@@ -889,9 +889,9 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.Mlb_JESup                       = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
     myEvent.Mlb_hemi_JESup                  = (myEvent.leadingLepton + sel.bJetClosestToLeadingLepton()).M();
     myEvent.HTPlusLeptonPtPlusMET_JESup     = myEvent.HT_JESup + myEvent.leadingLeptonPt + myEvent.MET_JESup;
-    myEvent.nJets_JESup                     = sel.GetJetsForAna().size();
+    myEvent.nJets_JESup                     = sel.GetSelectedJets().size();
 
-    if (abs(myEvent.leadingLeptonPDGId) == 11) 
+    if (abs(myEvent.leadingLeptonPDGId) == 11)
         myEvent.weightTriggerEfficiency_JESup = singleLeptonTriggerWeight(11,myEvent.leadingLepton.Pt(),
                                                                              myEvent.leadingLepton.Eta());
     else if ((abs(myEvent.leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() > 26))
@@ -903,13 +903,13 @@ Bool_t ProofJob::Process(Long64_t entry)
                                                                    myEvent.jets[3].Pt());
     else
         myEvent.weightTriggerEfficiency_JESup = -1.0;
-    
-    myEvent.nBTag_JESup        = sel.GetBJetsForAna().size();
+
+    myEvent.nBTag_JESup        = sel.GetSelectedBJets().size();
     myEvent.jets_JESup.clear();
     myEvent.jets_CSV_raw_JESup.clear();
     myEvent.jets_CSV_reshaped_JESup.clear();
 
-    jets = sel.GetJetsForAna();
+    jets = sel.GetSelectedJets();
     for (unsigned int i = 0 ; i < jets.size() ; i++)
     {
         myEvent.jets_JESup.push_back(jets[i].p4);
@@ -918,9 +918,9 @@ Bool_t ProofJob::Process(Long64_t entry)
     }
 
 
-    sel.doObjectSelection(runningOnData,-1);
-    sel.FillKinematicP4();
-    
+    sel.DoObjectSelection(runningOnData,-1);
+    sel.FillLeadingLeptonsInfo();
+
     myEvent.MET_JESdown                     = sel.Met();
     myEvent.MT_JESdown                      = sel.MT_wleptonic();
     myEvent.deltaPhiMETJets_JESdown         = sel.DPhi_MET_leadingJets();
@@ -937,9 +937,9 @@ Bool_t ProofJob::Process(Long64_t entry)
     myEvent.Mlb_JESdown                     = (myEvent.leadingLepton + sel.leadingJetByCSV(runningOnData)).M();
     myEvent.Mlb_hemi_JESdown                = (myEvent.leadingLepton + sel.bJetClosestToLeadingLepton()).M();
     myEvent.HTPlusLeptonPtPlusMET_JESdown   = myEvent.HT_JESdown + myEvent.leadingLeptonPt + myEvent.MET_JESdown;
-    myEvent.nJets_JESdown                   = sel.GetJetsForAna().size();
+    myEvent.nJets_JESdown                   = sel.GetSelectedJets().size();
 
-    if (abs(myEvent.leadingLeptonPDGId) == 11) 
+    if (abs(myEvent.leadingLeptonPDGId) == 11)
         myEvent.weightTriggerEfficiency_JESdown = singleLeptonTriggerWeight(11,myEvent.leadingLepton.Pt(),
                                                                                myEvent.leadingLepton.Eta());
     else if ((abs(myEvent.leadingLeptonPDGId) == 13) && (myEvent.leadingLepton.Pt() > 26))
@@ -952,12 +952,12 @@ Bool_t ProofJob::Process(Long64_t entry)
     else
         myEvent.weightTriggerEfficiency_JESdown = -1.0;
 
-    myEvent.nBTag_JESdown        = sel.GetBJetsForAna().size();
+    myEvent.nBTag_JESdown        = sel.GetSelectedBJets().size();
     myEvent.jets_JESdown.clear();
     myEvent.jets_CSV_raw_JESdown.clear();
     myEvent.jets_CSV_reshaped_JESdown.clear();
 
-    jets = sel.GetJetsForAna();
+    jets = sel.GetSelectedJets();
     for (unsigned int i = 0 ; i < jets.size() ; i++)
     {
         myEvent.jets_JESdown.push_back(jets[i].p4);
