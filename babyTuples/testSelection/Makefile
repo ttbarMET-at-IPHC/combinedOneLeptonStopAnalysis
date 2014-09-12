@@ -6,18 +6,21 @@ ROOTLIBS      = $(shell root-config --libs)
 
 DEFINES       = 
 
+IPHC_FRAMEWORK = /opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/
+
 CXX           = g++
 CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
 CXXFLAGS      += $(ROOTCFLAGS) 
 CXXFLAGS      += -I./
-CXXFLAGS      += -I `pwd`/../../../../../IPHCDataFormat/
-CXXFLAGS      += -I `pwd`/../../../
+CXXFLAGS      += -I $(IPHC_FRAMEWORK)/IPHCDataFormat/
+CXXFLAGS      += -I $(IPHC_FRAMEWORK)/NTuple/NTupleAnalysis/
+
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA -lMinuit -lMinuit2
-LDFLAGS       += -l:`pwd`/../../../../../IPHCDataFormat/NTFormat/src/libNTuple.so
-LDFLAGS       += -l:`pwd`/../../../libNTupleAna.so
+LDFLAGS       += -l:$(IPHC_FRAMEWORK)/IPHCDataFormat/NTFormat/src/libNTuple.so
+LDFLAGS       += -l:$(IPHC_FRAMEWORK)/NTuple/NTupleAnalysis/libNTupleAna.so
 
 SOFLAGS       = -shared
 LIBS          = 
