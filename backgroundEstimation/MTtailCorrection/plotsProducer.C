@@ -1,6 +1,8 @@
 #include "../common/common.h"
 #include "../../common/BDTcutsWithCustomRequirements.h"
 
+#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
+
 bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
@@ -240,11 +242,12 @@ int main (int argc, char *argv[])
             screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
         #endif
 
-    screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
-        screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
+    screwdriver.AddProcessClass("W+jets",          "W+jets",                 "background",kOrange-2);
+        screwdriver.AddDataset("W+jets",           "W+jets", 0, 0);
 
-    screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
-        screwdriver.AddDataset("rare",   "rare", 0, 0);
+    screwdriver.AddProcessClass("rare",            "rare",                   "background",kMagenta-5);
+        screwdriver.AddDataset("rare",             "rare", 0, 0);
+        screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "rare", 0, 0);
 
     screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
         screwdriver.AddDataset("SingleElec",   "data", 0, 0);

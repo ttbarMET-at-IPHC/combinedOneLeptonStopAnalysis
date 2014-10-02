@@ -10,6 +10,9 @@ CUSTOM_CNC_CUTS_LIST = $(shell cat ../checkCR4CR5modeling/cutAndCountDefinitions
 
 #--------------------------------------------------------------------------
 
+checkContamination: checkContamination.$(ExeSuf)
+	./checkContamination.$(ExeSuf)
+
 preselectionControlPlots: preselectionControlPlots.$(ExeSuf)
 	./preselectionControlPlots.$(ExeSuf)
 

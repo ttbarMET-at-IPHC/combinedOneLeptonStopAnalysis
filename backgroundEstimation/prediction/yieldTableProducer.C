@@ -7,6 +7,8 @@
     #error SIGNAL_REGION_TAG need to be defined.
 #endif
 
+#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
+
 bool goesInPreVetoSelectionMTpeak_withSRCuts()      { return (goesInPreVetoSelectionMTpeak()          && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()      { return (goesInPreVetoSelectionMTtail()          && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
@@ -33,7 +35,6 @@ bool secondLeptonInAcceptance_hadronicTau()
     return  (myEvent.secondGeneratedLeptonType == TAU_TO_ONE_PRONG)
          || (myEvent.secondGeneratedLeptonType == TAU_TO_MORE_THAN_ONE_PRONG);
 }
-// TODO : define case were second lepton type is not already computed
 #endif
 
 bool goesIn0BtagControlRegionMTpeak_withSRCuts()    { return (goesIn0BtagControlRegionMTpeak()        && SIGNAL_REGION_CUTS(disableMTCut)); }
@@ -80,13 +81,6 @@ int main (int argc, char *argv[])
             #ifdef USING_TTBAR_MADGRAPH
                 screwdriver.AddDataset("ttbar_madgraph_1l",             "1ltop",  0, 0);
             #endif
-            //screwdriver.AddDataset("ttbar_madgraph_scaledown",    "1ltop",  0, 0);
-            //screwdriver.AddDataset("ttbar_madgraph_scaleup",      "1ltop",  0, 0);
-            //screwdriver.AddDataset("ttbar_madgraph_matchingdown", "1ltop",  0, 0);
-            //screwdriver.AddDataset("ttbar_madgraph_matchingup",   "1ltop",  0, 0);
-            //screwdriver.AddDataset("ttbar_madgraph_mass166-5",    "1ltop",  0, 0);
-            //screwdriver.AddDataset("ttbar_madgraph_mass178-5",    "1ltop",  0, 0);
-
             screwdriver.AddDataset("singleTop_st",                  "1ltop",  0, 0);
 
 
@@ -107,6 +101,10 @@ int main (int argc, char *argv[])
             screwdriver.AddDataset("DoubleElec",   "data", 0, 0);
             screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
             screwdriver.AddDataset("MuEl",         "data", 0, 0);
+
+        screwdriver.AddProcessClass("signal",            "signal",                "background",kMagenta-5);
+            screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "signal", 0, 0);
+
 
     // ##########################
     // ##    Create Regions    ##
