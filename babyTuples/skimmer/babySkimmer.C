@@ -34,8 +34,8 @@ string sampleType;
 #define USE_SIGNAL_SKIMMING
 #define FOLDER_INPUT    "../../store/babyTuples_0603_withBDT/"
 #define FOLDER_OUTPUT   "./"
-#define MASS_STOP       250
-#define MASS_NEUTRALINO 100
+//#define MASS_STOP       250
+//#define MASS_NEUTRALINO 100
 
 // Files needed to compute on-fly variables
 #include "../../common/secondGeneratedLeptonType.h"

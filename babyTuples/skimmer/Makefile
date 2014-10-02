@@ -6,7 +6,7 @@ LogSuf        = log
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
 
-DEFINES       = 
+DEFINES       = -DMASS_STOP=$(INPUT_STOP_MASS) -DMASS_NEUTRALINO=$(INPUT_NEUTRALINO_MASS) 
 
 CXX           = g++
 CXXFLAGS      = -std=c++0x
