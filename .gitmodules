@@ -1,6 +1,7 @@
-[submodule "AN-14-067"]
-	path = AN-14-067
+[submodule "common"]
+	path = common
 	url = https://github.com/ttbarMET-at-IPHC/Stops-AN-14-067.git
+
 [submodule "sonicScrewdriver"]
 	path = sonicScrewdriver
 	url = https://github.com/alexAubin/sonicScrewdriver.git
