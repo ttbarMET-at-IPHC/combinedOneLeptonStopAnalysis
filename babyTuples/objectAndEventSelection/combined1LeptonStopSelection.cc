@@ -1,4 +1,4 @@
-#include "Selection/interface/combined1LeptonStopSelection.h"
+#include "combined1LeptonStopSelection.h"
 using namespace std;
 
 #define DEBUG_MSG std::cout << "DEBUG (" << __FILE__ << ", l." << __LINE__ << ") "
@@ -455,8 +455,8 @@ std::vector<IPHCTree::NTMuon> combined1LeptonStopSelection::Get1LeptonStopSelect
         if (fabs(muons[i].bestMatch_pT - muons[i].p4.Pt()) >= 10) continue;
 
         // Absolute isolation
-        //float absIso = Get1LeptonStopIsolation(muons[i]);
-        //if (absIso > 5) continue;
+        float absIso = Get1LeptonStopIsolation(muons[i]);
+        if (absIso > 5) continue;
 
         outputVector.push_back(muons[i]);
     }
@@ -588,8 +588,8 @@ std::vector<IPHCTree::NTElectron> combined1LeptonStopSelection::Get1LeptonStopSe
         if (fabs(electrons[i].etaSuperCluster) >= 1.4442)     continue;
 
         // Absolute isolation
-        //float absIso = Get1LeptonStopIsolation(electrons[i]);
-        //if (absIso > 5) continue;
+        float absIso = Get1LeptonStopIsolation(electrons[i]);
+        if (absIso > 5) continue;
 
         // E/Pin
         if (electrons[i].eSuperClusterOverP > 4) continue;

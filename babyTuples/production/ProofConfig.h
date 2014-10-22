@@ -24,7 +24,7 @@ using namespace std;
 // ###################
 
 // Number of nodes to be used
-#define NUMBER_OF_NODES 12
+#define NUMBER_OF_NODES 10
 
 // Name of the file describing what each worker have to do
 #define JOB_DESCRIPTION "ProofJob.C+"
@@ -41,6 +41,6 @@ using namespace std;
 #define OUTPUT_NAME "babyTuple.root"
 
 // Format definition of the babytuples
-#define BABYTUPLE_FORMAT "formats/Format_newFinal0516_isolationTests.h"
+#define BABYTUPLE_FORMAT "formats/Format_newFinal0516.h"
 
 #endif

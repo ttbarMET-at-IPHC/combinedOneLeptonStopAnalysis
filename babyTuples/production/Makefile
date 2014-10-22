@@ -4,10 +4,6 @@ SrcSuf        = C
 ExeSuf        = run
 LogSuf        = log
 
-# IPHC paths
-IPHCDATAFORMAT_NTUPLE = /opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/IPHCDataFormat
-IPHCANALYSIS_NTUPLE   = /opt/sbg/data/data4/cms/aaubin/analysisStudy_July13/CMSSW_5_3_2_patch4/src/NTuple/NTupleAnalysis
-
 # Root flags
 ROOTCFLAGS    = $(shell root-config --cflags)
 ROOTLIBS      = $(shell root-config --libs) 
@@ -21,13 +17,14 @@ CXXFLAGS      = -std=c++0x -g -O -Wall -fPIC -Wno-unused-result -Wshadow -Wl,--n
 # Include paths
 INCLUDES       = $(ROOTCFLAGS) 
 INCLUDES      += -I ./
-INCLUDES      += -I $(IPHCANALYSIS_NTUPLE)
-INCLUDES      += -I $(IPHCDATAFORMAT_NTUPLE)
+INCLUDES      += -I $(NTUPLE_ANALYSISFRAMEWORK)
+INCLUDES      += -I $(NTUPLE_DATAFORMAT)
 
 # Linker options
 LDFLAGS       += $(ROOTLIBS) -lEG -lTMVA -lProof -lProofPlayer -lMinuit -lMinuit2
-LDFLAGS       += -l:$(IPHCDATAFORMAT_NTUPLE)/NTFormat/src/libNTuple.so
-LDFLAGS       += -l:`pwd`/libNTupleAna.so
+LDFLAGS       += -l:$(NTUPLE_DATAFORMAT)/NTFormat/src/libNTuple.so
+LDFLAGS       += -l:$(NTUPLE_ANALYSISFRAMEWORK)/libNTupleAna.so
+LDFLAGS       += -l:$(ANALYSIS_SELECTION)/libObjectAndEventSelection.so
 
 # Uncomment this line if you want to use a script to parse & colorize gcc output
 # (You can also export this variable from your bashrc)
@@ -45,29 +42,26 @@ ROOTMESS1     = $(wildcard *.d)
 ROOTMESS2     = $(wildcard *.so)
 #------------------------------------------------------------------------------
 PROOF_LAUNCHER = ProofLauncher
-PROOF_JOB = ProofJob
-PROOF_CONFIG = ProofConfig.h
+PROOF_JOB      = ProofJob
+PROOF_CONFIG   = ProofConfig.h
 #------------------------------------------------------------------------------
 
 
-prod: job copyLibAna $(PROOF_LAUNCHER).$(ExeSuf)
+prod: job $(PROOF_LAUNCHER).$(ExeSuf)
 	@./$(PROOF_LAUNCHER).$(ExeSuf) $(PROOFFILTER) | tee $(PROOF_LAUNCHER).$(LogSuf)
 
 job: $(PROOF_JOB)_C.so
 
 clean:
 	@echo "Cleaning..."
-	@rm -rf $(OBJECTS) $(EXECUTABLES) $(LOGS) $(ROOTMESS1) $(ROOTMESS2) backup_outputProof* NTupleAnalysisPackage
+	@rm -rf $(OBJECTS) $(EXECUTABLES) $(LOGS) $(ROOTMESS1) $(ROOTMESS2) backup_outputProof* FrameworkAndSelectionPackage
 
 #------------------------------------------------------------------------------
 
-copyLibAna:
-	@cp $(IPHCANALYSIS_NTUPLE)/libNTupleAna.so ./libNTupleAna.so
-
-$(PROOF_JOB)_C.so: copyLibAna $(PROOF_CONFIG)
+$(PROOF_JOB)_C.so: $(PROOF_CONFIG)
 	@echo "Compiling job description..."
 	@$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -o .makeJob.run .makeJob.C
-	@export IPHCDATAFORMAT_NTUPLE=$(IPHCDATAFORMAT_NTUPLE); export IPHCANALYSIS_NTUPLE=$(IPHCANALYSIS_NTUPLE); ./.makeJob.run $(GCCPARSER)
+	@./.makeJob.run $(GCCPARSER)
 
 %.$(ExeSuf): %.$(SrcSuf) $(PROOF_CONFIG)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) -o $@ $< $(GCCPARSER)

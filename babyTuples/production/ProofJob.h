@@ -24,7 +24,7 @@
 #include "Tools/interface/AnalysisEnvironmentLoader.h"
 
 // Stop-analysis specific headers
-#include "./inputs/objectAndEventSelection/combined1LeptonStopSelection.h"
+#include "combined1LeptonStopSelection.h"
 #include "Selection/interface/StopMCinfo.h"
 #include "Plots/interface/StopMCCharacterization.h"
 #include "EventReco/interface/StopAnaReco.h"

@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
   // #####################
 
   cout << "  > Loading NTuple Analysis package (don't worry about the symlink error)" << endl;
-  proof->UploadPackage("./NTupleAnalysisPackage.par");
-  proof->EnablePackage("NTupleAnalysisPackage");
+  proof->UploadPackage("./FrameworkAndSelectionPackage.par");
+  proof->EnablePackage("FrameworkAndSelectionPackage");
 
   // ##############################
   // #   Load XML configuration   #
