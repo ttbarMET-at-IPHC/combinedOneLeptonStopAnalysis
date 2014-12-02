@@ -25,6 +25,9 @@ MlbShapeComparison: MlbShapeComparison.$(ExeSuf)
 variablePlots: variablePlots.$(ExeSuf)
 	./variablePlots.$(ExeSuf)
 
+fullMTwithSFRinTail: fullMTwithSFRinTail.$(ExeSuf)
+	./fullMTwithSFRinTail.$(ExeSuf)
+
 
 #BDT_REGIONS = $(BDT_T2bw075)
 

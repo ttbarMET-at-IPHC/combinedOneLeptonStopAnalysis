@@ -7,7 +7,7 @@
     #error SIGNAL_REGION_TAG need to be defined.
 #endif
 
-#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
+//#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
 
 bool goesInPreVetoSelectionMTpeak_withSRCuts()      { return (goesInPreVetoSelectionMTpeak()          && SIGNAL_REGION_CUTS(disableMTCut)); }
 bool goesInPreVetoSelectionMTtail_withSRCuts()      { return (goesInPreVetoSelectionMTtail()          && SIGNAL_REGION_CUTS(enableMTCut) ); }
@@ -102,8 +102,8 @@ int main (int argc, char *argv[])
             screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
             screwdriver.AddDataset("MuEl",         "data", 0, 0);
 
-        screwdriver.AddProcessClass("signal",            "signal",                "background",kMagenta-5);
-            screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "signal", 0, 0);
+//        screwdriver.AddProcessClass("signal",            "signal",                "background",kMagenta-5);
+//            screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "signal", 0, 0);
 
 
     // ##########################

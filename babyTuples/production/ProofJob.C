@@ -21,7 +21,7 @@ ProofJob::ProofJob()
     anaEL      = 0;
     verbosity  = 0;
     DataType   = 0;
-    Luminosity = 0; 
+    Luminosity = 0;
     theTree    = 0;
     fFile      = 0;
     fProofFile = 0;
@@ -62,7 +62,7 @@ void ProofJob::SlaveBegin(TTree * /*tree*/)
     // ############################
 
     // Dataset name
-    TNamed *dsname = (TNamed *) fInput->FindObject("PROOF_DATASETNAME"); 
+    TNamed *dsname = (TNamed *) fInput->FindObject("PROOF_DATASETNAME");
     datasetName = dsname->GetTitle();
 
     cout << "     > Dataset : " << datasetName << endl;
@@ -85,11 +85,11 @@ void ProofJob::SlaveBegin(TTree * /*tree*/)
 
     sel = Void;
     anaEL = new AnalysisEnvironmentLoader(xmlFileName.c_str());
-    anaEL->LoadSamples(datasets, datasetName); 
-    anaEL->LoadSelection(sel);  
+    anaEL->LoadSamples(datasets, datasetName);
+    anaEL->LoadSelection(sel);
     anaEL->LoadGeneralInfo(DataType, Luminosity, LumiError, verbosity);
 
-    LoadCorrectionFiles(); 
+    LoadCorrectionFiles();
 
     // Retrieve the current dataset according to its name
     for(unsigned int d=0;d<datasets.size();d++)
@@ -110,14 +110,14 @@ void ProofJob::SlaveBegin(TTree * /*tree*/)
 void ProofJob::SlaveTerminate()
 {
 
-    if (fFile) 
+    if (fFile)
     {
         fFile->cd();
 
-        theTree->Print();
-        theTree->Write(0, TObject::kOverwrite); 
+        //theTree->Print();
+        theTree->Write(0, TObject::kOverwrite);
 
-        fProofFile->Print();
+        //fProofFile->Print();
         fOutput->Add(fProofFile);
 
         fFile->Close("R");

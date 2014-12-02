@@ -23,6 +23,7 @@ using namespace theDoctor;
 // ###################################
 
 #define FOLDER_BABYTUPLES "../../store/babyTuples_0603_withBDT_skim/merged_1lepton4jetsMET80_or_2leptons1jetMET50/"
+//#define FOLDER_BABYTUPLES "../../store/babyTuples_1030_withBDT_skim/1lepton4jetsMET80/"
 #include "Reader.h"
 
 #define BDT_OUTPUT_AVAILABLE

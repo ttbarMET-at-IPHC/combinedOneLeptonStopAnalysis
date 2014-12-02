@@ -1,13 +1,8 @@
 #include "../common/common.h"
 #include "../../common/BDTcutsWithCustomRequirements.h"
 
-#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
+//#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
 
-bool goesInPreVetoSelectionMTpeak_withSRCuts()   { return (goesInPreVetoSelectionMTpeak()   && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInPreVetoSelectionMTtail_withSRCuts()   { return (goesInPreVetoSelectionMTtail()   && SIGNAL_REGION_CUTS(enableMTCut) ); }
-
-bool goesInPreselectionMTpeak_withSRCuts()       { return (goesInPreselectionMTpeak()       && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInPreselectionMTtail_withSRCuts()       { return (goesInPreselectionMTtail()       && SIGNAL_REGION_CUTS(enableMTCut) ); }
 /*
 bool goesInPreselectionNoMT_withSRCuts()
 {
@@ -16,18 +11,6 @@ bool goesInPreselectionNoMT_withSRCuts()
     return iok;
 }
 */
-
-bool goesIn0BtagControlRegionMTpeak_withSRCuts() { return (goesIn0BtagControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesIn0BtagControlRegionMTtail_withSRCuts() { return (goesIn0BtagControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
-bool goesIn0BtagControlRegionNoMT_withSRCuts()   { return (goesIn0BtagControlRegion()       && SIGNAL_REGION_CUTS(disableMTCut) ); }
-
-bool goesInDileptonControlRegionMTpeak_withSRCuts() { return (goesInDileptonControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInDileptonControlRegionMTtail_withSRCuts() { return (goesInDileptonControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
-bool goesInDileptonControlRegionNoMT_withSRCuts()   { return (goesInDileptonControlRegion()       && SIGNAL_REGION_CUTS(disableMTCut)); }
-
-bool goesInVetoControlRegionMTpeak_withSRCuts() { return (goesInVetoControlRegionMTpeak() && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInVetoControlRegionMTtail_withSRCuts() { return (goesInVetoControlRegionMTtail() && SIGNAL_REGION_CUTS(enableMTCut) ); }
-bool goesInVetoControlRegionNoMT_withSRCuts()   { return (goesInVetosControlRegion()      && SIGNAL_REGION_CUTS(disableMTCut)); }
 
 bool goesIn0BtagControlRegionMTtail100()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 100); }
 bool goesIn0BtagControlRegionMTtail120()     { return (goesIn0BtagControlRegion() && myEvent.MT  > 120); }
@@ -247,7 +230,7 @@ int main (int argc, char *argv[])
 
     screwdriver.AddProcessClass("rare",            "rare",                   "background",kMagenta-5);
         screwdriver.AddDataset("rare",             "rare", 0, 0);
-        screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "rare", 0, 0);
+        //screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "rare", 0, 0);
 
     screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
         screwdriver.AddDataset("SingleElec",   "data", 0, 0);

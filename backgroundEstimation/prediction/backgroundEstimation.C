@@ -5,7 +5,7 @@
 #define ISOLATED_TRACK_VETO_UNCERTAINTY                      0.06 // From tag and probe studies
 #define TAU_VETO_UNCERTAINTY                                 0.07 // From tau POG
 
-#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
+//#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
 
 int main (int argc, char *argv[])
 {
@@ -322,9 +322,11 @@ void backgroundEstimation::ComputeSFpre()
     Figure preveto_rare     = rawYieldTable.Get("preveto_MTpeak","rare"    ) * rareCrossSection_rescale;
     Figure preveto_data     = rawYieldTable.Get("preveto_MTpeak","data"    );
 
-    Figure preveto_signal   = rawYieldTable.Get("preveto_MTpeak","signal"    );
+    //Figure preveto_signal   = rawYieldTable.Get("preveto_MTpeak","signal"    );
+    //SF_pre = (preveto_data - preveto_rare - preveto_signal)
+    //      / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
 
-    SF_pre = (preveto_data - preveto_rare - preveto_signal)
+    SF_pre = (preveto_data - preveto_rare)
           / (preveto_1ltop + preveto_ttbar_2l + preveto_Wjets);
     if (MTpeakStat_variation) SF_pre.keepVariation(MTpeakStat_variation,"noNegativeValue");
 
@@ -338,10 +340,13 @@ void backgroundEstimation::ComputeSFpost()
     Figure postveto_rare     = rawYieldTable.Get("signalRegion_MTpeak","rare"    ) * rareCrossSection_rescale;
     Figure postveto_data     = rawYieldTable.Get("signalRegion_MTpeak","data"    );
 
-    Figure postveto_signal   = rawYieldTable.Get("signalRegion_MTpeak","signal"    );
+    //Figure postveto_signal   = rawYieldTable.Get("signalRegion_MTpeak","signal"    );
+    //SF_post = (postveto_data - postveto_rare - SF_pre * postveto_ttbar_2l - postveto_signal)
+    //       / (postveto_1ltop + postveto_Wjets);
 
-    SF_post = (postveto_data - postveto_rare - SF_pre * postveto_ttbar_2l - postveto_signal)
+    SF_post = (postveto_data - postveto_rare - SF_pre * postveto_ttbar_2l)
            / (postveto_1ltop + postveto_Wjets);
+
     if (MTpeakStat_variation) SF_post.keepVariation(MTpeakStat_variation,"noNegativeValue");
 }
 
@@ -378,8 +383,8 @@ void backgroundEstimation::ComputeSFvetopeak()
 #ifdef USING_MT_TAIL_CORRECTION_FROM_TEMPLATE_FIT_METHOD
 void backgroundEstimation::ImportMTTailCorrectionFromTemplateFitMethod()
 {
-    //Table SFR_table = Table("../MTtailCorrection/results/SF_MTtail.tab");
-    Table SFR_table = Table("../MTtailCorrection/signalContamination/"+string(SIGNAL_CONTAMINATION_INPUT)+"/SF_MTtail.tab");
+    Table SFR_table = Table("../MTtailCorrection/results/SF_MTtail.tab");
+    //Table SFR_table = Table("../MTtailCorrection/signalContamination/"+string(SIGNAL_CONTAMINATION_INPUT)+"/SF_MTtail.tab");
 
     // Remove low/medium/highDM suffix in label for BDT's
     string signalRegionLabel_ = signalRegionLabel;

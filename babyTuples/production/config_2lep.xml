@@ -19,7 +19,7 @@
 <a
     type="Corrections"
 
-    pileUp="/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/pileUp/puWeights_S7.root"
+    pileUp="/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/pileUp/puWeights_S10.root"
     bTagReshaping="/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/bTagReshaping/bTagReshaping.root"
     jetEnergyCorrectionMC="/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/JEC/Fall12_Uncertainty_MC_AK5PF.txt"
     jetEnergyCorrectionData="/opt/sbg/data/data4/cms/aaubin/stopAnalysis/babyTuples/production/inputs/JEC/Fall12_Uncertainty_Data_AK5PF.txt"
@@ -86,13 +86,13 @@
 
 <!-- Others -->
 
-<!--
 <d  name="WGstarToLNu2E" add="1" isData="0" NofEvts="-1" normf="1" xsection="5.873"
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WGstarToLNu2E/*.root" />
 <d  name="WGstarToLNu2Mu" add="1" isData="0" NofEvts="-1" normf="1" xsection="1.914"
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WGstarToLNu2Mu/*.root" />
 <d  name="WGstarToLNu2Tau" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.336"
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/WGstarToLNu2Tau/*.root" />
+<!--
 <d  name="TBZ" add="1" isData="0" NofEvts="-1" normf="1" xsection="0.0114"
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/TBZ/*.root" />
 <d  name="TTG" add="1" isData="0" NofEvts="-1" normf="1" xsection="2.166"
@@ -133,9 +133,9 @@
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DoubleElec_*/*.root" />
 <d  name="DoubleMuon" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/DoubleMuon_*/*.root" />
--->
 <d  name="MuEl" add="1" isData="1" NofEvts="-1" normf="1" xsection="-1"
     filenames="/opt/sbg/data/data2/cms/aaubin/store/nTuples/MuEl_*/*.root" />
+-->
 
 </Datasets>
 

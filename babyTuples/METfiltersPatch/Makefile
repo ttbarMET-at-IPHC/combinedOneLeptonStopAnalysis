@@ -16,7 +16,7 @@ CXXFLAGS      += $(ROOTCFLAGS) -I./
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
-LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
+LDFLAGS       += -l:`pwd`/../../.vectorDictionnary_C.so 
 
 SOFLAGS       = -shared
 LIBS          = 
@@ -36,7 +36,7 @@ DEFAULT_TARGET = babyFilter
 
 all: compile
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
+compile: ../../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
 
 clean:
 	@echo "Cleaning..."
@@ -44,7 +44,7 @@ clean:
 
 #------------------------------------------------------------------------------
 
-../.vectorDictionnary_C.so: ../.vectorDictionnary.C
+../../.vectorDictionnary_C.so: ../../.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
 $(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)

@@ -9,10 +9,10 @@ bool disableMTCut = false;
 // #  Sonic screwdriver headers  #
 // ###############################
 
-#include "interface/Table.h" 
-#include "interface/SonicScrewdriver.h" 
-#include "interface/tables/TableBackgroundSignal.h" 
-#include "interface/tables/TableDataMC.h" 
+#include "interface/Table.h"
+#include "interface/SonicScrewdriver.h"
+#include "interface/tables/TableBackgroundSignal.h"
+#include "interface/tables/TableDataMC.h"
 using namespace theDoctor;
 
 
@@ -56,7 +56,7 @@ float figureOfMerit(float S, float B, string mode, bool minimumEventRequirement 
     if (mode == "discovery") return S / sqrt(B);
     if (mode == "exclusion") return S / sqrt(S + B);
     if (mode == "azimov")    return sqrt(2 * ((S+B) * log(1 + S/B) - S));
-    
+
     return -1.0;
 }
 
@@ -84,7 +84,7 @@ void formatAndWriteMapPlot(SonicScrewdriver* screwdriver, TH2F* theHisto, string
     theHisto->Draw("COLZ TEXT");
     thePlot.Update();
     TPaletteAxis *pal = (TPaletteAxis*) theHisto->GetListOfFunctions()->FindObject("palette");
-    if (pal != 0) 
+    if (pal != 0)
     {
         pal->SetX1NDC(0.901);
         pal->SetY1NDC(0.1);

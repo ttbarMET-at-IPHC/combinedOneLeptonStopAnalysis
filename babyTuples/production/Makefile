@@ -6,7 +6,7 @@ LogSuf        = log
 
 # Root flags
 ROOTCFLAGS    = $(shell root-config --cflags)
-ROOTLIBS      = $(shell root-config --libs) 
+ROOTLIBS      = $(shell root-config --libs) -lEG -lTMVA -lProof -lProofPlayer -lMinuit -lMinuit2
 
 # Compiler
 CXX           = g++
@@ -21,7 +21,7 @@ INCLUDES      += -I $(NTUPLE_ANALYSISFRAMEWORK)
 INCLUDES      += -I $(NTUPLE_DATAFORMAT)
 
 # Linker options
-LDFLAGS       += $(ROOTLIBS) -lEG -lTMVA -lProof -lProofPlayer -lMinuit -lMinuit2
+LDFLAGS       += $(ROOTLIBS)
 LDFLAGS       += -l:$(NTUPLE_DATAFORMAT)/NTFormat/src/libNTuple.so
 LDFLAGS       += -l:$(NTUPLE_ANALYSISFRAMEWORK)/libNTupleAna.so
 LDFLAGS       += -l:$(ANALYSIS_SELECTION)/libObjectAndEventSelection.so

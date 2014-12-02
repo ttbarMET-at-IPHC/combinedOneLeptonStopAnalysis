@@ -161,10 +161,10 @@ class combined1LeptonStopSelection: public Selection
         {
             Mt2Com_bisect Mt2;
             float value = Mt2.calculateMT2w(GetSelectedJets(),
-                    GetSelectedBJets(),
-                    theLeadingLepton,
-                    theMET.Vect().XYvector(),
-                    "MT2w");
+                                            GetSelectedBJets(),
+                                            theLeadingLepton,
+                                            theMET.Vect().XYvector(),
+                                            "MT2w");
             return value;
         }
 
@@ -192,19 +192,27 @@ class combined1LeptonStopSelection: public Selection
         // M3b
         float M3b()
         {
+
             TLorentzVector sum;
-            if(selectedJets.size() == 3)
+
+                 if (selectedJets.size() <= 2) return -1.0;
+            else if (selectedJets.size() == 3)
             {
                 sum = selectedJets[0].p4 + selectedJets[1].p4 + selectedJets[2].p4;
             }
             else
             {
                 // check which jet is closest to lepton, then take other 3
-                double dphimin = 99.;
-                int index_closest_jet = -1;
-                for(int i=0; i < 4; i++)
+                double dphimin = 99.0;
+                int    index_closest_jet = -1;
+
+                // FIXME How comes people defined this using only the 4th leading jets ? ...
+                for (int i = 0 ; i < 4 ; i++)
                 {
-                    double dphi = theLeadingLepton.DeltaPhi(selectedJets[i].p4);
+                    double dphi;
+                    if (numberOfSelectedLeptons >= 1) dphi = theLeadingLepton.DeltaPhi(selectedJets[i].p4);
+                    else                              dphi = 99.0;
+
                     if (dphi < dphimin)
                     {
                         dphimin = dphi;
@@ -212,10 +220,9 @@ class combined1LeptonStopSelection: public Selection
                     }
                 }
 
-                for(int i=0; i<4; i++)
+                for (int i = 0 ; i < 4 ; i++)
                 {
-                    if(i!=index_closest_jet)
-                        sum = sum + selectedJets[i].p4;
+                    if (i != index_closest_jet) sum = sum + selectedJets[i].p4;
                 }
 
             }

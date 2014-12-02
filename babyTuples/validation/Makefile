@@ -7,14 +7,15 @@ ROOTLIBS      = $(shell root-config --libs)
 DEFINES       = 
 
 CXX           = g++
-CXXFLAGS      = -O -Wall -fPIC $(DEFINES) -Wno-unused-result
-CXXFLAGS      += $(ROOTCFLAGS) -I./ -I../sonicScrewdriver/
+CXXFLAGS      = -std=c++0x
+CXXFLAGS      += -O -Wall -fPIC $(DEFINES) -Wno-unused-result
+CXXFLAGS      += $(ROOTCFLAGS) -I./ -I../../sonicScrewdriver/
 
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
-LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
-LDFLAGS       += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
+LDFLAGS       += -l:`pwd`/../../.vectorDictionnary_C.so 
+LDFLAGS       += -l:`pwd`/../../sonicScrewdriver/libSonicScrewdriver.so
 
 SOFLAGS       = -shared
 LIBS          = 
@@ -25,11 +26,11 @@ OBJECTS       = $(SOURCES:.$(SrcSuf)=.$(ObjSuf))
 EXECUTABLES   = $(SOURCES:.$(SrcSuf)=)
 #------------------------------------------------------------------------------
 
-DEFAULT_FILE  = Validation_signal
+DEFAULT_FILE  = validation
 
 all: compile run browse 
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_FILE)
+compile: ../../.vectorDictionnary_C.so $(DEFAULT_FILE)
 
 run:
 	./$(DEFAULT_FILE)
@@ -37,10 +38,10 @@ run:
 browse:
 	root -q -l -X .plots
 
-../.vectorDictionnary_C.so: ../.vectorDictionnary.C
+../../.vectorDictionnary_C.so: ../../.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
-%.o: %.c
+%.o: %.C
 	$(CXX) $(CXXFLAGS) -c $<
 
 %: %.o
