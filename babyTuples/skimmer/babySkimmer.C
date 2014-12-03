@@ -21,9 +21,9 @@ string sampleType;
 // Define input and output folders
 
     // Standard babyTuples
-#define USE_ONE_LEPTON_SKIM
-#define FOLDER_INPUT  "../../store/babyTuples_1030_withBDT/"
-#define FOLDER_OUTPUT "../../store/babyTuples_1030_withBDT_skim/1lepton4jetsMET80/"
+//#define USE_ONE_LEPTON_SKIM
+//#define FOLDER_INPUT  "../../store/babyTuples_0603_withBDT/"
+//#define FOLDER_OUTPUT "../../store/babyTuples_0603_withBDT_skim/1lepton4jetsMET80_withWTagInfo/"
 
     // Fix for dilepton channels with 1 and 2 jets bins
 //#define USE_TWO_LEPTONS_SKIM
@@ -31,9 +31,9 @@ string sampleType;
 //#define FOLDER_OUTPUT "../../store/babyTuples_0603_withBDT_skim/2leptons1jetMET50/"
 
     // Skimming to extract one given benchmark of signal
-//#define USE_SIGNAL_SKIMMING
-//#define FOLDER_INPUT    "../../store/babyTuples_0603_withBDT/"
-//#define FOLDER_OUTPUT   "./"
+#define USE_SIGNAL_SKIMMING
+#define FOLDER_INPUT    "../../store/babyTuples_0603_withBDT/"
+#define FOLDER_OUTPUT   "./"
 //#define MASS_STOP       250
 //#define MASS_NEUTRALINO 100
 
