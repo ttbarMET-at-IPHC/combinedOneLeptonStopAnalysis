@@ -1,6 +1,6 @@
 default: tables
 
-include ../backgroundEstimation_common/common.make
+include ../backgroundEstimation/common/common.make
 
 #--------------------------------------------------------------------------
 
@@ -40,6 +40,8 @@ summary:
 produceSummary: summaryProducer.$(ExeSuf)
 	./summaryProducer.$(ExeSuf) 		"$(TAG)" "$(LABEL)" $(SIGNAL_REGIONS)
 
+illustrativePlots: illustrativePlots.$(ExeSuf)
+	./illustrativePlots.$(ExeSuf)
 
 
 #SIGNAL_REGIONS=BDT_T2bw025_1 BDT_T2bw025_3 BDT_T2bw025_4_highLSP BDT_T2bw025_4_lowLSP BDT_T2bw025_6 BDT_T2bw050_5 BDT_T2bw050_6       

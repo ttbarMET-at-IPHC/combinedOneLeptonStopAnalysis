@@ -1,6 +1,7 @@
 #!/bin/bash
 
-BENCHMARK_LIST=`ls ../signalContamination/`
+POLARIZATION_SCENARIO="T2bw_rl"
+BENCHMARK_LIST=`ls ../signalContamination/$POLARIZATION_SCENARIO`
 
 while read line
 do
@@ -12,8 +13,8 @@ do
         TYPE=`echo $BENCHMARK | tr '_' ' ' | awk '{print $1}'`
         STOP=`echo $BENCHMARK | tr '_' ' ' | awk '{print $2}'`
         LSP=`echo $BENCHMARK | tr '_' ' ' | awk '{print $3}'`
-        CORRECTED_BACKGROUND_YIELD=`cat ../signalContamination/$BENCHMARK/prediction/$SIGNAL_REGION.tab | grep totalSM | awk '{print $8}'`
-        CORRECTED_BACKGROUND_UNCERT=`cat ../signalContamination/$BENCHMARK/prediction/$SIGNAL_REGION.tab | grep totalSM | awk '{print $10}'`
+        CORRECTED_BACKGROUND_YIELD=`cat ../signalContamination/$POLARIZATION_SCENARIO/$BENCHMARK/prediction/$SIGNAL_REGION.tab | grep totalSM | awk '{print $8}'`
+        CORRECTED_BACKGROUND_UNCERT=`cat ../signalContamination/$POLARIZATION_SCENARIO/$BENCHMARK/prediction/$SIGNAL_REGION.tab | grep totalSM | awk '{print $10}'`
         CORRECTED_REL_UNCERT=`echo "scale=3; $CORRECTED_BACKGROUND_YIELD / $CORRECTED_BACKGROUND_UNCERT" | bc`
         
         NONCORRECTED_BACKGROUND_YIELD=`cat ../../common/results/latest/prediction/$SIGNAL_REGION.tab | grep totalSM | awk '{print $8}'`

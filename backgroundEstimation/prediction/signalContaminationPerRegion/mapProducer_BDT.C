@@ -1,3 +1,8 @@
+#include "interface/Table.h"
+#include "interface/SonicScrewdriver.h"
+#include "interface/tables/TableBackgroundSignal.h"
+#include "interface/tables/TableDataMC.h"
+using namespace theDoctor;
 
 #include "../../../common.h"
 #include "TH2F.h"
@@ -7,13 +12,20 @@
 string signalRegionName(string decaymode, int stopmass, int lspmass);
 float readGlobalSF(string SR, string signalType, int mStop, int mLSP, string option = "");
 
-int main()
+string polarizationScenario;
+
+int main(int argc, char *argv[])
 {
-    TH2F globalSFmap("globalSFmap","",28,112.5,812.5,16,-12.5,387.5);
+
+    if (argc < 3) { cerr << "Missing argument" << endl; return -1; }
+
+    PlotDefaultStyles::SetSmoothPalette("soft");
+
+    polarizationScenario = argv[1];
+    string signalType = argv[2];
+
+    TH2F globalSFmap("globalSFmap",("B_{SC-corrected}/B_{no SC} for "+signalType+" signal type").c_str(),28,112.5,812.5,16,-12.5,387.5);
     TH2F globalSFmap_uncert("globalSFmap_uncert","",28,112.5,812.5,16,-12.5,387.5);
-
-    string signalType = "T2bw-075";
-
     float mStopLimit = 0;
     if (signalType == "T2tt"    ) mStopLimit = 475;
     if (signalType == "T2bw-075") mStopLimit = 475;
@@ -55,10 +67,14 @@ int main()
 
         SRname = signalRegionName(signalType,mStop,mLSP);
 
-        if ((mStop - mLSP > 300) && (mStop > mStopLimit))
+        if ((((mStop - mLSP > 300) && (mStop > mStopLimit)) || (mLSP > 250))
+                // Very dirty fix, if someome see this, you're allowed to wipe me hard
+         || ((polarizationScenario != "nominal") && (signalType == "T2bw-050") && (mStop == 575) ))
         {
             uncorrected_background_yield  = readGlobalSF(SRname,signalType,mStop,mLSP,"uncorr_bkg_yield" );
             uncorrected_background_uncert = readGlobalSF(SRname,signalType,mStop,mLSP,"uncorr_bkg_uncert");
+
+            globalSFmap.Fill((float) mStop, (float) mLSP,1.0);
 
             output << "(" << uncorrected_background_yield << "," << uncorrected_background_uncert << ");" << endl;
             continue;
@@ -152,23 +168,39 @@ int main()
 
     gStyle->SetPaintTextFormat("4.2f");
     TCanvas c("","",800,600);
+    PlotDefaultStyles::ApplyDefaultAxisStyle(globalSFmap.GetXaxis(),"m_{#tilde{t}} [GeV]");
+    PlotDefaultStyles::ApplyDefaultAxisStyle(globalSFmap.GetYaxis(),"m_{#chi^{0} [GeV]}" );
     globalSFmap.SetMinimum(0.7);
     globalSFmap.SetStats(0);
     globalSFmap.Draw("colz text");
+    c.Update();
+    TPaletteAxis *pal = (TPaletteAxis*) globalSFmap.GetListOfFunctions()->FindObject("palette");
+    if (pal != 0)
+    {
+        pal->SetX1NDC(0.901);
+        pal->SetY1NDC(0.1);
+        pal->SetX2NDC(0.93);
+        pal->SetY2NDC(0.9);
+    }
+
     c.SaveAs(("outputs/globalSFmap_"+signalType+".pdf").c_str());
+    c.SaveAs(("outputs/globalSFmap_"+signalType+".root").c_str());
 
     TCanvas c2("","",800,600);
+    PlotDefaultStyles::ApplyDefaultAxisStyle(globalSFmap_uncert.GetXaxis(),"m_{#tilde{t}} [GeV]");
+    PlotDefaultStyles::ApplyDefaultAxisStyle(globalSFmap_uncert.GetYaxis(),"m_{#chi^{0}} [GeV]" );
     globalSFmap_uncert.SetMinimum(0.7);
     globalSFmap_uncert.SetStats(0);
     globalSFmap_uncert.Draw("colz text");
     c2.SaveAs(("outputs/globalSFmap_uncert_"+signalType+".pdf").c_str());
+    c2.SaveAs(("outputs/globalSFmap_uncert_"+signalType+".root").c_str());
 
 
 }
 
 float readGlobalSF(string SR, string signalType_, int mStop, int mLSP, string option)
 {
-    ifstream f("BDT_"+SR+".dump");
+    ifstream f(polarizationScenario+"/BDT_"+SR+".dump");
 
     int counter = 0;
     float globalSF_yield = 0;
@@ -191,9 +223,14 @@ float readGlobalSF(string SR, string signalType_, int mStop, int mLSP, string op
         if (signalType != signalType_) continue;
         if ((inputmStop != mStop) || (inputmLSP != mLSP)) continue;
         else { break; }
+
     }
 
     if (globalSF_yield == -1) globalSF_yield = 0;
+
+    if (globalSF_yield  < 0) globalSF_yield = 0;
+    if (globalSF_uncert < 0) globalSF_uncert = 0;
+    if (uncorrected_bkg_yield < 0) { cout << "WARNING - uncorrected bkg yield < 0, that should not happen at all !" << endl; exit(-1); }
 
          if (option == "")                  return globalSF_yield;
     else if (option == "globalSF_uncert")   return globalSF_uncert;

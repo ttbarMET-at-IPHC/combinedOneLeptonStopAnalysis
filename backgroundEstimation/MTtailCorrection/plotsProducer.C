@@ -1,7 +1,7 @@
 #include "../common/common.h"
 #include "../../common/BDTcutsWithCustomRequirements.h"
 
-//#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
+#define SIGNAL_CONTAMINATION_INPUT "T2bw-075_525_75"
 
 /*
 bool goesInPreselectionNoMT_withSRCuts()
@@ -230,7 +230,7 @@ int main (int argc, char *argv[])
 
     screwdriver.AddProcessClass("rare",            "rare",                   "background",kMagenta-5);
         screwdriver.AddDataset("rare",             "rare", 0, 0);
-        //screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "rare", 0, 0);
+        screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "rare", 0, 0);
 
     screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
         screwdriver.AddDataset("SingleElec",   "data", 0, 0);
@@ -435,6 +435,15 @@ int main (int argc, char *argv[])
             ReadEvent(theTree,i,&pointers,&myEvent);
 
             float weight = getWeight();
+
+            if (currentDataset == SIGNAL_CONTAMINATION_INPUT)
+                //weight *= myEvent.weightT2bwPolarization_rr;
+
+//myEvent->weightT2bwPolarization_ll
+//myEvent->weightT2bwPolarization_lr
+//myEvent->weightT2bwPolarization_rl
+//myEvent->weightT2bwPolarization_rr
+
 
             // Split 1-lepton ttbar and 2-lepton ttbar
             string currentProcessClass_ = currentProcessClass;

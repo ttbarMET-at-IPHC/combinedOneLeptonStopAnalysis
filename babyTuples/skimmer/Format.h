@@ -576,9 +576,10 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("weightISRmodeling",                            &(myEvent->weightISRmodeling));
     theTree->Branch("weightTopPt",                                  &(myEvent->weightTopPt));
     theTree->Branch("weightTriggerEfficiency",                      &(myEvent->weightTriggerEfficiency));
-    /*
+
     theTree->Branch("weightT2ttLeftHanded",                         &(myEvent->weightT2ttLeftHanded));
     theTree->Branch("weightT2ttRightHanded",                        &(myEvent->weightT2ttRightHanded));
+
     theTree->Branch("weightT2bwPolarization_ss",                    &(myEvent->weightT2bwPolarization_ss));
     theTree->Branch("weightT2bwPolarization_ls",                    &(myEvent->weightT2bwPolarization_ss));
     theTree->Branch("weightT2bwPolarization_sl",                    &(myEvent->weightT2bwPolarization_ss));
@@ -588,7 +589,7 @@ void InitializeBranchesForWriting(TTree* theTree, babyEvent* myEvent)
     theTree->Branch("weightT2bwPolarization_lr",                    &(myEvent->weightT2bwPolarization_lr));
     theTree->Branch("weightT2bwPolarization_rl",                    &(myEvent->weightT2bwPolarization_rl));
     theTree->Branch("weightT2bwPolarization_rr",                    &(myEvent->weightT2bwPolarization_rr));
-
+    /*
     theTree->Branch("MET_JESup",                                    &(myEvent->MET_JESup));
     theTree->Branch("MT_JESup",                                     &(myEvent->MT_JESup));
     theTree->Branch("deltaPhiMETJets_JESup",                        &(myEvent->deltaPhiMETJets_JESup));
