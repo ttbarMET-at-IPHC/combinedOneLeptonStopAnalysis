@@ -22,9 +22,11 @@ using namespace theDoctor;
 // #  BabyTuple format and location  #
 // ###################################
 
-#define FOLDER_BABYTUPLES "../../store/babyTuples_0603_withBDT_skim/merged_1lepton4jetsMET80_or_2leptons1jetMET50/"
+//#define FOLDER_BABYTUPLES "../../store2/babyTuples_13TeV_v1/"
+#define FOLDER_BABYTUPLES "/opt/sbg/data/data1/cms/echabert/Stop2015/BabyTuples/v1_30_06/"
 //#define FOLDER_BABYTUPLES "../../store/babyTuples_1030_withBDT_skim/1lepton4jetsMET80/"
-#include "Reader.h"
+//#include "Reader_CommonFormat.h"
+#include "../../common/Reader_CommonFormat.h"
 
 #define BDT_OUTPUT_AVAILABLE
 #define SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
@@ -43,10 +45,10 @@ using namespace theDoctor;
 // #  Analysis, cut-and-count and BDT definitions  #
 // #################################################
 
-#include "../../common/selectionDefinitions.h"
-#include "../../common/cutAndCountDefinitions.h"
-#include "../../common/signalRegionDefinitions.h"
-#include "../../common/secondGeneratedLeptonType.h"
+#include "../../common/selectionDefinitions13TeV.h"
+//#include "../../common/cutAndCountDefinitions.h"
+//#include "../../common/signalRegionDefinitions.h"
+//#include "../../common/secondGeneratedLeptonType.h"
 
 // ####################
 // #  Processes list  #
@@ -178,11 +180,12 @@ vector<string> scaleFactorsLabelList_CR4CR5modelingChecks =
     "$SF^{M_T \\text{tail}}_{\\text{reversed veto}}$",
 };
 
+/*
 string signalRegionLabel(string region, string mode)
 {
          if (findSubstring(region,"BDT_"))                                        return BDTlabel(region,mode);
     else if ((findSubstring(region,"cutAndCount_")) || region == "preselection")  return CnClabel(region,mode);
     else                                                                          return "unknown";
 }
-
+*/
 #endif
