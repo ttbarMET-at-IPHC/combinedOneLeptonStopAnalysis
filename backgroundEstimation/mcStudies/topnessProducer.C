@@ -1,6 +1,14 @@
 #include "../common/common.h"
 #include "topness_tt2l_mc_reso.h"
 
+bool PassFilter(TTree* theTree, long int i){
+    //theTree->GetBranch("genlepsfromtop")->GetEntry(i);
+    theTree->GetBranch("pfmet")->GetEntry(i);
+    theTree->GetBranch("ngoodleps")->GetEntry(i);
+    theTree->GetBranch("ngoodjets")->GetEntry(i);
+    return goesInPreselection();
+
+}
 
 
 bool goesInAnyChannel()                             { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
@@ -27,8 +35,32 @@ int main (int argc, char *argv[])
      // ##   Create Variables   ##
      // ##########################
 
+     tt2l_mc_info mcinfo;
+     tt2l_reso res;
+     
      screwdriver.AddVariable("MET",            "MET",                  "GeV",    26,0,520,       &(myEvent.pfmet),                  "");
      screwdriver.AddVariable("MT",             "M_{T}",                   "GeV",    40,0,400,       &(myEvent.MT),                   "");
+     
+     //Specific studu
+     //DeltaPhi (nu,nu)
+     //Pt of radiation
+     screwdriver.AddVariable("METReso",             "MET resolution",                 "GeV",    40,-400,400,       &(res.d_met),                   "");
+     screwdriver.AddVariable("HTReso",             "HT resolution",                   "GeV",    40,-400,400,       &(res.d_HT),                   "");
+     screwdriver.AddVariable("PzReso",             "Pz resolution",                   "GeV",    40,-400,400,       &(res.d_pz),                   "");
+     screwdriver.AddVariable("Pz_ttbar",             "Pz of ttbar system",            "GeV",    40,-2500,2500,     &(res.Pz_ttbar),                   "");
+     screwdriver.AddVariable("Pt_ttbar",             "Pt of ttbar system",            "GeV",    40,0,1500,     &(res.Pt_ttbar),                   "");
+     screwdriver.AddVariable("nofISR",             "Number of ISR",            "",    10, 0, 10,     &(res.nofISR),                   "");
+     screwdriver.AddVariable("nofJets",             "Number of jets",            "",    10, 0, 10,     &(res.njets),                   "");
+     screwdriver.AddVariable("lostLeptonPt",             "Pt of lost lepton",            "",    40, 0, 200,     &(res.lost_pt),                   "");
+     screwdriver.AddVariable("lostLeptonEta",             "Eta of lost lepton",            "",    40, -6, 6,     &(res.lost_eta),                   "");
+     screwdriver.AddVariable("HT_visttbar",             "HT of 2b and lepton",            "",    40, 0, 2000,     &(res.HT),                   "");
+     screwdriver.AddVariable("Pz_visttbar",             "Pz of 2b and lepton",            "",    40, 0, 2000,     &(res.pz),                   "");
+     screwdriver.AddVariable("HT_all",             "HT all jets and leading lepton",            "",    40, 0, 2000,     &(res.HT_all),                   "");
+     screwdriver.AddVariable("genMET",             "Generated MET",            "",    40, 0, 1200,     &(res.genMET),                   "");
+	//int index_b;	//
+	//int index_bbar; //
+//	vector<int> index_isr;
+
 
 
     // #########################################################
@@ -57,6 +89,9 @@ int main (int argc, char *argv[])
 
         //screwdriver.AddRegion("presel_MTpeak",          "Preselection (MT peak)",      &goesInMTpeak);
         screwdriver.AddRegion("presel_MTtail",          "Preselection (MT peak)",      &goesInMTtail);
+        screwdriver.AddRegion("baseline",          "Baseline selection",      &goesInBaselineSearchSR);
+        screwdriver.AddRegion("baslineLargeDM",          "Baseline S.R.  - Large #DeltaM",      &goesInLargeDMSR);
+        screwdriver.AddRegion("baselineSmallDM",          "Baseline S.R. - Small #DeltaM",      &goesInSmallDMSR);
 
 
     // ##########################
@@ -75,11 +110,44 @@ int main (int argc, char *argv[])
 
      // Create histograms
      screwdriver.Create1DHistos();
+     
+     // Create 2D histos
+     screwdriver.Add2DHisto("genMET","METReso");
+     screwdriver.Add2DHisto("HT_all","METReso");
+     screwdriver.Add2DHisto("HT_visttbar","METReso");
+     screwdriver.Add2DHisto("nofJets","METReso");
+     screwdriver.Add2DHisto("lostLeptonPt","METReso");
+     screwdriver.Add2DHisto("lostLeptonEta","METReso");
+     screwdriver.Add2DHisto("Pt_ttbar","METReso");
+/*     
+     screwdriver.Add2DHisto("Pt_ttbar","HTReso");
+     screwdriver.Add2DHisto("nofISR","HTReso");
+     screwdriver.Add2DHisto("HT_all","HTReso");
+     screwdriver.Add2DHisto("HT_visttbar","HTReso");
+     screwdriver.Add2DHisto("nofJets","HTReso");
+     screwdriver.Add2DHisto("lostLeptonPt","HTReso");
+     screwdriver.Add2DHisto("lostLeptonEta","HTReso");
+     screwdriver.Add2DHisto("Pt_ttbar","HTReso");
+     
+     screwdriver.Add2DHisto("Pz_ttbar","PzReso");
+     screwdriver.Add2DHisto("nofISR","PzReso");
+     screwdriver.Add2DHisto("HT_all","PzReso");
+     screwdriver.Add2DHisto("Pz_visttbar","PzReso");
+     screwdriver.Add2DHisto("nofJets","PzReso");
+     screwdriver.Add2DHisto("lostLeptonPt","PzReso");
+     screwdriver.Add2DHisto("lostLeptonEta","PzReso");
+     screwdriver.Add2DHisto("Pz_ttbar","PzReso");
+
+*/
+
+
+    // #########################################################
 
      // Schedule plots
      screwdriver.SchedulePlots("1DDataMCComparison");
      screwdriver.SchedulePlots("1DStack");
      screwdriver.SchedulePlots("1DSuperimposed");
+     screwdriver.SchedulePlots("2D");
 
      // Config plots
 
@@ -87,7 +155,7 @@ int main (int argc, char *argv[])
      screwdriver.SetGlobalFloatOption ("DataMCComparison",  "factorSignal",                     1.0    );
      
      screwdriver.SetGlobalStringOption("1DStack",           "includeSignal",    "superimposed");
-     screwdriver.SetGlobalFloatOption ("1DStack",           "factorSignal",     100.0    );
+     screwdriver.SetGlobalFloatOption ("1DStack",           "factorSignal",     1.0    );
 
      screwdriver.SetGlobalStringOption("Plot", "infoTopRight", "CMS Preliminary");
      screwdriver.SetGlobalStringOption("Plot", "infoTopLeft",  "#sqrt{s} = 8 TeV, L = 19.5 fb^{-1}");
@@ -136,11 +204,10 @@ int main (int argc, char *argv[])
             {
                 if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
-                // Get the i-th entry
-                //ReadEvent(theTree,i,&pointers,&myEvent);
-                //cout<<"can I read the event ?"<<endl;
+                if(!PassFilter(theTree,i)) continue;
+		
+		// Get the i-th entry
 		ReadEvent(theTree,i,&myEvent);
-		//cout<<"> Yes I can !"<<endl;
 
          	if(goesInPreselection() && goesInAnyChannel()){
 		//cout<<myEvent.MT<<" "<<myEvent.pfmet<<" "<<myEvent.ngoodleps<<" "<<myEvent.ngoodjets<<endl;
@@ -160,12 +227,16 @@ int main (int argc, char *argv[])
 
 
 		//Topness study
-		tt2l_mc_info mcinfo;
 		if(goesInPreselection()){
-		cout<<"##############################"<<endl;
-		cout<<"event "<<i<<endl;
-		Fill_tt2l_mc_info(mcinfo,myEvent);
-		if(mcinfo.isr_id.size()>=2) DumpMCinfo(mcinfo);
+			//cout<<"##############################"<<endl;
+			//cout<<"event "<<i<<endl;
+			Fill_tt2l_mc_info(mcinfo,myEvent);
+			//if(mcinfo.isr_id.size()>=2) DumpMCinfo(mcinfo);
+			if(mcinfo.top_lepdecay && mcinfo.atop_lepdecay){
+				fill_t2l_reso(res, mcinfo,myEvent);
+			//	cout<<"Event "<<i<<" is dileptonic"<<endl;
+			}
+			//if (myEvent.genlepsfromtop == 2)  cout<<" Event "<<i<<" 2 leptons "<<endl;
 		}
                 screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
