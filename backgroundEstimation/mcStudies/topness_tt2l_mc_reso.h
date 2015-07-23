@@ -6,6 +6,9 @@
 #define W_status_code 52
 #define lepton_status_code 22
 
+#include <fstream>
+//#include <stringstream>
+
 // check MC info
 //
 struct tt2l_mc_info{
@@ -14,6 +17,7 @@ struct tt2l_mc_info{
     float Pz_ttbar;
     float Pt_ttbar;
     float CM_Q2;
+    float CM_M2;
     //Lost branch
     TLorentzVector lostW;
     TLorentzVector lostLepton;
@@ -49,15 +53,77 @@ struct tt2l_mc_info{
     //ttbar system:
     TLorentzVector ttbar;
     int ttbar_decay; //0: had, 1: lep, 2: dilep
-    
+   
+    //neutrinos
+    vector<TLorentzVector> neutrinos;
+    //neutralinos
+    vector<TLorentzVector> neutralinos;
+
     // ISR
     vector<int> isr_id;
     vector<TLorentzVector> isr_p4;
 };
 
+void ResetMCInfo(tt2l_mc_info& mcinfo){
+	mcinfo.neutrinos.clear();
+	mcinfo.neutralinos.clear();
+	mcinfo.isr_id.clear();
+	mcinfo.isr_p4.clear();
+	mcinfo.ttbar_decay = -999;
+	mcinfo.genMET = -999;
+	mcinfo.Pz_ttbar = -999;
+	mcinfo.Pt_ttbar = -999;
+	mcinfo.CM_Q2 = -999;
+	mcinfo.CM_M2 = -999;
+	mcinfo.top_lepdecay = false;
+	mcinfo.atop_lepdecay = false;
+	mcinfo.top_lepid = -999;
+	mcinfo.atop_lepid = -999;
+	mcinfo.top_lepdecay = false;
+	mcinfo.atop_lepdecay = false;
+}
+
 ostream&  PrintP4(const TLorentzVector& a, ostream& os = cout){
 	os<<"Pt = "<<a.Pt()<<" "<<"Eta = "<<a.Eta()<<" Phi = "<<a.Phi()<<" E = "<<a.E();//<<endl;
 	return os;
+}
+
+
+struct tt2l_reso{
+	float met;	// reconstructed MET
+	float d_met;	// reco MET - gen MET
+	float HT;	// sum of reconstructed decay of top: 2b+1l+MET
+	float d_HT;	// diff reco - MC
+	float pz;	// pz of the reconstructed decay of top
+	float d_pz;	// diff reco - MC
+	int njets;	// nof selected jets
+	float HT_all;	// sum of Pt for all leptons + jets
+    	
+	float genMET;	// gen MET
+    	float Pz_ttbar;	// Pz of gen ttbar
+    	float Pt_ttbar;	// Pt of gen ttbar
+	int nofISR;	// Nof ISR
+	
+	// matching info
+	// index in the jet collection ordered in pt
+	// matching btw quark/gluon and jet
+	// default: -1
+	int index_b;	//
+	int index_bbar; //
+	vector<int> index_isr;
+
+	//lost lepton;
+	float lost_pt;
+	float lost_eta;
+
+	bool matched; // true if 2 b-quarks give selected jets and one of the lepton is reconstructed and selected
+};
+
+void ResetRes(tt2l_reso& res){
+	res.index_isr.clear();
+	res.matched = false;
+        res.index_b = -1;
+	res.index_bbar = -1;
 }
 
 void DumpMCinfo(tt2l_mc_info& mcinfo){
@@ -121,6 +187,8 @@ void DumpMCinfo(tt2l_mc_info& mcinfo){
 
 void Fill_tt2l_mc_info(tt2l_mc_info& mc_info, babyEvent& myevent){
    //cout<<"SIZE = "<<myevent.gen_id.size()<<endl;
+   
+   ResetMCInfo(mc_info);
    vector<int> isr;
    for(unsigned int i=0;i<myevent.gen_id.size();i++){
       /*
@@ -152,8 +220,20 @@ void Fill_tt2l_mc_info(tt2l_mc_info& mc_info, babyEvent& myevent){
       }
 
       //if(i>50) break;
+      //
+      //search neutralino
+      //
+      if(myevent.gen_id[i] == 1000022 && myevent.gen_status[i] == 1){
+      	 TLorentzVector neutralino;
+      	 neutralino.SetPtEtaPhiM(myevent.gen_pt[i], myevent.gen_eta[i], myevent.gen_phi[i], myevent.gen_m[i]);
+	 mc_info.neutralinos.push_back(neutralino);
+      }
+      //
       //found tops
-      if (abs(myevent.gen_id[i]) == 6  && myevent.gen_status[i] == top_status_code && myevent.gen_daughter_index[i].size() == 2){
+      //cout<<myevent.gen_id[i]<<" "<<myevent.gen_status[i]<<endl;
+      //if (abs(myevent.gen_id[i]) == 6  && myevent.gen_status[i] == top_status_code && myevent.gen_daughter_index[i].size() == 2){
+      //remove status constrain as it does not work for the signal
+      if (abs(myevent.gen_id[i]) == 6  && myevent.gen_daughter_index[i].size() == 2){
 	//cout<<"we found a top !"<<endl;
 	int sign = 1;
 	if (myevent.gen_id[i]<0) sign = -1;
@@ -220,6 +300,7 @@ void Fill_tt2l_mc_info(tt2l_mc_info& mc_info, babyEvent& myevent){
 
       }
       // adding the ISR
+      mc_info.isr_id.clear();
       for(unsigned int is=0;is<isr.size();is++){
       	mc_info.isr_id.push_back(myevent.gen_id[isr[is]]);
       	TLorentzVector part;
@@ -241,19 +322,30 @@ void Fill_tt2l_mc_info(tt2l_mc_info& mc_info, babyEvent& myevent){
 		//sum neutrino
 		if (mc_info.top_lepdecay){ 
       			mc_info.ttbar_decay++;
-			inv.SetPx(mc_info.top_l.Px());
-			inv.SetPy(mc_info.top_l.Py());
+			inv.SetPx(inv.Px()+mc_info.top_nu.Px());
+			inv.SetPy(inv.Py()+mc_info.top_nu.Py());
+			mc_info.neutrinos.push_back(mc_info.top_nu);
 		}
 		if (mc_info.atop_lepdecay){ 
       			mc_info.ttbar_decay++;
-			inv.SetPx(mc_info.top_l.Px());
-			inv.SetPy(mc_info.top_l.Py());
+			inv.SetPx(inv.Px()+mc_info.atop_nu.Px());
+			inv.SetPy(inv.Py()+mc_info.atop_nu.Py());
+			mc_info.neutrinos.push_back(mc_info.atop_nu);
+		}
+		//add met from neutralino
+		for(unsigned n=0;n<mc_info.neutralinos.size();n++){
+			inv.SetPx(inv.Px()+mc_info.neutralinos[n].Px());
+			inv.SetPy(inv.Py()+mc_info.neutralinos[n].Py());
 		}
 		mc_info.genMET = inv.Pt();
+		
+		
 		//---------------------------
 
     		mc_info.Pz_ttbar = mc_info.ttbar.Pz();
     		mc_info.Pt_ttbar = mc_info.ttbar.Pt();
+		mc_info.CM_Q2 = mc_info.ttbar.E();
+		mc_info.CM_M2 = mc_info.ttbar.M();
       /*
       if (myevent.gen_id[i] == -6 && myevent.gen_status[i] == top_status_code)  itbar = i;
       //found
@@ -300,8 +392,120 @@ void Fill_tt2l_mc_info(tt2l_mc_info& mc_info, babyEvent& myevent){
 
 }
 
+
+void fill_t2l_reso(tt2l_reso& res, tt2l_mc_info& mc_info, babyEvent& myevent){
+	res.met = myevent.pfmet;
+	res.genMET = 	mc_info.genMET;
+	res.Pz_ttbar = 	mc_info.Pz_ttbar;
+	res.Pt_ttbar = 	mc_info.Pt_ttbar;
+	res.nofISR = 	mc_info.isr_id.size();
+	res.d_met = 	res.met - res.genMET;
+	res.njets = 	myevent.jet_pt.size();
+	///compute HT_all
+	res.HT_all = 0;
+	for(unsigned int i=0;i<myevent.jet_pt.size();i++){
+		res.HT_all+=myevent.jet_pt[i];
+	}
+	res.HT_all+=	myevent.leadingLeptonPt;
+
+    	
+
+	// searching for lost lepton
+	res.lost_pt	= 0;
+	res.lost_eta	= 0;
+	TLorentzVector leadLepton;
+	//leadLepton.SetPtEtaPhiE(myevent.leadingLeptonPt, myevent.leadingLeptonEta, myevent.leadingLeptonPhi, myevent.leadingLeptonE);
+	// mass or E not save
+	leadLepton.SetPtEtaPhiM(myevent.lep1_pt, myevent.lep1_eta, myevent.lep1_phi, 0);
+	float dr = mc_info.top_l.DeltaR(leadLepton);
+	if(dr<0.1){	//the other lepton is loast
+		res.lost_pt = mc_info.atop_l.Pt();
+		res.lost_eta = mc_info.atop_l.Eta();
+	}
+	dr = mc_info.atop_l.DeltaR(leadLepton);
+	if(dr<0.1){	//the other lepton is lost
+		res.lost_pt = mc_info.top_l.Pt();
+		res.lost_eta = mc_info.top_l.Eta();
+	}
+	////////////////////////////////////////////
+	
+	////////////////////////////////////////////
+	/// matching with jets
+	////////////////////////////////////////////
+	
+	// isr index
+	res.index_isr = vector<int>(mc_info.isr_p4.size());
+	for(int i=0;i<res.nofISR;i++) res.index_isr[i] = -1; // default value
+	for(unsigned int i=0;i<myevent.jet_pt.size();i++){
+		TLorentzVector jet;
+		jet.SetPtEtaPhiM(myEvent.jet_pt[i], myEvent.jet_eta[i],myEvent.jet_phi[i],myEvent.jet_mass[i]);
+		//matching with b-quarks
+		float dr = 999;
+		dr = jet.DeltaR(mc_info.top_b);
+		if(dr<0.1) res.index_b = i;
+		dr = jet.DeltaR(mc_info.atop_b);
+		if(dr<0.1) res.index_bbar = i;
+		//matching with isr
+		for(unsigned r = 0; r < mc_info.isr_p4.size(); r++){
+			dr = jet.DeltaR(mc_info.isr_p4[r]);
+			if(dr<0.1) res.index_isr[r] = i; 
+		}
+
+	}
+	
+	////////////////////////////////////////////
+	/// For events that are fully matched
+	////////////////////////////////////////////
+
+	res.HT = -999;
+	res.d_HT = -999;
+	res.pz = -999;
+	res.d_pz = -999;
+	
+	res.matched = false;
+	//cout<<res.index_b<<" "<<res.index_bbar<<" "<<res.lost_pt<<endl;
+	if(res.index_b>=0 && res.index_bbar>=0 && res.lost_pt>0){
+		res.matched = true;
+		
+		res.HT = 0;
+		res.HT += myevent.jet_pt[res.index_b];
+		res.HT += myevent.jet_pt[res.index_bbar];
+		res.HT += myevent.leadingLeptonPt;
+		res.HT += myevent.pfmet;
+	        //@MC level
+		float HT_gen = 0;
+		HT_gen = mc_info.top_b.Pt();	
+		HT_gen = mc_info.atop_b.Pt();	
+		HT_gen = mc_info.top_l.Pt();	
+		HT_gen = mc_info.atop_l.Pt();	
+		HT_gen = mc_info.top_nu.Pt();	
+		HT_gen = mc_info.atop_nu.Pt();	
+		res.d_HT = myevent.HT - HT_gen;
+		
+		// Computed Pz
+		res.pz = 0;
+		TLorentzVector bjet;
+		bjet.SetPtEtaPhiM(myEvent.jet_pt[res.index_b], myEvent.jet_eta[res.index_b],myEvent.jet_phi[res.index_b],myEvent.jet_mass[res.index_b]);
+		res.pz += bjet.Pz() ;
+		TLorentzVector bbarjet;
+		bbarjet.SetPtEtaPhiM(myEvent.jet_pt[res.index_bbar], myEvent.jet_eta[res.index_bbar],myEvent.jet_phi[res.index_bbar],myEvent.jet_mass[res.index_bbar]);
+		res.pz += bbarjet.Pz() ;
+		TLorentzVector leadLepton;
+		// mass or E not save
+		leadLepton.SetPtEtaPhiM(myevent.leadingLeptonPt, myevent.leadingLeptonEta, myevent.leadingLeptonPhi, 0);
+		res.pz += leadLepton.Pz();
+		
+		res.d_pz = res.pz - mc_info.Pz_ttbar;
+	}
+	else{
+		res.lost_pt = -999;
+		res.lost_eta = -999;
+	}
+};
+/*
 void Fill_tt2l_res(tt2l_mc_info){
     //partage resolution MET (2 neutrinos - )
     //fraction evt correct jet assignation
 }
+*/
 #endif
