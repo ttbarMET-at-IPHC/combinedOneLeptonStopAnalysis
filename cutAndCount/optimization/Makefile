@@ -17,7 +17,7 @@ CXXFLAGS      += -I../sonicScrewdriver/
 LD            = g++ 
 LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined 
 LDFLAGS       += $(ROOTLIBS)  -lEG -lTMVA
-LDFLAGS       += -l:`pwd`/../.vectorDictionnary_C.so 
+LDFLAGS       += -l:`pwd`/.vectorDictionnary_C.so 
 LDFLAGS       += -l:`pwd`/../sonicScrewdriver/libSonicScrewdriver.so
 
 SOFLAGS       = -shared
@@ -39,7 +39,7 @@ DEFAULT_TARGET = T2bw
 
 all: compile run
 	
-compile: ../.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
+compile: ./.vectorDictionnary_C.so $(DEFAULT_TARGET).$(ExeSuf)
 
 run:
 	./$(DEFAULT_TARGET).$(ExeSuf) | tee $(DEFAULT_TARGET).$(LogSuf)
@@ -50,7 +50,7 @@ clean:
 
 #------------------------------------------------------------------------------
 
-../.vectorDictionnary_C.so: ../.vectorDictionnary.C
+./.vectorDictionnary_C.so: ./.vectorDictionnary.C
 	cd ..; root -q -l -L .vectorDictionnary.C+
 
 $(DEFAULT_TARGET).$(ExeSuf): $(DEFAULT_TARGET).$(SrcSuf)
