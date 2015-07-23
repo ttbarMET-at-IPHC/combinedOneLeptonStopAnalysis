@@ -1,3 +1,18 @@
+//#define USE_GEN_INFO
+//#define USE_GEN_INFO_EXT
+#define USE_LEP1
+//#define USE_LEP1_EXT
+//#define USE_LEP2
+//#define USE_LEP2_EXT
+//#define USE_JETS
+//#define USE_JETS_EXT
+//#define USE_PV
+//#define USE_WEIGHTS
+#define USE_VAR_BASELINE
+//#define USE_GLOBAL_VAR
+//#define USE_OLD_VAR
+#define USE_SKIMMING_VAR
+
 #include "../common/common.h"
 
 #ifndef SIGNAL_REGION_CUTS
@@ -9,7 +24,7 @@
 
 //#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
 
-
+#define FOLDER_BABYTUPLES_SKIM "/opt/sbg/data/data1/cms/echabert/Stop2015/BabyTuples/v1_20_07/skimming/"
 
 bool goesInAnyChannel()                             { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
 
@@ -30,50 +45,54 @@ int main (int argc, char *argv[])
         // Create a sonic Screwdriver
         SonicScrewdriver screwdriver;
 
+    
     // #########################################################
     // ##   Create ProcessClasses (and associated datasets)   ##
     // #########################################################
-	/*
-        screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
-            #ifdef USING_TTBAR_POWHEG
-                screwdriver.AddDataset("ttbar_powheg",                "1ltop",  0, 0);
-            #endif
-            #ifdef USING_TTBAR_MADGRAPH
-                screwdriver.AddDataset("ttbar_madgraph_1l",             "1ltop",  0, 0);
-            #endif
-            screwdriver.AddDataset("singleTop_st",                  "1ltop",  0, 0);
+	
+	screwdriver.AddProcessClass("ttbar_1l", "t#bar{t} #rightarrow l+jets",                             "background",kRed-7);
+                screwdriver.AddDataset("ttbar-madgraph",                "ttbar_1l",  0, 0);
 
 
         screwdriver.AddProcessClass("ttbar_2l", "t#bar{t} #rightarrow l^{+}l^{-}", "background",kCyan-3);
-            #ifdef USING_TTBAR_MADGRAPH
-                screwdriver.AddDataset("ttbar_madgraph_2l",   "ttbar_2l",  0, 0);
-            #endif
-
+///*	
+	screwdriver.AddProcessClass("single_top", "single top",                             "background",kRed-5);
+                screwdriver.AddDataset("singleTopbar_s",                "single_top",  0, 0);
+                screwdriver.AddDataset("singleTopbar_t",                "single_top",  0, 0);
+                screwdriver.AddDataset("singleTop_s",                "single_top",  0, 0);
+                screwdriver.AddDataset("singleTop_t",                "single_top",  0, 0);
+	 
         screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
-            screwdriver.AddDataset("W+jets",    "W+jets", 0, 0);
+            screwdriver.AddDataset("Wjets", "W+jets", 0, 0);
+	screwdriver.AddProcessClass("VV",   "di-boson",                          "background",kOrange-3);
+          //  screwdriver.AddDataset("ZZ", "ZZ", 0, 0);
+            screwdriver.AddDataset("WZ", "WZ", 0, 0);
+       
+       screwdriver.AddProcessClass("ttV",   "ttV",                          "background",kOrange-4);
+            screwdriver.AddDataset("ttW", "ttV", 0, 0);
+            screwdriver.AddDataset("ttZ", "ttV", 0, 0);
 
-        screwdriver.AddProcessClass("rare",   "rare",                              "background",kMagenta-5);
-            screwdriver.AddDataset("rare",   "rare", 0, 0);
-
-        screwdriver.AddProcessClass("data",   "data",                              "data",COLORPLOT_BLACK);
-            screwdriver.AddDataset("SingleElec",   "data", 0, 0);
-            screwdriver.AddDataset("SingleMuon",   "data", 0, 0);
-            screwdriver.AddDataset("DoubleElec",   "data", 0, 0);
-            screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
-            screwdriver.AddDataset("MuEl",         "data", 0, 0);
-	*/
-        //screwdriver.AddProcessClass("signal",            "signal",                "background",kMagenta-5);
-           // screwdriver.AddDataset("T2tt_650_325", "signal", 0, 0);
-        screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
-            screwdriver.AddDataset("T2tt_650_325", "W+jets", 0, 0);
+	screwdriver.AddProcessClass("T2tt_850_100",   "T2tt_850_100",                          "signal",kGreen+2);
+            screwdriver.AddDataset("T2tt_850_100", "T2tt_850_100", 0, 0);
+	screwdriver.AddProcessClass("T2tt_650_100",   "T2tt_650_100",                          "signal",kGreen+3);
+           screwdriver.AddDataset("T2tt_650_100", "T2tt_650_100", 0, 0);
+        screwdriver.AddProcessClass("T2tt_500_325",   "T2tt_500_325",                          "signal",kGreen+4);
+            screwdriver.AddDataset("T2tt_500_325", "T2tt_500_325", 0, 0);
 
 
     // ##########################
     // ##    Create Regions    ##
     // ##########################
 
-        screwdriver.AddRegion("presel_MTpeak",          "Preselection (MT peak)",      &goesInMTpeak);
-        screwdriver.AddRegion("presel_MTtail",          "Preselection (MT peak)",      &goesInMTtail);
+        //screwdriver.AddRegion("presel_MTpeak",          "Preselection (MT peak)",      &goesInMTpeak);
+        //screwdriver.AddRegion("presel_MTtail",          "Preselection (MT peak)",      &goesInMTtail);
+        screwdriver.AddRegion("preselection",          "Preselection ",      &goesInPreselection);
+        screwdriver.AddRegion("preselection_noveto",          "Preselection no veto",      &goesInPreselectionNoVeto);
+        screwdriver.AddRegion("baseline",          "Baseline selection",      &goesInBaselineSearchSR);
+        screwdriver.AddRegion("baselineLargeDM",          "Baseline S.R.  - Large #DeltaM",      &goesInLargeDMSR);
+        screwdriver.AddRegion("baselineSmallDM",          "Baseline S.R. - Small #DeltaM",      &goesInSmallDMSR);
+        screwdriver.AddRegion("baseline2b",          "Baseline selection",      &goesInBaselineSearchSR2b);
+        screwdriver.AddRegion("baselineSmallDM2b",          "Baseline S.R. - Small #DeltaM",      &goesInSmallDMSR2b);
 
 
     // ##########################
@@ -81,8 +100,8 @@ int main (int argc, char *argv[])
     // ##########################
 
         //screwdriver.AddChannel("singleLepton", "e/#mu-channels",  &goesInSingleLeptonChannel);
-        screwdriver.AddChannel("singleElec",   "e-channel",       &goesInSingleElecChannel  );
-        screwdriver.AddChannel("singleMuon",   "#mu-channel",     &goesInSingleMuonChannel  );
+        //screwdriver.AddChannel("singleElec",   "e-channel",       &goesInSingleElecChannel  );
+        //screwdriver.AddChannel("singleMuon",   "#mu-channel",     &goesInSingleMuonChannel  );
 
         /*
         screwdriver.AddChannel("doubleLepton", "2l-channel",      &goesInDoubleLeptonChannel);
@@ -120,7 +139,7 @@ int main (int argc, char *argv[])
             sampleType = screwdriver.GetProcessClassType(currentProcessClass);
 
             // Open the tree
-            string treePath = string(FOLDER_BABYTUPLES)+currentDataset+".root";
+            string treePath = string(FOLDER_BABYTUPLES_SKIM)+currentDataset+".root";
             TFile f(treePath.c_str());
             TTree* theTree = (TTree*) f.Get("babyTuple");
 
@@ -137,6 +156,7 @@ int main (int argc, char *argv[])
                 ttbarDatasetToBeSplitted = true;
 
             int nEntries = theTree->GetEntries();
+	    float sf_fracEvent = (float)nEntries/theTree->GetEntries();
             for (int i = 0 ; i < nEntries ; i++)
             {
                 if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
@@ -147,21 +167,25 @@ int main (int argc, char *argv[])
 		ReadEvent(theTree,i,&myEvent);
 		//cout<<"> Yes I can !"<<endl;
 
-         	if(goesInPreselection() && goesInAnyChannel()){
+         	//if(goesInPreselection() && goesInAnyChannel()){
 		//cout<<myEvent.MT<<" "<<myEvent.pfmet<<" "<<myEvent.ngoodleps<<" "<<myEvent.ngoodjets<<endl;
 		//cout<<"preselection: "<<goesInPreselection()<<endl;
 		//cout<<"all channel"<< goesInAnyChannel() <<  endl;
-		}
+		//}
 		//cout<<""<< <<  endl;
 		//cout<<""<< <<  endl;
 		//cout<<""<< <<  endl;
-	 	float weight = getWeight();
+	 	//float weight = getWeight();
+		float weight = getWeight(currentDataset,theTree->GetEntries(), sf_fracEvent);
 
                 // Split 1-lepton ttbar and 2-lepton ttbar
                 string currentProcessClass_ = currentProcessClass;
-                if (ttbarDatasetToBeSplitted && (myEvent.genlepsfromtop == 2))
-                    currentProcessClass_ = "ttbar_2l";
-
+                //if (ttbarDatasetToBeSplitted && (myEvent.genlepsfromtop == 2))
+                //    currentProcessClass_ = "ttbar_2l";
+		
+		//cout<<goesInBaselineSearchSR()<<endl;
+		//cout<<goesInAnyChannel()<<endl;
+		//cout<<weight<<endl;
                 screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
 
             }
@@ -178,7 +202,8 @@ int main (int argc, char *argv[])
         printBoxedMessage("Writing the table ... ");
 
         vector<string> regions  = { 
-				    "presel_MTpeak", "presel_MTtail",
+				    "preselection", "preselection_noveto", "baseline", "baselineLargeDM", "baselineSmallDM" 
+				    //"presel_MTpeak", "presel_MTtail",
 				    /*
 				    "preveto_MTpeak",      "preveto_MTtail",
                                     "signalRegion_MTpeak", "signalRegion_MTtail",
@@ -188,7 +213,9 @@ int main (int argc, char *argv[])
                                   */};
 
         string exportFile = "rawYieldTables/prediction.tab";
+        string exportFile2 = "rawYieldTables/predictionSig.tab";
         TableDataMC(&screwdriver,regions,"allChannels").Print(exportFile,4);
+        TableBackgroundSignal(&screwdriver,regions,"allChannels").Print(exportFile2,4);
 
         vector<string> secondLeptonInAcceptanceRegions  = {
                                                               "preveto_MTtail",
@@ -202,7 +229,6 @@ int main (int argc, char *argv[])
 
         printBoxedMessage("Table generation completed");
 
-        exit()
 	return (0);
 }
 
