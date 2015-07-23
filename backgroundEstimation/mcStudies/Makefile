@@ -1,4 +1,4 @@
-default: topnessProducer
+default: topnessProducer4
 #yieldTableProducer
 
 include ../common/common.make
@@ -20,3 +20,27 @@ plotsProducer: plotsProducer.$(ExeSuf)
 topnessProducer: topnessProducer.$(ExeSuf)
 	./topnessProducer.$(ExeSuf)
 
+topnessProducer2: topnessProducer2.$(ExeSuf)
+	./topnessProducer2.$(ExeSuf)
+
+topnessProducer3: topnessProducer3.$(ExeSuf)
+	./topnessProducer3.$(ExeSuf)
+
+topnessProducer4: topnessProducer4.$(ExeSuf)
+	./topnessProducer4.$(ExeSuf)
+
+topnessProducer5: topnessProducer5.$(ExeSuf)
+	./topnessProducer5.$(ExeSuf)
+
+
+metResolutionStudy: metResolutionStudy.$(ExeSuf)
+	./metResolutionStudy.$(ExeSuf)
+
+skimming: skimming.$(ExeSuf)
+	./skimming.$(ExeSuf)
+
+resoTermStudy: resoTermStudy.$(ExeSuf)
+	resoTermStudy.$(ExeSuf)
+
+bjetPosition: bjetPosition.$(ExeSuf)
+	bjetPosition.$(ExeSuf)
