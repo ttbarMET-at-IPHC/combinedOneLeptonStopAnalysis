@@ -9,47 +9,7 @@
 
 //#define SIGNAL_CONTAMINATION_INPUT "T2tt_475_175"
 
-bool goesInPreVetoSelectionMTpeak_withSRCuts()      { return (goesInPreVetoSelectionMTpeak()          && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInPreVetoSelectionMTtail_withSRCuts()      { return (goesInPreVetoSelectionMTtail()          && SIGNAL_REGION_CUTS(enableMTCut) ); }
 
-bool goesInPreselectionMTpeak_withSRCuts()          { return (goesInPreselectionMTpeak()              && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInPreselectionMTtail_withSRCuts()          { return (goesInPreselectionMTtail()              && SIGNAL_REGION_CUTS(enableMTCut) ); }
-
-#ifdef SECOND_LEPTON_IN_ACCEPTANCE_ALREADY_COMPUTED
-bool secondLeptonInAcceptance()
-{
-    if ((myEvent.secondGeneratedLeptonType != UNKNOWN)
-    &&  (myEvent.secondGeneratedLeptonType != NO_SECOND_LEPTON)
-    &&  (myEvent.secondGeneratedLeptonType != NOT_IN_ACCEPTANCE)) return true;
-    else return false;
-}
-
-bool secondLeptonInAcceptance_singleTrack()
-{
-    return  (myEvent.secondGeneratedLeptonType == ELEC_OR_MUON)
-         || (myEvent.secondGeneratedLeptonType == TAU_TO_ELEC_OR_MUON);
-}
-
-bool secondLeptonInAcceptance_hadronicTau()
-{
-    return  (myEvent.secondGeneratedLeptonType == TAU_TO_ONE_PRONG)
-         || (myEvent.secondGeneratedLeptonType == TAU_TO_MORE_THAN_ONE_PRONG);
-}
-#endif
-
-bool goesIn0BtagControlRegionMTpeak_withSRCuts()    { return (goesIn0BtagControlRegionMTpeak()        && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesIn0BtagControlRegionMTtail_withSRCuts()    { return (goesIn0BtagControlRegionMTtail()        && SIGNAL_REGION_CUTS(enableMTCut) ); }
-
-bool goesInDileptonControlRegion_withSRCuts()       { return (goesInDileptonControlRegion()           && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInDileptonControlRegionMTpeak_withSRCuts() { return (goesInDileptonControlRegionMTpeak()     && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInDileptonControlRegionMTtail_withSRCuts() { return (goesInDileptonControlRegionMTtail()     && SIGNAL_REGION_CUTS(enableMTCut) ); }
-
-bool goesInVetoControlRegionMTpeak_withSRCuts()     { return (goesInVetoControlRegionMTpeak()         && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInVetoControlRegionMTtail_withSRCuts()     { return (goesInVetoControlRegionMTtail()         && SIGNAL_REGION_CUTS(enableMTCut) ); }
-
-bool goesInDileptonControlRegion1or2jets_withSRCuts()     { return (goesInDileptonControlRegion(2)    && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInDileptonControlRegion3jets_withSRCuts()        { return (goesInDileptonControlRegion(3)    && SIGNAL_REGION_CUTS(disableMTCut)); }
-bool goesInDileptonControlRegionAtLeast4jets_withSRCuts() { return (goesInDileptonControlRegion(4)    && SIGNAL_REGION_CUTS(disableMTCut)); }
 
 bool goesInAnyChannel()                             { return (goesInSingleLeptonChannel() || goesInDoubleLeptonChannel());                  }
 
@@ -59,7 +19,7 @@ bool goesInAnyChannel()                             { return (goesInSingleLepton
 
 int main (int argc, char *argv[])
 {
-    loadBDTSignalRegions();
+    //loadBDTSignalRegions();
 
     printBoxedMessage("Starting tables generation");
 
@@ -73,7 +33,7 @@ int main (int argc, char *argv[])
     // #########################################################
     // ##   Create ProcessClasses (and associated datasets)   ##
     // #########################################################
-
+	/*
         screwdriver.AddProcessClass("1ltop", "1l top",                             "background",kRed-7);
             #ifdef USING_TTBAR_POWHEG
                 screwdriver.AddDataset("ttbar_powheg",                "1ltop",  0, 0);
@@ -101,36 +61,20 @@ int main (int argc, char *argv[])
             screwdriver.AddDataset("DoubleElec",   "data", 0, 0);
             screwdriver.AddDataset("DoubleMuon",   "data", 0, 0);
             screwdriver.AddDataset("MuEl",         "data", 0, 0);
-
-//        screwdriver.AddProcessClass("signal",            "signal",                "background",kMagenta-5);
-//            screwdriver.AddDataset(SIGNAL_CONTAMINATION_INPUT, "signal", 0, 0);
+	*/
+        //screwdriver.AddProcessClass("signal",            "signal",                "background",kMagenta-5);
+           // screwdriver.AddDataset("T2tt_650_325", "signal", 0, 0);
+        screwdriver.AddProcessClass("W+jets",   "W+jets",                          "background",kOrange-2);
+            screwdriver.AddDataset("T2tt_650_325", "W+jets", 0, 0);
 
 
     // ##########################
     // ##    Create Regions    ##
     // ##########################
 
-        screwdriver.AddRegion("preveto_MTpeak",          "Preselection (MT peak)",      &goesInPreVetoSelectionMTpeak_withSRCuts);
-        screwdriver.AddRegion("preveto_MTtail",          "Preselection (MT tail)",      &goesInPreVetoSelectionMTtail_withSRCuts);
+        screwdriver.AddRegion("presel_MTpeak",          "Preselection (MT peak)",      &goesInMTpeak);
+        screwdriver.AddRegion("presel_MTtail",          "Preselection (MT peak)",      &goesInMTtail);
 
-        screwdriver.AddRegion("signalRegion_MTpeak",     "Preselection (MT peak)",      &goesInPreselectionMTpeak_withSRCuts);
-        //screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",      &goesInPreselectionMTtail_withSRCuts, "blinded");
-        screwdriver.AddRegion("signalRegion_MTtail",     "Preselection (MT tail)",      &goesInPreselectionMTtail_withSRCuts);
-
-        screwdriver.AddRegion("0btag_MTpeak",            "0 b-tag (MT peak)",           &goesIn0BtagControlRegionMTpeak_withSRCuts);
-        screwdriver.AddRegion("0btag_MTtail",            "0 b-tag (MT tail)",           &goesIn0BtagControlRegionMTtail_withSRCuts);
-
-        screwdriver.AddRegion("reversedVeto_MTpeak",     "Reversed veto (MT peak)",     &goesInVetoControlRegionMTpeak_withSRCuts);
-        screwdriver.AddRegion("reversedVeto_MTtail",     "Reversed veto (MT tail)",     &goesInVetoControlRegionMTtail_withSRCuts);
-
-        screwdriver.AddRegion("2leptons",                "2 leptons",                   &goesInDileptonControlRegion_withSRCuts);
-        screwdriver.AddRegion("2leptons_MTpeak",         "2 leptons (MT peak)",         &goesInDileptonControlRegionMTpeak_withSRCuts);
-        screwdriver.AddRegion("2leptons_MTtail",         "2 leptons (MT tail)",         &goesInDileptonControlRegionMTtail_withSRCuts);
-
-        // Second lepton in acceptance (for tt->ll)
-        screwdriver.AddRegion("secondLeptonInAcceptance",    "",        "preveto_MTtail", &secondLeptonInAcceptance,             "blinded");
-        screwdriver.AddRegion("singleTrack",                 "",        "preveto_MTtail", &secondLeptonInAcceptance_singleTrack, "blinded");
-        screwdriver.AddRegion("hadronicTau",                 "",        "preveto_MTtail", &secondLeptonInAcceptance_hadronicTau, "blinded");
 
     // ##########################
     // ##   Create Channels    ##
@@ -180,8 +124,7 @@ int main (int argc, char *argv[])
             TFile f(treePath.c_str());
             TTree* theTree = (TTree*) f.Get("babyTuple");
 
-            intermediatePointers pointers;
-            InitializeBranchesForReading(theTree,&myEvent,&pointers);
+            InitializeBranchesForReading(theTree,&myEvent);
 
         // ########################################
         // ##        Run over the events         ##
@@ -199,13 +142,24 @@ int main (int argc, char *argv[])
                 if (i % (nEntries / 50) == 0) printProgressBar(i,nEntries,currentDataset);
 
                 // Get the i-th entry
-                ReadEvent(theTree,i,&pointers,&myEvent);
+                //ReadEvent(theTree,i,&pointers,&myEvent);
+                //cout<<"can I read the event ?"<<endl;
+		ReadEvent(theTree,i,&myEvent);
+		//cout<<"> Yes I can !"<<endl;
 
-                float weight = getWeight();
+         	if(goesInPreselection() && goesInAnyChannel()){
+		cout<<myEvent.MT<<" "<<myEvent.pfmet<<" "<<myEvent.ngoodleps<<" "<<myEvent.ngoodjets<<endl;
+		cout<<"preselection: "<<goesInPreselection()<<endl;
+		cout<<"all channel"<< goesInAnyChannel() <<  endl;
+		}
+		//cout<<""<< <<  endl;
+		//cout<<""<< <<  endl;
+		//cout<<""<< <<  endl;
+	 	float weight = getWeight();
 
                 // Split 1-lepton ttbar and 2-lepton ttbar
                 string currentProcessClass_ = currentProcessClass;
-                if (ttbarDatasetToBeSplitted && (myEvent.numberOfGenLepton == 2))
+                if (ttbarDatasetToBeSplitted && (myEvent.genlepsfromtop == 2))
                     currentProcessClass_ = "ttbar_2l";
 
                 screwdriver.AutoFillProcessClass(currentProcessClass_,weight);
@@ -223,12 +177,15 @@ int main (int argc, char *argv[])
 
         printBoxedMessage("Writing the table ... ");
 
-        vector<string> regions  = { "preveto_MTpeak",      "preveto_MTtail",
+        vector<string> regions  = { 
+				    "presel_MTpeak", "presel_MTtail",
+				    /*
+				    "preveto_MTpeak",      "preveto_MTtail",
                                     "signalRegion_MTpeak", "signalRegion_MTtail",
                                     "0btag_MTpeak",        "0btag_MTtail",
                                     "reversedVeto_MTpeak", "reversedVeto_MTtail",
                                     "2leptons", "2leptons_MTpeak", "2leptons_MTtail",
-                                  };
+                                  */};
 
         string exportFile = "rawYieldTables/"+string(SIGNAL_REGION_TAG)+".tab";
         TableDataMC(&screwdriver,regions,"allChannels").Print(exportFile,4);
@@ -240,8 +197,8 @@ int main (int argc, char *argv[])
                                                               "hadronicTau"
                                                           };
 
-        string exportFile2 = "secondLeptonInAcceptance/"+string(SIGNAL_REGION_TAG)+".tab";
-        TableDataMC(&screwdriver,secondLeptonInAcceptanceRegions,"allChannels").Print(exportFile2,4);
+        //string exportFile2 = "secondLeptonInAcceptance/"+string(SIGNAL_REGION_TAG)+".tab";
+        //TableDataMC(&screwdriver,secondLeptonInAcceptanceRegions,"allChannels").Print(exportFile2,4);
 
         printBoxedMessage("Table generation completed");
 
