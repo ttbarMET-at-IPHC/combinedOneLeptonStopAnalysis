@@ -20,6 +20,7 @@ LDFLAGS       = -g -O -Wall -fPIC -Wl,--no-undefined
 LDFLAGS      += $(ROOTLIBS)  -lEG -lTMVA 
 LDFLAGS      += -l:`pwd`/../../.vectorDictionnary_C.so 
 LDFLAGS      += -l:`pwd`/../../sonicScrewdriver/libSonicScrewdriver.so
+LDFLAGS      += -l:`pwd`/topness/libTopness.so 
 
 SOFLAGS       = -shared
 LIBS          =  
