@@ -35,3 +35,16 @@ predictions: backgroundEstimation.$(ExeSuf)
 		   ./backgroundEstimation.$(ExeSuf) $$REGION $(ARG);	\
 	 done;
 
+
+test: test.$(ExeSuf)
+	./test.$(ExeSuf)
+
+test_datacard: test_datacard.$(ExeSuf)
+	./test_datacard.$(ExeSuf)
+
+test_datacard.$(ExeSuf): test_datacard.C DataCardProducer.o
+	$(CXX) $(CXXFLAGS) DataCardProducer.o $(LDFLAGS) -o $@ $< $(LIBS) $(GCCPARSER)
+
+
+DataCardProducer.o: 
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c DataCardProducer.cc $(LIBS) $(GCCPARSER)
